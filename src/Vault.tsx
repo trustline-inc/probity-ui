@@ -23,7 +23,7 @@ function Vault() {
         <h1>Vault</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
         <div className="alert alert-info alert-dismissible fade show" role="alert">
-          <strong><i className="fas fa-exclamation-circle"></i></strong> Only Spark (FLR) is currently supported.
+          <strong><i className="fas fa-exclamation-circle"></i></strong> Only Ether (ETH) is currently supported.
           <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </header>    
@@ -47,7 +47,7 @@ function Vault() {
           <div className="row">
             <div className="col-6 offset-3">
               <div className="py-3">
-                <label htmlFor="depositAmountInput" className="form-label">Amount (FLR)</label>
+                <label htmlFor="depositAmountInput" className="form-label">Amount (ETH)</label>
                 <input
                   type="number"
                   min={0}
@@ -62,7 +62,7 @@ function Vault() {
           <div className="row">
             <div className="col-6 offset-3">
               <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-                <div className="m-2"><span className="text-muted h6">FLR/USD</span><br />${collateralPrice}</div>
+                <div className="m-2"><span className="text-muted h6">ETH/USD</span><br />${collateralPrice}</div>
                 <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
               </div>
             </div>

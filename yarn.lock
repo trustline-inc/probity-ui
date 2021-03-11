@@ -1580,7 +1580,7 @@
     "@ethersproject/rlp" "^5.0.7"
     "@ethersproject/signing-key" "^5.0.8"
 
-"@ethersproject/units@5.0.11":
+"@ethersproject/units@5.0.11", "@ethersproject/units@^5.0.11":
   version "5.0.11"
   resolved "https://registry.yarnpkg.com/@ethersproject/units/-/units-5.0.11.tgz#f82f6e353ac0d6fa43b17337790f1f9aa72cb4c8"
   integrity sha512-nOSPmcCWyB/dwoBRhhTtPGCsTbiXqmc7Q0Adwvafc432AC7hy3Fj3IFZtnSXsbtJ/GdHCIUIoA8gtvxSsFuBJg==
@@ -13951,6 +13951,11 @@ swarm-js@^0.1.40:
     setimmediate "^1.0.5"
     tar "^4.0.2"
     xhr-request "^1.0.1"
+
+swr@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-0.5.2.tgz#b7b32c3b10237ca0b4b167accfa7ce37dda356f8"
+  integrity sha512-uHCk7XmA8EGJOv9m2NRQLaiCo+JTsSdlSXc0dqyuLRKG3gzep0iOTwyz7XKL+3iC8ZyUjq+w6Kl/SneqIL1ncA==
 
 symbol-tree@^3.2.4:
   version "3.2.4"
