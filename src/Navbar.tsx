@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
-import injectedConnector from "./injectedConnector";
+import { injected } from "./connectors";
 import fetcher from "./fetcher";
 
 function Balance() {
@@ -26,19 +26,14 @@ function Balance() {
   })
 
   if (!balance) return null
-  return <div className="border rounded py-1 px-2">Balance: {parseFloat(formatEther(balance)).toPrecision(4)}</div>
+  return <div className="border rounded py-1 px-2">{parseFloat(formatEther(balance)).toFixed(4)} FLR</div>
 }
 
 function Navbar() {
-  const { chainId, account, activate, active } = useWeb3React<Web3Provider>()
-
-  React.useEffect(() => {
-    console.log("account:", account);
-    console.log("active:", active);
-  })
+  const { chainId, activate, active } = useWeb3React<Web3Provider>()
 
   const onClick = () => {
-    activate(injectedConnector)
+    activate(injected)
   }
 
   return (
@@ -50,6 +45,9 @@ function Navbar() {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to="/vault">Vault</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" activeClassName="active" to="/exchange">Exchange</NavLink>
               </li>
             </ul>
             <form className="row gx-3 gy-2 align-items-center">
