@@ -38,8 +38,8 @@ function Navbar() {
 
   return (
     <div className="Navbar">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container-md">
+      <nav className="navbar navbar-expand navbar-light bg-light">
+        <div className="container-fluid">
           <a className="navbar-brand" href="#/">Probity</a>
           <div className="collapse navbar-collapse mx-4" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">

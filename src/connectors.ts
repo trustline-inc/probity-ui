@@ -1,12 +1,4 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
-import { NetworkConnector } from '@web3-react/network-connector'
-
-export const network = new NetworkConnector({
-  urls: {
-    31337: 'http://localhost:8545',
-  },
-  defaultChainId: 1,
-});
 
 export const injected = new InjectedConnector({
   supportedChainIds: [

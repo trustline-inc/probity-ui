@@ -1,11 +1,12 @@
 import React from 'react';
 import useSWR from 'swr';
-import { BigNumber, Contract, utils } from "ethers";
-import { NavLink } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
+import { Contract, utils } from "ethers";
+import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import useLocalStorageState from "use-local-storage-state";
 import ProbityABI from "@trustline/probity/artifacts/contracts/Probity.sol/Probity.json";
+import { injected } from "./connectors";
 import fetcher from "./fetcher";
 
 const PROBITY_ADDRESS = "0x4c5859f0F772848b2D91F1D83E2Fe57935348029";
@@ -39,12 +40,25 @@ function Collateral() {
   )
 }
 
+enum Activity {
+  Deposit,
+  Withdraw
+}
+
 function Vault() {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const [activity, setActivity] = React.useState<Activity|null>(null);
+  const { account, active, activate, library } = useWeb3React<Web3Provider>()
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralValue, setCollateralValue] = React.useState(0.00);
+  const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
+
+  // Set activity by the path
+  React.useEffect(() => {
+    if (location.pathname === "/vault/deposit")  setActivity(Activity.Deposit);
+    if (location.pathname === "/vault/withdraw") setActivity(Activity.Withdraw);
+  }, [location])
 
   // Start listening to price feed
   React.useEffect(() => {
@@ -76,6 +90,10 @@ function Vault() {
       }
     }
   })
+
+  const onClick = () => {
+    activate(injected)
+  }
 
   /**
    * @function openVault
@@ -136,13 +154,26 @@ function Vault() {
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-      <header className="py-5">
+      <header className="pt-5">
         <h1>Vault</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
-        <div className="alert alert-info alert-dismissible fade show" role="alert">
-          <strong><i className="fas fa-exclamation-circle"></i></strong> Only Spark (FLR) is currently supported.
-          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        {
+          displayInfoAlert ? (
+            <div className="alert alert-info alert-dismissible fade show" role="alert">
+              <strong><i className="fas fa-exclamation-circle"></i></strong> Only Spark (FLR) is currently supported as collateral.
+              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => {
+                setDisplayInfoAlert(false);
+              }}></button>
+            </div>
+          ) : (null)
+        }
+        {
+          !active && (
+            <div className="alert alert-primary alert-dismissible fade show" role="alert">
+              <strong><i className="fas fa-plug"></i></strong> You must <a href="#/" className="alert-link" onClick={onClick}>connect your wallet</a> before using this app.
+            </div>
+          )
+        }
       </header>    
       <section className="border rounded p-5 w-50 mb-5">
         {/* Activity Navigation */}
@@ -152,53 +183,64 @@ function Vault() {
           <hr />
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"}>Deposit</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(Activity.Deposit) }}>Deposit</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"}>Withdraw</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(Activity.Withdraw) }}>Withdraw</NavLink>
             </li>
           </ul>
         </div>
         <hr />
         {/* Vault Activity */}
         <div className="container">
-          <div className="row">
-            <div className="col-6 offset-3">
-              <div className="py-3">
-                <label htmlFor="depositAmountInput" className="form-label">Amount (FLR)</label>
-                <input
-                  type="number"
-                  min={0}
-                  className="form-control"
-                  id="depositAmountInput"
-                  placeholder="0.000000000000000000"
-                  onChange={event => setCollateralAmount(Number(event.target.value))}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6 offset-3">
-              <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-                <div className="m-2"><span className="text-muted h6">FLR/USD</span><br />${collateralPrice}</div>
-                <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6 offset-3 mt-4">
-              <div className="d-grid">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-lg"
-                  onClick={() => {
-                    if (location.pathname === "/vault/deposit")  depositCollateral()
-                    if (location.pathname === "/vault/withdraw") withdrawCollateral()
-                  }}
-                >Confirm</button>
-              </div>
-            </div>
-          </div>
+          {
+            active && activity !== null && (
+              <>
+                <div className="row">
+                  <div className="col-6 offset-3">
+                    <div className="py-3">
+                      <label htmlFor="depositAmountInput" className="form-label">Amount (FLR)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        className="form-control"
+                        id="depositAmountInput"
+                        placeholder="0.000000000000000000"
+                        onChange={event => setCollateralAmount(Number(event.target.value))}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-6 offset-3">
+                    <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                      <div className="m-2"><span className="text-muted h6">FLR/USD</span><br />${collateralPrice}</div>
+                      <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-6 offset-3 mt-4">
+                    <div className="d-grid">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-lg"
+                        onClick={() => {
+                          if (activity === (Activity.Deposit as Activity))  depositCollateral()
+                          if (activity === (Activity.Withdraw as Activity)) withdrawCollateral()
+                        }}
+                      >Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )
+          }
+          {
+            !active && activity !== null && (
+              <div className="py-5 text-center">Please connect your wallet to manage vault operations.</div>
+            )
+          }
         </div>
       </section>
     </div>

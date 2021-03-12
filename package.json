@@ -20,6 +20,7 @@
     "react-scripts": "4.0.3",
     "swr": "^0.5.2",
     "typescript": "^4.1.2",
+    "use-local-storage-state": "^9.0.2",
     "web-vitals": "^1.0.1",
     "web3-react": "^5.0.5"
   },
