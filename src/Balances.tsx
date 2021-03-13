@@ -3,14 +3,18 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import ProbityABI from "@trustline/probity/artifacts/contracts/Probity.sol/Probity.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
 import { utils } from "ethers";
 import fetcher from "./fetcher";
-import { PROBITY_ADDRESS } from "./constants";
+import { PROBITY_ADDRESS, TREASURY_ADDRESS } from "./constants";
 
 function Balances() {
-  const { library } = useWeb3React<Web3Provider>()
+  const { account, library } = useWeb3React<Web3Provider>()
   const { data: vault } = useSWR([PROBITY_ADDRESS, 'getVault'], {
     fetcher: fetcher(library, ProbityABI.abi),
+  })
+  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+    fetcher: fetcher(library, TreasuryABI.abi),
   })
 
   if (!vault) return null;
@@ -58,7 +62,7 @@ function Balances() {
             Total Equity:
           </div>
           <div className="col-4">
-            0 AUR
+            {equityBalance ? utils.formatEther(equityBalance.toString()) : null} AUR
           </div>
         </div>
       </div>

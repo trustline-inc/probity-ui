@@ -21,8 +21,6 @@ function Equity() {
   const [collateralAmount, setCollateralAmount] = React.useState(200);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(150);
-  const collateralAmountInput = React.useRef<HTMLInputElement>(null);
-  const equityAmountInput = React.useRef<HTMLInputElement>(null);
 
   const onCollateralAmountChange = (event: any) => {
     const _collateralAmount = Number(event.target.value)
@@ -33,7 +31,7 @@ function Equity() {
   const onCollRatioChange = (event: any) => {
     const _collateralRatio = event.target.value;
     setCollateralRatio(_collateralRatio);
-    setEquityAmount(collateralAmount * (_collateralRatio * 0.01));
+    setEquityAmount(collateralAmount / (_collateralRatio * 0.01));
   }
 
   const onEquityAmountChange = (event: any) => {
@@ -65,11 +63,11 @@ function Equity() {
       const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
 
       try {
-        const result = await probity.issueEquity(0, { value: utils.parseEther(collateralAmount.toString()) });
-
+        const result = await probity.increaseEquity(utils.parseUnits(equityAmount.toString(), "ether").toString());
+        console.log("result:", result)
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data.events);
+        console.log("events:", data);
       } catch (error) {
         console.log(error);
       }
