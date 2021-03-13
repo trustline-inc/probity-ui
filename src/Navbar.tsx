@@ -47,7 +47,10 @@ function Navbar() {
                 <NavLink className="nav-link" activeClassName="active" to="/vault">Vault</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to="/exchange">Exchange</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to="/equity">Equity</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" activeClassName="active" to="/loans">Loans</NavLink>
               </li>
             </ul>
             <form className="row gx-3 gy-2 align-items-center">
