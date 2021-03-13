@@ -46,7 +46,7 @@ function Balances() {
             Coll. Utilized:
           </div>
           <div className="col-4">
-            0 FLR
+            {utils.formatEther(vault[2])} FLR
           </div>
         </div>
         <div className="row my-2">
