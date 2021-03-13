@@ -123,7 +123,7 @@ function Vault() {
   return (
     <>
       <header className="pt-5">
-        <h1>Vault</h1>
+        <h1>Vault Management</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
         {
           displayInfoAlert ? (
