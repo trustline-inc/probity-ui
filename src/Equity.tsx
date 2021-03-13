@@ -64,7 +64,10 @@ function Equity() {
       const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
 
       try {
-        const result = await probity.increaseEquity(utils.parseUnits(equityAmount.toString(), "ether").toString());
+        const result = await probity.increaseEquity(
+          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
+          utils.parseUnits(equityAmount.toString(), "ether").toString()
+        );
         console.log("result:", result)
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
@@ -192,7 +195,7 @@ function Equity() {
               <div className="row">
                 <div className="col-6 offset-3">
                   <div className="py-3">
-                    <label htmlFor="collateralConversionInput" className="form-label">Amount (FLR)</label>
+                    <label htmlFor="collateralConversionInput" className="form-label">Amount (AUR)</label>
                     <input
                       type="number"
                       min={0}
