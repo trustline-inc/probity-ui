@@ -19,6 +19,7 @@ function Equity() {
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
   const [equityAmount, setEquityAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(200);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(150);
 
@@ -82,7 +83,7 @@ function Equity() {
       const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
 
       try {
-        const result = await probity.redeemEquity(utils.parseEther(collateralAmount.toString()).toString());
+        const result = await probity.redeemEquity(utils.parseUnits(equityAmount.toString(), "ether").toString());
 
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
