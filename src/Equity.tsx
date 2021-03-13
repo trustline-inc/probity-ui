@@ -18,9 +18,29 @@ function Equity() {
   const [activity, setActivity] = React.useState<Activity|null>(null);
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
   const [equityAmount, setEquityAmount] = React.useState(0);
-  const [collateralAmount, setCollateralAmount] = React.useState(0);
+  const [collateralAmount, setCollateralAmount] = React.useState(200);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
-  const [collateralizationRatio, setCollateralizationRatio] = React.useState(0);
+  const [collateralRatio, setCollateralRatio] = React.useState(150);
+  const collateralAmountInput = React.useRef<HTMLInputElement>(null);
+  const equityAmountInput = React.useRef<HTMLInputElement>(null);
+
+  const onCollateralAmountChange = (event: any) => {
+    const _collateralAmount = Number(event.target.value)
+    setCollateralAmount(_collateralAmount);
+    setEquityAmount(_collateralAmount / (collateralRatio * 0.01));
+  }
+
+  const onCollRatioChange = (event: any) => {
+    const _collateralRatio = event.target.value;
+    setCollateralRatio(_collateralRatio);
+    setEquityAmount(collateralAmount * (_collateralRatio * 0.01));
+  }
+
+  const onEquityAmountChange = (event: any) => {
+    const _equityAmount = Number(event.target.value)
+    setEquityAmount(_equityAmount);
+    setCollateralAmount(_equityAmount / (collateralRatio * 0.01));
+  }
 
   // Start listening to price feed
   React.useEffect(() => {
@@ -36,14 +56,6 @@ function Equity() {
     if (location.pathname === "/equity/issue")  setActivity(Activity.Issue);
     if (location.pathname === "/equity/redeem") setActivity(Activity.Redeem);
   }, [location])
-
-  React.useEffect(() => {
-    console.log(collateralAmount)
-    console.log(collateralPrice)
-    console.log(equityAmount)
-    console.log((collateralAmount * collateralPrice) / equityAmount)
-    setCollateralizationRatio((collateralAmount * collateralPrice) / equityAmount);
-  }, [collateralAmount, collateralPrice, equityAmount]);
 
   /**
    * @function issueEquity
@@ -126,9 +138,27 @@ function Equity() {
                       className="form-control"
                       id="collateralConversionInput"
                       placeholder="0.000000000000000000"
-                      onChange={event => setCollateralAmount(Number(event.target.value))}
+                      value={collateralAmount}
+                      onChange={onCollateralAmountChange}
                     />
                   </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3">
+                  <label htmlFor="collateralRatio" className="form-label">Collateral Ratio</label>
+                  <input type="range" min="150" max="300" className="form-range" step="1" defaultValue={collateralRatio} id="collateralRatio" onChange={onCollRatioChange} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3">
+                  <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                    <div className="m-2"><span className="text-muted h6">Coll. Ratio</span><br />{Number(collateralRatio).toFixed(0)}%</div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3">
                   <div className="py-3">
                     <label htmlFor="equityIssuanceInput" className="form-label">Amount (AUR)</label>
                     <input
@@ -137,15 +167,9 @@ function Equity() {
                       className="form-control"
                       id="equityIssuanceInput"
                       placeholder="0.000000000000000000"
-                      onChange={event => setEquityAmount(Number(event.target.value))}
+                      value={equityAmount}
+                      onChange={onEquityAmountChange}
                     />
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-6 offset-3">
-                  <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-                    <div className="m-2"><span className="text-muted h6">Coll. Ratio</span><br />{(collateralizationRatio * 100).toFixed(2)}%</div>
                   </div>
                 </div>
               </div>
