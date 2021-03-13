@@ -47,7 +47,7 @@ function Loans() {
     <>
       <header className="pt-5">
         <h1>Loan Exchange</h1>
-        <p className="lead">Borrow Aurei and repay debt using collateral.</p>
+        <p className="lead">Borrow Aurei and repay debt with Spark (FLR).</p>
         {
           displayInfoAlert ? (
             <div className="alert alert-info alert-dismissible fade show" role="alert">

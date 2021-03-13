@@ -126,7 +126,7 @@ function Equity() {
         <hr />
         {/* Equity Activity */}
         {
-          active && activity !== null && (
+          active && activity === Activity.Issue && (
             <>
               <div className="row">
                 <div className="col-6 offset-3">
@@ -179,10 +179,40 @@ function Equity() {
                     <button
                       type="button"
                       className="btn btn-primary btn-lg"
-                      onClick={() => {
-                        if (activity === (Activity.Issue as Activity))  issueEquity()
-                        if (activity === (Activity.Redeem as Activity)) redeemEquity()
-                      }}
+                      onClick={issueEquity}
+                    >Confirm</button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )
+        }
+        {
+          active && activity === Activity.Redeem && (
+            <>
+              <div className="row">
+                <div className="col-6 offset-3">
+                  <div className="py-3">
+                    <label htmlFor="collateralConversionInput" className="form-label">Amount (FLR)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      className="form-control"
+                      id="collateralConversionInput"
+                      placeholder="0.000000000000000000"
+                      value={collateralAmount}
+                      onChange={onCollateralAmountChange}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3 mt-4">
+                  <div className="d-grid">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-lg"
+                      onClick={redeemEquity}
                     >Confirm</button>
                   </div>
                 </div>
