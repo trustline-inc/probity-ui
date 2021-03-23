@@ -2,6 +2,7 @@
   "name": "probity-web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://trustline-inc.github.io/probity-web",
   "dependencies": {
     "@ethersproject/units": "^5.0.11",
     "@testing-library/jest-dom": "^5.11.4",
@@ -14,6 +15,7 @@
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "ethers": "^5.0.32",
+    "gh-pages": "^3.1.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
@@ -29,6 +31,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "link-stablecoin": "npm link ../stablecoin --force"
   },
   "eslintConfig": {
