@@ -2,7 +2,7 @@ import React from 'react';
 import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import ProbityABI from "@trustline/probity/artifacts/contracts/Probity.sol/Probity.json";
+import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
 import { utils } from "ethers";
 import fetcher from "./fetcher";
@@ -11,7 +11,7 @@ import { PROBITY_ADDRESS, TREASURY_ADDRESS } from "./constants";
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
   const { data: vault } = useSWR([PROBITY_ADDRESS, 'getVault'], {
-    fetcher: fetcher(library, ProbityABI.abi),
+    fetcher: fetcher(library, TellerABI.abi),
   })
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),

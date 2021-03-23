@@ -4,7 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import useLocalStorageState from "use-local-storage-state";
-import ProbityABI from "@trustline/probity/artifacts/contracts/Probity.sol/Probity.json";
+import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
 import { injected } from "./connectors";
 import { PROBITY_ADDRESS } from "./constants";
 
@@ -45,7 +45,7 @@ function Vault() {
   // Listener for VaultCreated event
   React.useEffect(() => {
     if (library) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       const event = probity.filters.VaultCreated(account)
 
@@ -68,7 +68,7 @@ function Vault() {
    */
   const openVault = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
         const result = await probity.openVault(0, 0, { value: utils.parseEther(collateralAmount.toString()) });
@@ -87,7 +87,7 @@ function Vault() {
    */
   const depositCollateral = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
         const result = await probity.addCollateral(0, { value: utils.parseEther(collateralAmount.toString()) });
@@ -106,7 +106,7 @@ function Vault() {
    */
   const withdrawCollateral = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
         const result = await probity.withdrawCollateral(utils.parseEther(collateralAmount.toString()).toString());

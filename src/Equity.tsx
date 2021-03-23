@@ -3,7 +3,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import ProbityABI from "@trustline/probity/artifacts/contracts/Probity.sol/Probity.json";
+import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
 import { Contract, utils } from "ethers";
 import { PROBITY_ADDRESS } from "./constants";
 
@@ -61,7 +61,7 @@ function Equity() {
    */
    const issueEquity = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
         const result = await probity.increaseEquity(
@@ -83,7 +83,7 @@ function Equity() {
    */
   const redeemEquity = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, ProbityABI.abi, library.getSigner())
+      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
         const result = await probity.redeemEquity(utils.parseUnits(equityAmount.toString(), "ether").toString());
