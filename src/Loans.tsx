@@ -46,7 +46,7 @@ function Loans() {
   return (
     <>
       <header className="pt-5">
-        <h1>Loan Exchange</h1>
+        <h1>Stablecoin Loans</h1>
         <p className="lead">Borrow Aurei and repay debt with Spark (FLR).</p>
         {
           displayInfoAlert ? (

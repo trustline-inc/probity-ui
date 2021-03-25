@@ -4,13 +4,17 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
+import VaultABI from "@trustline/probity/artifacts/contracts/Vault.sol/Vault.json";
 import { utils } from "ethers";
 import fetcher from "./fetcher";
-import { PROBITY_ADDRESS, TREASURY_ADDRESS } from "./constants";
+import { TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "./constants";
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
-  const { data: vault } = useSWR([PROBITY_ADDRESS, 'getVault'], {
+  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+    fetcher: fetcher(library, VaultABI.abi),
+  })
+  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TellerABI.abi),
   })
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
@@ -27,15 +31,15 @@ function Balances() {
       <div className="border rounded p-4">
         <div className="row my-2">
           <div className="col-3">
-            Vault ID:
+            Total Coll:
           </div>
           <div className="col-4">
-            {vault[0].toString()}<br/>
+            {utils.formatEther(vault[0])} FLR
           </div>
         </div>
         <div className="row my-2">
           <div className="col-3">
-            Total Coll:
+            Encumbered:
           </div>
           <div className="col-4">
             {utils.formatEther(vault[1])} FLR
@@ -43,7 +47,7 @@ function Balances() {
         </div>
         <div className="row my-2">
           <div className="col-3">
-            Coll. Utilized:
+            Available:
           </div>
           <div className="col-4">
             {utils.formatEther(vault[2])} FLR

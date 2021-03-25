@@ -3,12 +3,12 @@ import useLocalStorageState from "use-local-storage-state";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
-import { PROBITY_ADDRESS } from "./constants";
+import { TREASURY_ADDRESS } from "./constants";
 
 enum Activity {
-  Issue,
+  Enroll,
   Redeem
 }
 
@@ -52,19 +52,19 @@ function Equity() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/equity/issue")  setActivity(Activity.Issue);
+    if (location.pathname === "/equity/enroll")  setActivity(Activity.Enroll);
     if (location.pathname === "/equity/redeem") setActivity(Activity.Redeem);
   }, [location])
 
   /**
-   * @function issueEquity
+   * @function enrollEquity
    */
-   const issueEquity = async () => {
+   const enrollEquity = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        const result = await probity.increaseEquity(
+        const result = await treasury.issue(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString()
         );
@@ -83,10 +83,10 @@ function Equity() {
    */
   const redeemEquity = async () => {
     if (library && account) {
-      const probity = new Contract(PROBITY_ADDRESS, TellerABI.abi, library.getSigner())
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        const result = await probity.redeemEquity(utils.parseUnits(equityAmount.toString(), "ether").toString());
+        const result = await treasury.redeem(utils.parseUnits(equityAmount.toString(), "ether").toString());
 
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
@@ -118,7 +118,7 @@ function Equity() {
         <div>
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/equity/issue"} onClick={() => { setActivity(Activity.Issue) }}>Issue</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/equity/enroll"} onClick={() => { setActivity(Activity.Enroll) }}>Enroll</NavLink>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" activeClassName="active" to={"/equity/redeem"} onClick={() => { setActivity(Activity.Redeem) }}>Redeem</NavLink>
@@ -128,12 +128,12 @@ function Equity() {
         <hr />
         {/* Equity Activity */}
         {
-          active && activity === Activity.Issue && (
+          active && activity === Activity.Enroll && (
             <>
               <div className="row">
                 <div className="col-6 offset-3">
                   <div className="py-3">
-                    <label htmlFor="collateralConversionInput" className="form-label">Amount (FLR)</label>
+                    <label htmlFor="collateralConversionInput" className="form-label">Amount Enrolled (FLR)</label>
                     <input
                       type="number"
                       min={0}
@@ -162,7 +162,7 @@ function Equity() {
               <div className="row">
                 <div className="col-6 offset-3">
                   <div className="py-3">
-                    <label htmlFor="equityIssuanceInput" className="form-label">Amount (AUR)</label>
+                    <label htmlFor="equityIssuanceInput" className="form-label">Amount Minted (AUR)</label>
                     <input
                       type="number"
                       min={0}
@@ -181,7 +181,7 @@ function Equity() {
                     <button
                       type="button"
                       className="btn btn-primary btn-lg"
-                      onClick={issueEquity}
+                      onClick={enrollEquity}
                     >Confirm</button>
                   </div>
                 </div>
