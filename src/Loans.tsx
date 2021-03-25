@@ -1,10 +1,16 @@
 import React from 'react';
+import useSWR from 'swr';
 import useLocalStorageState from "use-local-storage-state";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
+import { Contract, utils } from "ethers";
+import fetcher from "./fetcher";
+import { TELLER_ADDRESS, TREASURY_ADDRESS } from './constants';
 
 function Loans() {
-  const { active } = useWeb3React<Web3Provider>()
+  const { account, active, library } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
   const [baseToken, setBaseToken] = React.useState("FLR");
   const [baseTokenAmount, setBaseTokenAmount] = React.useState(0);
@@ -13,10 +19,36 @@ function Loans() {
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralizationRatio, setCollateralizationRatio] = React.useState(0);
 
-  const onClick = () => {
+  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
+    fetcher: fetcher(library, TellerABI.abi),
+  })
+  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+    fetcher: fetcher(library, TreasuryABI.abi),
+  })
+
+  const onClickSwapInputs = () => {
     const temp = baseToken;
     setBaseToken(counterToken);
     setCounterToken(temp);
+  }
+
+  const onClickBorrow = async () => {
+    if (library && account) {
+      const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
+
+      try {
+        const result = await teller.createLoan(
+          utils.parseUnits(baseTokenAmount.toString(), "ether").toString(),
+          utils.parseUnits(counterTokenAmount.toString(), "ether").toString()
+        );
+        console.log("result:", result)
+        // TODO: Wait for transaction validation using event
+        const data = await result.wait();
+        console.log("events:", data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   const onBaseTokenAmountChange = (event: any) => {
@@ -72,7 +104,7 @@ function Loans() {
                 </div>
                 <br/>
                 <div className="text-center">
-                  <button className="btn btn-lg" onClick={onClick}><i className="fa fa-exchange"/></button>
+                  <button className="btn btn-lg" onClick={onClickSwapInputs}><i className="fa fa-exchange"/></button>
                 </div>
                 <br/>
                 <label className="form-label">To</label>
@@ -86,6 +118,24 @@ function Loans() {
                   <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
                     <div className="m-2"><span className="text-muted h6">Coll. Ratio</span><br />{(collateralizationRatio * 100).toFixed(2)}%</div>
                   </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3">
+                  <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                    <div className="m-2"><span className="text-muted h6">Expected APR</span><br />
+                    {
+                      debtBalance && equityBalance ? (
+                        1 / (1 - ((Number(counterTokenAmount) + Number(utils.formatEther(debtBalance.toString()))) / Number(utils.formatEther(equityBalance.toString()))))
+                      ) : null
+                    }
+                    %</div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6 offset-3 d-grid">
+                  <button className="btn btn-primary btn-lg" onClick={onClickBorrow}>Borrow</button>
                 </div>
               </div>
             </>

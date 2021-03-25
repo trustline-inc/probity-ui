@@ -58,7 +58,7 @@ function Balances() {
             Total Debt:
           </div>
           <div className="col-4">
-            0 AUR
+          {debtBalance ? utils.formatEther(debtBalance.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2">

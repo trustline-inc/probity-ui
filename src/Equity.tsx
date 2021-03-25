@@ -87,7 +87,7 @@ function Equity() {
 
       try {
         const result = await treasury.redeem(utils.parseUnits(equityAmount.toString(), "ether").toString());
-
+        console.log("result:", result)
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
         console.log("events:", data.events);
