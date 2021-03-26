@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
-import { injected } from "./connectors";
-import fetcher from "./fetcher";
+import { injected } from "../../connectors";
+import fetcher from "../../fetcher";
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>()

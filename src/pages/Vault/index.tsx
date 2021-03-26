@@ -3,29 +3,24 @@ import { Contract, utils } from "ethers";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import useLocalStorageState from "use-local-storage-state";
 import VaultABI from "@trustline/probity/artifacts/contracts/Vault.sol/Vault.json";
-import { injected } from "./connectors";
-import { VAULT_ADDRESS } from "./constants";
-
-enum Activity {
-  Deposit,
-  Withdraw
-}
+import Activity from "../../containers/Activity";
+import { Activity as ActivityType } from "../../types";
+import { VAULT_ADDRESS } from "../../constants";
 
 function Vault() {
   const location = useLocation();
-  const [activity, setActivity] = React.useState<Activity|null>(null);
-  const { account, active, activate, library } = useWeb3React<Web3Provider>()
+  const [error, setError] = React.useState<any|null>(null);
+  const [activity, setActivity] = React.useState<ActivityType|null>(null);
+  const { account, active, library } = useWeb3React<Web3Provider>()
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralValue, setCollateralValue] = React.useState(0.00);
-  const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/vault/deposit")  setActivity(Activity.Deposit);
-    if (location.pathname === "/vault/withdraw") setActivity(Activity.Withdraw);
+    if (location.pathname === "/vault/deposit")  setActivity(ActivityType.Deposit);
+    if (location.pathname === "/vault/withdraw") setActivity(ActivityType.Withdraw);
   }, [location])
 
   // Start listening to price feed
@@ -59,10 +54,6 @@ function Vault() {
     }
   })
 
-  const onClick = () => {
-    activate(injected)
-  }
-
   /**
    * @function depositCollateral
    */
@@ -78,6 +69,7 @@ function Vault() {
         console.log("events:", data.events);
       } catch (error) {
         console.log(error);
+        setError(error);
       }
     }
   }
@@ -97,47 +89,32 @@ function Vault() {
         console.log("events:", data.events);
       } catch (error) {
         console.log(error);
+        setError(error);
       }
     }
   }
 
   return (
     <>
-      <header className="pt-5">
+      <header className="pt-2">
         <h1>Vault Management</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
-        {
-          displayInfoAlert ? (
-            <div className="alert alert-info alert-dismissible fade show" role="alert">
-              <strong><i className="fas fa-exclamation-circle"></i></strong> Only Spark (FLR) is currently supported as collateral.
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => {
-                setDisplayInfoAlert(false);
-              }}></button>
-            </div>
-          ) : (null)
-        }
-        {
-          !active && (
-            <div className="alert alert-primary alert-dismissible fade show" role="alert">
-              <strong><i className="fas fa-plug"></i></strong> You must <a href="#!" className="alert-link" onClick={onClick}>connect your wallet</a> before using this app.
-            </div>
-          )
-        }
       </header>    
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(Activity.Deposit) }}>Deposit</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(Activity.Withdraw) }}>Withdraw</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
             </li>
           </ul>
         </div>
         <hr />
         {/* Vault Activity */}
+        <Activity active={active} activity={activity} error={error}>
         {
           active && activity !== null && (
             <>
@@ -170,9 +147,10 @@ function Vault() {
                     <button
                       type="button"
                       className="btn btn-primary btn-lg"
+                      disabled={collateralAmount === 0}
                       onClick={() => {
-                        if (activity === (Activity.Deposit as Activity))  depositCollateral()
-                        if (activity === (Activity.Withdraw as Activity)) withdrawCollateral()
+                        if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
+                        if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
                       }}
                     >Confirm</button>
                   </div>
@@ -181,16 +159,7 @@ function Vault() {
             </>
           )
         }
-        {
-          !active && activity !== null && (
-            <div className="py-5 text-center">Please connect your wallet to manage vault operations.</div>
-          )
-        }
-        {
-          active && activity === null && (
-            <div className="py-5 text-center">Please select an activity.</div>
-          )
-        }
+        </Activity>
       </section>
     </>
   );

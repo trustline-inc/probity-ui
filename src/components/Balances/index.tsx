@@ -6,8 +6,8 @@ import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.
 import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
 import VaultABI from "@trustline/probity/artifacts/contracts/Vault.sol/Vault.json";
 import { utils } from "ethers";
-import fetcher from "./fetcher";
-import { TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "./constants";
+import fetcher from "../../fetcher";
+import { TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "../../constants";
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
@@ -24,11 +24,14 @@ function Balances() {
   if (!vault) return null;
   return (
     <>
-      <header className="pt-5">
+      <header className="pt-2">
         <h1>Balances</h1>
         <p className="lead">Assets, Debts, and Equity balances.</p>
       </header>
       <div className="border rounded p-4">
+        <h3>Indivudual</h3>
+        <hr />
+        <h5>Collateral</h5>
         <div className="row my-2">
           <div className="col-3">
             Total Coll:
@@ -53,9 +56,11 @@ function Balances() {
             {utils.formatEther(vault[2])} FLR
           </div>
         </div>
+        <hr />
+        <h5>Borrow &amp; Supply</h5>
         <div className="row my-2">
           <div className="col-3">
-            Total Debt:
+            Debt:
           </div>
           <div className="col-4">
           {debtBalance ? utils.formatEther(debtBalance.toString()) : null} AUR
@@ -63,12 +68,54 @@ function Balances() {
         </div>
         <div className="row my-2">
           <div className="col-3">
-            Total Equity:
+            Equity:
           </div>
           <div className="col-4">
             {equityBalance ? utils.formatEther(equityBalance.toString()) : null} AUR
           </div>
         </div>
+        {/* 
+          <h3>Aggregate</h3>
+          <hr />
+          <h5>Collateral</h5>
+          <div className="row my-2">
+            <div className="col-3">
+              Total Coll:
+            </div>
+            <div className="col-4">
+            </div>
+          </div>
+          <div className="row my-2">
+            <div className="col-3">
+              Encumbered:
+            </div>
+            <div className="col-4">
+            </div>
+          </div>
+          <div className="row my-2">
+            <div className="col-3">
+              Available:
+            </div>
+            <div className="col-4">
+            </div>
+          </div>
+          <hr />
+          <h5>Borrow &amp; Supply</h5>
+          <div className="row my-2">
+            <div className="col-3">
+              Total Debt:
+            </div>
+            <div className="col-4">
+            </div>
+          </div>
+          <div className="row my-2">
+            <div className="col-3">
+              Total Equity:
+            </div>
+            <div className="col-4">
+            </div>
+          </div>
+        */}
       </div>
     </>
   )

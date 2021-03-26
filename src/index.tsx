@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import './index.css';
-import App from './App';
+import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 
 function getLibrary(provider: any, connector: any): Web3Provider {
