@@ -2,7 +2,7 @@ import React from 'react';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
+import TreasuryABI from "@trustline/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import Activity from "../../containers/Activity";
 import IssuanceActivity from "./IssuanceActivity";
@@ -10,7 +10,7 @@ import RedemptionActivity from "./RedemptionActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
 
-function Equity() {
+function Capital() {
   const location = useLocation();
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
@@ -46,8 +46,8 @@ function Equity() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/equity/issue")  setActivity(ActivityType.Issue);
-    if (location.pathname === "/equity/redeem") setActivity(ActivityType.Redeem);
+    if (location.pathname === "/capital/issue")  setActivity(ActivityType.Issue);
+    if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
   }, [location])
 
   /**
@@ -99,23 +99,23 @@ function Equity() {
   return (
     <>
       <header className="pt-2">
-        <h1>Equity Management</h1>
-        <p className="lead">Converting collateral to equity allows you to earn interest.</p>
+        <h1>Capital Management</h1>
+        <p className="lead">Converting collateral to capital allows you to earn interest.</p>
       </header>
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/equity/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/equity/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+              <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
             </li>
           </ul>
         </div>
         <hr />
-        {/* Equity Management Activities */}
+        {/* Capital Management Activities */}
         <Activity active={active} activity={activity} error={error}>
           {
             activity === ActivityType.Issue && (
@@ -146,4 +146,4 @@ function Equity() {
   );
 }
 
-export default Equity;
+export default Capital;

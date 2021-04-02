@@ -2,18 +2,11 @@ import React from "react"
 import { utils } from "ethers";
 
 interface Props {
-  debtBalance: number;
-  equityBalance: number;
   collateralRatio: number;
-  aureiAmount: number;
+  rate: any;
 }
 
-function BorrowActivity({
-  debtBalance,
-  equityBalance,
-  collateralRatio,
-  aureiAmount
-}: Props) {
+function BorrowActivity({ collateralRatio, rate }: Props) {
   return (
     <>
       <div className="row">
@@ -26,13 +19,7 @@ function BorrowActivity({
       <div className="row">
         <div className="col-6 offset-3">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center text-center">
-            <div className="m-2"><span className="text-muted h6">Current APR</span><br />
-            {
-              debtBalance && equityBalance ? (
-                1 / (1 - ((Number(aureiAmount) + Number(utils.formatEther(debtBalance.toString()))) / Number(utils.formatEther(equityBalance.toString()))))
-              ) : null
-            }
-            %</div>
+            <div className="m-2"><span className="text-muted h6">Current APR</span><br />{rate && utils.formatEther(rate.div("1000000000").toString())}%</div>
           </div>
         </div>
       </div>

@@ -1,34 +1,35 @@
-import React from "react";
+import React from "react"
 
 interface Props {
   collateralAmount: number;
   equityAmount: number;
+  collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  redeemEquity: () => void;
+  issueEquity: () => void;
 }
 
-function RedemptionActivity({
+function IssueActivity({
   collateralAmount,
   equityAmount,
+  collateralRatio,
   onCollateralAmountChange,
   onEquityAmountChange,
-  redeemEquity
+  issueEquity
 }: Props) {
   return (
     <>
       <div className="row">
         <div className="col-6 offset-3">
           <div className="py-3">
-            <label htmlFor="collateralRedemptionAmount" className="form-label">Collateral Amount (FLR)</label>
+            <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount (AUR)</label>
             <input
               type="number"
               min={0}
               className="form-control"
-              id="collateralRedemptionAmount"
+              id="equityIssuanceInput"
               placeholder="0.000000000000000000"
-              value={collateralAmount}
-              onChange={onCollateralAmountChange}
+              onChange={onEquityAmountChange}
             />
           </div>
         </div>
@@ -36,16 +37,22 @@ function RedemptionActivity({
       <div className="row">
         <div className="col-6 offset-3">
           <div className="py-3">
-            <label htmlFor="equityRedemptionAmount" className="form-label">Equity Amount (AUR)</label>
+            <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount (FLR)</label>
             <input
               type="number"
               min={0}
               className="form-control"
-              id="equityRedemptionAmount"
+              id="collateralConversionInput"
               placeholder="0.000000000000000000"
-              value={equityAmount}
-              onChange={onEquityAmountChange}
+              onChange={onCollateralAmountChange}
             />
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-6 offset-3">
+          <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+            <div className="m-2"><span className="text-muted h6">Coll. Ratio</span><br />{collateralRatio === 0 ? null : `${collateralRatio * 100}%`}</div>
           </div>
         </div>
       </div>
@@ -55,7 +62,7 @@ function RedemptionActivity({
             <button
               type="button"
               className="btn btn-primary btn-lg"
-              onClick={redeemEquity}
+              onClick={issueEquity}
               disabled={equityAmount === 0 || collateralAmount === 0}
             >Confirm</button>
           </div>
@@ -65,4 +72,4 @@ function RedemptionActivity({
   )
 }
 
-export default RedemptionActivity
+export default IssueActivity

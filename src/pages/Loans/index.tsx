@@ -3,14 +3,16 @@ import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import TellerABI from "@trustline/probity/artifacts/contracts/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline/probity/artifacts/contracts/Treasury.sol/Treasury.json";
+import AureiABI from "@trustline/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
+import TellerABI from "@trustline/aurei/artifacts/contracts/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { TELLER_ADDRESS, TREASURY_ADDRESS } from '../../constants';
+import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS } from '../../constants';
 import BorrowActivity from './BorrowActivity';
+import RepayActivity from './RepayActivity';
 
 function Loans() {
   const location = useLocation();
@@ -22,11 +24,14 @@ function Loans() {
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
 
-  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
+  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'totalEquity'], {
     fetcher: fetcher(library, TreasuryABI.abi),
+  })
+  const { data: rate } = useSWR([TELLER_ADDRESS, 'getRate'], {
+    fetcher: fetcher(library, TellerABI.abi),
   })
 
   // Set activity by the path
@@ -56,7 +61,28 @@ function Loans() {
   }
 
   const repay = async () => {
+    if (library && account) {
+      const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
+      const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
 
+      try {
+        await aurei.approve(
+          TELLER_ADDRESS,
+          utils.parseUnits(aureiAmount.toString(), "ether").toString()
+        );
+        const result = await teller.repay(
+          utils.parseUnits(aureiAmount.toString(), "ether").toString(),
+          utils.parseUnits(collateralAmount.toString(), "ether").toString()
+        );
+        console.log("result:", result)
+        // TODO: Wait for transaction validation using event
+        const data = await result.wait();
+        console.log("events:", data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
   }
 
   const onAureiAmountChange = (event: any) => {
@@ -122,6 +148,15 @@ function Loans() {
             {
               activity === ActivityType.Borrow && (
                 <BorrowActivity
+                  rate={rate}
+                  collateralRatio={collateralRatio}
+                />
+              )
+            }
+
+            {
+              activity === ActivityType.Repay && (
+                <RepayActivity
                   debtBalance={debtBalance}
                   equityBalance={equityBalance}
                   aureiAmount={aureiAmount}

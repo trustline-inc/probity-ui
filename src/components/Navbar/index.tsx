@@ -47,7 +47,7 @@ function Navbar() {
                 <NavLink className="nav-link" activeClassName="active" to="/vault">Vault</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to="/equity">Equity</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to="/capital">Capital</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to="/loans">Loans</NavLink>

@@ -2297,9 +2297,11 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@trustline/probity@file:../stablecoin":
-  "resolved" "file:../stablecoin"
+"@trustline/aurei@file:../aurei":
+  "resolved" "file:../aurei"
   "version" "1.0.0"
+  dependencies:
+    "bignumber.js" "^9.0.1"
 
 "@types/anymatch@*":
   "integrity" "sha512-/+CRPXpBDpo2RK9C68N3b2cOvO0Cf5B9aPijHsoDQTHivnGSObdOF2BRQOYjojWTDy6nQvMjmqRXIxH55VjxxA=="

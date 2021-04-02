@@ -10,7 +10,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { injected } from "../../connectors";
 import Navbar from '../../components/Navbar';
 import Balances from '../../components/Balances';
-import Equity from '../../pages/Equity';
+import Capital from '../../pages/Capital';
 import Loans from '../../pages/Loans';
 import Vault from '../../pages/Vault';
 import './index.css';
@@ -59,8 +59,8 @@ function App() {
                 <Route path="/vault">
                   <Vault />
                 </Route>
-                <Route path="/equity">
-                  <Equity />
+                <Route path="/capital">
+                  <Capital />
                 </Route>
                 <Route path="/loans">
                   <Loans />
