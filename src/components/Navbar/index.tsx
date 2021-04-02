@@ -6,6 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
 import { injected } from "../../connectors";
 import fetcher from "../../fetcher";
+import logo from "../../assets/logo.png";
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>()
@@ -40,7 +41,10 @@ function Navbar() {
     <div className="Navbar">
       <nav className="navbar navbar-expand navbar-light bg-light">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#/">Probity</a>
+          <a className="navbar-brand" href="#/">
+            <img src={logo} alt="Probity" height="30" style={{ marginBottom: 5, marginRight: 5 }} />
+            &nbsp;Probity
+          </a>
           <div className="collapse navbar-collapse mx-4" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
