@@ -1,4 +1,4 @@
-# Probity Web
+# Probity dApp
 
 > NOTE: THE BETA TESTING WILL TAKE PLACE AT https://trustline-inc.github.io/probity
 
