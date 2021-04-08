@@ -30,7 +30,7 @@ function Loans() {
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'totalEquity'], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
-  const { data: rate } = useSWR([TELLER_ADDRESS, 'getRate'], {
+  const { data: rate } = useSWR([TELLER_ADDRESS, 'getAPR'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
 

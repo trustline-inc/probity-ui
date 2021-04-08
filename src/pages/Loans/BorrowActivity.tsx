@@ -19,7 +19,7 @@ function BorrowActivity({ collateralRatio, rate }: Props) {
       <div className="row">
         <div className="col-6 offset-3">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center text-center">
-            <div className="m-2"><span className="text-muted h6">Current APR</span><br />{rate && utils.formatEther(rate.div("1000000000").toString())}%</div>
+            <div className="m-2"><span className="text-muted h6">Current APR</span><br />{rate && utils.formatEther(rate.div("10000000").toString().slice(2))}%</div>
           </div>
         </div>
       </div>
