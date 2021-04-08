@@ -18,16 +18,19 @@ function Balances() {
   const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+  const { data: capitalBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
   const { data: aureiBalance } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, AureiABI.abi),
   })
+  const { data: totalAssets } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
+    fetcher: fetcher(library, AureiABI.abi),
+  })
   const { data: totalDebt } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: totalEquity } = useSWR([TREASURY_ADDRESS, 'totalEquity'], {
+  const { data: totalSupply } = useSWR([TREASURY_ADDRESS, 'totalSupply'], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
 
@@ -36,7 +39,7 @@ function Balances() {
     <>
       <header className="pt-2">
         <h1>Balances</h1>
-        <p className="lead">Assets, Debts, and Equity balances.</p>
+        <p className="lead">Assets, Debts, and Capital balances.</p>
       </header>
       <div className="border rounded p-4">
         <h3>Indivudual</h3>
@@ -86,10 +89,11 @@ function Balances() {
         </div>
         <div className="row my-2">
           <div className="col-3">
-            Equity:
+            Capital:
           </div>
           <div className="col-9">
-            {equityBalance ? utils.formatEther(equityBalance.toString()) : null} AUR
+            {/* TODO: Ensure capitalBalance is received as WAD */}
+            {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} AUR
           </div>
         </div>
       </div>
@@ -125,6 +129,7 @@ function Balances() {
             Assets:
           </div>
           <div className="col-9">
+          {totalAssets ? utils.formatEther(totalAssets.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2">
@@ -137,10 +142,10 @@ function Balances() {
         </div>
         <div className="row my-2">
           <div className="col-3">
-            Equity:
+            Capital:
           </div>
           <div className="col-9">
-          {totalEquity ? utils.formatEther(totalEquity.toString()) : null} AUR
+          {totalSupply ? utils.formatEther(totalSupply.toString()) : null} AUR
           </div>
         </div>
       </div>
