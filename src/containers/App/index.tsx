@@ -10,6 +10,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { injected } from "../../connectors";
 import Navbar from '../../components/Navbar';
 import Balances from '../../components/Balances';
+import Info from '../../components/Info';
 import Capital from '../../pages/Capital';
 import Loans from '../../pages/Loans';
 import Vault from '../../pages/Vault';
@@ -54,7 +55,10 @@ function App() {
             </div>
           </div>
           <div className="row">
-            <div className="col-4 offset-4">
+            <div className="col-4">
+              {active && <Info />}
+            </div>
+            <div className="col-4">
               <Switch>
                 <Route path="/vault">
                   <Vault />
