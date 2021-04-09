@@ -30,11 +30,11 @@ function App() {
         <Navbar />
         <div className="container-fluid">
           <div className="row mt-3">
-            <div className="offset-md-4 col-md-4 col-sm-12">
+            <div className="col-12">
               {
                 displayInfoAlert ? (
                   <div className="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong><i className="fas fa-exclamation-circle"></i> Notice</strong> Only Spark (FLR) is currently supported as collateral.
+                    <strong><i className="fas fa-exclamation-circle"></i> Notice</strong> Only testnet Spark (CFLR) is currently supported as collateral. This is a pre-release alpha version and is only compatible with the Coston testnet. Do <strong>NOT</strong> try using real money. This app is currently for testing purposes only.
                     <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => {
                       setDisplayInfoAlert(false);
                     }}></button>
