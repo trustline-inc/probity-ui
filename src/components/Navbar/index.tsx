@@ -27,7 +27,7 @@ function Balance() {
   })
 
   if (!balance) return null
-  return <div className="border rounded py-1 px-2">{parseFloat(formatEther(balance)).toFixed(4)} FLR</div>
+  return <div className="border rounded py-1 px-2">{parseFloat(formatEther(balance)).toFixed(4)} CFLR</div>
 }
 
 function Navbar() {
