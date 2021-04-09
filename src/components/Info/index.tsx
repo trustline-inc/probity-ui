@@ -11,6 +11,15 @@ function Info() {
       </header>
       <div className="border rounded p-4">
         {
+          location.pathname === "/" && (
+            <>
+              <h3>Welcome</h3>
+              <p>Please choose an activity from the navigation bar to get started.</p>
+              <p>Note that this application is running on the Coston testnet and is a <strong>pre-release</strong> version. Do <strong>not</strong> try to interact with this application by using real funds.</p>
+            </>
+          )
+        }
+        {
           location.pathname.includes("/vault") && (
             <>
               <h3>Managing a vault</h3>
