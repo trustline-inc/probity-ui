@@ -2,7 +2,7 @@
   "name": "probity",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://trustline-inc.github.io/probity",
+  "homepage": ".",
   "dependencies": {
     "@ethersproject/units": "^5.0.11",
     "@testing-library/jest-dom": "^5.11.4",
