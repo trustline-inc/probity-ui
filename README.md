@@ -1,7 +1,5 @@
 # Probity dApp
 
-> NOTE: THE BETA TESTING WILL TAKE PLACE AT https://trustline-inc.github.io/probity
-
 A public web interface for the Probity blockchain bank.
 
 ## Getting Started
