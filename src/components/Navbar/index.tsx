@@ -39,12 +39,15 @@ function Navbar() {
 
   return (
     <div className="Navbar">
-      <nav className="navbar navbar-expand navbar-light bg-light">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
           <a className="navbar-brand" href="#/">
             <img src={logo} alt="Probity" height="30" style={{ marginBottom: 5, marginRight: 5 }} />
             &nbsp;Probity
           </a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
           <div className="collapse navbar-collapse mx-4" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
