@@ -30,7 +30,7 @@ function App() {
         <Navbar />
         <div className="container-fluid">
           <div className="row mt-3">
-            <div className="offset-4 col-4">
+            <div className="offset-md-4 col-md-4 col-sm-12">
               {
                 displayInfoAlert ? (
                   <div className="alert alert-info alert-dismissible fade show" role="alert">
@@ -44,7 +44,7 @@ function App() {
             </div>
           </div>
           <div className="row">
-            <div className="offset-4 col-4">
+            <div className="offset-md-4 col-md-4 col-sm-12">
               {
                 !active && (
                   <div className="alert alert-primary alert-dismissible fade show" role="alert">
@@ -55,10 +55,10 @@ function App() {
             </div>
           </div>
           <div className="row">
-            <div className="col-4">
+            <div className="col-md-4 col-sm-12">
               {active && <Info />}
             </div>
-            <div className="col-4">
+            <div className="col-md-4 col-sm-12">
               <Switch>
                 <Route path="/vault">
                   <Vault />
@@ -71,7 +71,7 @@ function App() {
                 </Route>
               </Switch>
             </div>
-            <div className="col-4">
+            <div className="col-md-4 col-sm-12">
               {active && <Balances />}
             </div>
           </div>
