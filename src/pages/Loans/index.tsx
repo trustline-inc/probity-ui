@@ -113,7 +113,7 @@ function Loans() {
     <>
       <header className="pt-2">
         <h1>Stablecoin Loans</h1>
-        <p className="lead">Borrow Aurei and repay debt with Spark (FLR).</p>
+        <p className="lead">Borrow Aurei and repay debt with Spark.</p>
       </header>
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
@@ -141,7 +141,7 @@ function Loans() {
               <label className="form-label">Collateral</label>
               <div className="input-group input-group-lg mb-3">
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
-                <span className="input-group-text font-monospace">{"FLR"}</span>
+                <span className="input-group-text font-monospace">{"CFLR"}</span>
               </div>
             </div>
 

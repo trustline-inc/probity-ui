@@ -50,7 +50,7 @@ function Balances() {
             Total Coll:
           </div>
           <div className="col-9">
-            {utils.formatEther(vault[0])} FLR
+            {utils.formatEther(vault[0])} CFLR
           </div>
         </div>
         <div className="row my-2">
@@ -58,7 +58,7 @@ function Balances() {
             Encumbered:
           </div>
           <div className="col-9">
-            {utils.formatEther(vault[1])} FLR
+            {utils.formatEther(vault[1])} CFLR
           </div>
         </div>
         <div className="row my-2">
@@ -66,7 +66,7 @@ function Balances() {
             Available:
           </div>
           <div className="col-9">
-            {utils.formatEther(vault[2])} FLR
+            {utils.formatEther(vault[2])} CFLR
           </div>
         </div>
         <hr />
@@ -76,7 +76,7 @@ function Balances() {
             Assets:
           </div>
           <div className="col-9">
-          {aureiBalance ? utils.formatEther(aureiBalance.toString()) : null} AUR
+          {aureiBalance ? utils.formatEther(aureiBalance.toString()) : null} CAUR
           </div>
         </div>
         <div className="row my-2">
@@ -84,7 +84,7 @@ function Balances() {
             Debt:
           </div>
           <div className="col-9">
-          {debtBalance ? utils.formatEther(debtBalance.toString()) : null} AUR
+          {debtBalance ? utils.formatEther(debtBalance.toString()) : null} CAUR
           </div>
         </div>
         <div className="row my-2">
@@ -93,7 +93,7 @@ function Balances() {
           </div>
           <div className="col-9">
             {/* TODO: Ensure capitalBalance is received as WAD */}
-            {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} AUR
+            {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} CAUR
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ function Balances() {
             Assets:
           </div>
           <div className="col-9">
-          {totalAssets ? utils.formatEther(totalAssets.toString()) : null} AUR
+          {totalAssets ? utils.formatEther(totalAssets.toString()) : null} CAUR
           </div>
         </div>
         <div className="row my-2">
@@ -138,7 +138,7 @@ function Balances() {
             Debt:
           </div>
           <div className="col-9">
-          {totalDebt ? utils.formatEther(totalDebt.toString()) : null} AUR
+          {totalDebt ? utils.formatEther(totalDebt.toString()) : null} CAUR
           </div>
         </div>
         <div className="row my-2">
@@ -146,7 +146,7 @@ function Balances() {
             Capital:
           </div>
           <div className="col-9">
-          {totalSupply ? utils.formatEther(totalSupply.toString()) : null} AUR
+          {totalSupply ? utils.formatEther(totalSupply.toString()) : null} CAUR
           </div>
         </div>
       </div> */}

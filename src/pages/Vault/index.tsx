@@ -121,7 +121,7 @@ function Vault() {
               <div className="row">
                 <div className="col-12">
                   <div className="py-3">
-                    <label htmlFor="depositAmountInput" className="form-label">Amount (FLR)</label>
+                    <label htmlFor="depositAmountInput" className="form-label">Amount (CFLR)</label>
                     <input
                       type="number"
                       min={0}

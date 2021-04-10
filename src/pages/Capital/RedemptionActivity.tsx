@@ -36,7 +36,7 @@ function RedemptionActivity({
       <div className="row">
         <div className="col-6 offset-3">
           <div className="py-3">
-            <label htmlFor="collateralRedemptionAmount" className="form-label">Collateral Amount (FLR)</label>
+            <label htmlFor="collateralRedemptionAmount" className="form-label">Collateral Amount (CFLR)</label>
             <input
               type="number"
               min={0}

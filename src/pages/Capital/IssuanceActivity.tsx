@@ -37,7 +37,7 @@ function IssueActivity({
       <div className="row">
         <div className="col-6 offset-3">
           <div className="py-3">
-            <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount (FLR)</label>
+            <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount (CFLR)</label>
             <input
               type="number"
               min={0}
