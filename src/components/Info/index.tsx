@@ -11,7 +11,7 @@ function Info() {
       </header>
       <div className="border rounded p-4">
         {
-          location.pathname === "/" && (
+          (location.pathname === "/" || location.pathname === "/!") && (
             <>
               <h3>Welcome</h3>
               <p>Please choose an activity from the navigation bar to get started.</p>
