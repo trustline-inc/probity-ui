@@ -136,7 +136,7 @@ function Vault() {
               <div className="row">
                 <div className="col-12">
                   <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-                    <div className="m-2"><span className="text-muted h6">FLR/USD</span><br />${collateralPrice}</div>
+                    <div className="m-2"><span className="text-muted h6">CFLR/USD</span><br />${collateralPrice}</div>
                     <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
                   </div>
                 </div>
