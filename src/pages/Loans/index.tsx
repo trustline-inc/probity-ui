@@ -135,7 +135,7 @@ function Loans() {
             <label className="form-label">Amount</label>
               <div className="input-group input-group-lg">
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
-                <span className="input-group-text font-monospace">{"AUR"}</span>
+                <span className="input-group-text font-monospace">{"CAUR"}</span>
               </div>
               <br/>
               <label className="form-label">Collateral</label>
