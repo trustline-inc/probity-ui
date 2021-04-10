@@ -97,7 +97,8 @@ function Balances() {
           </div>
         </div>
       </div>
-      <div className="border rounded p-4 mt-3">
+
+      {/* <div className="border rounded p-4 mt-3">
         <h3>Aggregate</h3>
         <hr />
         <h5>Collateral</h5>
@@ -148,7 +149,7 @@ function Balances() {
           {totalSupply ? utils.formatEther(totalSupply.toString()) : null} AUR
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }
