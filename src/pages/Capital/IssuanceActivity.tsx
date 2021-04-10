@@ -22,7 +22,7 @@ function IssueActivity({
       <div className="row">
         <div className="col-6 offset-3">
           <div className="py-3">
-            <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount (AUR)</label>
+            <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount (CAUR)</label>
             <input
               type="number"
               min={0}
