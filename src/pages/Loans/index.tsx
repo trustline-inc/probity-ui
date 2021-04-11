@@ -174,7 +174,7 @@ function Loans() {
                     if (activity === (ActivityType.Repay as ActivityType)) repay()
                   }}
                   disabled={aureiAmount === 0 || collateralAmount === 0}
-                >Comfirm</button>
+                >Confirm</button>
               </div>
             </div>
           </>

@@ -42,7 +42,7 @@ function Balances() {
         <p className="lead">Assets, Debts, and Capital balances.</p>
       </header>
       <div className="border rounded p-4">
-        <h3>Indivudual</h3>
+        <h3>Individual</h3>
         <hr />
         <h5>Collateral</h5>
         <div className="row my-2">
