@@ -27,7 +27,6 @@ function RedemptionActivity({
               className="form-control"
               id="equityRedemptionAmount"
               placeholder="0.000000000000000000"
-              value={equityAmount}
               onChange={onEquityAmountChange}
             />
           </div>
@@ -43,7 +42,6 @@ function RedemptionActivity({
               className="form-control"
               id="collateralRedemptionAmount"
               placeholder="0.000000000000000000"
-              value={collateralAmount}
               onChange={onCollateralAmountChange}
             />
           </div>
