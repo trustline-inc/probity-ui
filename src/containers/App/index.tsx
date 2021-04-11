@@ -29,7 +29,7 @@ function App() {
     if(/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       setMobileDevice(true)
     }
-  });
+  }, []);
 
   return (
     <Router>
