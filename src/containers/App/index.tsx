@@ -26,7 +26,8 @@ function App() {
   }
 
   useEffect(() => {
-    if(/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+    if(/Mobi|Android/i.test(navigator.userAgent)) {
       setMobileDevice(true)
     }
   }, []);
