@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   HashRouter as Router,
   Switch,
@@ -17,12 +17,19 @@ import Vault from '../../pages/Vault';
 import './index.css';
 
 function App() {
+  const [mobileDevice, setMobileDevice] = useState(false);
   const { active, activate } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState("displayInfoAlert", true);
 
   const onClick = () => {
     activate(injected)
   }
+
+  useEffect(() => {
+    if(/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      setMobileDevice(true)
+    }
+  });
 
   return (
     <Router>
@@ -48,7 +55,13 @@ function App() {
               {
                 !active && (
                   <div className="alert alert-primary alert-dismissible fade show" role="alert">
-                    <strong><i className="fas fa-plug"></i></strong> You must <a href="#!" className="alert-link" onClick={onClick}>connect your wallet</a> before using this app.
+                    {
+                      mobileDevice ? (
+                        <><strong><i className="fas fa-mobile"></i></strong>&nbsp;Mobile device detected. Please use the Metamask app to connect your wallet.</>
+                      ) : (
+                        <><strong><i className="fas fa-plug"></i></strong> You must <a href="#!" className="alert-link" onClick={onClick}>connect your wallet</a> before using this app.</>
+                      )
+                    }
                   </div>
                 )
               }
