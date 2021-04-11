@@ -24,7 +24,7 @@ function Balances() {
   const { data: aureiBalance } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, AureiABI.abi),
   })
-  const { data: totalAssets } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
+  const { data: totalAurei } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
     fetcher: fetcher(library, AureiABI.abi),
   })
   const { data: totalDebt } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
@@ -98,10 +98,10 @@ function Balances() {
         </div>
       </div>
 
-      {/* <div className="border rounded p-4 mt-3">
+      <div className="border rounded p-4 mt-3">
         <h3>Aggregate</h3>
         <hr />
-        <h5>Collateral</h5>
+        {/* <h5>Collateral</h5>
         <div className="row my-2">
           <div className="col-3">
             Total Coll:
@@ -123,14 +123,14 @@ function Balances() {
           <div className="col-9">
           </div>
         </div>
-        <hr />
+        <hr /> */}
         <h5>Balance Sheet</h5>
         <div className="row my-2">
           <div className="col-3">
             Assets:
           </div>
           <div className="col-9">
-          {totalAssets ? utils.formatEther(totalAssets.toString()) : null} CAUR
+          {totalAurei ? utils.formatEther(totalAurei.toString()) : null} CAUR
           </div>
         </div>
         <div className="row my-2">
@@ -149,7 +149,7 @@ function Balances() {
           {totalSupply ? utils.formatEther(totalSupply.toString()) : null} CAUR
           </div>
         </div>
-      </div> */}
+      </div>
     </>
   )
 }
