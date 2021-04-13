@@ -6,3 +6,13 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
 }
+
+.page-container {
+  background-color: #fff;
+  padding: 15px 35px;
+
+}
+
+.left-nav {
+  background-color: #f8f9fd;
+}
