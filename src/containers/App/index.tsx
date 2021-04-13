@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  useRouteMatch,
+} from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
@@ -100,21 +105,33 @@ function App() {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-4 col-sm-12">{active && <Info />}</div>
-                <div className="col-md-4 col-sm-12">
-                  <Switch>
-                    <Route path="/vault">
-                      <Vault />
-                    </Route>
-                    <Route path="/capital">
-                      <Capital />
-                    </Route>
-                    <Route path="/loans">
-                      <Loans />
-                    </Route>
-                  </Switch>
+                <div
+                  className={
+                    active ? "col-md-4 col-sm-12" : `col-md-6 col-sm-12`
+                  }
+                >
+                  {active && <Info />}
                 </div>
-                <div className="col-md-4 col-sm-12">
+                {active ? (
+                  <div className="col-md-4 col-sm-12">
+                    <Switch>
+                      <Route path="/vault">
+                        <Vault />
+                      </Route>
+                      <Route path="/capital">
+                        <Capital />
+                      </Route>
+                      <Route path="/loans">
+                        <Loans />
+                      </Route>
+                    </Switch>
+                  </div>
+                ) : null}
+                <div
+                  className={
+                    active ? "col-md-4 col-sm-12" : `col-md-6 col-sm-12`
+                  }
+                >
                   {active && <Balances />}
                 </div>
               </div>
