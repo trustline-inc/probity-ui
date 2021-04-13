@@ -65,12 +65,12 @@ function Navbar() {
         <Balance />
 
         <ul className="navbar-nav my-4">
-          <li className="nav-item">
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/vault">
               <i className="fas fa-lock" /> Vault
             </NavLink>
           </li>
-          <li className="nav-item">
+          <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"
@@ -79,7 +79,7 @@ function Navbar() {
               <i className="fas fa-coins" /> Capital
             </NavLink>
           </li>
-          <li className="nav-item">
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
               <i className="fas fa-money-bill-wave-alt" /> Loans
             </NavLink>
