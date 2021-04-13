@@ -29,8 +29,9 @@ function Balance() {
 
   if (!balance) return null;
   return (
-    <div className="border rounded py-1 px-2">
-      {parseFloat(formatEther(balance)).toFixed(4)} CFLR
+    <div className="your-balance">
+      <h3>Your balance</h3>
+      <span className="tokens">{parseFloat(formatEther(balance)).toFixed(4)} CFLR</span>
     </div>
   );
 }
@@ -61,10 +62,12 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button> */}
 
+        <Balance />
+
         <ul className="navbar-nav">
           <li className="nav-item">
             <NavLink className="nav-link" activeClassName="active" to="/vault">
-              <i className="fas fa-vault" /> Vault
+              <i className="fas fa-lock" /> Vault
             </NavLink>
           </li>
           <li className="nav-item">
@@ -78,16 +81,19 @@ function Navbar() {
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-            <i className="fas fa-money-bill-wave-alt" /> Loans
+              <i className="fas fa-money-bill-wave-alt" /> Loans
             </NavLink>
           </li>
         </ul>
+        <br />
+        <br />
         <form className="row gx-3 gy-2 align-items-center">
           {chainId ? (
             <div className="col-auto">
               <div className="w-100">Chain ID: {chainId}</div>
             </div>
           ) : null}
+          <br />
           <div className="col-auto">
             {active ? (
               <div className="w-100">
@@ -105,7 +111,6 @@ function Navbar() {
             )}
           </div>
         </form>
-        <Balance />
       </div>
     </nav>
   );

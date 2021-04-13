@@ -13,6 +13,7 @@
 
 .left-nav nav {
     padding: 25px 35px;
+    min-width: 330px;
 }
 
 .left-nav .nav-link{
@@ -31,4 +32,24 @@
 .left-nav .navbar-nav i {
     margin-right: .3rem;
     font-size: .9rem;
+}
+
+.left-nav .nav-item {
+    margin: 5px 0;
+}
+
+.your-balance {
+    margin: 20px 0;
+}
+
+.your-balance h3 {
+    font-size:.9rem;
+    color: #92969f;
+    margin: 0;
+    font-weight: normal;
+}
+
+.your-balance .tokens {
+    color: #136eb7;
+    font-weight: bold;;
 }

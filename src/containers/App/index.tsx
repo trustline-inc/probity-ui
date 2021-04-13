@@ -35,16 +35,16 @@ function App() {
     <Router>
       <div className="App">
         <div className="d-flex ">
-          <div className="vh-100 left-nav">
+          <div className="min-vh-100 left-nav">
             <Navbar />
           </div>
-          <div className="flex-grow-1  vh-100 page-container">
+          <div className="flex-grow-1 min-vh-100 page-container">
             <div className="container-fluid">
               <div className="row mt-3">
                 <div className="col-12">
                   {displayInfoAlert ? (
                     <div
-                      className="alert alert-info alert-dismissible fade show"
+                      className="alert alert-danger alert-dismissible fade show"
                       role="alert"
                     >
                       <strong>

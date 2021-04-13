@@ -9,6 +9,7 @@ import VaultABI from "@trustline/aurei/artifacts/contracts/Vault.sol/Vault.json"
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "../../constants";
+import './index.css';
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
