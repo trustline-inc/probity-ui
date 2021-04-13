@@ -29,7 +29,7 @@ function Balance() {
 
   if (!balance) return null;
   return (
-    <div className="your-balance">
+    <div className="your-balance my-3 mt-5 shadow-sm p-3 bg-white rounded">
       <h3>Your balance</h3>
       <span className="tokens">{parseFloat(formatEther(balance)).toFixed(4)} CFLR</span>
     </div>
@@ -64,7 +64,7 @@ function Navbar() {
 
         <Balance />
 
-        <ul className="navbar-nav">
+        <ul className="navbar-nav my-4">
           <li className="nav-item">
             <NavLink className="nav-link" activeClassName="active" to="/vault">
               <i className="fas fa-lock" /> Vault
