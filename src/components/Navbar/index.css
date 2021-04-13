@@ -40,5 +40,6 @@
 
 .your-balance .tokens {
     color: #136eb7;
-    font-weight: bold;;
+    font-weight: bold;
+    font-size:1.2rem;
 }

@@ -106,7 +106,7 @@ function Navbar() {
                 type="button"
                 onClick={onClick}
               >
-                Connect
+                <i className="fas fa-wallet mr-2" /> Connect your wallet
               </button>
             )}
           </div>
