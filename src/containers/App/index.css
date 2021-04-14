@@ -14,6 +14,8 @@
 }
 
 .left-nav {
-  /* background-color: #f8f9fd; */
+  box-shadow: 0 0 4px #bfc6e3;
+  position: relative;
+  z-index: 30;
   background: linear-gradient(169deg, rgba(248,249,253,1) 0%, rgba(247,248,252,1) 75%, rgba(208,218,231,1) 100%);
 }
