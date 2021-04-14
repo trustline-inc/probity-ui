@@ -13,6 +13,7 @@ import fetcher from "../../fetcher";
 import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
+import Info from '../../components/Info';
 
 function Loans() {
   const location = useLocation();
@@ -114,16 +115,18 @@ function Loans() {
       <header className="pt-2">
         <h1>Stablecoin Loans</h1>
         <p className="lead">Borrow Aurei and repay debt with Spark.</p>
+        {active && <Info />}
+
       </header>
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
+              <NavLink className="nav-link border" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
+              <NavLink className="nav-link border" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
             </li>
           </ul>
         </div>

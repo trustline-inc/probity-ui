@@ -9,6 +9,7 @@ import IssuanceActivity from "./IssuanceActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
+import Info from '../../components/Info';
 
 function Capital() {
   const location = useLocation();
@@ -101,16 +102,18 @@ function Capital() {
       <header className="pt-2">
         <h1>Capital Management</h1>
         <p className="lead">Converting collateral to capital allows you to earn interest.</p>
+        {active && <Info />}
+
       </header>
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
+              <NavLink className="nav-link border" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+              <NavLink className="nav-link border" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
             </li>
           </ul>
         </div>

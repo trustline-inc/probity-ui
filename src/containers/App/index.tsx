@@ -3,7 +3,6 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  useRouteMatch,
 } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
@@ -11,7 +10,6 @@ import useLocalStorageState from "use-local-storage-state";
 import { injected } from "../../connectors";
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
-import Info from "../../components/Info";
 import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
 import Vault from "../../pages/Vault";
@@ -90,7 +88,7 @@ function App() {
                           app to connect your wallet.
                         </div>
                       ) : (
-                          <div className="shadow-sm border p-4 mt-5 bg-white rounded">
+                          <div className="shadow-sm border p-5 mt-5 bg-white rounded">
                           <h3>Please select a wallet to connect to this dapp:</h3>
                           <br />
                           <br />
@@ -108,15 +106,8 @@ function App() {
                 </div>
               </div>
               <div className="row">
-                <div
-                  className={
-                    active ? "col-md-4 col-sm-12" : `col-md-6 col-sm-12`
-                  }
-                >
-                  {active && <Info />}
-                </div>
                 {active ? (
-                  <div className="col-md-4 col-sm-12">
+                  <div className="col-md-6 col-sm-12">
                     <Switch>
                       <Route path="/vault">
                         <Vault />
@@ -135,7 +126,7 @@ function App() {
                 ) : null}
                 <div
                   className={
-                    active ? "col-md-4 col-sm-12" : `col-md-6 col-sm-12`
+                    active ? "col-md-6 col-sm-12" : `col-md-6 col-sm-12`
                   }
                 >
                   {active && <Balances />}

@@ -7,6 +7,7 @@ import VaultABI from "@trustline/aurei/artifacts/contracts/Vault.sol/Vault.json"
 import Activity from "../../containers/Activity";
 import { Activity as ActivityType } from "../../types";
 import { VAULT_ADDRESS } from "../../constants";
+import Info from '../../components/Info';
 
 function Vault() {
   const location = useLocation();
@@ -99,16 +100,18 @@ function Vault() {
       <header className="pt-2">
         <h1>Vault Management</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
+        {active && <Info />}
+
       </header>    
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill">
-            <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
+            <li className="nav-item ">
+              <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
+              <NavLink className="nav-link border" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
             </li>
           </ul>
         </div>
