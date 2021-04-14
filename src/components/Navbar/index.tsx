@@ -31,7 +31,9 @@ function Balance() {
   return (
     <div className="your-balance my-3 mt-5 shadow-sm p-3 bg-white rounded">
       <h3>Your balance</h3>
-      <span className="tokens">{parseFloat(formatEther(balance)).toFixed(4)} CFLR</span>
+      <span className="tokens">
+        {parseFloat(formatEther(balance)).toFixed(4)} CFLR
+      </span>
     </div>
   );
 }
@@ -88,28 +90,22 @@ function Navbar() {
         <br />
         <br />
         <form className="row gx-3 gy-2 align-items-center">
-          {chainId ? (
-            <div className="col-auto">
-              <div className="w-100">Chain ID: {chainId}</div>
-            </div>
-          ) : null}
+          {chainId ? <div>Chain ID: {chainId}</div> : null}
           <br />
-          <div className="col-auto">
-            {active ? (
-              <div className="w-100">
-                <i className="inline-block far fa-dot-circle text-success" />
-                &nbsp;Connected
-              </div>
-            ) : (
-              <button
-                className="btn btn-outline-success"
-                type="button"
-                onClick={onClick}
-              >
-                <i className="fas fa-wallet mr-2" /> Connect your wallet
-              </button>
-            )}
-          </div>
+          {active ? (
+            <div>
+              <i className="inline-block far fa-dot-circle text-success" />
+              &nbsp;Connected
+            </div>
+          ) : (
+            <button
+              className="btn btn-outline-success"
+              type="button"
+              onClick={onClick}
+            >
+              <i className="fas fa-wallet mr-2" /> Connect to a wallet
+            </button>
+          )}
         </form>
       </div>
     </nav>

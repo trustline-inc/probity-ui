@@ -76,31 +76,34 @@ function App() {
               <div className="row">
                 <div className="offset-md-4 col-md-4 col-sm-12">
                   {!active && (
-                    <div
-                      className="alert alert-primary alert-dismissible fade show"
-                      role="alert"
-                    >
+                    <>
                       {mobileDevice ? (
-                        <>
+                        <div
+                          className="alert alert-primary alert-dismissible fade show"
+                          role="alert"
+                        >
+                          {" "}
                           <strong>
                             <i className="fas fa-mobile"></i>
                           </strong>
                           &nbsp;Mobile device detected. Please use the Metamask
                           app to connect your wallet.
-                        </>
+                        </div>
                       ) : (
-                        <>
-                          <strong>
-                            <i className="fas fa-plug"></i>
-                          </strong>{" "}
-                          You must{" "}
-                          <a href="#!" className="alert-link" onClick={onClick}>
-                            connect your wallet
-                          </a>{" "}
-                          before using this app.
-                        </>
+                          <div className="shadow-sm border p-4 mt-5 bg-white rounded">
+                          <h3>Please select a wallet to connect to this dapp:</h3>
+                          <br />
+                          <br />
+                          <button
+                            className="btn btn-outline-success"
+                            type="button"
+                            onClick={onClick}
+                          >
+                            <i className="fas fa-wallet mr-2" /> Connect wallet
+                          </button>
+                        </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
@@ -123,6 +126,9 @@ function App() {
                       </Route>
                       <Route path="/loans">
                         <Loans />
+                      </Route>
+                      <Route path="/">
+                        <Vault />
                       </Route>
                     </Switch>
                   </div>
