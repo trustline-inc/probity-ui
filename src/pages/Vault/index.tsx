@@ -98,7 +98,7 @@ function Vault() {
   return (
     <>
       <header className="pt-2">
-        <h1>Vault Management</h1>
+        <h1><i className="fas fa-lock" /> Vault Management</h1>
         <p className="lead">The Probity vault securely stores crypto collateral.</p>
         {active && <Info />}
 

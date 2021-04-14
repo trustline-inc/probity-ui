@@ -100,7 +100,7 @@ function Capital() {
   return (
     <>
       <header className="pt-2">
-        <h1>Capital Management</h1>
+        <h1><i className="fas fa-coins" /> Capital Management</h1>
         <p className="lead">Converting collateral to capital allows you to earn interest.</p>
         {active && <Info />}
 
