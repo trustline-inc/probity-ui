@@ -5,8 +5,8 @@ function Info() {
   const location = useLocation();
   return (
     <>
-      <header className="pt-2">
-        <div className="border rounded p-4">
+      <header>
+        <div className="my-3">
           {(location.pathname === "/" || location.pathname === "/!") && (
             <>
               <p>
