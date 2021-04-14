@@ -4,42 +4,63 @@
 }
 
 .navbar-brand {
-    color: #136eb7;
-    height: 30px;
-    line-height: 30px;
-    display: inline-block;
-    font-size: 1.5rem;
+  color: #136eb7;
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  font-size: 1.5rem;
 }
 
 .left-nav nav {
-    padding: 25px 35px;
-    min-width: 330px;
+  padding: 25px 35px;
+  min-width: 330px;
 }
 
-.left-nav .nav-link{
-    font-size: 1.1rem;
-    color: #1d242c;
+.left-nav .nav-link {
+  font-size: 1.1rem;
+  color: #1d242c;
 }
 
 .left-nav .nav-link.active {
-    color: #136eb7;
+  color: #136eb7;
 }
 
 .left-nav .navbar-nav i {
-    margin-right: .3rem;
-    font-size: .9rem;
+  margin-right: 0.3rem;
+  font-size: 0.9rem;
 }
 
-
 .your-balance h3 {
-    font-size:.9rem;
-    color: #92969f;
-    margin: 0;
-    font-weight: normal;
+  font-size: 0.9rem;
+  color: #92969f;
+  margin: 0;
+  font-weight: normal;
 }
 
 .your-balance .tokens {
-    color: #136eb7;
-    font-weight: bold;
-    font-size:1.2rem;
+  color: #136eb7;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.navbar-light .navbar-toggler {
+  background: #fff;
+}
+
+@media only screen and (max-width: 1280px) {
+  .left-nav .navbar-expand-lg .navbar-toggler {
+    display: block;
+  }
+  .main-container .min-vh-100 {
+    min-height: 50px !important;
+  }
+  .chain-info,
+  .navbar-nav,
+  .connected {
+    display: none;
+  }
+
+  .navbar-nav.mobile-visible {
+    display: block;
+  }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
@@ -40,33 +40,43 @@ function Balance() {
 
 function Navbar() {
   const { chainId, activate, active } = useWeb3React<Web3Provider>();
+  const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
 
   const onClick = () => {
     activate(injected);
   };
 
+  // Copy state temporarily to flip it. Seems to work better than just 
+  // inverting the boolean in the onClick itself
+  const toggleMobileMenuVisibility = () => {
+    const currentVisibility = mobileMenuVisibility;
+    setMobileMenuVisibility(!currentVisibility);
+  }
+
   return (
     <nav>
       <div className="container-fluid">
-        <a className="navbar-brand" href="#/">
-          <img src={logo} alt="Probity" height="30" className="logo" />
-          &nbsp;Probity
-        </a>
-        {/* <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button> */}
+        <div className="d-flex flex-row justify-content-between">
+          <div>
+            <a className="navbar-brand" href="#/">
+              <img src={logo} alt="Probity" height="30" className="logo" />
+              &nbsp;Probity
+            </a>
+          </div>
+          <div className="navbar navbar-expand-lg navbar-light">
+            <button
+              className="navbar-toggler"
+              type="button"
+              onClick={toggleMobileMenuVisibility}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+          </div>
+        </div>
 
         <Balance />
 
-        <ul className="navbar-nav my-4">
+        <ul className={`navbar-nav my-4 ${mobileMenuVisibility ? 'mobile-visible' : ''}`}>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/vault">
               <i className="fas fa-lock" /> Vault
@@ -87,24 +97,26 @@ function Navbar() {
             </NavLink>
           </li>
         </ul>
-        <br />
-        <br />
+        <div className="spacer spacer-1" />
         <form className="row gx-3 gy-2 align-items-center">
-          {chainId ? <div>Chain ID: {chainId}</div> : null}
-          <br />
+          {chainId ? (
+            <div className="chain-info">Chain ID: {chainId}</div>
+          ) : null}
           {active ? (
-            <div>
+            <div className="mt-2 connected">
               <i className="inline-block far fa-dot-circle text-success" />
               &nbsp;Connected
             </div>
           ) : (
-            <button
-              className="btn btn-outline-success"
-              type="button"
-              onClick={onClick}
-            >
-              <i className="fas fa-wallet mr-2" /> Connect to a wallet
-            </button>
+            <div className="mt-2">
+              <button
+                className="btn btn-outline-success"
+                type="button"
+                onClick={onClick}
+              >
+                <i className="fas fa-wallet mr-2" /> Connect to a wallet
+              </button>
+            </div>
           )}
         </form>
       </div>

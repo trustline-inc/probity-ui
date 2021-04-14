@@ -37,7 +37,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="d-flex ">
+        <div className="d-flex main-container ">
           <div className="min-vh-100 left-nav">
             <Navbar />
           </div>
@@ -72,7 +72,7 @@ function App() {
                 </div>
               </div>
               <div className="row">
-                <div className="offset-md-4 col-md-4 col-sm-12">
+                <div className="offset-md-3 offset-lg-4 col-lg-4 col-md-6  col-sm-12">
                   {!active && (
                     <>
                       {mobileDevice ? (

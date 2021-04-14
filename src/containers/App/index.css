@@ -19,3 +19,10 @@
   z-index: 30;
   background: linear-gradient(169deg, rgba(248,249,253,1) 0%, rgba(247,248,252,1) 75%, rgba(208,218,231,1) 100%);
 }
+
+
+@media only screen and (max-width: 1280px) {
+  .main-container {
+    flex-direction: column;
+  }
+}
