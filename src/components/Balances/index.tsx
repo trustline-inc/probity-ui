@@ -42,7 +42,7 @@ function Balances() {
         <h1>Balances</h1>
         <p className="lead">Assets, Debts, and Capital balances.</p>
       </header>
-      <div className="border rounded p-4">
+      <div className="border rounded p-4  shadow-sm bg-white">
         <h3>Individual</h3>
         <hr />
         <h5>Collateral</h5>
@@ -99,7 +99,7 @@ function Balances() {
         </div>
       </div>
 
-      <div className="border rounded p-4 mt-3">
+      <div className="border rounded p-4 mt-3  shadow-sm bg-white">
         <h3>Aggregate</h3>
         <hr />
         {/* <h5>Collateral</h5>

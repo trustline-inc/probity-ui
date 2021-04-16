@@ -118,7 +118,7 @@ function Loans() {
         {active && <Info />}
 
       </header>
-      <section className="border rounded p-5 mb-5">
+      <section className="border rounded p-5 mb-5  shadow-sm bg-white">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill spaced">
@@ -134,7 +134,7 @@ function Loans() {
         {/* Loan Activities */}
         <Activity active={active} activity={activity} error={error}>
           <>
-            <div className="p-5 border rounded">
+            <div className="p-5 border rounded  shadow-sm bg-white">
             <label className="form-label">Amount</label>
               <div className="input-group input-group-lg">
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />

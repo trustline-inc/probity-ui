@@ -29,7 +29,7 @@ function Balance() {
 
   if (!balance) return null;
   return (
-    <div className="your-balance my-3 mt-5 shadow-sm p-3 bg-white rounded">
+    <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded">
       <h3>Your balance</h3>
       <span className="tokens">
         {parseFloat(formatEther(balance)).toFixed(4)} CFLR
@@ -110,7 +110,7 @@ function Navbar() {
           ) : (
             <div className="mt-2">
               <button
-                className="btn btn-outline-success"
+                className="btn btn-light text-success"
                 type="button"
                 onClick={onClick}
               >

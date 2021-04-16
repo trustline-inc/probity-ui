@@ -1,14 +1,19 @@
 .logo {
   margin-bottom: 5px;
   margin-right: 5px;
+  border:1px solid #fff;
 }
 
 .navbar-brand {
-  color: #136eb7;
+  color: #fff;
   height: 30px;
   line-height: 30px;
   display: inline-block;
   font-size: 1.5rem;
+}
+
+.navbar-brand:hover {
+  color: rgba(255,255,255,.7)
 }
 
 .left-nav nav {
@@ -18,11 +23,20 @@
 
 .left-nav .nav-link {
   font-size: 1.1rem;
-  color: #1d242c;
+  color: #fff;
+}
+
+.left-nav .nav-link:hover  {
+  color: rgba(255,255,255,.7)
 }
 
 .left-nav .nav-link.active {
-  color: #136eb7;
+  color: #fff;
+  padding-left: 15px;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+  background: rgba(255,255,255,.1);
+  border-radius: .25rem;
+
 }
 
 .left-nav .navbar-nav i {
@@ -32,19 +46,27 @@
 
 .your-balance h3 {
   font-size: 0.9rem;
-  color: #92969f;
+  color: rgba(255,255,255,.6);
   margin: 0;
   font-weight: normal;
 }
 
 .your-balance .tokens {
-  color: #136eb7;
+  color: #fff;
   font-weight: bold;
   font-size: 1.2rem;
 }
 
+.your-balance {
+  background: rgba(255,255,255,.3);
+}
+
 .navbar-light .navbar-toggler {
   background: #fff;
+}
+
+.connected .text-success {
+  color: #0bc800 !important;
 }
 
 @media only screen and (max-width: 1280px) {

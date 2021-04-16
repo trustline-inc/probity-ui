@@ -103,7 +103,7 @@ function Vault() {
         {active && <Info />}
 
       </header>    
-      <section className="border rounded p-5 mb-5">
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         {/* Activity Navigation */}
         <div>
           <ul className="nav nav-pills nav-fill spaced">

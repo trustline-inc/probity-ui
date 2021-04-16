@@ -8,7 +8,7 @@
 }
 
 .page-container {
-  background-color: #fff;
+  background: linear-gradient(169deg, rgba(248,249,253,1) 0%, rgba(247,248,252,1) 75%, rgba(208,218,231,1) 100%);
   padding: 15px 35px;
 
 }
@@ -17,7 +17,8 @@
   box-shadow: 0 0 4px #bfc6e3;
   position: relative;
   z-index: 30;
-  background: linear-gradient(169deg, rgba(248,249,253,1) 0%, rgba(247,248,252,1) 75%, rgba(208,218,231,1) 100%);
+  background: linear-gradient(169deg, rgba(19,110,183,1) 0%, rgba(19,110,183,1) 75%, rgba(4,76,135,1) 100%);
+  color:#fff;
 }
 
 .nav-pills.nav-fill .nav-item {
@@ -25,6 +26,15 @@
 }
 .nav-pills.nav-fill .nav-item:last-child {
   margin-right: 0;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  background-color: rgb(19,110,183);
+}
+
+a {
+  color: rgb(19,110,183);
+
 }
 
 @media only screen and (max-width: 1280px) {
