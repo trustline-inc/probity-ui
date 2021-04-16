@@ -20,6 +20,12 @@
   background: linear-gradient(169deg, rgba(248,249,253,1) 0%, rgba(247,248,252,1) 75%, rgba(208,218,231,1) 100%);
 }
 
+.nav-pills.nav-fill .nav-item {
+  margin-right:10px;
+}
+.nav-pills.nav-fill .nav-item:last-child {
+  margin-right: 0;
+}
 
 @media only screen and (max-width: 1280px) {
   .main-container {

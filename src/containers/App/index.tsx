@@ -107,7 +107,7 @@ function App() {
               </div>
               <div className="row">
                 {active ? (
-                  <div className="col-md-6 col-sm-12">
+                  <div className="col-md-8 col-sm-12">
                     <Switch>
                       <Route path="/vault">
                         <Vault />
@@ -126,7 +126,7 @@ function App() {
                 ) : null}
                 <div
                   className={
-                    active ? "col-md-6 col-sm-12" : `col-md-6 col-sm-12`
+                    active ? "col-md-4 col-sm-12" : `col-md-4 col-sm-12`
                   }
                 >
                   {active && <Balances />}

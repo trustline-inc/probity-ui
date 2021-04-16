@@ -106,7 +106,7 @@ function Vault() {
       <section className="border rounded p-5 mb-5">
         {/* Activity Navigation */}
         <div>
-          <ul className="nav nav-pills nav-fill">
+          <ul className="nav nav-pills nav-fill spaced">
             <li className="nav-item ">
               <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
             </li>
