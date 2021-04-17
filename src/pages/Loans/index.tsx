@@ -118,24 +118,24 @@ function Loans() {
         {active && <Info />}
 
       </header>
-      <section className="border rounded p-5 mb-5  shadow-sm bg-white">
-        {/* Activity Navigation */}
-        <div>
-          <ul className="nav nav-pills nav-fill spaced">
-            <li className="nav-item">
-              <NavLink className="nav-link border" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link border" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
-            </li>
-          </ul>
-        </div>
-        <hr />
-        {/* Loan Activities */}
-        <Activity active={active} activity={activity} error={error}>
-          <>
-            <div className="p-5 border rounded  shadow-sm bg-white">
-            <label className="form-label">Amount</label>
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
+        <div className="col-md-6 offset-md-3">
+          {/* Activity Navigation */}
+          <div>
+            <ul className="nav nav-pills nav-fill spaced">
+              <li className="nav-item">
+                <NavLink className="nav-link border" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link border" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
+              </li>
+            </ul>
+          </div>
+          <hr />
+          {/* Loan Activities */}
+          <Activity active={active} activity={activity} error={error}>
+            <>
+              <label className="form-label">Amount</label>
               <div className="input-group input-group-lg">
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
                 <span className="input-group-text font-monospace">{"CAUR"}</span>
@@ -146,42 +146,42 @@ function Loans() {
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
                 <span className="input-group-text font-monospace">{"CFLR"}</span>
               </div>
-            </div>
 
-            {
-              activity === ActivityType.Borrow && (
-                <BorrowActivity
-                  rate={rate}
-                  collateralRatio={collateralRatio}
-                />
-              )
-            }
+              {
+                activity === ActivityType.Borrow && (
+                  <BorrowActivity
+                    rate={rate}
+                    collateralRatio={collateralRatio}
+                  />
+                )
+              }
 
-            {
-              activity === ActivityType.Repay && (
-                <RepayActivity
-                  debtBalance={debtBalance}
-                  equityBalance={equityBalance}
-                  aureiAmount={aureiAmount}
-                  collateralRatio={collateralRatio}
-                />
-              )
-            }
+              {
+                activity === ActivityType.Repay && (
+                  <RepayActivity
+                    debtBalance={debtBalance}
+                    equityBalance={equityBalance}
+                    aureiAmount={aureiAmount}
+                    collateralRatio={collateralRatio}
+                  />
+                )
+              }
 
-            <div className="row">
-              <div className="col-6 offset-3 d-grid">
-                <button
-                  className="btn btn-primary btn-lg mt-4"
-                  onClick={() => {
-                    if (activity === (ActivityType.Borrow as ActivityType)) borrow()
-                    if (activity === (ActivityType.Repay as ActivityType)) repay()
-                  }}
-                  disabled={aureiAmount === 0 || collateralAmount === 0}
-                >Confirm</button>
+              <div className="row">
+                <div className="col-6 offset-3 d-grid">
+                  <button
+                    className="btn btn-primary btn-lg mt-4"
+                    onClick={() => {
+                      if (activity === (ActivityType.Borrow as ActivityType)) borrow()
+                      if (activity === (ActivityType.Repay as ActivityType)) repay()
+                    }}
+                    disabled={aureiAmount === 0 || collateralAmount === 0}
+                  >Confirm</button>
+                </div>
               </div>
-            </div>
-          </>
-        </Activity>
+            </>
+          </Activity>
+        </div>
       </section>
     </>
   );

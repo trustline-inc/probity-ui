@@ -104,65 +104,67 @@ function Vault() {
 
       </header>    
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        {/* Activity Navigation */}
-        <div>
-          <ul className="nav nav-pills nav-fill spaced">
-            <li className="nav-item ">
-              <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link border" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
-            </li>
-          </ul>
+        <div className="col-md-6 offset-md-3">
+          {/* Activity Navigation */}
+          <div>
+            <ul className="nav nav-pills nav-fill spaced">
+              <li className="nav-item ">
+                <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link border" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
+              </li>
+            </ul>
+          </div>
+          <hr />
+          {/* Vault Activity */}
+          <Activity active={active} activity={activity} error={error}>
+          {
+            active && activity !== null && (
+              <>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="py-3">
+                      <label htmlFor="depositAmountInput" className="form-label">Amount (CFLR)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        className="form-control"
+                        id="depositAmountInput"
+                        placeholder="0.000000000000000000"
+                        onChange={event => setCollateralAmount(Number(event.target.value))}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12">
+                    <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                      <div className="m-2"><span className="text-muted h6">CFLR/USD</span><br />${collateralPrice}</div>
+                      <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12 mt-4">
+                    <div className="d-grid">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-lg"
+                        disabled={collateralAmount === 0}
+                        onClick={() => {
+                          if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
+                          if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
+                        }}
+                      >Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )
+          }
+          </Activity>
         </div>
-        <hr />
-        {/* Vault Activity */}
-        <Activity active={active} activity={activity} error={error}>
-        {
-          active && activity !== null && (
-            <>
-              <div className="row">
-                <div className="col-12">
-                  <div className="py-3">
-                    <label htmlFor="depositAmountInput" className="form-label">Amount (CFLR)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      className="form-control"
-                      id="depositAmountInput"
-                      placeholder="0.000000000000000000"
-                      onChange={event => setCollateralAmount(Number(event.target.value))}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12">
-                  <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-                    <div className="m-2"><span className="text-muted h6">CFLR/USD</span><br />${collateralPrice}</div>
-                    <div className="m-2"><span className="text-muted h6">Value</span><br />${collateralValue.toFixed(2)}</div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 mt-4">
-                  <div className="d-grid">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-lg"
-                      disabled={collateralAmount === 0}
-                      onClick={() => {
-                        if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
-                        if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
-                      }}
-                    >Confirm</button>
-                  </div>
-                </div>
-              </div>
-            </>
-          )
-        }
-        </Activity>
       </section>
     </>
   );
