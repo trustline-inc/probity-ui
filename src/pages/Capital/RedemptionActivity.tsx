@@ -18,7 +18,7 @@ function RedemptionActivity({
   return (
     <>
       <div className="row">
-        <div className="col-6 offset-3">
+        <div className="col-12">
           <div className="py-3">
             <label htmlFor="equityRedemptionAmount" className="form-label">Capital Amount (CAUR)</label>
             <input
@@ -33,7 +33,7 @@ function RedemptionActivity({
         </div>
       </div>
       <div className="row">
-        <div className="col-6 offset-3">
+        <div className="col-12">
           <div className="py-3">
             <label htmlFor="collateralRedemptionAmount" className="form-label">Collateral Amount (CFLR)</label>
             <input
@@ -48,7 +48,7 @@ function RedemptionActivity({
         </div>
       </div>
       <div className="row">
-        <div className="col-6 offset-3 mt-4">
+        <div className="col-12 mt-4">
           <div className="d-grid">
             <button
               type="button"

@@ -1,0 +1,9 @@
+h1, h2, h3, h4, h5 {
+    color: #136eb7;
+
+}
+
+.alert {
+    background: #fff !important;
+    border-left-width: 8px;
+}

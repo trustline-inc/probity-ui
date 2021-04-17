@@ -9,6 +9,7 @@ import IssuanceActivity from "./IssuanceActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
+import Info from '../../components/Info';
 
 function Capital() {
   const location = useLocation();
@@ -99,48 +100,52 @@ function Capital() {
   return (
     <>
       <header className="pt-2">
-        <h1>Capital Management</h1>
+        <h1><i className="fas fa-coins"  style={{fontSize:'1.8rem'}} /> Capital Management</h1>
         <p className="lead">Converting collateral to capital allows you to earn interest.</p>
+        {active && <Info />}
+
       </header>
-      <section className="border rounded p-5 mb-5">
-        {/* Activity Navigation */}
-        <div>
-          <ul className="nav nav-pills nav-fill">
-            <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
-            </li>
-          </ul>
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
+        <div className="col-md-6 offset-md-3">
+          {/* Activity Navigation */}
+          <div>
+            <ul className="nav nav-pills nav-fill spaced">
+              <li className="nav-item">
+                <NavLink className="nav-link border" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link border" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+              </li>
+            </ul>
+          </div>
+          <hr />
+          {/* Capital Management Activities */}
+          <Activity active={active} activity={activity} error={error}>
+            {
+              activity === ActivityType.Issue && (
+                <IssuanceActivity
+                  collateralAmount={collateralAmount}
+                  equityAmount={equityAmount}
+                  collateralRatio={collateralRatio}
+                  issueEquity={issueEquity}
+                  onCollateralAmountChange={onCollateralAmountChange}
+                  onEquityAmountChange={onEquityAmountChange}
+                />
+              )
+            }
+            {
+              activity === ActivityType.Redeem && (
+                <RedemptionActivity
+                  collateralAmount={collateralAmount}
+                  onCollateralAmountChange={onCollateralAmountChange}
+                  equityAmount={equityAmount}
+                  onEquityAmountChange={onEquityAmountChange}
+                  redeemEquity={redeemEquity}
+                />
+              )
+            }
+          </Activity>
         </div>
-        <hr />
-        {/* Capital Management Activities */}
-        <Activity active={active} activity={activity} error={error}>
-          {
-            activity === ActivityType.Issue && (
-              <IssuanceActivity
-                collateralAmount={collateralAmount}
-                equityAmount={equityAmount}
-                collateralRatio={collateralRatio}
-                issueEquity={issueEquity}
-                onCollateralAmountChange={onCollateralAmountChange}
-                onEquityAmountChange={onEquityAmountChange}
-              />
-            )
-          }
-          {
-            activity === ActivityType.Redeem && (
-              <RedemptionActivity
-                collateralAmount={collateralAmount}
-                onCollateralAmountChange={onCollateralAmountChange}
-                equityAmount={equityAmount}
-                onEquityAmountChange={onEquityAmountChange}
-                redeemEquity={redeemEquity}
-              />
-            )
-          }
-        </Activity>
       </section>
     </>
   );

@@ -9,6 +9,7 @@ import VaultABI from "@trustline/aurei/artifacts/contracts/Vault.sol/Vault.json"
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "../../constants";
+import './index.css';
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
@@ -41,7 +42,7 @@ function Balances() {
         <h1>Balances</h1>
         <p className="lead">Assets, Debts, and Capital balances.</p>
       </header>
-      <div className="border rounded p-4">
+      <div className="border rounded p-4  shadow-sm bg-white">
         <h3>Individual</h3>
         <hr />
         <h5>Collateral</h5>
@@ -98,7 +99,7 @@ function Balances() {
         </div>
       </div>
 
-      <div className="border rounded p-4 mt-3">
+      <div className="border rounded p-4 mt-3  shadow-sm bg-white">
         <h3>Aggregate</h3>
         <hr />
         {/* <h5>Collateral</h5>

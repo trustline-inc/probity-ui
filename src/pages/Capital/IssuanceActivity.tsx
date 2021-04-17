@@ -20,7 +20,7 @@ function IssueActivity({
   return (
     <>
       <div className="row">
-        <div className="col-6 offset-3">
+        <div className="col-12">
           <div className="py-3">
             <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount (CAUR)</label>
             <input
@@ -35,7 +35,7 @@ function IssueActivity({
         </div>
       </div>
       <div className="row">
-        <div className="col-6 offset-3">
+        <div className="col-12">
           <div className="py-3">
             <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount (CFLR)</label>
             <input
@@ -50,14 +50,14 @@ function IssueActivity({
         </div>
       </div>
       <div className="row">
-        <div className="col-6 offset-3">
+        <div className="col-md-6 offset-md-3">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2"><span className="text-muted h6">Coll. Ratio</span><br />{collateralRatio === 0 ? null : `${collateralRatio * 100}%`}</div>
           </div>
         </div>
       </div>
       <div className="row">
-        <div className="col-6 offset-3 mt-4">
+        <div className="col-12 mt-4">
           <div className="d-grid">
             <button
               type="button"
