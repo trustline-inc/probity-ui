@@ -37,7 +37,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="d-flex main-container ">
+        <div className="d-flex main-container">
           <div className="min-vh-100 left-nav">
             <Navbar />
           </div>
