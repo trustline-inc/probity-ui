@@ -168,7 +168,7 @@ function Loans() {
               }
 
               <div className="row">
-                <div className="col-6 offset-3 d-grid">
+                <div className="col-12 mt-4 d-grid">
                   <button
                     className="btn btn-primary btn-lg mt-4"
                     onClick={() => {
