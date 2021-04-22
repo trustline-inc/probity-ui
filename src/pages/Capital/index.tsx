@@ -109,7 +109,7 @@ function Capital() {
         <div className="col-md-6 offset-md-3">
           {/* Activity Navigation */}
           <div>
-            <ul className="nav nav-pills nav-fill spaced">
+            <ul className="nav nav-pills nav-fill spaced nav-justified">
               <li className="nav-item">
                 <NavLink className="nav-link border" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
               </li>
