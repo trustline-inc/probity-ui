@@ -20,9 +20,9 @@ function IssueActivity({
   return (
     <>
       <div className="row">
-        <div className="col-12">
-          <div className="py-3">
-            <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount (CAUR)</label>
+        <div className="col-12 mb-4">
+          <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount</label>
+          <div className="input-group">
             <input
               type="number"
               min={0}
@@ -31,13 +31,14 @@ function IssueActivity({
               placeholder="0.000000000000000000"
               onChange={onEquityAmountChange}
             />
+            <span className="input-group-text font-monospace">{"CAUR"}</span>
           </div>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="py-3">
-            <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount (CFLR)</label>
+          <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount</label>
+          <div className="input-group">
             <input
               type="number"
               min={0}
@@ -46,6 +47,7 @@ function IssueActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
+            <span className="input-group-text font-monospace">{"CFLR"}</span>
           </div>
         </div>
       </div>
