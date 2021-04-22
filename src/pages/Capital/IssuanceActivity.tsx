@@ -57,15 +57,13 @@ function IssueActivity({
         </div>
       </div>
       <div className="row">
-        <div className="col-12 mt-4">
-          <div className="d-grid">
-            <button
-              type="button"
-              className="btn btn-primary btn-lg"
-              onClick={issueEquity}
-              disabled={equityAmount === 0 || collateralAmount === 0}
-            >Confirm</button>
-          </div>
+        <div className="col-12 mt-4 d-grid">
+          <button
+            type="button"
+            className="btn btn-primary btn-lg"
+            onClick={issueEquity}
+            disabled={equityAmount === 0 || collateralAmount === 0}
+          >Confirm</button>
         </div>
       </div>
     </>

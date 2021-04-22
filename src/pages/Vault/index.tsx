@@ -146,18 +146,16 @@ function Vault() {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-12 mt-4">
-                    <div className="d-grid">
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-lg"
-                        disabled={collateralAmount === 0}
-                        onClick={() => {
-                          if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
-                          if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
-                        }}
-                      >Confirm</button>
-                    </div>
+                  <div className="col-12 mt-4 d-grid">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-lg"
+                      disabled={collateralAmount === 0}
+                      onClick={() => {
+                        if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
+                        if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
+                      }}
+                    >Confirm</button>
                   </div>
                 </div>
               </>
