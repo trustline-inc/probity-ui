@@ -107,12 +107,12 @@ function Vault() {
         <div className="col-md-6 offset-md-3">
           {/* Activity Navigation */}
           <div>
-            <ul className="nav nav-pills nav-fill spaced nav-justified">
+            <ul className="nav nav-pills nav-justified">
               <li className="nav-item ">
-                <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link border" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>

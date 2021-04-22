@@ -122,12 +122,12 @@ function Loans() {
         <div className="col-md-6 offset-md-3">
           {/* Activity Navigation */}
           <div>
-            <ul className="nav nav-pills nav-fill spaced nav-justified">
+            <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link border" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link border" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
               </li>
             </ul>
           </div>
