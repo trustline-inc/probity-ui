@@ -42,111 +42,111 @@ function Balances() {
         <h1>Balances</h1>
         <p className="lead">Assets, Debts, and Capital balances.</p>
       </header>
-      <div className="border rounded p-4  shadow-sm bg-white">
+      <div className="border rounded p-4 shadow-sm bg-white">
         <h3>Individual</h3>
         <hr />
         <h5>Collateral</h5>
         <div className="row my-2">
-          <div className="col-3">
+          <div className="col-6">
             Total Coll:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
             {utils.formatEther(vault[0])} CFLR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Encumbered:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
             {utils.formatEther(vault[1])} CFLR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Available:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
             {utils.formatEther(vault[2])} CFLR
           </div>
         </div>
         <hr />
         <h5>Balance Sheet</h5>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Assets:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
           {aureiBalance ? utils.formatEther(aureiBalance.toString()) : null} CAUR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Debt:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
           {debtBalance ? utils.formatEther(debtBalance.toString()) : null} CAUR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Capital:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
             {/* TODO: Ensure capitalBalance is received as WAD */}
             {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} CAUR
           </div>
         </div>
       </div>
 
-      <div className="border rounded p-4 mt-3  shadow-sm bg-white">
+      <div className="border rounded p-4 mt-3 shadow-sm bg-white">
         <h3>Aggregate</h3>
         <hr />
         {/* <h5>Collateral</h5>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Total Coll:
           </div>
-          <div className="col-9">
+          <div className="col-6">
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Encumbered:
           </div>
-          <div className="col-9">
+          <div className="col-6">
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Available:
           </div>
-          <div className="col-9">
+          <div className="col-6">
           </div>
         </div>
         <hr /> */}
         <h5>Balance Sheet</h5>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Assets:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
           {totalAurei ? utils.formatEther(totalAurei.toString()) : null} CAUR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Debt:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
           {totalDebt ? utils.formatEther(totalDebt.toString()) : null} CAUR
           </div>
         </div>
-        <div className="row my-2">
-          <div className="col-3">
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
             Capital:
           </div>
-          <div className="col-9">
+          <div className="col-6 text-truncate">
           {totalSupply ? utils.formatEther(totalSupply.toString()) : null} CAUR
           </div>
         </div>
