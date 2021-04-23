@@ -13,27 +13,45 @@ import './index.css';
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
-  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'get', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
-  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
+  const { data: debtBalance, mutate: mutateDebt } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: capitalBalance } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+  const { data: capitalBalance, mutate: mutateCapital } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
-  const { data: aureiBalance } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
+  const { data: aureiBalance, mutate: mutateAurei } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, AureiABI.abi),
   })
-  const { data: totalAurei } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
+  const { data: totalAurei, mutate: mutateTotalAurei } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
     fetcher: fetcher(library, AureiABI.abi),
   })
-  const { data: totalDebt } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
+  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: totalSupply } = useSWR([TREASURY_ADDRESS, 'totalSupply'], {
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([TREASURY_ADDRESS, 'totalSupply'], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
+
+  React.useEffect(() => {
+    if (library) {
+      library.on("block", () => {
+        mutateVault(undefined, true);
+        mutateDebt(undefined, true);
+        mutateCapital(undefined, true);
+        mutateAurei(undefined, true);
+        mutateTotalAurei(undefined, true);
+        mutateTotalDebt(undefined, true);
+        mutateTotalSupply(undefined, true);
+      });
+
+      return () => {
+        library.removeAllListeners("block");
+      };
+    }
+  });
 
   if (!vault) return null;
   return (
