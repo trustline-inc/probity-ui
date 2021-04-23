@@ -5,6 +5,9 @@
 .left-nav .social-links a {
   color: rgba(255, 255, 255, 0.4);
 }
+.left-nav .social-links a:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
 
 .page-container .social-links {
   display: none;
