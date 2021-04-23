@@ -123,9 +123,9 @@ function Vault() {
             active && activity !== null && (
               <>
                 <div className="row">
-                  <div className="col-12">
-                    <div className="py-3">
-                      <label htmlFor="depositAmountInput" className="form-label">Amount (CFLR)</label>
+                  <div className="col-12 mb-4">
+                    <label htmlFor="depositAmountInput" className="form-label">Amount</label>
+                    <div className="input-group">
                       <input
                         type="number"
                         min={0}
@@ -134,6 +134,7 @@ function Vault() {
                         placeholder="0.000000000000000000"
                         onChange={event => setCollateralAmount(Number(event.target.value))}
                       />
+                      <span className="input-group-text font-monospace">{"CFLR"}</span>
                     </div>
                   </div>
                 </div>
