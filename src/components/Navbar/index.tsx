@@ -29,7 +29,7 @@ function Balance() {
 
   if (!balance) return null;
   return (
-    <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded">
+    <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
         {parseFloat(formatEther(balance)).toFixed(4)} CFLR

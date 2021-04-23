@@ -107,12 +107,12 @@ function Vault() {
         <div className="col-md-6 offset-md-3">
           {/* Activity Navigation */}
           <div>
-            <ul className="nav nav-pills nav-fill spaced">
+            <ul className="nav nav-pills nav-justified">
               <li className="nav-item ">
-                <NavLink className="nav-link border" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit) }}>Deposit</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link border" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
@@ -146,18 +146,16 @@ function Vault() {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-12 mt-4">
-                    <div className="d-grid">
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-lg"
-                        disabled={collateralAmount === 0}
-                        onClick={() => {
-                          if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
-                          if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
-                        }}
-                      >Confirm</button>
-                    </div>
+                  <div className="col-12 mt-4 d-grid">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-lg"
+                      disabled={collateralAmount === 0}
+                      onClick={() => {
+                        if (activity === (ActivityType.Deposit as ActivityType))  depositCollateral()
+                        if (activity === (ActivityType.Withdraw as ActivityType)) withdrawCollateral()
+                      }}
+                    >Confirm</button>
                   </div>
                 </div>
               </>
