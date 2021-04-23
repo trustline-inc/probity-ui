@@ -8,6 +8,7 @@ import { injected } from "../../connectors";
 import fetcher from "../../fetcher";
 import logo from "../../assets/logo.png";
 import "./index.css";
+import SocialLinks from "../Social";
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -53,9 +54,10 @@ function Navbar() {
     setMobileMenuVisibility(!currentVisibility);
   }
 
+
   return (
-    <nav>
-      <div className="container-fluid">
+    <nav className="d-flex flex-column align-items-end left-nav-flex h-100">
+      <div className="container-fluid mb-3">
         <div className="d-flex flex-row justify-content-between">
           <div>
             <a className="navbar-brand" href="#/">
@@ -96,6 +98,7 @@ function Navbar() {
               <i className="fas fa-money-bill-wave-alt" /> Loans
             </NavLink>
           </li>
+
         </ul>
         <div className="spacer spacer-1" />
         <form className="row gx-3 gy-2 align-items-center">
@@ -120,6 +123,7 @@ function Navbar() {
           )}
         </form>
       </div>
+      <SocialLinks />
     </nav>
   );
 }

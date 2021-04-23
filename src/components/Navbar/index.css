@@ -16,6 +16,14 @@
   color: rgba(255,255,255,.7)
 }
 
+.left-nav a {
+  color: #fff;
+}
+
+.left-nav a:hover {
+  color: rgba(255,255,255,.7)
+}
+
 .left-nav nav {
   padding: 25px 35px;
   min-width: 330px;
