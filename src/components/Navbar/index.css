@@ -93,8 +93,4 @@
   .navbar-nav.mobile-visible {
     display: block;
   }
-
-  .left-nav .social-links {
-    display: none;
-  }
 }

@@ -2,6 +2,24 @@
   font-size: 1.25rem;
 }
 
-.social-links a {
-  color: rgba(255,255, 255, .4)
+.left-nav .social-links a {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.page-container .social-links {
+  display: none;
+}
+
+@media only screen and (max-width: 1280px) {
+  .left-nav .social-links {
+    display: none;
+  }
+
+  .page-container .social-links {
+    display: block;
+  }
+
+  .page-container .social-links a {
+    color: rgba(0, 0, 0, 0.4);
+  }
 }

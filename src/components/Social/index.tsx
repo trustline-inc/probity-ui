@@ -3,7 +3,7 @@ import "./index.css";
 
 function SocialLinks() {
   return (
-    <div className="social-links mt-auto container-fluid">
+    <div className="social-links mt-auto container-fluid text-center">
       <a href="https://twitter.com/TrustlineInc" className="mx-2">
         <i className="fab fa-twitter"></i>
       </a>

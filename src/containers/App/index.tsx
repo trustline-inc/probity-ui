@@ -14,6 +14,7 @@ import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
 import Vault from "../../pages/Vault";
 import "./index.css";
+import SocialLinks from "../../components/Social";
 
 function App() {
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -130,6 +131,11 @@ function App() {
                   }
                 >
                   {active && <Balances />}
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-12 mt-5">
+                  <SocialLinks />
                 </div>
               </div>
             </div>
