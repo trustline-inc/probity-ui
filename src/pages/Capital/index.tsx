@@ -1,4 +1,5 @@
 import React from 'react';
+import web3 from "web3";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
@@ -61,7 +62,8 @@ function Capital() {
       try {
         const result = await treasury.issue(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          utils.parseUnits(equityAmount.toString(), "ether").toString()
+          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
         console.log("result:", result)
         // TODO: Wait for transaction validation using event
@@ -84,7 +86,8 @@ function Capital() {
       try {
         const result = await treasury.redeem(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          utils.parseUnits(equityAmount.toString(), "ether").toString()
+          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
         console.log("result:", result)
         // TODO: Wait for transaction validation using event

@@ -7,6 +7,7 @@ import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.j
 import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
+import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
@@ -48,7 +49,8 @@ function Loans() {
       try {
         const result = await teller.createLoan(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          utils.parseUnits(aureiAmount.toString(), "ether").toString()
+          utils.parseUnits(aureiAmount.toString(), "ether").toString(),
+          { gasPrice: web3.utils.toWei('100', 'Gwei') }
         );
         console.log("result:", result)
         // TODO: Wait for transaction validation using event
@@ -73,7 +75,8 @@ function Loans() {
         );
         const result = await teller.repay(
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
-          utils.parseUnits(collateralAmount.toString(), "ether").toString()
+          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
         console.log("result:", result)
         // TODO: Wait for transaction validation using event

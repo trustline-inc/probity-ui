@@ -3,6 +3,7 @@ import { Contract, utils } from "ethers";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import web3 from "web3";
 import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
 import Activity from "../../containers/Activity";
 import { Activity as ActivityType } from "../../types";
@@ -63,7 +64,10 @@ function Vault() {
       const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
 
       try {
-        const result = await vault.deposit({ value: utils.parseEther(collateralAmount.toString()) });
+        const result = await vault.deposit({
+          value: utils.parseEther(collateralAmount.toString()),
+          gasPrice: web3.utils.toWei('15', 'Gwei')
+        });
 
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
@@ -83,7 +87,10 @@ function Vault() {
       const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
 
       try {
-        const result = await vault.withdraw(utils.parseEther(collateralAmount.toString()).toString());
+        const result = await vault.withdraw(
+          utils.parseEther(collateralAmount.toString()).toString(),
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+        );
 
         // TODO: Wait for transaction validation using event
         const data = await result.wait();
