@@ -98,7 +98,11 @@ function Navbar() {
               <i className="fas fa-money-bill-wave-alt" /> Loans
             </NavLink>
           </li>
-
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/transactions">
+              <i className="fas fa-table" /> Transactions
+            </NavLink>
+          </li>
         </ul>
         <div className="spacer spacer-1" />
         <form className="row gx-3 gy-2 align-items-center">

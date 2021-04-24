@@ -12,6 +12,7 @@ import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
+import Transactions from "../../pages/Transactions";
 import Vault from "../../pages/Vault";
 import "./index.css";
 import SocialLinks from "../../components/Social";
@@ -118,6 +119,9 @@ function App() {
                       </Route>
                       <Route path="/loans">
                         <Loans />
+                      </Route>
+                      <Route path="/transactions">
+                        <Transactions />
                       </Route>
                       <Route path="/">
                         <Vault />

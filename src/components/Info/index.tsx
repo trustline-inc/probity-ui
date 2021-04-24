@@ -52,6 +52,13 @@ function Info() {
               </p>
             </>
           )}
+          {location.pathname.includes("/transactions") && (
+            <>
+              <p>
+                View the transaction state from your activity.
+              </p>
+            </>
+          )}
         </div>
       </header>
     </>
