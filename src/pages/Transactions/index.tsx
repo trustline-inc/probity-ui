@@ -3,7 +3,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 
 export default function Transactions() {
-  const { active, activate } = useWeb3React<Web3Provider>();
+  const { active } = useWeb3React<Web3Provider>();
 
   return (
     <>
