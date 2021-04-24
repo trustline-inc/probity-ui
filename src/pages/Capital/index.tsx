@@ -2,7 +2,7 @@ import React from 'react';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
+import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import Activity from "../../containers/Activity";
 import IssuanceActivity from "./IssuanceActivity";

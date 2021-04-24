@@ -8,20 +8,29 @@ This project uses [Node.js](https://nodejs.org/en/), a JavaScript runtime built 
 
 **Install dependencies**
 
-You can use `npm` which comes with Node.js by default, but this project uses [`yarn`](https://yarnpkg.com/).
+Use `npm` to manage dependencies
 
 ```
-yarn
+npm install
 ```
 
-This will install React and Web3 libraries.
+This will install React, Web3, and Aurei libraries.
+
+**Create `.npmrc`**
+
+[Authenticate with a personal access token](https://docs.github.com/en/packages/guides/configuring-npm-for-use-with-github-packages#authenticating-with-a-personal-access-token)
+
+```
+@trustline-inc:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=TOKEN
+```
 
 **Start the app**
 
 This starts the application at [`http://localhost:3000`](http://localhost:3000)
 
 ```
-yarn start
+npm start
 ```
 
 ## Deployment

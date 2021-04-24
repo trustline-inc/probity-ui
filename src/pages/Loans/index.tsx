@@ -3,9 +3,9 @@ import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import AureiABI from "@trustline/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
-import TellerABI from "@trustline/aurei/artifacts/contracts/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
+import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
+import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";

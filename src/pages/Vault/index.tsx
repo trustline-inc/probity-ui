@@ -3,7 +3,7 @@ import { Contract, utils } from "ethers";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import VaultABI from "@trustline/aurei/artifacts/contracts/Vault.sol/Vault.json";
+import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
 import Activity from "../../containers/Activity";
 import { Activity as ActivityType } from "../../types";
 import { VAULT_ADDRESS } from "../../constants";
