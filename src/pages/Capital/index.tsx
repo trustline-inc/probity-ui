@@ -52,6 +52,22 @@ function Capital() {
     if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
   }, [location])
 
+  // Listener for TreasuryUpdated event
+  React.useEffect(() => {
+    if (library) {
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const event = treasury.filters.TreasuryUpdated(account)
+
+      library.on(event, (from, to, amount, event) => {
+        console.log('TreasuryUpdated', { from, to, amount, event })
+      })
+
+      return () => {
+        library.removeAllListeners(event)
+      }
+    }
+  })
+
   /**
    * @function issueEquity
    */

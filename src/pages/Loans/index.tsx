@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
@@ -15,6 +15,7 @@ import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS } from '../../constants
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
+import EventContext from "../../contexts/TransactionContext"
 
 function Loans() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function Loans() {
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const ctx = useContext(EventContext)
 
   const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, TellerABI.abi),
@@ -52,10 +54,8 @@ function Loans() {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('100', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -78,10 +78,8 @@ function Loans() {
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);

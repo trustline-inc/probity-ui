@@ -37,7 +37,6 @@ function Balances() {
 
   React.useEffect(() => {
     if (library) {
-      console.log("Listening to blocks")
       library.on("block", () => {
         mutateVault(undefined, true);
         mutateDebt(undefined, true);
@@ -112,7 +111,6 @@ function Balances() {
             Capital:
           </div>
           <div className="col-6 text-truncate">
-            {/* TODO: Ensure capitalBalance is received as WAD */}
             {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} CAUR
           </div>
         </div>

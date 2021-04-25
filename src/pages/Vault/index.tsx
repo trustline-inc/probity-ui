@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Contract, utils } from "ethers";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
@@ -9,6 +9,7 @@ import Activity from "../../containers/Activity";
 import { Activity as ActivityType } from "../../types";
 import { VAULT_ADDRESS } from "../../constants";
 import Info from '../../components/Info';
+import EventContext from "../../contexts/TransactionContext"
 
 function Vault() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function Vault() {
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralValue, setCollateralValue] = React.useState(0.00);
+  const ctx = useContext(EventContext)
 
   // Set activity by the path
   React.useEffect(() => {
@@ -39,23 +41,6 @@ function Vault() {
     setCollateralValue((collateralPrice * collateralAmount));
   }, [collateralPrice, collateralAmount]);
 
-  // Listener for VaultUpdated event
-  React.useEffect(() => {
-    if (library) {
-      const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
-
-      const event = vault.filters.VaultUpdated(account)
-
-      library.on(event, (from, to, amount, event) => {
-        console.log('VaultUpdated', { from, to, amount, event })
-      })
-
-      return () => {
-        library.removeAllListeners(event)
-      }
-    }
-  })
-
   /**
    * @function depositCollateral
    */
@@ -69,9 +54,8 @@ function Vault() {
           gasPrice: web3.utils.toWei('15', 'Gwei')
         });
 
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data.events);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -87,14 +71,10 @@ function Vault() {
       const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
 
       try {
-        const result = await vault.withdraw(
+        await vault.withdraw(
           utils.parseEther(collateralAmount.toString()).toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-
-        // TODO: Wait for transaction validation using event
-        const data = await result.wait();
-        console.log("events:", data.events);
       } catch (error) {
         console.log(error);
         setError(error);

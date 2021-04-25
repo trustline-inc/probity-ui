@@ -55,7 +55,7 @@ function Info() {
           {location.pathname.includes("/transactions") && (
             <>
               <p>
-                View the transaction state from your activity.
+                View the transaction activity from your session.
               </p>
             </>
           )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HashRouter as Router,
   Switch,
@@ -16,6 +16,7 @@ import Transactions from "../../pages/Transactions";
 import Vault from "../../pages/Vault";
 import "./index.css";
 import SocialLinks from "../../components/Social";
+import EventContext from "../../contexts/TransactionContext"
 
 function App() {
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -24,6 +25,10 @@ function App() {
     "displayInfoAlert",
     true
   );
+  const [transactions, setTransactions]: any = useState([])
+  const updateTransactions = (transaction: any) => {
+    setTransactions([...transactions, transaction]);
+  };
 
   const onClick = () => {
     activate(injected);
@@ -41,7 +46,9 @@ function App() {
       <div className="App">
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
-            <Navbar />
+            <EventContext.Provider value={{ transactions, updateTransactions }}>
+              <Navbar />
+            </EventContext.Provider>
           </div>
           <div className="flex-grow-1 min-vh-100 page-container">
             <div className="container-fluid">
@@ -110,23 +117,25 @@ function App() {
               <div className="row">
                 {active ? (
                   <div className="col-md-8 col-sm-12">
-                    <Switch>
-                      <Route path="/vault">
-                        <Vault />
-                      </Route>
-                      <Route path="/capital">
-                        <Capital />
-                      </Route>
-                      <Route path="/loans">
-                        <Loans />
-                      </Route>
-                      <Route path="/transactions">
-                        <Transactions />
-                      </Route>
-                      <Route path="/">
-                        <Vault />
-                      </Route>
-                    </Switch>
+                    <EventContext.Provider value={{ transactions, updateTransactions }}>
+                      <Switch>
+                        <Route path="/vault">
+                          <Vault />
+                        </Route>
+                        <Route path="/capital">
+                          <Capital />
+                        </Route>
+                        <Route path="/loans">
+                          <Loans />
+                        </Route>
+                        <Route path="/transactions">
+                          <Transactions />
+                        </Route>
+                        <Route path="/">
+                          <Vault />
+                        </Route>
+                      </Switch>
+                    </EventContext.Provider>
                   </div>
                 ) : null}
                 <div
