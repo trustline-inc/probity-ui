@@ -118,6 +118,29 @@ export default function Transactions() {
             </tr>
           )
         }
+        {
+          event.event === "Approval" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td/>
+              <td colSpan={3}>
+                <table className="table table-borderless mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Spender</th>
+                      <th scope="col">Value</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <tr>
+                    <td>{utils.formatEther(event.args[1]).toString()}</td>
+                    <td>{utils.formatEther(event.args[2]).toString()}</td>
+                  </tr>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
       </React.Fragment>
     )
   });

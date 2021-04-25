@@ -69,16 +69,19 @@ function Loans() {
       const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
 
       try {
-        await aurei.approve(
+        var result, data;
+        result = await aurei.approve(
           TELLER_ADDRESS,
           utils.parseUnits(aureiAmount.toString(), "ether").toString()
         );
-        const result = await teller.repay(
+        data = await result.wait();
+        ctx.updateTransactions(data);
+        result = await teller.repay(
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        const data = await result.wait();
+        data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
