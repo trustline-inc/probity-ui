@@ -11,6 +11,7 @@ export default function Transactions() {
 
   const rows = ctx.transactions.map((tx: any, index) => {
     const event = tx.events.find((event: any) => event.event)
+    if (event === undefined) return <></>
     return (
       <React.Fragment key={index}>
         <tr className="table-primary" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
@@ -64,6 +65,27 @@ export default function Transactions() {
                     <td>{utils.formatEther(event.args[2]).toString()}</td>
                     <td>{utils.formatEther(event.args[3].toString().substring(1, event.args[3].toString().length-9))}</td>
                     <td>{new Date(event.args[4] * 1000).toLocaleString()}</td>
+                  </tr>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
+        {
+          event.event === "TreasuryUpdated" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td/>
+              <td colSpan={3}>
+                <table className="table table-borderless mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Capital</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <tr>
+                    <td>{utils.formatEther(event.args[1]).toString()}</td>
                   </tr>
                 </tbody>
                 </table>

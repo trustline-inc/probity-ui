@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import web3 from "web3";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -11,6 +11,7 @@ import RedemptionActivity from "./RedemptionActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
 import Info from '../../components/Info';
+import EventContext from "../../contexts/TransactionContext"
 
 function Capital() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function Capital() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const ctx = useContext(EventContext)
 
   const onCollateralAmountChange = (event: any) => {
     const amount = Number(event.target.value)
@@ -81,10 +83,8 @@ function Capital() {
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -105,10 +105,8 @@ function Capital() {
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data.events);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
