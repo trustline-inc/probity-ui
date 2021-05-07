@@ -48,7 +48,7 @@ function Capital() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/capital/issue")  setActivity(ActivityType.Issue);
+    if (location.pathname === "/capital/stake")  setActivity(ActivityType.Stake);
     if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
   }, [location])
 
@@ -114,7 +114,7 @@ function Capital() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/stake"} onClick={() => { setActivity(ActivityType.Stake) }}>Stake</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
@@ -125,7 +125,7 @@ function Capital() {
           {/* Capital Management Activities */}
           <Activity active={active} activity={activity} error={error}>
             {
-              activity === ActivityType.Issue && (
+              activity === ActivityType.Stake && (
                 <IssuanceActivity
                   collateralAmount={collateralAmount}
                   equityAmount={equityAmount}

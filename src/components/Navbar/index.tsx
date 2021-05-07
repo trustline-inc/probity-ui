@@ -90,12 +90,12 @@ function Navbar() {
               activeClassName="active"
               to="/capital"
             >
-              <i className="fas fa-coins" /> Capital
+              <i className="fas fa-coins" /> Staking
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Loans
+              <i className="fas fa-money-bill-wave-alt" /> Lending
             </NavLink>
           </li>
 

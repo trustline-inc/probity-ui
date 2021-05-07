@@ -21,23 +21,12 @@ function IssueActivity({
     <>
       <div className="row">
         <div className="col-12 mb-4">
-          <label htmlFor="equityIssuanceInput" className="form-label">Capital Amount</label>
-          <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="equityIssuanceInput"
-              placeholder="0.000000000000000000"
-              onChange={onEquityAmountChange}
-            />
-            <span className="input-group-text font-monospace">{"CAUR"}</span>
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-12">
-          <label htmlFor="collateralConversionInput" className="form-label">Collateral Amount</label>
+          <label htmlFor="collateralConversionInput" className="form-label">
+            Collateral<br/>
+            <small className="form-text text-muted">
+              Amount of collateral to lock
+            </small>
+          </label>
           <div className="input-group">
             <input
               type="number"
@@ -48,6 +37,27 @@ function IssueActivity({
               onChange={onCollateralAmountChange}
             />
             <span className="input-group-text font-monospace">{"CFLR"}</span>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <label htmlFor="equityIssuanceInput" className="form-label">
+            Capital<br/>
+            <small className="form-text text-muted">
+              Amount of Aurei to mint
+            </small>
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              id="equityIssuanceInput"
+              placeholder="0.000000000000000000"
+              onChange={onEquityAmountChange}
+            />
+            <span className="input-group-text font-monospace">{"CAUR"}</span>
           </div>
         </div>
       </div>
