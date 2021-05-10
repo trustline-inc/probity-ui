@@ -4,12 +4,16 @@ interface Props {
   interestAmount: number;
   onInterestAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   withdraw: (amount: number) => void;
+  setInterestType: (type: string) => void;
+  interestType: string;
 }
 
 function WithdrawActivity({
   interestAmount,
   onInterestAmountChange,
   withdraw,
+  setInterestType,
+  interestType
 }: Props) {
   return (
     <>
@@ -19,11 +23,11 @@ function WithdrawActivity({
             <div className="m-2">
               <span>Token Type</span><br/>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="TCN" value="TCN" defaultChecked />
+                <input className="form-check-input" type="radio" name="interestType" id="TCN" value="TCN" checked={interestType === "TCN"} onClick={() => { setInterestType("TCN") }} />
                 <label className="form-check-label" htmlFor="TCN">TCN</label>
               </div>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" />
+                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onClick={() => { setInterestType("AUR") }} />
                 <label className="form-check-label" htmlFor="AUR">AUR</label>
               </div>
             </div>

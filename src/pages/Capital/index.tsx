@@ -24,6 +24,7 @@ function Capital() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const [interestType, setInterestType] = React.useState("TCN")
 
   const onCollateralAmountChange = (event: any) => {
     const amount = Number(event.target.value)
@@ -116,8 +117,10 @@ function Capital() {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
+        const isTCN = interestType === "TCN";
         const result = await treasury.withdraw(
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
+          isTCN,
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
         console.log("result:", result)
@@ -187,6 +190,8 @@ function Capital() {
                   interestAmount={interestAmount}
                   onInterestAmountChange={onInterestAmountChange}
                   withdraw={withdraw}
+                  setInterestType={setInterestType}
+                  interestType={interestType}
                 />
               )
             }
