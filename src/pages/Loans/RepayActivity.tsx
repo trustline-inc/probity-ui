@@ -27,7 +27,7 @@ function RepayActivity({
       </label>
       <div className="input-group">
         <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
-        <span className="input-group-text font-monospace">{"CAUR"}</span>
+        <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>
       <br/>
       <label className="form-label">
