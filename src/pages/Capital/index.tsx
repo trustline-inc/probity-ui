@@ -8,6 +8,7 @@ import { Contract, utils } from "ethers";
 import Activity from "../../containers/Activity";
 import IssuanceActivity from "./IssuanceActivity";
 import RedemptionActivity from "./RedemptionActivity";
+import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
 import Info from '../../components/Info';
@@ -18,6 +19,7 @@ function Capital() {
   const [error, setError] = React.useState<any|null>(null);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [equityAmount, setEquityAmount] = React.useState(0);
+  const [interestAmount, setInterestAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
@@ -37,6 +39,11 @@ function Capital() {
       setCollateralRatio(collateralAmount / amount);
   }
 
+  const onInterestAmountChange = (event: any) => {
+    const amount = Number(event.target.value)
+    setInterestAmount(amount);
+  }
+
   // Start listening to price feed
   React.useEffect(() => {
     const runEffect = async () => {
@@ -50,6 +57,7 @@ function Capital() {
   React.useEffect(() => {
     if (location.pathname === "/capital/stake")  setActivity(ActivityType.Stake);
     if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
+    if (location.pathname === "/capital/withdraw") setActivity(ActivityType.Interest);
   }, [location])
 
   /**
@@ -100,6 +108,29 @@ function Capital() {
     }
   }
 
+  /**
+   * @function withdraw
+   */
+    const withdraw = async () => {
+    if (library && account) {
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+
+      try {
+        const result = await treasury.withdraw(
+          utils.parseUnits(interestAmount.toString(), "ether").toString(),
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+        );
+        console.log("result:", result)
+        // TODO: Wait for transaction validation using event
+        const data = await result.wait();
+        console.log("events:", data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
   return (
     <>
       <header className="pt-2">
@@ -118,6 +149,9 @@ function Capital() {
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
@@ -144,6 +178,15 @@ function Capital() {
                   equityAmount={equityAmount}
                   onEquityAmountChange={onEquityAmountChange}
                   redeemEquity={redeemEquity}
+                />
+              )
+            }
+            {
+              activity === ActivityType.Interest && (
+                <WithdrawActivity
+                  interestAmount={interestAmount}
+                  onInterestAmountChange={onInterestAmountChange}
+                  withdraw={withdraw}
                 />
               )
             }

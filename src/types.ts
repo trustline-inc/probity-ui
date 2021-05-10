@@ -2,6 +2,7 @@ export enum Activity {
   // Capital
   Stake,
   Redeem,
+  Interest,
 
   // Loans
   Borrow,
