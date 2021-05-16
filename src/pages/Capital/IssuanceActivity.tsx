@@ -36,7 +36,7 @@ function IssueActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{"CFLR"}</span>
+            <span className="input-group-text font-monospace">{"FLR"}</span>
           </div>
         </div>
       </div>

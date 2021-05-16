@@ -51,7 +51,7 @@ function WithdrawActivity({
               placeholder="0.000000000000000000"
               onChange={onInterestAmountChange}
             />
-            <span className="input-group-text font-monospace">{"TCN"}</span>
+            <span className="input-group-text font-monospace">{interestType}</span>
           </div>
         </div>
       </div>

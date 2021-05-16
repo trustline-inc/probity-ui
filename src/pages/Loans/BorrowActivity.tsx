@@ -35,7 +35,7 @@ function BorrowActivity({
       </label>
       <div className="input-group mb-3">
         <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
-        <span className="input-group-text font-monospace">{"CFLR"}</span>
+        <span className="input-group-text font-monospace">{"FLR"}</span>
       </div>
       <div className="row">
         <div className="col-12">

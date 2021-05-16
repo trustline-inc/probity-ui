@@ -16,10 +16,13 @@ function Balances() {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'get', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
+  const { data: interestBalance, mutate: mutateInterestBalance } = useSWR([TREASURY_ADDRESS, 'interestOf', account], {
+    fetcher: fetcher(library, TreasuryABI.abi),
+  })
   const { data: debtBalance, mutate: mutateDebt } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TellerABI.abi),
   })
-  const { data: capitalBalance, mutate: mutateCapital } = useSWR([TREASURY_ADDRESS, 'balanceOf', account], {
+  const { data: capitalBalance, mutate: mutateCapital } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
   const { data: aureiBalance, mutate: mutateAurei } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
@@ -37,7 +40,6 @@ function Balances() {
 
   React.useEffect(() => {
     if (library) {
-      console.log("Listening to blocks")
       library.on("block", () => {
         mutateVault(undefined, true);
         mutateDebt(undefined, true);
@@ -46,6 +48,7 @@ function Balances() {
         mutateTotalAurei(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateTotalSupply(undefined, true);
+        mutateInterestBalance(undefined, true);
       });
 
       return () => {
@@ -70,7 +73,7 @@ function Balances() {
             Total Coll:
           </div>
           <div className="col-6 text-truncate">
-            {utils.formatEther(vault[0])} CFLR
+            {utils.formatEther(vault[0])} FLR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -78,7 +81,7 @@ function Balances() {
             Encumbered:
           </div>
           <div className="col-6 text-truncate">
-            {utils.formatEther(vault[1])} CFLR
+            {utils.formatEther(vault[1])} FLR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -86,7 +89,7 @@ function Balances() {
             Available:
           </div>
           <div className="col-6 text-truncate">
-            {utils.formatEther(vault[2])} CFLR
+            {utils.formatEther(vault[2])} FLR
           </div>
         </div>
         <hr />
@@ -96,7 +99,7 @@ function Balances() {
             Assets:
           </div>
           <div className="col-6 text-truncate">
-          {aureiBalance ? utils.formatEther(aureiBalance.toString()) : null} CAUR
+          {aureiBalance ? utils.formatEther(aureiBalance.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -104,7 +107,7 @@ function Balances() {
             Debt:
           </div>
           <div className="col-6 text-truncate">
-          {debtBalance ? utils.formatEther(debtBalance.toString()) : null} CAUR
+          {debtBalance ? utils.formatEther(debtBalance.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -113,7 +116,16 @@ function Balances() {
           </div>
           <div className="col-6 text-truncate">
             {/* TODO: Ensure capitalBalance is received as WAD */}
-            {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} CAUR
+            {capitalBalance ? utils.formatEther(capitalBalance.toString()) : null} AUR
+          </div>
+        </div>
+        <div className="row my-2 text-truncate">
+          <div className="col-6">
+            Interest:
+          </div>
+          <div className="col-6 text-truncate">
+            {/* TODO: Ensure capitalBalance is received as WAD */}
+            {interestBalance ? utils.formatEther(interestBalance.toString()) : null} TCN
           </div>
         </div>
       </div>
@@ -150,7 +162,7 @@ function Balances() {
             Assets:
           </div>
           <div className="col-6 text-truncate">
-          {totalAurei ? utils.formatEther(totalAurei.toString()) : null} CAUR
+          {totalAurei ? utils.formatEther(totalAurei.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -158,7 +170,7 @@ function Balances() {
             Debt:
           </div>
           <div className="col-6 text-truncate">
-          {totalDebt ? utils.formatEther(totalDebt.toString()) : null} CAUR
+          {totalDebt ? utils.formatEther(totalDebt.toString()) : null} AUR
           </div>
         </div>
         <div className="row my-2 text-truncate">
@@ -166,7 +178,7 @@ function Balances() {
             Capital:
           </div>
           <div className="col-6 text-truncate">
-          {totalSupply ? utils.formatEther(totalSupply.toString()) : null} CAUR
+          {totalSupply ? utils.formatEther(totalSupply.toString()) : null} AUR
           </div>
         </div>
       </div>

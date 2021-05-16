@@ -54,7 +54,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Only testnet Spark (CFLR) is currently supported as
+                      Only testnet Spark (FLR) is currently supported as
                       collateral. This is a pre-release alpha version and is
                       only compatible with the Coston testnet. Do{" "}
                       <strong>NOT</strong> try using real money. This app is

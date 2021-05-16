@@ -26,8 +26,8 @@ function Info() {
               {" "}
               <p>
                 A <strong>Probity vault</strong> is a blockchain program that
-                allows users to either capitalize the treasury or to take out a
-                loan.
+                allows users to either capitalize the treasury to earn interest
+                or to take out a loan.
               </p>
             </>
           )}
@@ -35,10 +35,10 @@ function Info() {
             <>
               <p>
                 <strong>Capitalization</strong> is the process of enabling
-                Probity to make Aurei loans using your vault's collateral. You
+                Probity to make Aurei loans backed by vault collateral. You
                 can earn yield on issued Aurei by locking collateral in your
-                vault. Locked collateral is added to a pool of loanable funds.
-                Your collateral is withdrawable at any and all times.
+                vault where it is added to a pool of loanable funds. Your
+                collateral is withdrawable at any time.
               </p>
             </>
           )}
@@ -47,8 +47,7 @@ function Info() {
               <p>
                 Take out a stablecoin loan by locking collateral in your vault.
                 You will not be able to redeem your entire collateral while
-                there is a loan balance. Loans are repaid in Aurei or TCN, which
-                can be bought on exchanges.
+                there is a loan balance. Loans are repaid in Aurei.
               </p>
             </>
           )}
