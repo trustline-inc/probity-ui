@@ -11,7 +11,6 @@ export default function Transactions() {
 
   const rows = ctx.transactions.map((tx: any, index) => {
     const event = tx.events.find((event: any) => event.event)
-    console.log(event)
     if (event === undefined) return null;
     return (
       <React.Fragment key={index}>
@@ -224,6 +223,13 @@ export default function Transactions() {
             {rows}
           </tbody>
         </table>
+        {rows.length === 0 && (
+          <div className="my-5">
+            <span className="d-flex justify-content-center align-items-center">
+              No transactions to display
+            </span>
+          </div>
+        )}
       </div>
     </>
   );
