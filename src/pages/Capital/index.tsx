@@ -149,10 +149,8 @@ function Capital() {
           isTCN,
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);

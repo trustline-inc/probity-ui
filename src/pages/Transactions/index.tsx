@@ -100,6 +100,58 @@ export default function Transactions() {
           )
         }
         {
+          event.event === "Redemption" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0 table-responsive">
+                  <thead>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Capital</th>
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Timestamp</th>
+                      <th className="col-3"/>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args.capital).toString()} AUR</td>
+                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
+                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3"/>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
+        {
+          event.event === "Withdrawal" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0 table-responsive">
+                  <thead>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Capital</th>
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Timestamp</th>
+                      <th className="col-3"/>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args.capital).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
+                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3"/>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
+        {
           event.event === "Repayment" && (
             <tr className="collapse" id={`collapse-${index}`}>
               <td colSpan={4}>
