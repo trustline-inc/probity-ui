@@ -1,4 +1,5 @@
 import React from "react"
+import PriceFeed from "../../components/PriceFeed";
 
 interface Props {
   collateralAmount: number;
@@ -19,28 +20,7 @@ function StakingActivity({
 }: Props) {
   return (
     <>
-      <div className="row">
-        <div className="col-12 mb-4">
-          <label htmlFor="collateralConversionInput" className="form-label">
-            Collateral<br/>
-            <small className="form-text text-muted">
-              Amount of collateral to lock
-            </small>
-          </label>
-          <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="collateralConversionInput"
-              placeholder="0.000000000000000000"
-              onChange={onCollateralAmountChange}
-            />
-            <span className="input-group-text font-monospace">{"FLR"}</span>
-          </div>
-        </div>
-      </div>
-      <div className="row">
+      <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityIssuanceInput" className="form-label">
             Capital<br/>
@@ -61,6 +41,28 @@ function StakingActivity({
           </div>
         </div>
       </div>
+      <div className="row mb-4">
+        <div className="col-12">
+          <label htmlFor="collateralConversionInput" className="form-label">
+            Collateral<br/>
+            <small className="form-text text-muted">
+              Amount of collateral to lock
+            </small>
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              id="collateralConversionInput"
+              placeholder="0.000000000000000000"
+              onChange={onCollateralAmountChange}
+            />
+            <span className="input-group-text font-monospace">{"FLR"}</span>
+          </div>
+        </div>
+      </div>
+      <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">

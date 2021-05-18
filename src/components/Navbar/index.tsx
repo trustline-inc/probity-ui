@@ -85,14 +85,14 @@ function Navbar() {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/stake"
+              to="/capital"
             >
-              <i className="fas fa-coins" /> Staking
+              <i className="fas fa-coins" /> Capital
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Borrowing
+              <i className="fas fa-money-bill-wave-alt" /> Loans
             </NavLink>
           </li>
           <li className="nav-item my-1">

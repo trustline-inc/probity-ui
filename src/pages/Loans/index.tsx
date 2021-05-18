@@ -5,13 +5,13 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS } from '../../constants';
+import { AUREI_ADDRESS, TELLER_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -28,11 +28,11 @@ function Loans() {
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const ctx = useContext(EventContext)
 
-  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
-    fetcher: fetcher(library, TellerABI.abi),
+  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+    fetcher: fetcher(library, VaultABI.abi),
   })
-  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'totalEquity'], {
-    fetcher: fetcher(library, TreasuryABI.abi),
+  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
+    fetcher: fetcher(library, TellerABI.abi),
   })
   const { data: rate } = useSWR([TELLER_ADDRESS, 'getAPR'], {
     fetcher: fetcher(library, TellerABI.abi),
@@ -98,7 +98,10 @@ function Loans() {
   }
 
   const onCollateralAmountChange = (event: any) => {
-    const amount = event.target.value;
+    var amount;
+    const delta = Number(event.target.value);
+    if (activity === ActivityType.Repay) amount = Number(utils.formatEther(vault[0]).toString()) - delta;
+    else amount = Number(utils.formatEther(vault[0]).toString()) + delta;
     setCollateralAmount(amount);
   }
 
@@ -113,13 +116,22 @@ function Loans() {
 
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {
-    setCollateralRatio((collateralAmount * collateralPrice) / aureiAmount);
-  }, [collateralAmount, collateralPrice, aureiAmount]);
+    if (debtBalance) {
+      switch (activity) {
+        case ActivityType.Borrow:
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + aureiAmount));
+          break;
+        case ActivityType.Repay:
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - aureiAmount));
+          break;
+      }
+    }
+  }, [collateralAmount, collateralPrice, aureiAmount, debtBalance, activity]);
 
   return (
     <>
       <header className="pt-2">
-        <h1>Borrowing</h1>
+        <h1>Loan Management</h1>
         <p className="lead">Take out a secured stablecoin loan.</p>
         {active && <Info />}
       </header>
@@ -129,10 +141,10 @@ function Loans() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow) }}>Borrow</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/loans/borrow"} onClick={() => { setActivity(ActivityType.Borrow); setCollateralAmount(0) }}>Borrow</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay) }}>Repay</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay); setCollateralAmount(0) }}>Repay</NavLink>
               </li>
             </ul>
           </div>
@@ -145,6 +157,7 @@ function Loans() {
                   <BorrowActivity
                     rate={rate}
                     collateralRatio={collateralRatio}
+                    collateralAmount={collateralAmount}
                     onAureiAmountChange={onAureiAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
                   />
@@ -154,10 +167,9 @@ function Loans() {
               {
                 activity === ActivityType.Repay && (
                   <RepayActivity
-                    debtBalance={debtBalance}
-                    equityBalance={equityBalance}
                     aureiAmount={aureiAmount}
                     collateralRatio={collateralRatio}
+                    collateralAmount={collateralAmount}
                     onAureiAmountChange={onAureiAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
                   />

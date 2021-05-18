@@ -21,12 +21,12 @@ function Info() {
               </p>
             </>
           )}
-          {location.pathname.includes("/stake") && (
+          {location.pathname.includes("/capital") && (
             <>
               <p>
-                Staking is the process of enabling Probity to make Aurei loans
-                backed by collateral. You can earn yield on the Aurei created from
-                staked collateral. Collateral is redeemable at any time.
+                Capitalization is the process of enabling Probity to mint Aurei backed
+                by staked assets. You can earn yield on the Aurei created from staked
+                collateral. Collateral is redeemable at any time.
               </p>
             </>
           )}

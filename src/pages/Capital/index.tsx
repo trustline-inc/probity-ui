@@ -1,16 +1,19 @@
 import React, { useContext } from 'react';
 import web3 from "web3";
+import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
+import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
 import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY_ADDRESS } from "../../constants";
+import { TREASURY_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
@@ -28,12 +31,34 @@ function Capital() {
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
+  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+    fetcher: fetcher(library, VaultABI.abi),
+  })
+  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
+    fetcher: fetcher(library, TreasuryABI.abi),
+  })
+
   const onCollateralAmountChange = (event: any) => {
-    const amount = Number(event.target.value)
+    var amount;
+    const delta = Number(event.target.value);
+    if (activity === ActivityType.Redeem) amount = Number(utils.formatEther(vault[1]).toString()) - delta;
+    else amount = Number(utils.formatEther(vault[1]).toString()) + delta;
     setCollateralAmount(amount);
-    if (equityAmount > 0)
-      setCollateralRatio(amount / equityAmount);
   }
+
+  // Dynamically calculate the collateralization ratio
+  React.useEffect(() => {
+    if (equityBalance) {
+      switch (activity) {
+        case ActivityType.Stake:
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + equityAmount));
+          break;
+        case ActivityType.Redeem:
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - equityAmount));
+          break;
+      }
+    }
+  }, [collateralAmount, collateralPrice, equityAmount, equityBalance, activity]);
 
   const onEquityAmountChange = (event: any) => {
     const amount = Number(event.target.value)
@@ -163,8 +188,8 @@ function Capital() {
   return (
     <>
       <header className="pt-2">
-        <h1>Staking</h1>
-        <p className="lead">Staking assets as collateral allows you to earn interest.</p>
+        <h1>Capital Management</h1>
+        <p className="lead">Staking assets to create Aurei capital allows you to earn interest.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -173,13 +198,13 @@ function Capital() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/stake"} onClick={() => { setActivity(ActivityType.Stake) }}>Stake</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/stake"} onClick={() => { setActivity(ActivityType.Stake); setCollateralAmount(0) }}>Stake</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
