@@ -23,11 +23,11 @@ function WithdrawActivity({
             <div className="m-2">
               <span>Token Type</span><br/>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="TCN" value="TCN" checked={interestType === "TCN"} onClick={() => { setInterestType("TCN") }} />
+                <input className="form-check-input" type="radio" name="interestType" id="TCN" value="TCN" checked={interestType === "TCN"} onChange={() => { setInterestType("TCN") }} />
                 <label className="form-check-label" htmlFor="TCN">TCN</label>
               </div>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onClick={() => { setInterestType("AUR") }} />
+                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onChange={() => { setInterestType("AUR") }} />
                 <label className="form-check-label" htmlFor="AUR">AUR</label>
               </div>
             </div>

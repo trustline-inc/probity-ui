@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import web3 from "web3";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -6,12 +6,13 @@ import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import Activity from "../../containers/Activity";
-import IssuanceActivity from "./IssuanceActivity";
+import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
 import Info from '../../components/Info';
+import EventContext from "../../contexts/TransactionContext"
 
 function Capital() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function Capital() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
   const onCollateralAmountChange = (event: any) => {
@@ -61,23 +63,49 @@ function Capital() {
     if (location.pathname === "/capital/withdraw") setActivity(ActivityType.Interest);
   }, [location])
 
+  // Listener for Treasury events
+  React.useEffect(() => {
+    if (library) {
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const stake = treasury.filters.Stake(null, null, null, account)
+      const redemption = treasury.filters.Redemption(null, null, null, account)
+      const withdrawal = treasury.filters.Withdrawal(null, null, null, account)
+
+      library.on(stake, (event) => {
+        console.log('Stake Event:', event);
+      })
+
+      library.on(redemption, (event) => {
+        console.log('Redemption Event:', event);
+      })
+
+      library.on(withdrawal, (event) => {
+        console.log('Withdrawal Event:', event);
+      })
+
+      return () => {
+        library.removeAllListeners(stake)
+        library.removeAllListeners(redemption)
+        library.removeAllListeners(withdrawal)
+      }
+    }
+  })
+
   /**
-   * @function issueEquity
+   * @function stake
    */
-   const issueEquity = async () => {
+   const stake = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        const result = await treasury.issue(
+        const result = await treasury.stake(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -86,9 +114,9 @@ function Capital() {
   }
 
   /**
-   * @function redeemEquity
+   * @function redeem
    */
-  const redeemEquity = async () => {
+  const redeem = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
@@ -98,10 +126,8 @@ function Capital() {
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data.events);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -123,10 +149,8 @@ function Capital() {
           isTCN,
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
         );
-        console.log("result:", result)
-        // TODO: Wait for transaction validation using event
         const data = await result.wait();
-        console.log("events:", data);
+        ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -163,11 +187,11 @@ function Capital() {
           <Activity active={active} activity={activity} error={error}>
             {
               activity === ActivityType.Stake && (
-                <IssuanceActivity
+                <StakingActivity
                   collateralAmount={collateralAmount}
                   equityAmount={equityAmount}
                   collateralRatio={collateralRatio}
-                  issueEquity={issueEquity}
+                  stake={stake}
                   onCollateralAmountChange={onCollateralAmountChange}
                   onEquityAmountChange={onEquityAmountChange}
                 />
@@ -180,7 +204,7 @@ function Capital() {
                   onCollateralAmountChange={onCollateralAmountChange}
                   equityAmount={equityAmount}
                   onEquityAmountChange={onEquityAmountChange}
-                  redeemEquity={redeemEquity}
+                  redeem={redeem}
                 />
               )
             }

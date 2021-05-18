@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import useSWR from "swr";
 import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
@@ -9,6 +9,7 @@ import fetcher from "../../fetcher";
 import logo from "../../assets/logo.png";
 import "./index.css";
 import SocialLinks from "../Social";
+import EventContext from "../../contexts/TransactionContext"
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -42,6 +43,7 @@ function Balance() {
 function Navbar() {
   const { chainId, activate, active } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
+  const ctx = useContext(EventContext)
 
   const onClick = () => {
     activate(injected);
@@ -95,10 +97,14 @@ function Navbar() {
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Lending
+              <i className="fas fa-money-bill-wave-alt" /> Borrowing
             </NavLink>
           </li>
-
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/transactions">
+              <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
+            </NavLink>
+          </li>
         </ul>
         <div className="spacer spacer-1" />
         <form className="row gx-3 gy-2 align-items-center">

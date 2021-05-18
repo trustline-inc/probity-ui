@@ -6,16 +6,16 @@ interface Props {
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  issueEquity: () => void;
+  stake: () => void;
 }
 
-function IssueActivity({
+function StakingActivity({
   collateralAmount,
   equityAmount,
   collateralRatio,
   onCollateralAmountChange,
   onEquityAmountChange,
-  issueEquity
+  stake
 }: Props) {
   return (
     <>
@@ -73,7 +73,7 @@ function IssueActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={issueEquity}
+            onClick={stake}
             disabled={equityAmount === 0 || collateralAmount === 0}
           >Confirm</button>
         </div>
@@ -82,4 +82,4 @@ function IssueActivity({
   )
 }
 
-export default IssueActivity
+export default StakingActivity

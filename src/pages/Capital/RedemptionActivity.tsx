@@ -5,7 +5,7 @@ interface Props {
   equityAmount: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  redeemEquity: () => void;
+  redeem: () => void;
 }
 
 function RedemptionActivity({
@@ -13,7 +13,7 @@ function RedemptionActivity({
   equityAmount,
   onCollateralAmountChange,
   onEquityAmountChange,
-  redeemEquity
+  redeem
 }: Props) {
   return (
     <>
@@ -64,7 +64,7 @@ function RedemptionActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={redeemEquity}
+            onClick={redeem}
             disabled={equityAmount === 0 || collateralAmount === 0}
           >Confirm</button>
         </div>
