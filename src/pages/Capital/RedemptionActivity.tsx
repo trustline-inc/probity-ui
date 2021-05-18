@@ -3,6 +3,7 @@ import React from "react";
 interface Props {
   collateralAmount: number;
   equityAmount: number;
+  collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   redeem: () => void;
@@ -11,6 +12,7 @@ interface Props {
 function RedemptionActivity({
   collateralAmount,
   equityAmount,
+  collateralRatio,
   onCollateralAmountChange,
   onEquityAmountChange,
   redeem
@@ -56,6 +58,17 @@ function RedemptionActivity({
               onChange={onEquityAmountChange}
             />
             <span className="input-group-text font-monospace">{"AUR"}</span>
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+            <div className="m-2">
+              <span>New Collateral Ratio:</span>
+              <br />
+              <small className="text-muted">N/A</small>
+            </div>
           </div>
         </div>
       </div>

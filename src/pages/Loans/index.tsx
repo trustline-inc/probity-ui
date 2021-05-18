@@ -50,9 +50,11 @@ function Loans() {
 
       try {
         const result = await teller.createLoan(
-          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
-          { gasPrice: web3.utils.toWei('100', 'Gwei') }
+          { 
+            gasPrice: web3.utils.toWei('100', 'Gwei'),
+            value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
+          }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);

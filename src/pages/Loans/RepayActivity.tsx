@@ -40,15 +40,17 @@ function RepayActivity({
         <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
         <span className="input-group-text font-monospace">{"FLR"}</span>
       </div>
-      {/* 
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2"><span className="text-muted h6">New Coll. Ratio</span><br />{collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : null}</div>
+            <div className="m-2">
+              <span>New Collateral Ratio:</span>
+              <br />
+              <small className="text-muted">N/A</small>
+            </div>
           </div>
         </div>
-      </div> 
-      */}
+      </div>
     </>
   )
 }

@@ -82,11 +82,6 @@ function Navbar() {
 
         <ul className={`navbar-nav my-4 ${mobileMenuVisibility ? 'mobile-visible' : ''}`}>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/vault">
-              <i className="fas fa-lock" /> Vault
-            </NavLink>
-          </li>
-          <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"

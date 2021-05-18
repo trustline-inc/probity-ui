@@ -13,7 +13,6 @@ import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
 import Transactions from "../../pages/Transactions";
-import Vault from "../../pages/Vault";
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
@@ -119,9 +118,6 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
-                        <Route path="/vault">
-                          <Vault />
-                        </Route>
                         <Route path="/capital">
                           <Capital />
                         </Route>
@@ -132,7 +128,7 @@ function App() {
                           <Transactions />
                         </Route>
                         <Route path="/">
-                          <Vault />
+                          <Capital />
                         </Route>
                       </Switch>
                     </EventContext.Provider>

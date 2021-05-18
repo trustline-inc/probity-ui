@@ -100,9 +100,11 @@ function Capital() {
 
       try {
         const result = await treasury.stake(
-          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
-          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+          { 
+            gasPrice: web3.utils.toWei('15', 'Gwei'),
+            value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
+          }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -164,7 +166,6 @@ function Capital() {
         <h1><i className="fas fa-coins"  style={{fontSize:'1.8rem'}} /> Capital Management</h1>
         <p className="lead">Staking collateral allows you to earn interest.</p>
         {active && <Info />}
-
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="col-md-6 offset-md-3">
@@ -203,6 +204,7 @@ function Capital() {
                   collateralAmount={collateralAmount}
                   onCollateralAmountChange={onCollateralAmountChange}
                   equityAmount={equityAmount}
+                  collateralRatio={collateralRatio}
                   onEquityAmountChange={onEquityAmountChange}
                   redeem={redeem}
                 />

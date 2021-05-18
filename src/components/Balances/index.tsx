@@ -70,7 +70,7 @@ function Balances() {
         <h5>Collateral</h5>
         <div className="row my-2">
           <div className="col-6">
-            Total Coll:
+            Loan Collateral:
           </div>
           <div className="col-6 text-truncate">
             {utils.formatEther(vault[0])} FLR
@@ -78,18 +78,10 @@ function Balances() {
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-6">
-            Encumbered:
+            Staked Collateral:
           </div>
           <div className="col-6 text-truncate">
             {utils.formatEther(vault[1])} FLR
-          </div>
-        </div>
-        <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Available:
-          </div>
-          <div className="col-6 text-truncate">
-            {utils.formatEther(vault[2])} FLR
           </div>
         </div>
         <hr />
