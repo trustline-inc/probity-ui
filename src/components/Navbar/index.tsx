@@ -34,7 +34,7 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {parseFloat(formatEther(balance)).toFixed(4)} CFLR
+        {parseFloat(formatEther(balance)).toFixed(4)} FLR
       </span>
     </div>
   );
@@ -92,12 +92,12 @@ function Navbar() {
               activeClassName="active"
               to="/capital"
             >
-              <i className="fas fa-coins" /> Capital
+              <i className="fas fa-coins" /> Staking
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Loans
+              <i className="fas fa-money-bill-wave-alt" /> Borrowing
             </NavLink>
           </li>
           <li className="nav-item my-1">

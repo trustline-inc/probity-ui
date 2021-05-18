@@ -139,23 +139,13 @@ function Loans() {
           {/* Loan Activities */}
           <Activity active={active} activity={activity} error={error}>
             <>
-              <label className="form-label">Amount</label>
-              <div className="input-group">
-                <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
-                <span className="input-group-text font-monospace">{"CAUR"}</span>
-              </div>
-              <br/>
-              <label className="form-label">Collateral</label>
-              <div className="input-group mb-3">
-                <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
-                <span className="input-group-text font-monospace">{"CFLR"}</span>
-              </div>
-
               {
                 activity === ActivityType.Borrow && (
                   <BorrowActivity
                     rate={rate}
                     collateralRatio={collateralRatio}
+                    onAureiAmountChange={onAureiAmountChange}
+                    onCollateralAmountChange={onCollateralAmountChange}
                   />
                 )
               }
@@ -167,6 +157,8 @@ function Loans() {
                     equityBalance={equityBalance}
                     aureiAmount={aureiAmount}
                     collateralRatio={collateralRatio}
+                    onAureiAmountChange={onAureiAmountChange}
+                    onCollateralAmountChange={onCollateralAmountChange}
                   />
                 )
               }

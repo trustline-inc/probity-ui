@@ -6,8 +6,9 @@ import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import Activity from "../../containers/Activity";
-import IssuanceActivity from "./IssuanceActivity";
+import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
+import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY_ADDRESS } from "../../constants";
 import Info from '../../components/Info';
@@ -19,11 +20,13 @@ function Capital() {
   const [error, setError] = React.useState<any|null>(null);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [equityAmount, setEquityAmount] = React.useState(0);
+  const [interestAmount, setInterestAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const ctx = useContext(EventContext)
+  const [interestType, setInterestType] = React.useState("TCN")
 
   const onCollateralAmountChange = (event: any) => {
     const amount = Number(event.target.value)
@@ -39,6 +42,11 @@ function Capital() {
       setCollateralRatio(collateralAmount / amount);
   }
 
+  const onInterestAmountChange = (event: any) => {
+    const amount = Number(event.target.value)
+    setInterestAmount(amount);
+  }
+
   // Start listening to price feed
   React.useEffect(() => {
     const runEffect = async () => {
@@ -50,35 +58,48 @@ function Capital() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/capital/issue")  setActivity(ActivityType.Issue);
+    if (location.pathname === "/capital/stake")  setActivity(ActivityType.Stake);
     if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
+    if (location.pathname === "/capital/withdraw") setActivity(ActivityType.Interest);
   }, [location])
 
-  // Listener for TreasuryUpdated event
+  // Listener for Treasury events
   React.useEffect(() => {
     if (library) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
-      const event = treasury.filters.TreasuryUpdated(account)
+      const stake = treasury.filters.Stake(null, null, null, account)
+      const redemption = treasury.filters.Redemption(null, null, null, account)
+      const withdrawal = treasury.filters.Withdrawal(null, null, null, account)
 
-      library.on(event, (from, to, amount, event) => {
-        console.log('TreasuryUpdated', { from, to, amount, event })
+      library.on(stake, (event) => {
+        console.log('Stake Event:', event);
+      })
+
+      library.on(redemption, (event) => {
+        console.log('Redemption Event:', event);
+      })
+
+      library.on(withdrawal, (event) => {
+        console.log('Withdrawal Event:', event);
       })
 
       return () => {
-        library.removeAllListeners(event)
+        library.removeAllListeners(stake)
+        library.removeAllListeners(redemption)
+        library.removeAllListeners(withdrawal)
       }
     }
   })
 
   /**
-   * @function issueEquity
+   * @function stake
    */
-   const issueEquity = async () => {
+   const stake = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        const result = await treasury.issue(
+        const result = await treasury.stake(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { gasPrice: web3.utils.toWei('15', 'Gwei') }
@@ -93,9 +114,9 @@ function Capital() {
   }
 
   /**
-   * @function redeemEquity
+   * @function redeem
    */
-  const redeemEquity = async () => {
+  const redeem = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
@@ -114,11 +135,36 @@ function Capital() {
     }
   }
 
+  /**
+   * @function withdraw
+   */
+    const withdraw = async () => {
+    if (library && account) {
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+
+      try {
+        const isTCN = interestType === "TCN";
+        const result = await treasury.withdraw(
+          utils.parseUnits(interestAmount.toString(), "ether").toString(),
+          isTCN,
+          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+        );
+        console.log("result:", result)
+        // TODO: Wait for transaction validation using event
+        const data = await result.wait();
+        console.log("events:", data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
   return (
     <>
       <header className="pt-2">
         <h1><i className="fas fa-coins"  style={{fontSize:'1.8rem'}} /> Capital Management</h1>
-        <p className="lead">Converting collateral to capital allows you to earn interest.</p>
+        <p className="lead">Staking collateral allows you to earn interest.</p>
         {active && <Info />}
 
       </header>
@@ -128,10 +174,13 @@ function Capital() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/issue"} onClick={() => { setActivity(ActivityType.Issue) }}>Issue</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/stake"} onClick={() => { setActivity(ActivityType.Stake) }}>Stake</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem) }}>Redeem</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
@@ -139,12 +188,12 @@ function Capital() {
           {/* Capital Management Activities */}
           <Activity active={active} activity={activity} error={error}>
             {
-              activity === ActivityType.Issue && (
-                <IssuanceActivity
+              activity === ActivityType.Stake && (
+                <StakingActivity
                   collateralAmount={collateralAmount}
                   equityAmount={equityAmount}
                   collateralRatio={collateralRatio}
-                  issueEquity={issueEquity}
+                  stake={stake}
                   onCollateralAmountChange={onCollateralAmountChange}
                   onEquityAmountChange={onEquityAmountChange}
                 />
@@ -157,7 +206,18 @@ function Capital() {
                   onCollateralAmountChange={onCollateralAmountChange}
                   equityAmount={equityAmount}
                   onEquityAmountChange={onEquityAmountChange}
-                  redeemEquity={redeemEquity}
+                  redeem={redeem}
+                />
+              )
+            }
+            {
+              activity === ActivityType.Interest && (
+                <WithdrawActivity
+                  interestAmount={interestAmount}
+                  onInterestAmountChange={onInterestAmountChange}
+                  withdraw={withdraw}
+                  setInterestType={setInterestType}
+                  interestType={interestType}
                 />
               )
             }

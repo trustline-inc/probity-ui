@@ -11,35 +11,37 @@ export default function Transactions() {
 
   const rows = ctx.transactions.map((tx: any, index) => {
     const event = tx.events.find((event: any) => event.event)
-    if (event === undefined) return <></>
+    console.log(event)
+    if (event === undefined) return null;
     return (
       <React.Fragment key={index}>
-        <tr className="table-primary" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
-          <th scope="row">{index + 1}</th>
-          <td><span className="badge rounded-pill bg-primary">{event.event}</span></td>
-          <td>{tx.blockNumber}</td>
-          <td><code>{tx.transactionHash}</code></td>
+        <tr className="table-primary d-flex" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
+          <th className="col-1" scope="row">{index + 1}</th>
+          <td className="col-2"><span className="badge rounded-pill bg-primary">{event.event}</span></td>
+          <td className="col-1">{tx.blockNumber}</td>
+          <td className="col-8 text-truncate"><code>{tx.transactionHash}</code></td>
         </tr>
         {
           event.event === "VaultUpdated" && (
             <tr className="collapse" id={`collapse-${index}`}>
-              <td/>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 <table className="table table-borderless mb-0">
                   <thead>
-                    <tr>
-                      <th scope="col">Collateral</th>
-                      <th scope="col">Encumbered</th>
-                      <th scope="col">Available</th>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Encumbered</th>
+                      <th className="col-3" scope="col">Available</th>
+                      <th className="col-3"/>
                     </tr>
                   </thead>
-                <tbody>
-                  <tr>
-                    <td>{utils.formatEther(event.args[1]).toString()}</td>
-                    <td>{utils.formatEther(event.args[2]).toString()}</td>
-                    <td>{utils.formatEther(event.args[3]).toString()}</td>
-                  </tr>
-                </tbody>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args[1]).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[2]).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[3]).toString()}</td>
+                      <td className="col-3"/>
+                    </tr>
+                  </tbody>
                 </table>
               </td>
             </tr>
@@ -48,46 +50,50 @@ export default function Transactions() {
         {
           event.event === "LoanCreated" && (
             <tr className="collapse" id={`collapse-${index}`}>
-              <td/>
-              <td colSpan={3}>
-                <table className="table table-borderless mb-0">
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0 table-responsive">
                   <thead>
-                    <tr>
-                      <th scope="col">Collateral</th>
-                      <th scope="col">Principal</th>
-                      <th scope="col">Rate</th>
-                      <th scope="col">Timestamp</th>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Principal</th>
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Timestamp</th>
+                      <th className="col-3" scope="col">Rate</th>
                     </tr>
                   </thead>
-                <tbody>
-                  <tr>
-                    <td>{utils.formatEther(event.args[1]).toString()}</td>
-                    <td>{utils.formatEther(event.args[2]).toString()}</td>
-                    <td>{utils.formatEther(event.args[3].toString().substring(1, event.args[3].toString().length-9))}</td>
-                    <td>{new Date(event.args[4] * 1000).toLocaleString()}</td>
-                  </tr>
-                </tbody>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args.principal).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()}</td>
+                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args.rate.toString().substring(1, event.args[3].toString().length-9))}</td>
+                    </tr>
+                  </tbody>
                 </table>
               </td>
             </tr>
           )
         }
         {
-          event.event === "TreasuryUpdated" && (
+          event.event === "Stake" && (
             <tr className="collapse" id={`collapse-${index}`}>
-              <td/>
-              <td colSpan={3}>
-                <table className="table table-borderless mb-0">
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0 table-responsive">
                   <thead>
-                    <tr>
-                      <th scope="col">Capital</th>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Capital</th>
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Timestamp</th>
+                      <th className="col-3"/>
                     </tr>
                   </thead>
-                <tbody>
-                  <tr>
-                    <td>{utils.formatEther(event.args[1]).toString()}</td>
-                  </tr>
-                </tbody>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args.capital).toString()} AUR</td>
+                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
+                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3"/>
+                    </tr>
+                  </tbody>
                 </table>
               </td>
             </tr>
@@ -96,23 +102,24 @@ export default function Transactions() {
         {
           event.event === "Repayment" && (
             <tr className="collapse" id={`collapse-${index}`}>
-              <td/>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 <table className="table table-borderless mb-0">
                   <thead>
-                    <tr>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Collateral</th>
-                      <th scope="col">Timestamp</th>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Amount</th>
+                      <th className="col-3" scope="col">Collateral</th>
+                      <th className="col-3" scope="col">Timestamp</th>
+                      <th className="col-3"/>
                     </tr>
                   </thead>
-                <tbody>
-                  <tr>
-                    <td>{utils.formatEther(event.args[1]).toString()}</td>
-                    <td>{utils.formatEther(event.args[2]).toString()}</td>
-                    <td>{new Date(event.args[3] * 1000).toLocaleString()}</td>
-                  </tr>
-                </tbody>
+                  <tbody>
+                    <tr className="d-flex">
+                      <td className="col-3">{utils.formatEther(event.args.amount).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()}</td>
+                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3"/>
+                    </tr>
+                  </tbody>
                 </table>
               </td>
             </tr>
@@ -121,19 +128,18 @@ export default function Transactions() {
         {
           event.event === "Approval" && (
             <tr className="collapse" id={`collapse-${index}`}>
-              <td/>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 <table className="table table-borderless mb-0">
                   <thead>
-                    <tr>
-                      <th scope="col">Spender</th>
-                      <th scope="col">Value</th>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Value</th>
+                      <th className="col-3" scope="col">Spender</th>
                     </tr>
                   </thead>
                 <tbody>
-                  <tr>
-                    <td>{utils.formatEther(event.args[1]).toString()}</td>
-                    <td>{utils.formatEther(event.args[2]).toString()}</td>
+                  <tr className="d-flex">
+                    <td className="col-3">{utils.formatEther(event.args.value).toString()}</td>
+                    <td className="col-3">{event.args.spender}</td>
                   </tr>
                 </tbody>
                 </table>
@@ -155,11 +161,11 @@ export default function Transactions() {
       <div className="table-responsive">
         <table className="table">
           <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Event Type</th>
-              <th scope="col">Block</th>
-              <th scope="col">Transaction Hash</th>
+            <tr className="d-flex">
+              <th className="col-1" scope="col">#</th>
+              <th className="col-2" scope="col">Event Type</th>
+              <th className="col-1" scope="col">Block</th>
+              <th className="col-8" scope="col">Transaction Hash</th>
             </tr>
           </thead>
           <tbody>
