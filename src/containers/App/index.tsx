@@ -118,7 +118,7 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
-                        <Route path="/capital">
+                        <Route path="/stake">
                           <Capital />
                         </Route>
                         <Route path="/loans">

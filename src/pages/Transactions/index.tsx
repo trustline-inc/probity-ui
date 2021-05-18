@@ -205,7 +205,7 @@ export default function Transactions() {
   return (
     <>
       <header className="pt-2">
-        <h1><i className="fas fa-table" style={{fontSize:'1.8rem'}} /> Transactions</h1>
+        <h1>Transaction History</h1>
         <p className="lead">View your transaction history.</p>
         {active && <Info />}
       </header>

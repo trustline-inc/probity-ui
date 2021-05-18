@@ -163,8 +163,8 @@ function Capital() {
   return (
     <>
       <header className="pt-2">
-        <h1><i className="fas fa-coins"  style={{fontSize:'1.8rem'}} /> Capital Management</h1>
-        <p className="lead">Staking collateral allows you to earn interest.</p>
+        <h1>Staking</h1>
+        <p className="lead">Staking assets as collateral allows you to earn interest.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

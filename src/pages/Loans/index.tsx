@@ -119,10 +119,9 @@ function Loans() {
   return (
     <>
       <header className="pt-2">
-        <h1><i className="fas fa-money-bill-wave-alt"  style={{fontSize:'1.8rem'}} /> Stablecoin Loans</h1>
-        <p className="lead">Borrow Aurei and repay debt with Spark.</p>
+        <h1>Borrowing</h1>
+        <p className="lead">Take out a secured stablecoin loan.</p>
         {active && <Info />}
-
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="col-md-6 offset-md-3">

@@ -85,7 +85,7 @@ function Navbar() {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/capital"
+              to="/stake"
             >
               <i className="fas fa-coins" /> Staking
             </NavLink>

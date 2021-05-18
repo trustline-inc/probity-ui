@@ -21,24 +21,12 @@ function Info() {
               </p>
             </>
           )}
-          {location.pathname.includes("/vault") && (
-            <>
-              {" "}
-              <p>
-                A <strong>Probity vault</strong> is a blockchain program that
-                allows users to either capitalize the treasury to earn interest
-                or to take out a loan.
-              </p>
-            </>
-          )}
-          {location.pathname.includes("/capital") && (
+          {location.pathname.includes("/stake") && (
             <>
               <p>
-                <strong>Capitalization</strong> is the process of enabling
-                Probity to make Aurei loans backed by vault collateral. You
-                can earn yield on issued Aurei by locking collateral in your
-                vault where it is added to a pool of loanable funds. Your
-                collateral is withdrawable at any time.
+                Staking is the process of enabling Probity to make Aurei loans
+                backed by collateral. You can earn yield on the Aurei created from
+                staked collateral. Collateral is redeemable at any time.
               </p>
             </>
           )}
