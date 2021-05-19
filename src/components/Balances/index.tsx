@@ -18,6 +18,12 @@ function Balances() {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'get', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
+  const { data: totalLoanCollateral, mutate: mutateTotalLoanCollateral } = useSWR([VAULT_ADDRESS, 'totalLoanCollateral'], {
+    fetcher: fetcher(library, VaultABI.abi),
+  })
+  const { data: totalStakedCollateral, mutate: mutateTotalStakedCollateral } = useSWR([VAULT_ADDRESS, 'totalStakedCollateral'], {
+    fetcher: fetcher(library, VaultABI.abi),
+  })
   const { data: interestBalance, mutate: mutateInterestBalance } = useSWR([TREASURY_ADDRESS, 'interestOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
@@ -55,6 +61,8 @@ function Balances() {
         mutateTcnBalance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
+        mutateTotalLoanCollateral(undefined, true);
+        mutateTotalStakedCollateral(undefined, true);
       });
 
       return () => {
@@ -124,52 +132,42 @@ function Balances() {
       <div className="border rounded p-4 mt-3 shadow-sm bg-white">
         <h3>Aggregate</h3>
         <hr />
-        {/* <h5>Collateral</h5>
+        <h5>Collateral</h5>
         <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Total Coll:
-          </div>
-          <div className="col-6">
+          <div className="col-12">
+            <strong>Loan Collateral</strong>
+            <br/>
+            <span className="text-truncate">{totalLoanCollateral ? numeral(utils.formatEther(totalLoanCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Encumbered:
-          </div>
-          <div className="col-6">
-          </div>
-        </div>
-        <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Available:
-          </div>
-          <div className="col-6">
+          <div className="col-12">
+            <strong>Staked Collateral</strong>
+            <br/>
+            <span className="text-truncate">{totalStakedCollateral ? numeral(utils.formatEther(totalStakedCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
           </div>
         </div>
-        <hr /> */}
+        <hr />
         <h5>Balance Sheet</h5>
         <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Assets:
-          </div>
-          <div className="col-6 text-truncate">
-          {totalAurei ? numeral(utils.formatEther(totalAurei.toString())).format('0,0.0[00000000000000000]') : null} AUR
-          </div>
-        </div>
-        <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Debt:
-          </div>
-          <div className="col-6 text-truncate">
-          {totalDebt ? numeral(utils.formatEther(totalDebt.toString())).format('0,0.0[00000000000000000]') : null} AUR
+          <div className="col-12">
+            <strong>Assets</strong>
+            <br/>
+            <span className="text-truncate">{totalAurei ? numeral(utils.formatEther(totalAurei.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
-          <div className="col-6">
-            Capital:
+          <div className="col-12">
+            <strong>Debt</strong>
+            <br/>
+            <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
-          <div className="col-6 text-truncate">
-          {totalSupply ? numeral(utils.formatEther(totalSupply.toString())).format('0,0.0[00000000000000000]') : null} AUR
+        </div>
+        <div className="row my-2 text-truncate">
+          <div className="col-12">
+            <strong>Capital</strong>
+            <br/>
+            <span className="text-truncate">{totalSupply ? numeral(utils.formatEther(totalSupply.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
       </div>
