@@ -26,6 +26,7 @@ function Loans() {
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const [maxBorrow, setMaxBorrow] = React.useState(0)
   const ctx = useContext(EventContext)
 
   const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
@@ -128,6 +129,11 @@ function Loans() {
     }
   }, [collateralAmount, collateralPrice, aureiAmount, debtBalance, activity]);
 
+  // Ensure loan size input does not exceed maximum
+  React.useEffect(() => {
+    if (Number(aureiAmount) > maxBorrow) setAureiAmount(maxBorrow)
+  }, [aureiAmount, maxBorrow]);
+
   return (
     <>
       <header className="pt-2">
@@ -156,7 +162,9 @@ function Loans() {
                 activity === ActivityType.Borrow && (
                   <BorrowActivity
                     rate={rate}
+                    maxBorrow={maxBorrow}
                     aureiAmount={aureiAmount}
+                    setMaxBorrow={setMaxBorrow}
                     collateralRatio={collateralRatio}
                     collateralAmount={collateralAmount}
                     onAureiAmountChange={onAureiAmountChange}

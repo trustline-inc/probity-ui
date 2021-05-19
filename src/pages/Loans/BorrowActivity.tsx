@@ -13,6 +13,8 @@ interface Props {
   collateralAmount: number;
   aureiAmount: number;
   rate: any;
+  maxBorrow: number;
+  setMaxBorrow: (maxBorrow: number) => void;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -22,12 +24,13 @@ function BorrowActivity({
   collateralAmount,
   aureiAmount,
   rate,
+  maxBorrow,
+  setMaxBorrow,
   onAureiAmountChange,
   onCollateralAmountChange
 }: Props) {
   const { library } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
-  const [maxBorrow, setMaxBorrow] = React.useState(0)
 
   const { data: utilization } = useSWR([TELLER_ADDRESS, 'getUtilization'], {
     fetcher: fetcher(library, TellerABI.abi),
@@ -43,7 +46,7 @@ function BorrowActivity({
       setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
       setMaxBorrow(supply - borrows)
     }
-  }, [rate, aureiAmount, utilization])
+  }, [rate, aureiAmount, utilization, setMaxBorrow])
 
   return (
     <>
@@ -54,7 +57,7 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" max={maxBorrow.toString()} placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
+        <input type="number" min="0.000000000000000000" max={maxBorrow} placeholder="0.000000000000000000" className="form-control" value={aureiAmount} onChange={onAureiAmountChange} />
         <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>
       <div className="row pt-3 pb-1">
