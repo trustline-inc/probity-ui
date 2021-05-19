@@ -57,7 +57,7 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" max={maxBorrow} placeholder="0.000000000000000000" className="form-control" value={aureiAmount} onChange={onAureiAmountChange} />
+        <input type="number" min="0.000000000000000000" max={maxBorrow} placeholder="0.000000000000000000" className="form-control" value={aureiAmount ? aureiAmount : ""} onChange={onAureiAmountChange} />
         <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>
       <div className="row pt-3 pb-1">
