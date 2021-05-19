@@ -100,8 +100,8 @@ function Loans() {
   const onCollateralAmountChange = (event: any) => {
     var amount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Repay) amount = Number(utils.formatEther(vault[0]).toString()) - delta;
-    else amount = Number(utils.formatEther(vault[0]).toString()) + delta;
+    if (activity === ActivityType.Repay) amount = Number(utils.formatEther(vault[0]).toString()) - Number(delta);
+    else amount = Number(utils.formatEther(vault[0]).toString()) + Number(delta);
     setCollateralAmount(amount);
   }
 
@@ -119,10 +119,10 @@ function Loans() {
     if (debtBalance) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + aureiAmount));
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + Number(aureiAmount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - aureiAmount));
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - Number(aureiAmount)));
           break;
       }
     }

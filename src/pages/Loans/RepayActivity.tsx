@@ -6,7 +6,7 @@ interface Props {
   collateralAmount: number;
   aureiAmount: number;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>, adjustment: boolean) => void;
+  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function RepayActivity({
@@ -37,7 +37,7 @@ function RepayActivity({
         </small>
       </label>
       <div className="input-group mb-3">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={(event) => { onCollateralAmountChange(event, true) }} />
+        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
         <span className="input-group-text font-monospace">{"FLR"}</span>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />

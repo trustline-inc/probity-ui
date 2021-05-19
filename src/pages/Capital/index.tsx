@@ -41,8 +41,8 @@ function Capital() {
   const onCollateralAmountChange = (event: any) => {
     var amount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) amount = Number(utils.formatEther(vault[1]).toString()) - delta;
-    else amount = Number(utils.formatEther(vault[1]).toString()) + delta;
+    if (activity === ActivityType.Redeem) amount = Number(utils.formatEther(vault[1]).toString()) - Number(delta);
+    else amount = Number(utils.formatEther(vault[1]).toString()) + Number(delta);
     setCollateralAmount(amount);
   }
 
@@ -51,10 +51,10 @@ function Capital() {
     if (equityBalance) {
       switch (activity) {
         case ActivityType.Stake:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + equityAmount));
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - equityAmount));
+          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - Number(equityAmount)));
           break;
       }
     }

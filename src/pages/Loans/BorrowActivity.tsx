@@ -14,7 +14,7 @@ interface Props {
   aureiAmount: number;
   rate: any;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>, adjustment: boolean) => void;
+  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function BorrowActivity({
@@ -27,6 +27,7 @@ function BorrowActivity({
 }: Props) {
   const { library } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
+  const [maxBorrow, setMaxBorrow] = React.useState(0)
 
   const { data: utilization } = useSWR([TELLER_ADDRESS, 'getUtilization'], {
     fetcher: fetcher(library, TellerABI.abi),
@@ -38,8 +39,9 @@ function BorrowActivity({
       const supply = Number(utils.formatEther(utilization[1].toString()));
       const newBorrows = borrows + Number(aureiAmount);
       const newUtilization = (newBorrows / supply);
-      const newAPR = (((1 / ((1 - newUtilization))) - 1) * 100) + 1
-      setEstimatedAPR(newAPR.toFixed(2))
+      const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+      setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+      setMaxBorrow(supply - borrows)
     }
   }, [rate, aureiAmount, utilization])
 
@@ -52,7 +54,7 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
+        <input type="number" min="0.000000000000000000" max={maxBorrow.toString()} placeholder="0.000000000000000000" className="form-control" onChange={onAureiAmountChange} />
         <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>
       <div className="row pt-3 pb-1">
@@ -78,7 +80,7 @@ function BorrowActivity({
       </label>
       <div className="input-group mb-3">
         <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={(event) => {
-           onCollateralAmountChange(event, false) }} />
+           onCollateralAmountChange(event) }} />
         <span className="input-group-text font-monospace">{"FLR"}</span>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
