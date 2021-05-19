@@ -25,6 +25,7 @@ function Capital() {
   const [equityAmount, setEquityAmount] = React.useState(0);
   const [interestAmount, setInterestAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
+  const [totalCollateral, setTotalCollateral] = React.useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
@@ -39,11 +40,12 @@ function Capital() {
   })
 
   const onCollateralAmountChange = (event: any) => {
-    var amount;
+    var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) amount = Number(utils.formatEther(vault[1]).toString()) - Number(delta);
-    else amount = Number(utils.formatEther(vault[1]).toString()) + Number(delta);
-    setCollateralAmount(amount);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault[1]).toString()) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault[1]).toString()) + Number(delta);
+    setTotalCollateral(totalAmount);
+    setCollateralAmount(delta);
   }
 
   // Dynamically calculate the collateralization ratio
@@ -51,20 +53,20 @@ function Capital() {
     if (equityBalance) {
       switch (activity) {
         case ActivityType.Stake:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + Number(equityAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - Number(equityAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - Number(equityAmount)));
           break;
       }
     }
-  }, [collateralAmount, collateralPrice, equityAmount, equityBalance, activity]);
+  }, [totalCollateral, collateralPrice, equityAmount, equityBalance, activity]);
 
   const onEquityAmountChange = (event: any) => {
     const amount = Number(event.target.value)
     setEquityAmount(amount);
     if (equityAmount > 0)
-      setCollateralRatio(collateralAmount / amount);
+      setCollateralRatio(totalCollateral / amount);
   }
 
   const onInterestAmountChange = (event: any) => {

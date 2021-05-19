@@ -23,6 +23,7 @@ function Loans() {
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
+  const [totalCollateral, setTotalCollateral] = React.useState(0);
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
@@ -99,11 +100,12 @@ function Loans() {
   }
 
   const onCollateralAmountChange = (event: any) => {
-    var amount;
+    var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Repay) amount = Number(utils.formatEther(vault[0]).toString()) - Number(delta);
-    else amount = Number(utils.formatEther(vault[0]).toString()) + Number(delta);
-    setCollateralAmount(amount);
+    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault[0]).toString()) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault[0]).toString()) + Number(delta);
+    setTotalCollateral(totalAmount);
+    setCollateralAmount(delta);
   }
 
   // Start listening to price feed
@@ -120,14 +122,14 @@ function Loans() {
     if (debtBalance) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + Number(aureiAmount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((collateralAmount * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - Number(aureiAmount)));
           break;
       }
     }
-  }, [collateralAmount, collateralPrice, aureiAmount, debtBalance, activity]);
+  }, [totalCollateral, collateralPrice, aureiAmount, debtBalance, activity]);
 
   // Ensure loan size input does not exceed maximum
   React.useEffect(() => {
