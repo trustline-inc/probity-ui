@@ -55,7 +55,7 @@ function Loans() {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           { 
             gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 25,
+            gasLimit: 250000,
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -86,7 +86,7 @@ function Loans() {
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { 
             gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 25
+            gasLimit: 250000
           }
         );
         data = await result.wait();

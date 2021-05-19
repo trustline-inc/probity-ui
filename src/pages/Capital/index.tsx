@@ -130,7 +130,7 @@ function Capital() {
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { 
             gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 25,
+            gasLimit: 250000,
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -156,7 +156,7 @@ function Capital() {
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           {
             gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 25
+            gasLimit: 250000
           }
         );
         const data = await result.wait();
@@ -182,7 +182,7 @@ function Capital() {
           isTCN,
           {
             gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 25
+            gasLimit: 250000
           }
         );
         const data = await result.wait();
