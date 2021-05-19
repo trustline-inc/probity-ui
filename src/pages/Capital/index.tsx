@@ -176,7 +176,10 @@ function Capital() {
         const result = await treasury.withdraw(
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
           isTCN,
-          { gasPrice: web3.utils.toWei('7000', 'Gwei') }
+          {
+            gasPrice: web3.utils.toWei('7250', 'Gwei'),
+            gasLimit: web3.utils.toWei('250000', 'Gwei')
+          }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
