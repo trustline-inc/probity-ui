@@ -34,10 +34,11 @@ function BorrowActivity({
 
   React.useEffect(() => {
     if (utilization) {
-      const borrows = utils.formatEther(utilization[0].toString());
-      const supply = utils.formatEther(utilization[1].toString());
-      const newUtilization = (Number(borrows) + aureiAmount) / Number(supply);
-      const newAPR = 1 / ((1 - newUtilization))
+      const borrows = Number(utils.formatEther(utilization[0].toString()));
+      const supply = Number(utils.formatEther(utilization[1].toString()));
+      const newBorrows = borrows + Number(aureiAmount);
+      const newUtilization = (newBorrows / supply);
+      const newAPR = (((1 / ((1 - newUtilization))) - 1) * 100) + 1
       setEstimatedAPR(newAPR.toFixed(2))
     }
   }, [rate, aureiAmount, utilization])
