@@ -129,7 +129,7 @@ function Capital() {
         const result = await treasury.stake(
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('15', 'Gwei'),
+            gasPrice: web3.utils.toWei('7000', 'Gwei'),
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -153,7 +153,7 @@ function Capital() {
         const result = await treasury.redeem(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
-          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+          { gasPrice: web3.utils.toWei('7000', 'Gwei') }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -176,7 +176,7 @@ function Capital() {
         const result = await treasury.withdraw(
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
           isTCN,
-          { gasPrice: web3.utils.toWei('15', 'Gwei') }
+          { gasPrice: web3.utils.toWei('7000', 'Gwei') }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
