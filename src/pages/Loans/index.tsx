@@ -156,6 +156,7 @@ function Loans() {
                 activity === ActivityType.Borrow && (
                   <BorrowActivity
                     rate={rate}
+                    aureiAmount={aureiAmount}
                     collateralRatio={collateralRatio}
                     collateralAmount={collateralAmount}
                     onAureiAmountChange={onAureiAmountChange}

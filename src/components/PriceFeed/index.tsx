@@ -23,8 +23,8 @@ function PriceFeed({ collateralAmount }: { collateralAmount: number; }) {
     <div className="row">
       <div className="col-12">
         <div className="py-2 h-100 d-flex flex-row align-items-center justify-content-center text-center">
-          <div className="mx-4"><span className="text-muted h6">FLR/USD</span><br />${collateralPrice}</div>
-          <div className="mx-4"><span className="text-muted h6">Value</span><br />${Math.abs(collateralValue).toFixed(2)}</div>
+          <div className="mx-4"><span className="text-muted">FLR/USD</span><br />${collateralPrice}</div>
+          <div className="mx-4"><span className="text-muted">Value</span><br />${Math.abs(collateralValue).toFixed(2)}</div>
         </div>
       </div>
     </div>

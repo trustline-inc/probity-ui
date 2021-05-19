@@ -2353,10 +2353,10 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@trustline-inc/aurei@0.9.0":
-  version "0.9.0"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/aurei/0.9.0/4b45219b49753b125ec92def962a07e292eb48faa40d811f6d89d91f934a422a#5ce9b16d2df07cd35ca1e7ac48de4c0d044ea824"
-  integrity sha512-JpvYzVSKt1bssFzJ88ZE0fdBHMWjGPzhRZCThKpz7ufWmv5iadtlsEipmqOkdBdOASL3NbBdCW6c4gcGmEIvsA==
+"@trustline-inc/aurei@0.10.0":
+  version "0.10.0"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/aurei/0.10.0/ac4bcf9649ea5dc8477403fc1efcd57b9b4e702577f3e94b405065399256e160#9f9d918f6e165ed409afe08b1b5f835d70d026d4"
+  integrity sha512-HKMgHEJ+xD/ZtZ/xhRQcEac4lUgdatD9XRlH+H+jB39zqO6zoAR4kEfbZdyD00MYSFdBtLcleAHAZQvWOsFbmg==
 
 "@types/anymatch@*":
   version "1.3.1"
