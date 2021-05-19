@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
-import { utils, BigNumber } from "ethers";
+import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { TELLER_ADDRESS } from '../../constants';
 import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
