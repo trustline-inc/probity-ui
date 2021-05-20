@@ -49,7 +49,7 @@ function App() {
               <Navbar />
             </EventContext.Provider>
           </div>
-          <div className="flex-grow-1 min-vh-100 page-container">
+          <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">
             <div className="container-fluid">
               <div className="row mt-3">
                 <div className="col-12">
