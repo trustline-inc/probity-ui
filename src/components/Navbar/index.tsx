@@ -96,6 +96,11 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/transfers">
+              <i className="fas fa-paper-plane" /> Transfers
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/transactions">
               <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
             </NavLink>

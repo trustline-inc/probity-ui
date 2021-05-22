@@ -10,5 +10,8 @@ export enum Activity {
 
   // Vault
   Deposit,
-  Withdraw
+  Withdraw,
+
+  // Transfer
+  Transfer
 }

@@ -13,6 +13,7 @@ import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
 import Transactions from "../../pages/Transactions";
+import Transfers from "../../pages/Transfers";
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
@@ -126,6 +127,9 @@ function App() {
                         </Route>
                         <Route path="/transactions">
                           <Transactions />
+                        </Route>
+                        <Route path="/transfers">
+                          <Transfers />
                         </Route>
                         <Route path="/">
                           <Capital />
