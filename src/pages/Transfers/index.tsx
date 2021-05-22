@@ -2,8 +2,9 @@ import React, { useContext } from "react";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Info from '../../components/Info';
-import { Contract } from "ethers";
-import { BRIDGE_ADDRESS } from '../../constants';
+import { Contract, utils } from "ethers";
+import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
+import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
 import BridgeABI from "@trustline-inc/aurei/artifacts/contracts/Bridge.sol/Bridge.json";
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
@@ -41,12 +42,19 @@ export default function Transfers() {
       const address = json.addresses[0].addressDetails.address;
 
       if (library && account) {
+        const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
         const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
 
         try {
-          const nonce = 1;
-          const result = await bridge.transferAureiToXRP(address, aureiAmount, nonce);
-          const data = await result.wait();
+          var result, data;
+          result = await aurei.approve(
+            BRIDGE_ADDRESS,
+            utils.parseUnits(aureiAmount.toString(), "ether").toString()
+          );
+          data = await result.wait();
+          ctx.updateTransactions(data);
+          result = await bridge.transferAureiToXRP(address, aureiAmount, 1);
+          data = await result.wait();
           ctx.updateTransactions(data);
         } catch (error) {
           console.log(error);
