@@ -28,40 +28,45 @@ export default function Transfers() {
   }
 
   const onClick = async () => {
-    const response = await fetch(`https://trustline.app/${username}`, {
-      method: "get",
-      headers: {
-        'Accept': 'application/xrpl-testnet+json',
-        'PayID-Version': '1.0'
-      }
-    })
-    const json = await response.json()
+    try {
+      const headers = new Headers()
+      headers.append('Accept', 'application/xrpl-testnet+json')
+      headers.append('PayID-Version', '1.0')
 
-    if (json.addresses.length > 0) {
-      // Take the first one for now
-      const address = json.addresses[0].addressDetails.address;
+      const response = await fetch(new Request(`https://trustline.app/${username}`), {
+        method: 'GET',
+        headers
+      })
 
-      if (library && account) {
-        const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
-        const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+      const json = await response.json()
 
-        try {
-          var result, data;
-          result = await aurei.approve(
-            BRIDGE_ADDRESS,
-            utils.parseUnits(aureiAmount.toString(), "ether").toString()
-          );
-          data = await result.wait();
-          ctx.updateTransactions(data);
-          result = await bridge.transferAureiToXRP(address, aureiAmount, 1);
-          data = await result.wait();
-          ctx.updateTransactions(data);
-        } catch (error) {
-          console.log(error);
-          setError(error);
+      if (json.addresses.length > 0) {
+        // Take the first one for now
+        const address = json.addresses[0].addressDetails.address;
+
+        if (library && account) {
+          const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
+          const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+
+          try {
+            var result, data;
+            result = await aurei.approve(
+              BRIDGE_ADDRESS,
+              utils.parseUnits(aureiAmount.toString(), "ether").toString()
+            );
+            data = await result.wait();
+            ctx.updateTransactions(data);
+            result = await bridge.transferAureiToXRP(address, aureiAmount, 1);
+            data = await result.wait();
+            ctx.updateTransactions(data);
+          } catch (error) {
+            console.log(error);
+            setError(error);
+          }
         }
       }
-
+    } catch (error) {
+      console.log(error)
     }
   }
 
