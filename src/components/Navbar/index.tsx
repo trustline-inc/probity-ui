@@ -96,6 +96,11 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/swaps">
+              <i className="fas fa-sync" /> Swaps
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/transfers">
               <i className="fas fa-paper-plane" /> Transfers
             </NavLink>

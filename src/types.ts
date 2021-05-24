@@ -4,6 +4,9 @@ export enum Activity {
   Redeem,
   Interest,
 
+  // Exchange
+  Exchange,
+
   // Loans
   Borrow,
   Repay,
