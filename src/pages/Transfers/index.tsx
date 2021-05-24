@@ -28,7 +28,7 @@ export default function Transfers() {
   }
 
   const onClick = async () => {
-    const response = await fetch(`http://127.0.0.1:8082/${username}`, {
+    const response = await fetch(`https://trustline.app/${username}`, {
       method: "get",
       headers: {
         'Accept': 'application/xrpl-testnet+json',
