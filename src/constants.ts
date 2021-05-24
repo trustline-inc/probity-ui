@@ -2,7 +2,7 @@
  * Coston 2 Testnet Aurei addresses
  */
 export const AUREI_ADDRESS    = process.env && process.env.REACT_APP_AUREI_ADDRESS    ? process.env.REACT_APP_AUREI_ADDRESS    : "0xf756fA532845c4Ac84609F31f7341A63Ee5B72A0";
-export const BRIDGE_ADDRESS   = process.env && process.env.REACT_APP_BRIDGE_ADDRESS   ? process.env.REACT_APP_BRIDGE_ADDRESS   : "0x31937Bc8DE7Fd5BD91B2c838A505FA0dc41817Bb";
+export const BRIDGE_ADDRESS   = process.env && process.env.REACT_APP_BRIDGE_ADDRESS   ? process.env.REACT_APP_BRIDGE_ADDRESS   : "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C";
 export const REGISTRY_ADDRESS = process.env && process.env.REACT_APP_REGISTRY_ADDRESS ? process.env.REACT_APP_REGISTRY_ADDRESS : "0x0b4A04860d90f192eF0f399867991f35B957ed2b";
 export const TCNTOKEN_ADDRESS = process.env && process.env.REACT_APP_TCNTOKEN_ADDRESS ? process.env.REACT_APP_TCNTOKEN_ADDRESS : "0x36f86C3046503d8d246FAAf3E986705AaF3c22eD"
 export const TELLER_ADDRESS   = process.env && process.env.REACT_APP_TELLER_ADDRESS   ? process.env.REACT_APP_TELLER_ADDRESS   : "0x06faF6eD3A46beDa8731104307a9cCf077c8a975";
