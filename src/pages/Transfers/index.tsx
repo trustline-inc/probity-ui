@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import web3 from "web3";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Info from '../../components/Info';
@@ -56,7 +57,14 @@ export default function Transfers() {
             );
             data = await result.wait();
             ctx.updateTransactions(data);
-            result = await bridge.transferAureiToXRP(address, aureiAmount, 1);
+            result = await bridge.transferAureiToXRP(
+              address,
+              utils.parseUnits(aureiAmount.toString(), "ether").toString(),
+              (Date.now() / 1000).toFixed(0),
+              {
+                gasPrice: web3.utils.toWei('225', 'Gwei'),
+                gasLimit: 300000
+              });
             data = await result.wait();
             ctx.updateTransactions(data);
           } catch (error) {
@@ -80,7 +88,7 @@ export default function Transfers() {
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
-            <div className="col-md-6 offset-md-3">
+            <div className="col-md-8 offset-md-2">
               <label className="form-label">Amount</label>
               <div className="input-group">
                 <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={aureiAmount ? aureiAmount : ""} onChange={onAureiAmountChange} />
@@ -89,7 +97,7 @@ export default function Transfers() {
             </div>
           </div>
           <div className="row mt-3">
-            <div className="col-md-6 offset-md-3">
+            <div className="col-md-8 offset-md-2">
               <label className="form-label">PayString</label>
               <div className="input-group">
                 <input type="text" className="form-control" value={username} onChange={onUsernameChange} />
@@ -98,7 +106,7 @@ export default function Transfers() {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-6 offset-md-3 mt-4 d-grid">
+            <div className="col-md-8 offset-md-2 mt-4 d-grid">
               <button
                 className="btn btn-primary btn-lg mt-4"
                 onClick={onClick}
