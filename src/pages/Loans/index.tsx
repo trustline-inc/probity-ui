@@ -54,8 +54,8 @@ function Loans() {
         const result = await teller.createLoan(
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 250000,
+            gasPrice: web3.utils.toWei('225', 'Gwei'),
+            gasLimit: 300000,
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -85,8 +85,8 @@ function Loans() {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('7250', 'Gwei'),
-            gasLimit: 250000
+            gasPrice: web3.utils.toWei('225', 'Gwei'),
+            gasLimit: 300000
           }
         );
         data = await result.wait();
