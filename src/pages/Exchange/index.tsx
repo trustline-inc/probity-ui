@@ -1,23 +1,17 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Info from '../../components/Info';
-import { Contract, utils } from "ethers";
-import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
-import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
-import BridgeABI from "@trustline-inc/aurei/artifacts/contracts/Bridge.sol/Bridge.json";
-import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 
 export default function Exchange() {
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { active } = useWeb3React<Web3Provider>()
   const [coin, setCoin] = React.useState("FLR");
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [send, setSend] = React.useState("FLR");
   const [receive, setReceive] = React.useState("AUR");
-  const [error, setError] = React.useState<any|null>(null);
-  const ctx = useContext(EventContext)
+  const [error] = React.useState<any|null>(null);
 
   const onAureiAmountChange = (event: any) => {
     const amount = event.target.value;
