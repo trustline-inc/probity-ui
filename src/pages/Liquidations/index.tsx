@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
 import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
@@ -10,6 +11,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
+import EventContext from "../../contexts/TransactionContext"
 
 function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   const [users, setUsers] = useState([]);
@@ -17,6 +19,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   const [price, setPrice] = useState(0.00);
   const { library, active } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
+  const ctx = useContext(EventContext)
 
   useEffect(() => {
     if (library) {
@@ -46,7 +49,9 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
             debt: numeral(utils.formatEther(debt.toString()).toString()).format('$0,0.00'),
             capital: numeral(utils.formatEther(capital.toString()).toString()).format('$0,0.00'),
             loanCollateral: numeral(Number(utils.formatEther(loanCollateral.toString())) * collateralPrice).format('$0,0.00'),
-            stakedCollateral: numeral(Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice).format('$0,0.00')
+            stakedCollateral: numeral(Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice).format('$0,0.00'),
+            loanLiquidationEligible: Number(utils.formatEther(loanCollateral.toString())) * collateralPrice < (Number(utils.formatEther(debt.toString())) * 1.5),
+            capitalLiquidationEligible: Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice < (Number(utils.formatEther(capital.toString())) * 1.5),
           });
         }
         setVaults(_vaults);
@@ -58,15 +63,24 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
 
   const liquidate = async (address: string, type: string) => {
     if (library) {
+      const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
       const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        let result;
+        let result, data;
         if (type === "debt") {
+          result = await aurei.approve(
+            TELLER_ADDRESS,
+            utils.parseEther(price.toString()).toString()
+          );
+          data = await result.wait();
+          ctx.updateTransactions(data);
           result = await teller.liquidate(address, utils.parseEther(price.toString()).toString());
+          data = await result.wait();
         } else {
           result = await treasury.liquidate(address)
+          data = await result.wait();
         }
         console.log(result);
       } catch (error) {
@@ -76,7 +90,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
     }
   }
 
-  const rows = vaults.map((vault: any, index: number) => {
+  const liquidationEligibleVaults = vaults.filter((vault: any) => vault.loanLiquidationEligible || vault.capitalLiquidationEligible).map((vault: any, index: number) => {
     return (
       <div key={index} className="row">
         <div className="col-8 border">
@@ -103,9 +117,34 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
     )
   })
 
+  const nonEligibleVaults = vaults.filter((vault: any) => !vault.loanLiquidationEligible && !vault.capitalLiquidationEligible).map((vault: any, index: number) => {
+    return (
+      <div key={index} className="row">
+        <div className="col-12 border">
+          <pre className="mt-3">{JSON.stringify(vault, null, 2)}</pre>
+        </div>
+        <hr className="my-3" />
+      </div>
+    )
+  })
+
   return (
     <Activity active={active} activity={ActivityType.Liquidate} error={error}>
-      {rows}
+      <h4>Under-Collateralized Vaults</h4>
+      {liquidationEligibleVaults}
+      {liquidationEligibleVaults.length === 0 && (
+        <>
+          <div className="d-flex justify-content-center align-items-center py-5">
+            No vaults are currently eligible for liquidation
+          </div>
+          <div>
+
+          </div>
+        </>
+      )}
+      <div className="py-1" />
+      <h4>Non-Eligible Vaults</h4>
+      {nonEligibleVaults}
     </Activity>
   )
 }

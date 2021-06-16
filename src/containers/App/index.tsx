@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
+import { Contract } from "ethers";
 import fetcher from "../../fetcher";
 import FtsoABI from "@trustline-inc/aurei/artifacts/contracts/Ftso.sol/Ftso.json";
 import { FTSO_ADDRESS } from '../../constants';
@@ -47,10 +48,16 @@ function App() {
     const runEffect = async () => {
       if (price !== undefined) {
         setCollateralPrice(price.toNumber() / 100);
+      } else {
+        if (library) {
+          const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
+          const result = await ftso.getPrice();
+          setCollateralPrice(result.toString());
+        }
       }
     }
     runEffect();
-  }, [price]);
+  }, [library, price]);
 
   useEffect(() => {
     if (library) {
@@ -62,7 +69,7 @@ function App() {
         library.removeAllListeners("block");
       };
     }
-  });
+  }, [library, mutatePrice]);
 
   useEffect(() => {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
