@@ -13,5 +13,8 @@ export enum Activity {
   Withdraw,
 
   // Transfer
-  Transfer
+  Transfer,
+
+  // Liquidations
+  Liquidate
 }
