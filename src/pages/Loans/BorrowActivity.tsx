@@ -68,7 +68,7 @@ function BorrowActivity({
               <br />
               {rate && (
                 aureiAmount ? (
-                  estimatedAPR
+                  Math.min(estimatedAPR, 100)
                 ) : utils.formatEther(rate.div("10000000").toString().slice(2))
               )}%
             </div>
