@@ -4,6 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
+import numeral from "numeral";
 
 export default function Transactions() {
   const { active } = useWeb3React<Web3Provider>();
@@ -191,6 +192,34 @@ export default function Transactions() {
                   <tr className="d-flex">
                     <td className="col-3">{utils.formatEther(event.args.value).toString()}</td>
                     <td className="col-3">{event.args.spender}</td>
+                  </tr>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
+        {
+          event.event === "Liquidation" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0">
+                  <thead>
+                    <tr className="d-flex">
+                      <th className="col-3" scope="col">Owner</th>
+                      <th className="col-3" scope="col">Coll. Amt.</th>
+                      <th className="col-3" scope="col">Coll. Val.</th>
+                      {/* <th className="col-3" scope="col">Keeper</th> */}
+                      <th className="col-3" scope="col">Timestamp</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <tr className="d-flex">
+                    <td className="col-3 text-truncate">{event.args.borrower}</td>
+                    <td className="col-3">{numeral(utils.formatEther(event.args.collateralAmount)).format('0,0.0[00000000000000000]')}</td>
+                    <td className="col-3">{numeral(utils.formatEther(event.args.collateralValue)).format('$0,0.00')}</td>
+                    {/* <td className="col-3">{event.args.liquidator}</td> */}
+                    <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
                   </tr>
                 </tbody>
                 </table>

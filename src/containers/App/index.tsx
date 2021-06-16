@@ -52,7 +52,7 @@ function App() {
         if (library) {
           const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
           const result = await ftso.getPrice();
-          setCollateralPrice(result.toString());
+          setCollateralPrice(Number(result.toString()) / 100);
         }
       }
     }

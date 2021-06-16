@@ -78,9 +78,11 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           ctx.updateTransactions(data);
           result = await teller.liquidate(address, utils.parseEther(price.toString()).toString());
           data = await result.wait();
+          ctx.updateTransactions(data);
         } else {
           result = await treasury.liquidate(address)
           data = await result.wait();
+          ctx.updateTransactions(data);
         }
         console.log(result);
       } catch (error) {
@@ -100,14 +102,14 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <div className="mb-3">
               <label htmlFor="purchase_price" className="form-label">Purchase Price</label>
-              <input type="number" className="form-control" id="purchase_price" placeholder="0.00" onChange={event => setPrice(Number(event.target.value))} />
+              <input type="number" className="form-control" id="purchase_price" placeholder="0.00" onChange={event => setPrice(Number(event.target.value))} disabled={!vault.loanLiquidationEligible} />
               <small className="text-muted">Purchase price in AUR (debt liquidation)</small>
             </div>
-            <button className="btn btn-primary my-2 w-100" onClick={() => liquidate(vault.address, "debt")}>
+            <button className="btn btn-primary my-2 w-100" disabled={!vault.loanLiquidationEligible} onClick={() => liquidate(vault.address, "debt")}>
               Liquidate Debt
             </button>
             <br/>
-            <button className="btn btn-primary w-100" onClick={() => liquidate(vault.address, "capital")}>
+            <button className="btn btn-primary w-100" disabled={!vault.capitalLiquidationEligible} onClick={() => liquidate(vault.address, "capital")}>
               Liquidate Capital
             </button>
           </div>
