@@ -9,8 +9,9 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
+import numeral from "numeral";
 
-function Liquidations() {
+function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   const [users, setUsers] = useState([]);
   const [vaults, setVaults] = useState<any>([]);
   const [price, setPrice] = useState(0.00);
@@ -42,10 +43,10 @@ function Liquidations() {
           const [loanCollateral, stakedCollateral] = await vault.balanceOf(address);
           _vaults.push({
             address: address,
-            debt: utils.formatEther(debt.toString()).toString(),
-            capital: utils.formatEther(capital.toString()).toString(),
-            loanCollateral: utils.formatEther(loanCollateral.toString()).toString(),
-            stakedCollateral: utils.formatEther(stakedCollateral.toString()).toString()
+            debt: numeral(utils.formatEther(debt.toString()).toString()).format('$0,0.00'),
+            capital: numeral(utils.formatEther(capital.toString()).toString()).format('$0,0.00'),
+            loanCollateral: numeral(Number(utils.formatEther(loanCollateral.toString())) * collateralPrice).format('$0,0.00'),
+            stakedCollateral: numeral(Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice).format('$0,0.00')
           });
         }
         setVaults(_vaults);
@@ -53,7 +54,7 @@ function Liquidations() {
 
       runEffect();
     }
-  }, [library, users])
+  }, [library, users, collateralPrice])
 
   const liquidate = async (address: string, type: string) => {
     if (library) {
@@ -88,7 +89,7 @@ function Liquidations() {
               <input type="number" className="form-control" id="purchase_price" placeholder="0.00" onChange={event => setPrice(Number(event.target.value))} />
               <small className="text-muted">Purchase price in AUR (debt liquidation)</small>
             </div>
-            <button className="btn btn-primary my-2 w-100" onClick={() => liquidate(vault.address, "debt", price)}>
+            <button className="btn btn-primary my-2 w-100" onClick={() => liquidate(vault.address, "debt")}>
               Liquidate Debt
             </button>
             <br/>

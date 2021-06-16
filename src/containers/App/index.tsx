@@ -162,7 +162,7 @@ function App() {
                           <Transfers />
                         </Route>
                         <Route path="/liquidations">
-                          <Liquidations />
+                          <Liquidations collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/">
                           <Capital collateralPrice={collateralPrice} />
