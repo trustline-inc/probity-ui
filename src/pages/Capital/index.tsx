@@ -17,7 +17,7 @@ import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.j
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
-function Capital() {
+function Capital({ collateralPrice }: { collateralPrice: number }) {
   const location = useLocation();
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
@@ -26,13 +26,11 @@ function Capital() {
   const [interestAmount, setInterestAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [totalCollateral, setTotalCollateral] = React.useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
-  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+  const { data: vault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
@@ -73,15 +71,6 @@ function Capital() {
     const amount = Number(event.target.value)
     setInterestAmount(amount);
   }
-
-  // Start listening to price feed
-  React.useEffect(() => {
-    const runEffect = async () => {
-      // TODO: Fetch live price
-      setCollateralPrice(1.00);
-    }
-    runEffect();
-  }, []);
 
   // Set activity by the path
   React.useEffect(() => {

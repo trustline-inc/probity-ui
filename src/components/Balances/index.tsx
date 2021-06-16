@@ -15,7 +15,7 @@ import './index.css';
 
 function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'get', account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
   const { data: totalLoanCollateral, mutate: mutateTotalLoanCollateral } = useSWR([VAULT_ADDRESS, 'totalLoanCollateral'], {

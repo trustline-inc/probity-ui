@@ -17,7 +17,7 @@ import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
-function Loans() {
+function Loans({ collateralPrice }: { collateralPrice: number }) {
   const location = useLocation();
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -25,12 +25,11 @@ function Loans() {
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [totalCollateral, setTotalCollateral] = React.useState(0);
   const [aureiAmount, setAureiAmount] = React.useState(0);
-  const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxBorrow, setMaxBorrow] = React.useState(0)
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ADDRESS, 'get', account], {
+  const { data: vault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
   const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
@@ -111,15 +110,6 @@ function Loans() {
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }
-
-  // Start listening to price feed
-  React.useEffect(() => {
-    const runEffect = async () => {
-      // TODO: Fetch live price
-      setCollateralPrice(1.00);
-    }
-    runEffect();
-  }, []);
 
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {

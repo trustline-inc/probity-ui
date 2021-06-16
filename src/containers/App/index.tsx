@@ -4,9 +4,13 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
+import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
+import fetcher from "../../fetcher";
+import FtsoABI from "@trustline-inc/aurei/artifacts/contracts/Ftso.sol/Ftso.json";
+import { FTSO_ADDRESS } from '../../constants';
 import { injected } from "../../connectors";
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
@@ -20,7 +24,8 @@ import EventContext from "../../contexts/TransactionContext"
 
 function App() {
   const [mobileDevice, setMobileDevice] = useState(false);
-  const { active, activate } = useWeb3React<Web3Provider>();
+  const [collateralPrice, setCollateralPrice] = useState(0.00);
+  const { activate, active, library } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
     "displayInfoAlert",
     true
@@ -29,10 +34,34 @@ function App() {
   const updateTransactions = (transaction: any) => {
     setTransactions([...transactions, transaction]);
   };
+  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getPrice'], {
+    fetcher: fetcher(library, FtsoABI.abi),
+  })
 
   const onClick = () => {
     activate(injected);
   };
+
+  useEffect(() => {
+    const runEffect = async () => {
+      if (price !== undefined) {
+        setCollateralPrice(price.toNumber() / 100);
+      }
+    }
+    runEffect();
+  }, [price]);
+
+  useEffect(() => {
+    if (library) {
+      library.on("block", () => {
+        mutatePrice(undefined, true);
+      });
+
+      return () => {
+        library.removeAllListeners("block");
+      };
+    }
+  });
 
   useEffect(() => {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
@@ -120,10 +149,10 @@ function App() {
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
                         <Route path="/stake">
-                          <Capital />
+                          <Capital collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/loans">
-                          <Loans />
+                          <Loans collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/transactions">
                           <Transactions />
@@ -132,7 +161,7 @@ function App() {
                           <Transfers />
                         </Route>
                         <Route path="/">
-                          <Capital />
+                          <Capital collateralPrice={collateralPrice} />
                         </Route>
                       </Switch>
                     </EventContext.Provider>
