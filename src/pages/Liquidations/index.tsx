@@ -36,7 +36,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       const runEffect = async () => {
-        const _vaults = [];
+        const _vaults: any[] = [];
         for (let address of users) {
           const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
           const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
