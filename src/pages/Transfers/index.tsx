@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import web3 from "web3";
+import { Modal } from "bootstrap";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import QRCode from "react-qr-code";
 import Info from '../../components/Info';
 import { Contract, utils } from "ethers";
 import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
@@ -15,6 +17,7 @@ export default function Transfers() {
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [aureiAmount, setAureiAmount] = React.useState(0);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const [error, setError] = React.useState<any|null>(null);
   const ctx = useContext(EventContext)
 
@@ -28,7 +31,7 @@ export default function Transfers() {
     setUsername(username);
   }
 
-  const onClick = async () => {
+  const initiateTransfer = async () => {
     try {
       const headers = new Headers()
       headers.append('Accept', 'application/xrpl-testnet+json')
@@ -80,11 +83,31 @@ export default function Transfers() {
 
   return (
     <>
+      {
+        modalOpen && (
+          <div className="modal" id="qr_code" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Scan QR Code</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body d-flex justify-content-center">
+                  <QRCode value={account!} />
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setModalOpen(false)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
       <header className="pt-2">
         <h1>Transfers</h1>
-        <p className="lead">Transfer Aurei to the Trustline app.</p>
         {active && <Info />}
       </header>
+      <p className="lead">Send Aurei to the StablePay App</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
@@ -109,9 +132,25 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 mt-4 d-grid">
               <button
                 className="btn btn-primary btn-lg mt-4"
-                onClick={onClick}
+                onClick={initiateTransfer}
                 disabled={aureiAmount === 0}
               >Confirm</button>
+            </div>
+          </div>
+        </Activity>
+      </section>
+      <p className="lead">Receive Aurei from the StablePay App</p>
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
+        <Activity active={active} activity={ActivityType.Transfer} error={error}>
+          <div className="row">
+            <div className="col-md-8 offset-md-2 my-4 d-grid">
+              <button
+                className="btn btn-primary btn-lg"
+                onClick={() => {
+                  var modal = new Modal(document.getElementById('qr_code') as HTMLElement, {})
+                  modal.show();
+                }}
+              ><i className="fa fa-qrcode"/> Press for QR Code</button>
             </div>
           </div>
         </Activity>
