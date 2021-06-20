@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import web3 from "web3";
 import { Modal } from "bootstrap";
 import { useWeb3React } from '@web3-react/core'
@@ -14,10 +14,10 @@ import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 
 export default function Transfers() {
+  const modalRef = useRef(null);
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [aureiAmount, setAureiAmount] = React.useState(0);
-  const [modalOpen, setModalOpen] = React.useState(false);
   const [error, setError] = React.useState<any|null>(null);
   const ctx = useContext(EventContext)
 
@@ -81,27 +81,30 @@ export default function Transfers() {
     }
   }
 
+  const closeModal = () => {
+    const modal = new Modal(modalRef.current!, {})
+    modal.hide();
+  }
+
   return (
     <>
       {
-        modalOpen && (
-          <div className="modal" id="qr_code" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Scan QR Code</h5>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body d-flex justify-content-center">
-                  <QRCode value={account!} />
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setModalOpen(false)}>Close</button>
-                </div>
+        <div className="modal" ref={modalRef} id="qr_code" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Scan QR Code</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body d-flex justify-content-center">
+                <QRCode value={account!} />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal}>Close</button>
               </div>
             </div>
           </div>
-        )
+        </div>
       }
       <header className="pt-2">
         <h1>Transfers</h1>
@@ -147,7 +150,7 @@ export default function Transfers() {
               <button
                 className="btn btn-primary btn-lg"
                 onClick={() => {
-                  var modal = new Modal(document.getElementById('qr_code') as HTMLElement, {})
+                  const modal = new Modal(modalRef.current!, {})
                   modal.show();
                 }}
               ><i className="fa fa-qrcode"/> Press for QR Code</button>
