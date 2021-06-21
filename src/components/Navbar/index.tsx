@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import useSWR from "swr";
+import numeral from "numeral";
 import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
@@ -34,7 +35,7 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {parseFloat(formatEther(balance)).toFixed(4)} FLR
+        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} FLR
       </span>
     </div>
   );
