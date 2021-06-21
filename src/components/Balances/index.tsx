@@ -84,15 +84,13 @@ function Balances() {
         <h5>Collateral</h5>
         <div className="row my-2">
           <div className="col-12">
-            <strong>Loan Collateral</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Loan Collateral</h6>
             <span className="text-truncate">{numeral(utils.formatEther(vault[0])).format('0,0.0[00000000000000000]')} FLR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Staked Collateral</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Staked Collateral</h6>
             <span className="text-truncate">{numeral(utils.formatEther(vault[1])).format('0,0.0[00000000000000000]')} FLR</span>
           </div>
         </div>
@@ -100,30 +98,27 @@ function Balances() {
         <h5>Balance Sheet</h5>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Assets</strong>
+            <h6 className="text-decoration-underline text-secondary">Assets</h6>
           </div>
-          <span className="text-truncate">▸ {aureiBalance ? numeral(utils.formatEther(aureiBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
+          <span className="text-truncate">{aureiBalance ? numeral(utils.formatEther(aureiBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           <br/>
-          <span className="text-truncate">▸ {tcnBalance ? numeral(utils.formatEther(tcnBalance.toString())).format('0,0.0[00000000000000000]') : null} TCN</span>
+          <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.toString())).format('0,0.0[00000000000000000]') : null} TCN</span>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Debt</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Debt</h6>
             <span className="text-truncate">{debtBalance ? numeral(utils.formatEther(debtBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Capital</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Capital</h6>
             <span className="text-truncate">{capitalBalance ? numeral(utils.formatEther(capitalBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Interest</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Interest</h6>
             <span className="text-truncate">{interestBalance ? numeral(utils.formatEther(interestBalance.toString())).format('0,0.0[00000000000000000]') : null} TCN</span>
           </div>
         </div>
@@ -135,15 +130,13 @@ function Balances() {
         <h5>Collateral</h5>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Loan Collateral</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Loan Collateral</h6>
             <span className="text-truncate">{totalLoanCollateral ? numeral(utils.formatEther(totalLoanCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Staked Collateral</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Staked Collateral</h6>
             <span className="text-truncate">{totalStakedCollateral ? numeral(utils.formatEther(totalStakedCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
           </div>
         </div>
@@ -151,22 +144,19 @@ function Balances() {
         <h5>Balance Sheet</h5>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Assets</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Assets</h6>
             <span className="text-truncate">{totalAurei ? numeral(utils.formatEther(totalAurei.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Debt</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Debt</h6>
             <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
         <div className="row my-2 text-truncate">
           <div className="col-12">
-            <strong>Capital</strong>
-            <br/>
+            <h6 className="text-decoration-underline text-secondary">Capital</h6>
             <span className="text-truncate">{totalSupply ? numeral(utils.formatEther(totalSupply.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
           </div>
         </div>
