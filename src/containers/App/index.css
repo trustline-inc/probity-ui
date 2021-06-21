@@ -45,10 +45,6 @@ a {
   color: rgb(19, 110, 183);
 }
 
-* {
-  font-family: 'Roboto Slab', serif;
-}
-
 @media only screen and (max-width: 1280px) {
   .main-container {
     flex-direction: column;
