@@ -1,4 +1,4 @@
-# Probity dApp
+# ProbityDAO Portal
 
 A public web interface for the Probity blockchain bank.
 

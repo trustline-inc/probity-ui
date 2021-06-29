@@ -64,8 +64,8 @@ function Navbar() {
         <div className="d-flex flex-row justify-content-between">
           <div>
             <a className="navbar-brand" href="#/">
-              <img src={logo} alt="Probity" height="30" className="logo" />
-              &nbsp;Probity
+              <img src={logo} alt="ProbityDAO" height="30" className="logo" />
+              &nbsp;ProbityDAO
             </a>
           </div>
           <div className="navbar navbar-expand-lg navbar-light">
