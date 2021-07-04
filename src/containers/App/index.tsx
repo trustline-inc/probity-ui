@@ -99,11 +99,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Only testnet Spark (FLR) is currently supported as
-                      collateral. This is a pre-release alpha version and is
-                      only compatible with the Coston testnet. Do{" "}
-                      <strong>NOT</strong> try using real money. This app is
-                      currently for testing purposes only.
+                      Coston is currently undergoing an upgrade. Check the Trustline Telegram and Discord channels to be notified when the Coston upgrade is complete.
                       <button
                         type="button"
                         className="btn-close"
