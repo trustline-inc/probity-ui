@@ -12,7 +12,6 @@ import logo from "../../assets/logo.png";
 import "./index.css";
 import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
-import { request } from "node:http";
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -71,29 +70,34 @@ function Navbar() {
     }
 
     setRequestingTestCoins(true)
-    var url;
-    switch (process.env.NODE_ENV) {
-      case "development":
-        url = "http://localhost:3000/coston"
-        break
-      default:
-        url = "https://faucet.trustline.io/coston"
-    }
-    const response = await axios({
-      url,
-      params: {
-        user: account
+    try {
+      var url;
+      switch (process.env.NODE_ENV) {
+        case "development":
+          url = "http://localhost:3000/coston"
+          break
+        default:
+          url = "https://faucet.trustline.io/coston"
       }
-    })
-    setRequestingTestCoins(false)
+      const response = await axios({
+        url,
+        params: {
+          user: account
+        }
+      })
+      setRequestingTestCoins(false)
 
-    if (response.data.hash) {
-      const now = new Date()
-      const cooldown = now.setDate(now.getDate() + 1);
-      window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
-      alert(
-        `Sent 1,000 CFLR to ${account}. Testnet fund requests are limited to once per day.`
-      )
+      if (response.data.hash) {
+        const now = new Date()
+        const cooldown = now.setDate(now.getDate() + 1);
+        window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
+        alert(
+          `Sent 1,000 CFLR to ${account}. Testnet fund requests are limited to once per day.`
+        )
+      }
+    } catch (error) {
+      setRequestingTestCoins(false)
+      alert("An error occurred. Please report to the Probity Telegram group.")
     }
   }
 
@@ -128,12 +132,12 @@ function Navbar() {
               activeClassName="active"
               to="/capital"
             >
-              <i className="fas fa-coins" /> Capital
+              <i className="fas fa-coins" /> Stake
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Loans
+              <i className="fas fa-money-bill-wave-alt" /> Borrow
             </NavLink>
           </li>
           <li className="nav-item my-1">

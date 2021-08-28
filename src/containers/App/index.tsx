@@ -93,13 +93,13 @@ function App() {
                 <div className="col-12">
                   {displayInfoAlert ? (
                     <div
-                      className="alert alert-danger alert-dismissible fade show"
+                      className="alert alert-info alert-dismissible fade show"
                       role="alert"
                     >
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Coston is currently undergoing an upgrade. Check the Trustline Telegram and Discord channels to be notified when the Coston upgrade is complete.
+                      Probity is now live on Trustline's private Coston testnet until the public network is available again.
                       <button
                         type="button"
                         className="btn-close"
