@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import useSWR from "swr";
+import axios from "axios";
 import numeral from "numeral";
 import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
@@ -11,6 +12,7 @@ import logo from "../../assets/logo.png";
 import "./index.css";
 import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
+import { request } from "node:http";
 
 function Balance() {
   const { account, library } = useWeb3React<Web3Provider>();
@@ -45,6 +47,8 @@ function Navbar() {
   const { chainId, activate, active } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
+  const { account } = useWeb3React<Web3Provider>();
+  const [requestingTestCoins, setRequestingTestCoins] = useState(false)
 
   const onClick = () => {
     activate(injected);
@@ -55,6 +59,42 @@ function Navbar() {
   const toggleMobileMenuVisibility = () => {
     const currentVisibility = mobileMenuVisibility;
     setMobileMenuVisibility(!currentVisibility);
+  }
+
+  const handleFaucetRequest = async (event: React.MouseEvent) => {
+    event.preventDefault()
+
+    const cooldownPeriodEnd = window.localStorage.getItem("probity-testnet-faucet")!
+    if (cooldownPeriodEnd && new Date(Number(cooldownPeriodEnd)) > new Date()) {
+      const expiresAt = new Date(Number(cooldownPeriodEnd)).toLocaleString()
+      return alert(`Testnet funds have already been requested in the past day. The cooldown period expires at ${expiresAt}.`)
+    }
+
+    setRequestingTestCoins(true)
+    var url;
+    switch (process.env.NODE_ENV) {
+      case "development":
+        url = "http://localhost:3000/coston"
+        break
+      default:
+        url = "https://faucet.trustline.io/coston"
+    }
+    const response = await axios({
+      url,
+      params: {
+        user: account
+      }
+    })
+    setRequestingTestCoins(false)
+
+    if (response.data.hash) {
+      const now = new Date()
+      const cooldown = now.setDate(now.getDate() + 1);
+      window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
+      alert(
+        `Sent 1,000 CFLR to ${account}. Testnet fund requests are limited to once per day.`
+      )
+    }
   }
 
 
@@ -118,10 +158,30 @@ function Navbar() {
             <div className="chain-info">Chain ID: {chainId}</div>
           ) : null}
           {active ? (
-            <div className="mt-2 connected">
-              <i className="inline-block far fa-dot-circle text-success" />
-              &nbsp;Connected
-            </div>
+            <>
+              <div className="mt-2 connected">
+                <i className="inline-block far fa-dot-circle text-success" />
+                &nbsp;Connected
+              </div>
+              <div className="spacer spacer-1" />
+              <div>
+                <button
+                  className="btn btn-light"
+                  type="button"
+                  style={{ width: 140 }}
+                  onClick={handleFaucetRequest}
+                  disabled={requestingTestCoins}
+                >
+                  {
+                    requestingTestCoins ? (
+                      <i className="fas fa-circle-notch fa-spin"></i>
+                    ) : (
+                      <span><i className="mr-2" /> Request CFLR</span>
+                    )
+                  }
+                </button>
+              </div>
+            </>
           ) : (
             <div className="mt-2">
               <button
