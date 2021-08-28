@@ -13,7 +13,7 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import EventContext from "../../contexts/TransactionContext"
 
-function Liquidations({ collateralPrice }: { collateralPrice: number }) {
+function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [users, setUsers] = useState([]);
   const [vaults, setVaults] = useState<any>([]);
   const [price, setPrice] = useState(0.00);
@@ -137,7 +137,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
       {liquidationEligibleVaults.length === 0 && (
         <>
           <div className="d-flex justify-content-center align-items-center py-5">
-            No vaults are currently eligible for liquidation
+            No vault collateral is currently eligible for auction
           </div>
           <div>
 
@@ -151,4 +151,4 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   )
 }
 
-export default Liquidations;
+export default Auctions;

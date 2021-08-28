@@ -107,8 +107,8 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/liquidations">
-              <i className="fas fa-tint" /> Liquidations
+            <NavLink className="nav-link" activeClassName="active" to="/auctions">
+              <i className="fas fa-gavel" /> Auctions
             </NavLink>
           </li>
         </ul>

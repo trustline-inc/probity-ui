@@ -19,7 +19,7 @@ import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
-import Liquidations from "../../pages/Liquidations";
+import Auctions from "../../pages/Auctions";
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
@@ -164,8 +164,8 @@ function App() {
                         <Route path="/transfers">
                           <Transfers />
                         </Route>
-                        <Route path="/liquidations">
-                          <Liquidations collateralPrice={collateralPrice} />
+                        <Route path="/auctions">
+                          <Auctions collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/">
                           <Capital collateralPrice={collateralPrice} />
