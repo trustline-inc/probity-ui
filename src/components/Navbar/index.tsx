@@ -102,13 +102,13 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/transactions">
-              <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
+            <NavLink className="nav-link" activeClassName="active" to="/auctions">
+              <i className="fas fa-gavel" /> Auctions
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/auctions">
-              <i className="fas fa-gavel" /> Auctions
+            <NavLink className="nav-link" activeClassName="active" to="/transactions">
+              <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
             </NavLink>
           </li>
         </ul>
