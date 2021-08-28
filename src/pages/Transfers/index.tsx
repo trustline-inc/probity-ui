@@ -110,7 +110,7 @@ export default function Transfers() {
         <h1>Transfers</h1>
         {active && <Info />}
       </header>
-      <p className="lead">Send Aurei to the StablePay App</p>
+      <p className="lead">Send Aurei to the Trustline App</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
@@ -142,7 +142,7 @@ export default function Transfers() {
           </div>
         </Activity>
       </section>
-      <p className="lead">Receive Aurei from the StablePay App</p>
+      <p className="lead">Receive Aurei from the Trustline App</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
