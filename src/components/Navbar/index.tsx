@@ -8,7 +8,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
 import { injected } from "../../connectors";
 import fetcher from "../../fetcher";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/probity.png";
 import "./index.css";
 import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
@@ -106,10 +106,9 @@ function Navbar() {
     <nav className="d-flex flex-column align-items-end left-nav-flex h-100">
       <div className="container-fluid mb-3">
         <div className="d-flex flex-row justify-content-between">
-          <div>
+          <div className="mb-3">
             <a className="navbar-brand" href="#/">
-              <img src={logo} alt="ProbityDAO" height="30" className="logo" />
-              &nbsp;ProbityDAO
+              <img src={logo} alt="Probity" height="50" className="logo" />
             </a>
           </div>
           <div className="navbar navbar-expand-lg navbar-light">
