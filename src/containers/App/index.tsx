@@ -99,7 +99,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Probity is now live on Trustline's private Coston testnet until the public network is available again.
+                      Probity is now live on <a href="https://trustline.co" target="blank">Trustline's</a> private Coston testnet until a public network is available.
                       <button
                         type="button"
                         className="btn-close"
