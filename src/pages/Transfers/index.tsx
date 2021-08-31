@@ -65,8 +65,7 @@ export default function Transfers() {
               utils.parseUnits(aureiAmount.toString(), "ether").toString(),
               (Date.now() / 1000).toFixed(0),
               {
-                gasPrice: web3.utils.toWei('225', 'Gwei'),
-                gasLimit: 300000
+                gasPrice: web3.utils.toWei('225', 'Gwei')
               });
             data = await result.wait();
             ctx.updateTransactions(data);

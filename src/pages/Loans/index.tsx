@@ -54,7 +54,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           { 
             gasPrice: web3.utils.toWei('225', 'Gwei'),
-            gasLimit: 300000,
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -84,8 +83,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('225', 'Gwei'),
-            gasLimit: 300000
+            gasPrice: web3.utils.toWei('225', 'Gwei')
           }
         );
         data = await result.wait();
