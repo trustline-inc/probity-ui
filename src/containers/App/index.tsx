@@ -50,9 +50,13 @@ function App() {
         setCollateralPrice(price.toNumber() / 100);
       } else {
         if (library) {
-          const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
-          const result = await ftso.getPrice();
-          setCollateralPrice(Number(result.toString()) / 100);
+          try {
+            const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
+            const result = await ftso.getPrice();
+            setCollateralPrice(Number(result.toString()) / 100);
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
     }
