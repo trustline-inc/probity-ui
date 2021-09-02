@@ -119,7 +119,7 @@ function Balances() {
         <div className="row my-2 text-truncate">
           <div className="col-12">
             <h6>Interest</h6>
-            <span className="text-truncate">{interestBalance ? numeral(utils.formatEther(interestBalance.toString())).format('0,0.0[00000000000000000]') : null} TCN</span>
+            <span className="text-truncate">{interestBalance ? utils.formatEther(interestBalance.toString()) : null} TCN</span>
           </div>
         </div>
       </div>
