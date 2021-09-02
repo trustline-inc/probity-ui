@@ -15,6 +15,7 @@ import Activity from "../../containers/Activity";
 
 export default function Transfers() {
   const modalRef = useRef(null);
+  const [loading, setLoading] = React.useState(false)
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [aureiAmount, setAureiAmount] = React.useState(0);
@@ -27,12 +28,13 @@ export default function Transfers() {
   }
 
   const onUsernameChange = (event: any) => {
-    const username = event.target.value;
+    const username = event.target.value.replace(/[^a-zA-Z\d]/ig, "");
     setUsername(username);
   }
 
   const initiateTransfer = async () => {
     try {
+      setLoading(true)
       const headers = new Headers()
       headers.append('Accept', 'application/xrpl-testnet+json')
       headers.append('PayID-Version', '1.0')
@@ -54,29 +56,33 @@ export default function Transfers() {
 
           try {
             var result, data;
+            // Divide by 1e3 because max precision on XRPL is 10e-15.
             result = await aurei.approve(
               BRIDGE_ADDRESS,
-              utils.parseUnits(aureiAmount.toString(), "ether").toString()
+              utils.parseUnits(aureiAmount.toString(), "ether").div(1e3).toString()
             );
             data = await result.wait();
             ctx.updateTransactions(data);
             result = await bridge.transferAureiToXRP(
               address,
-              utils.parseUnits(aureiAmount.toString(), "ether").toString(),
+              utils.parseUnits(aureiAmount.toString(), "ether").div(1e3).toString(),
               (Date.now() / 1000).toFixed(0),
               {
                 gasPrice: web3.utils.toWei('225', 'Gwei')
               });
             data = await result.wait();
             ctx.updateTransactions(data);
+            setLoading(false)
           } catch (error) {
             console.log(error);
             setError(error);
+            setLoading(false)
           }
         }
       }
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
   }
 
@@ -110,6 +116,7 @@ export default function Transfers() {
         {active && <Info />}
       </header>
       <p className="lead">Send Aurei to the Trustline App</p>
+      <p className="text-secondary"><span className="fa fa-info-circle"></span> This action will ask you to sign an <code>Approve</code> and a <code>transferAureiToXRP</code> transaction.</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
@@ -123,7 +130,7 @@ export default function Transfers() {
           </div>
           <div className="row mt-3">
             <div className="col-md-8 offset-md-2">
-              <label className="form-label">PayString</label>
+              <label className="form-label">PayString Username</label>
               <div className="input-group">
                 <input type="text" className="form-control" value={username} onChange={onUsernameChange} />
                 <span className="input-group-text font-monospace">{"$trustline.app"}</span>
@@ -135,7 +142,7 @@ export default function Transfers() {
               <button
                 className="btn btn-primary btn-lg mt-4"
                 onClick={initiateTransfer}
-                disabled={aureiAmount === 0}
+                disabled={aureiAmount === 0 || username === "" || loading}
               >Confirm</button>
             </div>
           </div>
