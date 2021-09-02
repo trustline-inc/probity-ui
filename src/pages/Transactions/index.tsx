@@ -17,9 +17,9 @@ export default function Transactions() {
       <React.Fragment key={index}>
         <tr className="table-primary d-flex" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
           <th className="col-1" scope="row">{index + 1}</th>
-          <td className="col-2"><span className="badge rounded-pill bg-primary">{event.event}</span></td>
+          <td className="col-3"><span className="badge rounded-pill bg-primary">{event.event}</span></td>
           <td className="col-1">{tx.blockNumber}</td>
-          <td className="col-8 text-truncate"><code>{tx.transactionHash}</code></td>
+          <td className="col-7 text-truncate"><code>{tx.transactionHash}</code></td>
         </tr>
         {
           event.event === "VaultUpdated" && (
@@ -227,6 +227,28 @@ export default function Transactions() {
             </tr>
           )
         }
+        {
+          event.event === "NewPendingTransferToXRP" && (
+            <tr className="collapse" id={`collapse-${index}`}>
+              <td colSpan={4}>
+                <table className="table table-borderless mb-0">
+                  <thead>
+                    <tr className="d-flex">
+                      <th className="col-9" scope="col">ID</th>
+                      <th className="col-3" scope="col">Amount</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <tr className="d-flex">
+                    <td className="col-9 text-truncate"><code>{event.args.txHash}</code></td>
+                    <td className="col-3">{numeral(utils.formatEther(event.args.amount)).format('0,0.0[00000000000000000]')}</td>
+                  </tr>
+                </tbody>
+                </table>
+              </td>
+            </tr>
+          )
+        }
       </React.Fragment>
     )
   });
@@ -243,9 +265,9 @@ export default function Transactions() {
           <thead>
             <tr className="d-flex">
               <th className="col-1" scope="col">#</th>
-              <th className="col-2" scope="col">Event Type</th>
+              <th className="col-3" scope="col">Event Type</th>
               <th className="col-1" scope="col">Block</th>
-              <th className="col-8" scope="col">Transaction Hash</th>
+              <th className="col-7" scope="col">Transaction Hash</th>
             </tr>
           </thead>
           <tbody>
