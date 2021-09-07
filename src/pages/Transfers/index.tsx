@@ -56,20 +56,21 @@ export default function Transfers() {
 
           try {
             var result, data;
-            // Divide by 1e3 because max precision on XRPL is 10e-15.
             result = await aurei.approve(
               BRIDGE_ADDRESS,
-              utils.parseUnits(aureiAmount.toString(), "ether").div(1e3).toString()
+              utils.parseUnits(aureiAmount.toString(), "ether").toString()
             );
             data = await result.wait();
             ctx.updateTransactions(data);
             result = await bridge.transferAureiToXRP(
               address,
+              // Divide by 1e3 because max precision on XRPL is 10e-15.
               utils.parseUnits(aureiAmount.toString(), "ether").div(1e3).toString(),
               (Date.now() / 1000).toFixed(0),
               {
                 gasPrice: web3.utils.toWei('225', 'Gwei')
-              });
+              }
+            );
             data = await result.wait();
             ctx.updateTransactions(data);
             setLoading(false)
@@ -150,7 +151,7 @@ export default function Transfers() {
       </section>
       <p className="lead">Receive Aurei from the Trustline App</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <Activity active={active} activity={ActivityType.Transfer} error={error}>
+        <Activity active={active} activity={ActivityType.Transfer} error={null}>
           <div className="row">
             <div className="col-md-8 offset-md-2 my-4 d-grid">
               <button
