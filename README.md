@@ -63,5 +63,5 @@ npm start
 ## Deployment
 
 ```
-npm run predeploy && npm run deploy
+npm run deploy
 ```
