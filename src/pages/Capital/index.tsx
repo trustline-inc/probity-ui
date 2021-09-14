@@ -117,8 +117,8 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
       try {
         const result = await treasury.stake(
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
-          { 
-            gasPrice: web3.utils.toWei('225', 'Gwei'),
+          {
+            gasLimit: web3.utils.toWei('400000', 'wei'),
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -143,7 +143,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           utils.parseUnits(equityAmount.toString(), "ether").toString(),
           {
-            gasPrice: web3.utils.toWei('225', 'Gwei')
+            gasLimit: web3.utils.toWei('400000', 'wei')
           }
         );
         const data = await result.wait();
@@ -168,7 +168,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
           isTCN,
           {
-            gasPrice: web3.utils.toWei('225', 'Gwei')
+            gasLimit: web3.utils.toWei('400000', 'wei')
           }
         );
         const data = await result.wait();

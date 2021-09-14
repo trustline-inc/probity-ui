@@ -53,7 +53,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
         const result = await teller.createLoan(
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('225', 'Gwei'),
+            gasLimit: web3.utils.toWei('400000', 'wei'),
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
@@ -83,7 +83,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.parseUnits(aureiAmount.toString(), "ether").toString(),
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
           { 
-            gasPrice: web3.utils.toWei('225', 'Gwei')
+            gasLimit: web3.utils.toWei('400000', 'wei')
           }
         );
         data = await result.wait();
