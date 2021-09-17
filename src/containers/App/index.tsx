@@ -32,9 +32,11 @@ function App() {
     "displayInfoAlert",
     true
   );
-  const [transactions, setTransactions]: any = useState([])
+  const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
   const updateTransactions = (transaction: any) => {
-    setTransactions([...transactions, transaction]);
+    const newTxs = [...transactions, transaction]
+    localStorage.setItem("probity-txs", JSON.stringify(newTxs))
+    setTransactions(newTxs);
   };
   const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),

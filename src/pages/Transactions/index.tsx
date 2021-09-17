@@ -1,4 +1,4 @@
-import { utils } from "ethers"
+import { BigNumber, utils } from "ethers"
 import React, { useContext } from "react"
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
@@ -62,10 +62,10 @@ export default function Transactions() {
                   </thead>
                   <tbody>
                     <tr className="d-flex">
-                      <td className="col-3">{utils.formatEther(event.args.principal).toString()}</td>
-                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()}</td>
-                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
-                      <td className="col-3">{utils.formatEther(event.args.rate.toString().substring(1, event.args[3].toString().length-9))}</td>
+                      <td className="col-3">{utils.formatEther(event.args[0]).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[1]).toString()}</td>
+                      <td className="col-3">{new Date(BigNumber.from(event.args[2]).toNumber() * 1000).toLocaleString()}</td>
+                      <td className="col-3">{utils.formatEther(BigNumber.from(event.args[3]).toString().substring(1, BigNumber.from(event.args[3]).toString().length-9))}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -88,9 +88,9 @@ export default function Transactions() {
                   </thead>
                   <tbody>
                     <tr className="d-flex">
-                      <td className="col-3">{utils.formatEther(event.args.capital).toString()} AUR</td>
-                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
-                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[0]).toString()} AUR</td>
+                      <td className="col-3">{utils.formatEther(event.args[1]).toString()} FLR</td>
+                      <td className="col-3">{new Date(BigNumber.from(event.args[2]).toNumber() * 1000).toLocaleString()}</td>
                       <td className="col-3"/>
                     </tr>
                   </tbody>
@@ -114,9 +114,9 @@ export default function Transactions() {
                   </thead>
                   <tbody>
                     <tr className="d-flex">
-                      <td className="col-3">{utils.formatEther(event.args.capital).toString()} AUR</td>
-                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
-                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[0]).toString()} AUR</td>
+                      <td className="col-3">{utils.formatEther(event.args[1]).toString()} FLR</td>
+                      <td className="col-3">{new Date(BigNumber.from(event.args[2]).toNumber() * 1000).toLocaleString()}</td>
                       <td className="col-3"/>
                     </tr>
                   </tbody>
@@ -142,7 +142,7 @@ export default function Transactions() {
                     <tr className="d-flex">
                       <td className="col-3">{utils.formatEther(event.args.capital).toString()}</td>
                       <td className="col-3">{utils.formatEther(event.args.collateral).toString()} FLR</td>
-                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3">{new Date(BigNumber.from(event.args.timestamp).toNumber() * 1000).toLocaleString()}</td>
                       <td className="col-3"/>
                     </tr>
                   </tbody>
@@ -166,9 +166,9 @@ export default function Transactions() {
                   </thead>
                   <tbody>
                     <tr className="d-flex">
-                      <td className="col-3">{utils.formatEther(event.args.amount).toString()}</td>
-                      <td className="col-3">{utils.formatEther(event.args.collateral).toString()}</td>
-                      <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[0]).toString()}</td>
+                      <td className="col-3">{utils.formatEther(event.args[1]).toString()}</td>
+                      <td className="col-3">{new Date(BigNumber.from(event.args[2]).toNumber() * 1000).toLocaleString()}</td>
                       <td className="col-3"/>
                     </tr>
                   </tbody>
@@ -219,7 +219,7 @@ export default function Transactions() {
                     <td className="col-3">{numeral(utils.formatEther(event.args.collateralAmount)).format('0,0.0[00000000000000000]')}</td>
                     <td className="col-3">{numeral(utils.formatEther(event.args.collateralValue)).format('$0,0.00')}</td>
                     {/* <td className="col-3">{event.args.liquidator}</td> */}
-                    <td className="col-3">{new Date(event.args.timestamp * 1000).toLocaleString()}</td>
+                    <td className="col-3">{new Date(BigNumber.from(event.args.timestamp).toNumber() * 1000).toLocaleString()}</td>
                   </tr>
                 </tbody>
                 </table>
