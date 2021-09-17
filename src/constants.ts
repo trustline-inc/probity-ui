@@ -9,3 +9,6 @@ export const TCNTOKEN_ADDRESS = process.env && process.env.REACT_APP_TCNTOKEN_AD
 export const TELLER_ADDRESS   = process.env && process.env.REACT_APP_TELLER_ADDRESS   ? process.env.REACT_APP_TELLER_ADDRESS   : "0xeb47A5C561b40057733B38B5839EF7efCdE25860";
 export const TREASURY_ADDRESS = process.env && process.env.REACT_APP_TREASURY_ADDRESS ? process.env.REACT_APP_TREASURY_ADDRESS : "0x5C6489d4D3b4d1366Aa55898174099b1C03aD2c9";
 export const VAULT_ADDRESS    = process.env && process.env.REACT_APP_VAULT_ADDRESS    ? process.env.REACT_APP_VAULT_ADDRESS    : "0x9Afe05e7D152EBEf01e6C3d42a43c8f426C95f5b";
+
+// Other constants
+export const VERSION = process.env.REACT_APP_VERSION

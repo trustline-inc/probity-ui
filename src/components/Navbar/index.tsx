@@ -11,6 +11,7 @@ import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
 import "./index.css";
 import SocialLinks from "../Social";
+import { VERSION } from '../../constants';
 import EventContext from "../../contexts/TransactionContext"
 
 function Balance() {
@@ -199,6 +200,9 @@ function Navbar() {
         </form>
       </div>
       <SocialLinks />
+      <small className="mt-3 container-fluid text-center">
+        v{VERSION}
+      </small>
     </nav>
   );
 }
