@@ -25,7 +25,6 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       const runEffect = async () => {
-        setLoading(true)
         const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
         const _users = await vault.getUsers();
         setUsers(_users);
@@ -38,6 +37,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       const runEffect = async () => {
+        setLoading(true)
         const _vaults: any[] = [];
         for (let address of users) {
           const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
