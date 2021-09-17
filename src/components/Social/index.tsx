@@ -16,7 +16,7 @@ function SocialLinks() {
       <a target="blank" href="https://trustline-inc.medium.com/probity-is-available-on-the-testnet-bf87d287173d" className="mx-2">
         <i className="fab fa-medium"></i>
       </a>
-      <a target="blank" href="https://github.com/trustline-inc" className="mx-2">
+      <a target="blank" href="https://github.com/probitydao" className="mx-2">
         <i className="fab fa-github"></i>
       </a>
       <a target="blank" href="https://docs.trustline.co/trustline/" className="mx-2">
