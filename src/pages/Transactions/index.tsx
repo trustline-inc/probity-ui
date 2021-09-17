@@ -15,7 +15,7 @@ export default function Transactions() {
     if (event === undefined) return null;
     return (
       <React.Fragment key={index}>
-        <tr className="table-primary d-flex" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
+        <tr className="table-primary d-flex text-center" role="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${index}`}>
           <th className="col-1" scope="row">{index + 1}</th>
           <td className="col-3"><span className="badge rounded-pill bg-primary">{event.event}</span></td>
           <td className="col-1">{tx.blockNumber}</td>
@@ -260,28 +260,31 @@ export default function Transactions() {
         <p className="lead">View your transaction history.</p>
         {active && <Info />}
       </header>
-      <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr className="d-flex">
-              <th className="col-1" scope="col">#</th>
-              <th className="col-3" scope="col">Event Type</th>
-              <th className="col-1" scope="col">Block</th>
-              <th className="col-7" scope="col">Transaction Hash</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
-        {rows.length === 0 && (
-          <div className="my-5">
-            <span className="d-flex justify-content-center align-items-center">
-              No transactions to display
-            </span>
-          </div>
-        )}
-      </div>
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
+        <div className="table-responsive">
+          {rows.length === 0 ? (
+            <div className="py-5">
+              <span className="d-flex justify-content-center align-items-center">
+                No transactions to display
+              </span>
+            </div>
+          ) : (
+            <table className="table table-bordered">
+              <thead>
+                <tr className="d-flex text-center">
+                  <th className="col-1" scope="col">#</th>
+                  <th className="col-3" scope="col">Event Type</th>
+                  <th className="col-1" scope="col">Block</th>
+                  <th className="col-7" scope="col">Transaction Hash</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </section>
     </>
   );
 }
