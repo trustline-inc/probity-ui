@@ -14,6 +14,7 @@ import numeral from "numeral";
 import EventContext from "../../contexts/TransactionContext"
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
+  const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [vaults, setVaults] = useState<any>([]);
   const [price, setPrice] = useState(0.00);
@@ -24,6 +25,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       const runEffect = async () => {
+        setLoading(true)
         const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
         const _users = await vault.getUsers();
         setUsers(_users);
@@ -55,6 +57,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           });
         }
         setVaults(_vaults);
+        setLoading(false)
       }
 
       runEffect();
@@ -133,20 +136,30 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   return (
     <Activity active={active} activity={ActivityType.Liquidate} error={error}>
       <h4>Under-Collateralized Vaults</h4>
-      {liquidationEligibleVaults}
-      {liquidationEligibleVaults.length === 0 && (
-        <>
+      {
+        loading ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            Loading...
+          </div>
+        ) : liquidationEligibleVaults.length === 0 ? (
           <div className="d-flex justify-content-center align-items-center py-5">
             No vault collateral is currently eligible for auction
           </div>
-          <div>
-
-          </div>
-        </>
-      )}
+        ) : liquidationEligibleVaults
+      }
       <div className="py-1" />
       <h4>Non-Eligible Vaults</h4>
-      {nonEligibleVaults}
+      {
+        loading ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            Loading...
+          </div>
+        ) : nonEligibleVaults.length === 0 ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            There are no vaults to display.
+          </div>
+        ) : nonEligibleVaults
+      }
     </Activity>
   )
 }
