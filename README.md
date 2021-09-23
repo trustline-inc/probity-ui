@@ -1,6 +1,6 @@
-# Probity Website
+# Probity Frontend
 
-A public web interface for the Probity blockchain app.
+A public react interface for the Probity blockchain app.
 
 ## Getting Started
 
