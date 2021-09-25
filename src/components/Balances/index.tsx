@@ -3,11 +3,11 @@ import useSWR from 'swr';
 import Nav from 'react-bootstrap/Nav'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
-import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
-import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
-import TcnTokenABI from "@trustline-inc/aurei/artifacts/contracts/TcnToken.sol/TcnToken.json";
+import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
+import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
+import TcnTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import numeral from "numeral";

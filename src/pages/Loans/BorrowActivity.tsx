@@ -6,7 +6,7 @@ import PriceFeed from "../../components/PriceFeed";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { TELLER_ADDRESS } from '../../constants';
-import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
+import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 
 interface Props {
   collateralRatio: number;

@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline-inc/aurei/artifacts/contracts/Treasury.sol/Treasury.json";
+import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
@@ -12,8 +12,9 @@ import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY_ADDRESS, VAULT_ADDRESS } from '../../constants';
-import VaultABI from "@trustline-inc/aurei/artifacts/contracts/Vault.sol/Vault.json";
+import { TREASURY_ADDRESS, NATIVE_COLLATERAL_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
@@ -33,6 +34,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   const { data: vault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
+  console.log(vault)
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
@@ -83,25 +85,25 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   React.useEffect(() => {
     if (library) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
-      const stake = treasury.filters.Stake(null, null, null, account)
-      const redemption = treasury.filters.Redemption(null, null, null, account)
-      const withdrawal = treasury.filters.Withdrawal(null, null, null, account)
+      const deposit = treasury.filters.Deposit(null, null)
+      // const redemption = treasury.filters.Redemption(null, null, null, account)
+      const withdrawal = treasury.filters.Withdrawal(null, null)
 
-      library.on(stake, (event) => {
-        console.log('Stake Event:', event);
+      library.on(deposit, (event) => {
+        console.log('Deposit Event:', event);
       })
 
-      library.on(redemption, (event) => {
-        console.log('Redemption Event:', event);
-      })
+      // library.on(redemption, (event) => {
+      //   console.log('Redemption Event:', event);
+      // })
 
       library.on(withdrawal, (event) => {
         console.log('Withdrawal Event:', event);
       })
 
       return () => {
-        library.removeAllListeners(stake)
-        library.removeAllListeners(redemption)
+        library.removeAllListeners(deposit)
+        // library.removeAllListeners(redemption)
         library.removeAllListeners(withdrawal)
       }
     }
@@ -112,17 +114,23 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
    const stake = async () => {
     if (library && account) {
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {
-        const result = await treasury.stake(
-          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+        var result = await treasury.deposit(
           {
             gasLimit: web3.utils.toWei('400000', 'wei'),
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
           }
         );
-        const data = await result.wait();
+        var data = await result.wait();
+        ctx.updateTransactions(data);
+        result = await vault.modifySupply(
+          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+          { gasLimit: web3.utils.toWei('400000', 'wei') }
+        );
+        data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);

@@ -7,8 +7,8 @@ import QRCode from "react-qr-code";
 import Info from '../../components/Info';
 import { Contract, utils } from "ethers";
 import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
-import AureiABI from "@trustline-inc/aurei/artifacts/contracts/Aurei.sol/Aurei.json";
-import BridgeABI from "@trustline-inc/aurei/artifacts/contracts/Bridge.sol/Bridge.json";
+import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
+import BridgeABI from "@trustline-inc/probity/artifacts/contracts/Bridge.sol/Bridge.json";
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";

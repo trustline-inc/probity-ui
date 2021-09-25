@@ -2,7 +2,7 @@ import React from "react";
 import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import FtsoABI from "@trustline-inc/aurei/artifacts/contracts/Ftso.sol/Ftso.json";
+import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
 import { FTSO_ADDRESS } from '../../constants';
 import fetcher from "../../fetcher";
 
