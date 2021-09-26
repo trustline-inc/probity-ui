@@ -38,7 +38,7 @@ function App() {
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
     setTransactions(newTxs);
   };
-  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getPrice'], {
+  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
@@ -54,7 +54,7 @@ function App() {
         if (library) {
           try {
             const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
-            const result = await ftso.getPrice();
+            const result = await ftso.getCurrentPrice();
             setCollateralPrice(Number(result.toString()) / 100);
           } catch (error) {
             console.error(error)

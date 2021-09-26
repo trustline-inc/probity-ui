@@ -12,9 +12,9 @@ import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY_ADDRESS, NATIVE_COLLATERAL_ADDRESS, VAULT_ADDRESS } from '../../constants';
-import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
+import { TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
+// import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
@@ -31,10 +31,9 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
-  const { data: vault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
+  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
-  console.log(vault)
   const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
     fetcher: fetcher(library, TreasuryABI.abi),
   })
@@ -114,7 +113,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
    const stake = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
+      // const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
 
       try {

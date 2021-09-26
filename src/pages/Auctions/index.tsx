@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from '../../constants';
+import { AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -25,7 +25,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       const runEffect = async () => {
-        const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
+        const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
         const _users = await vault.getUsers();
         setUsers(_users);
       }
@@ -42,7 +42,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
         for (let address of users) {
           const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
           const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
-          const vault = new Contract(VAULT_ADDRESS, VaultABI.abi, library.getSigner())
+          const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
           const debt = await teller.balanceOf(address);
           const capital = await treasury.capitalOf(address);
           const [loanCollateral, stakedCollateral] = await vault.balanceOf(address);
@@ -87,7 +87,6 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           data = await result.wait();
           ctx.updateTransactions(data);
         }
-        console.log(result);
       } catch (error) {
         console.error(error)
         setError(error);

@@ -10,8 +10,8 @@ import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { AUREI_ADDRESS, TELLER_ADDRESS, VAULT_ADDRESS } from '../../constants';
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
+import { AUREI_ADDRESS, TELLER_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
+import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -29,7 +29,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const [maxBorrow, setMaxBorrow] = React.useState(0)
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
+  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, VaultABI.abi),
   })
   const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {

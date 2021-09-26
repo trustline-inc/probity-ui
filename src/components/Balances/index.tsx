@@ -4,52 +4,45 @@ import Nav from 'react-bootstrap/Nav'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/Vault.sol/Vault.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import TcnTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import numeral from "numeral";
-import { AUREI_ADDRESS, TCNTOKEN_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ADDRESS } from "../../constants";
+import {
+  AUREI_ADDRESS,
+  TCN_TOKEN_ADDRESS,
+  TREASURY_ADDRESS,
+  VAULT_ENGINE_ADDRESS
+} from "../../constants";
 import './index.css';
 
 function Balances() {
   enum BalanceType { Individual, Aggregate }
   const [selected, setSelected] = React.useState(BalanceType.Individual)
   const { account, library } = useWeb3React<Web3Provider>()
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, VaultABI.abi),
+
+  // Read data from deployed contracts
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", utils.formatBytes32String("FLR"), account], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalLoanCollateral, mutate: mutateTotalLoanCollateral } = useSWR([VAULT_ADDRESS, 'totalLoanCollateral'], {
-    fetcher: fetcher(library, VaultABI.abi),
+  const { data: aureiBalance, mutate: mutateDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', account], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalStakedCollateral, mutate: mutateTotalStakedCollateral } = useSWR([VAULT_ADDRESS, 'totalStakedCollateral'], {
-    fetcher: fetcher(library, VaultABI.abi),
+  const { data: interestBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'TCN', account], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: interestBalance, mutate: mutateInterestBalance } = useSWR([TREASURY_ADDRESS, 'interestOf', account], {
-    fetcher: fetcher(library, TreasuryABI.abi),
-  })
-  const { data: debtBalance, mutate: mutateDebt } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, TellerABI.abi),
-  })
-  const { data: capitalBalance, mutate: mutateCapital } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
-    fetcher: fetcher(library, TreasuryABI.abi),
-  })
-  const { data: tcnBalance, mutate: mutateTcnBalance } = useSWR([TCNTOKEN_ADDRESS, 'balanceOf', account], {
+  const { data: tcnBalance, mutate: mutateTcnBalance } = useSWR([TCN_TOKEN_ADDRESS, 'balanceOf', account], {
     fetcher: fetcher(library, TcnTokenABI.abi),
-  })
-  const { data: aureiBalance, mutate: mutateAurei } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, AureiABI.abi),
   })
   const { data: totalAurei, mutate: mutateTotalAurei } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
     fetcher: fetcher(library, AureiABI.abi),
   })
-  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([TELLER_ADDRESS, 'totalDebt'], {
-    fetcher: fetcher(library, TellerABI.abi),
+  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'totalDebt'], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([TREASURY_ADDRESS, 'totalSupply'], {
-    fetcher: fetcher(library, TreasuryABI.abi),
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', TREASURY_ADDRESS], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
   React.useEffect(() => {
@@ -57,15 +50,11 @@ function Balances() {
       library.on("block", () => {
         mutateVault(undefined, true);
         mutateDebt(undefined, true);
-        mutateCapital(undefined, true);
-        mutateAurei(undefined, true);
         mutateTotalAurei(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateTcnBalance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
-        mutateTotalLoanCollateral(undefined, true);
-        mutateTotalStakedCollateral(undefined, true);
       });
 
       return () => {
@@ -104,14 +93,14 @@ function Balances() {
               <h5>Collateral</h5>
               <div className="row my-2">
                 <div className="col-12">
-                  <h6>Loan Collateral</h6>
-                  <span className="text-truncate">{numeral(utils.formatEther(vault[0])).format('0,0.0[00000000000000000]')} FLR</span>
+                  <h6>Free Collateral</h6>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-12">
-                  <h6>Staked Collateral</h6>
-                  <span className="text-truncate">{numeral(utils.formatEther(vault[1])).format('0,0.0[00000000000000000]')} FLR</span>
+                  <h6>Used Collateral</h6>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.lockedCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
                 </div>
               </div>
               <hr />
@@ -127,13 +116,13 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-12">
                   <h6>Debt</h6>
-                  <span className="text-truncate">{debtBalance ? numeral(utils.formatEther(debtBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-12">
                   <h6>Capital</h6>
-                  <span className="text-truncate">{capitalBalance ? numeral(utils.formatEther(capitalBalance.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital.toString())).format('0,0.0[00000000000000000]') : null} AUR</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -145,20 +134,6 @@ function Balances() {
             </>
           ) : (
             <>
-              <h5>Collateral</h5>
-              <div className="row my-2 text-truncate">
-                <div className="col-12">
-                  <h6>Loan Collateral</h6>
-                  <span className="text-truncate">{totalLoanCollateral ? numeral(utils.formatEther(totalLoanCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-12">
-                  <h6>Staked Collateral</h6>
-                  <span className="text-truncate">{totalStakedCollateral ? numeral(utils.formatEther(totalStakedCollateral.toString())).format('0,0.0[00000000000000000]') : null} FLR</span>
-                </div>
-              </div>
-              <hr />
               <h5>Balance Sheet</h5>
               <div className="row my-2 text-truncate">
                 <div className="col-12">
