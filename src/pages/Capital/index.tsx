@@ -12,9 +12,9 @@ import StakingActivity from "./StakingActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
-// import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { NATIVE_COLLATERAL_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
+import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 
@@ -23,7 +23,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
-  const [equityAmount, setEquityAmount] = React.useState(0);
+  const [supplyAmount, setSupplyAmount] = React.useState(0);
   const [interestAmount, setInterestAmount] = React.useState(0);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [totalCollateral, setTotalCollateral] = React.useState(0);
@@ -31,40 +31,42 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
-  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, VaultABI.abi),
-  })
-  const { data: equityBalance } = useSWR([TREASURY_ADDRESS, 'capitalOf', account], {
-    fetcher: fetcher(library, TreasuryABI.abi),
+  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', utils.formatBytes32String("FLR"), account], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
+  /**
+   * @function onCollateralAmountChange
+   * @param event 
+   * Updates state collateral and total collateral amounts
+   */
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault[1]).toString()) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault[1]).toString()) + Number(delta);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.capital).toString()) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.freeCollateral + vault.lockedCollateral).toString()) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }
 
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {
-    if (equityBalance) {
+    if (vault) {
       switch (activity) {
         case ActivityType.Stake:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) + Number(equityAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital).toString()) + Number(supplyAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(equityBalance).toString()) - Number(equityAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital).toString()) - Number(supplyAmount)));
           break;
       }
     }
-  }, [totalCollateral, collateralPrice, equityAmount, equityBalance, activity]);
+  }, [totalCollateral, collateralPrice, supplyAmount, vault, activity]);
 
-  const onEquityAmountChange = (event: any) => {
+  const onSupplyAmountChange = (event: any) => {
     const amount = Number(event.target.value)
-    setEquityAmount(amount);
-    if (equityAmount > 0)
+    setSupplyAmount(amount);
+    if (supplyAmount > 0)
       setCollateralRatio(totalCollateral / amount);
   }
 
@@ -113,11 +115,11 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
    const stake = async () => {
     if (library && account) {
-      // const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
-      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
 
       try {
-        var result = await treasury.deposit(
+        var result = await nativeCollateral.deposit(
           {
             gasLimit: web3.utils.toWei('400000', 'wei'),
             value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
@@ -125,8 +127,11 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
         );
         var data = await result.wait();
         ctx.updateTransactions(data);
-        result = await vault.modifySupply(
-          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+        const collateralId = utils.formatBytes32String("FLR")
+        result = await vaultEngine.modifySupply(
+          collateralId,
+          TREASURY_ADDRESS,
+          utils.parseUnits(supplyAmount.toString(), "ether").toString(),
           { gasLimit: web3.utils.toWei('400000', 'wei') }
         );
         data = await result.wait();
@@ -148,7 +153,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
       try {
         const result = await treasury.redeem(
           utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          utils.parseUnits(equityAmount.toString(), "ether").toString(),
+          utils.parseUnits(supplyAmount.toString(), "ether").toString(),
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
@@ -217,11 +222,11 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
               activity === ActivityType.Stake && (
                 <StakingActivity
                   collateralAmount={collateralAmount}
-                  equityAmount={equityAmount}
+                  supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
                   stake={stake}
                   onCollateralAmountChange={onCollateralAmountChange}
-                  onEquityAmountChange={onEquityAmountChange}
+                  onSupplyAmountChange={onSupplyAmountChange}
                 />
               )
             }
@@ -230,9 +235,9 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
                 <RedemptionActivity
                   collateralAmount={collateralAmount}
                   onCollateralAmountChange={onCollateralAmountChange}
-                  equityAmount={equityAmount}
+                  supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
-                  onEquityAmountChange={onEquityAmountChange}
+                  onSupplyAmountChange={onSupplyAmountChange}
                   redeem={redeem}
                 />
               )

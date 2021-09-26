@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
+import { utils } from "ethers";
 import { FTSO_ADDRESS } from '../../constants';
 import fetcher from "../../fetcher";
 
@@ -11,19 +12,19 @@ function PriceFeed({ collateralAmount }: { collateralAmount: number; }) {
   const [collateralPrice, setCollateralPrice] = React.useState(0.00);
   const [collateralValue, setCollateralValue] = React.useState(0.00);
 
-  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getPrice'], {
+  const { data, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
   // Start listening to price feed
   React.useEffect(() => {
     const runEffect = async () => {
-      if (price !== undefined) {
-        setCollateralPrice(price.toNumber() / 100);
+      if (data !== undefined) {
+        setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
       }
     }
     runEffect();
-  }, [price]);
+  }, [data]);
 
   React.useEffect(() => {
     if (library) {

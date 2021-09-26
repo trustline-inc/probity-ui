@@ -3,19 +3,19 @@ import PriceFeed from "../../components/PriceFeed";
 
 interface Props {
   collateralAmount: number;
-  equityAmount: number;
+  supplyAmount: number;
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   stake: () => void;
 }
 
 function StakingActivity({
   collateralAmount,
-  equityAmount,
+  supplyAmount,
   collateralRatio,
   onCollateralAmountChange,
-  onEquityAmountChange,
+  onSupplyAmountChange,
   stake
 }: Props) {
   return (
@@ -35,7 +35,7 @@ function StakingActivity({
               className="form-control"
               id="equityIssuanceInput"
               placeholder="0.000000000000000000"
-              onChange={onEquityAmountChange}
+              onChange={onSupplyAmountChange}
             />
             <span className="input-group-text font-monospace">{"AUR"}</span>
           </div>
@@ -76,7 +76,7 @@ function StakingActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={stake}
-            disabled={equityAmount === 0 || collateralAmount === 0}
+            disabled={supplyAmount === 0 || collateralAmount === 0}
           >Confirm</button>
         </div>
       </div>

@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
-import { Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
 import { FTSO_ADDRESS } from '../../constants';
@@ -38,7 +38,7 @@ function App() {
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
     setTransactions(newTxs);
   };
-  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
+  const { data, mutate } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
@@ -48,14 +48,14 @@ function App() {
 
   useEffect(() => {
     const runEffect = async () => {
-      if (price !== undefined) {
-        setCollateralPrice(price.toNumber() / 100);
+      if (data !== undefined) {
+        setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
       } else {
         if (library) {
           try {
             const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
             const result = await ftso.getCurrentPrice();
-            setCollateralPrice(Number(result.toString()) / 100);
+            setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
           } catch (error) {
             console.error(error)
           }
@@ -63,19 +63,19 @@ function App() {
       }
     }
     runEffect();
-  }, [library, price]);
+  }, [library, data]);
 
   useEffect(() => {
     if (library) {
       library.on("block", () => {
-        mutatePrice(undefined, true);
+        mutate(undefined, true);
       });
 
       return () => {
         library.removeAllListeners("block");
       };
     }
-  }, [library, mutatePrice]);
+  }, [library, mutate]);
 
   useEffect(() => {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent

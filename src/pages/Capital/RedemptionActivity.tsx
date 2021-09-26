@@ -3,19 +3,19 @@ import PriceFeed from "../../components/PriceFeed"
 
 interface Props {
   collateralAmount: number;
-  equityAmount: number;
+  supplyAmount: number;
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   redeem: () => void;
 }
 
 function RedemptionActivity({
   collateralAmount,
-  equityAmount,
+  supplyAmount,
   collateralRatio,
   onCollateralAmountChange,
-  onEquityAmountChange,
+  onSupplyAmountChange,
   redeem
 }: Props) {
   return (
@@ -35,7 +35,7 @@ function RedemptionActivity({
               className="form-control"
               id="equityRedemptionAmount"
               placeholder="0.000000000000000000"
-              onChange={onEquityAmountChange}
+              onChange={onSupplyAmountChange}
             />
             <span className="input-group-text font-monospace">{"AUR"}</span>
           </div>
@@ -86,7 +86,7 @@ function RedemptionActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={redeem}
-            disabled={equityAmount === 0 || collateralAmount === 0}
+            disabled={supplyAmount === 0 || collateralAmount === 0}
           >Confirm</button>
         </div>
       </div>
