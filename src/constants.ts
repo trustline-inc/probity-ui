@@ -1,15 +1,18 @@
+import { BigNumber } from "ethers";
+
 /**
  * Contract addresses
  */
-export const AUREI_ADDRESS             = process.env && process.env.REACT_APP_AUREI_ADDRESS             ? process.env.REACT_APP_AUREI_ADDRESS             : "0x9CcEB5dFbACaA5bdD90d6343d312D944F8288636";
-export const BRIDGE_ADDRESS            = process.env && process.env.REACT_APP_BRIDGE_ADDRESS            ? process.env.REACT_APP_BRIDGE_ADDRESS            : "0xDAb5EADe7C774638E3e5151b9504abe159B455C1";
-export const FTSO_ADDRESS              = process.env && process.env.REACT_APP_FTSO_ADDRESS              ? process.env.REACT_APP_FTSO_ADDRESS              : "0x352D0cFD3cc9825c13C2f69B1d6a128c6Ea8D804";
-export const NATIVE_COLLATERAL_ADDRESS = process.env && process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS ? process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS : "0xd529C9a7c1c221677894B679560928646E64702D";
-export const REGISTRY_ADDRESS          = process.env && process.env.REACT_APP_REGISTRY_ADDRESS          ? process.env.REACT_APP_REGISTRY_ADDRESS          : "0xBBf387879F189e762fd3c619374A8A38B9e31dd7";
-export const TCN_TOKEN_ADDRESS         = process.env && process.env.REACT_APP_TCN_TOKEN_ADDRESS         ? process.env.REACT_APP_TCN_TOKEN_ADDRESS         : "0x8FeBE2379eb6217a27C0D0B010Cee12158590722";
-export const TELLER_ADDRESS            = process.env && process.env.REACT_APP_TELLER_ADDRESS            ? process.env.REACT_APP_TELLER_ADDRESS            : "0x63F2314eD99c381E0385204d051CD3195619e337";
-export const TREASURY_ADDRESS          = process.env && process.env.REACT_APP_TREASURY_ADDRESS          ? process.env.REACT_APP_TREASURY_ADDRESS          : "0x97C81A29094Aa97b2D94715D07dC2a4384F110BD";
-export const VAULT_ENGINE_ADDRESS      = process.env && process.env.REACT_APP_VAULT_ENGINE_ADDRESS      ? process.env.REACT_APP_VAULT_ENGINE_ADDRESS      : "0x4dc0705d18Fce70DBBeaAa6e4aCBf6CEf96c78f4";
+export const AUREI_ADDRESS             = process.env && process.env.REACT_APP_AUREI_ADDRESS             ? process.env.REACT_APP_AUREI_ADDRESS             : "0x238f76EffC3F3d711847D48682304Bfaee357888";
+export const BRIDGE_ADDRESS            = process.env && process.env.REACT_APP_BRIDGE_ADDRESS            ? process.env.REACT_APP_BRIDGE_ADDRESS            : "0x7B0E124460D7B84E035E65855d72711EE639970F";
+export const FTSO_ADDRESS              = process.env && process.env.REACT_APP_FTSO_ADDRESS              ? process.env.REACT_APP_FTSO_ADDRESS              : "0x6278F4F18Ad235C27d3d6029B3Bdaa7dFB884A47";
+export const NATIVE_COLLATERAL_ADDRESS = process.env && process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS ? process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS : "0x1aEf23136b3335b8E98a1a3A3A8324DfeA9C06E1";
+export const REGISTRY_ADDRESS          = process.env && process.env.REACT_APP_REGISTRY_ADDRESS          ? process.env.REACT_APP_REGISTRY_ADDRESS          : "0xd62b12e7f8232c050bD87adFe7fA9071D864Fd19";
+export const TCN_TOKEN_ADDRESS         = process.env && process.env.REACT_APP_TCN_TOKEN_ADDRESS         ? process.env.REACT_APP_TCN_TOKEN_ADDRESS         : "0xB8762F3F8A041018f9EFaec494dCA78f4968BcDb";
+export const TELLER_ADDRESS            = process.env && process.env.REACT_APP_TELLER_ADDRESS            ? process.env.REACT_APP_TELLER_ADDRESS            : "0xf56dAde9c66c6bE12E5B529909066135e61834c8";
+export const TREASURY_ADDRESS          = process.env && process.env.REACT_APP_TREASURY_ADDRESS          ? process.env.REACT_APP_TREASURY_ADDRESS          : "0x0581F116aB4Fe1F5bEBCd3dE0d66612D0F6C1EC6";
+export const VAULT_ENGINE_ADDRESS      = process.env && process.env.REACT_APP_VAULT_ENGINE_ADDRESS      ? process.env.REACT_APP_VAULT_ENGINE_ADDRESS      : "0x39361717bF9C5C2F0e882D3D39fd7e45a4b7d94D";
 
 // Other constants
+export const ETHER = BigNumber.from("1000000000000000000");
 export const VERSION = process.env.REACT_APP_VERSION

@@ -2403,10 +2403,10 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@trustline-inc/probity@^0.5.0-alpha1":
-  version "0.5.0-alpha1"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/0.5.0-alpha1/8f2259ad22cf38d362e0191d0a212d626c80d574d2b450636f841edb8dd3dc12#1bdb9d77eebd240d036a30e1b3d0639b0a572730"
-  integrity sha512-z++NVG9KNmPtL8VFS6vN6J3zoBGFkWqAA8MRETyXlf1MUg+cgrwB++Nqcl1/3N1fwcIl6Rc17jYLH41hJsQGEw==
+"@trustline-inc/probity@^0.5.0-alpha2":
+  version "0.5.0-alpha2"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/0.5.0-alpha2/1e8264ca2aed5244f18364c3f63a7bd3a01e04912c5320d59b9accbc8a08db40#8f63dd0191454697aa836654d32eb90810659d67"
+  integrity sha512-8sZYX+2nulL0Pg4xNVXVxskPjserPN9GduQZ3+JHxKQ/j2miGEyxRlVL5oYxWs4h9NLL3bI9sPaCa6VbBV2VwQ==
 
 "@types/anymatch@*":
   version "1.3.1"

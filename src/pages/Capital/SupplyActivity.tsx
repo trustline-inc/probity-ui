@@ -7,7 +7,8 @@ interface Props {
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  stake: () => void;
+  supply: () => void;
+  loading: boolean;
 }
 
 function StakingActivity({
@@ -16,7 +17,8 @@ function StakingActivity({
   collateralRatio,
   onCollateralAmountChange,
   onSupplyAmountChange,
-  stake
+  supply,
+  loading
 }: Props) {
   return (
     <>
@@ -75,9 +77,11 @@ function StakingActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={stake}
-            disabled={supplyAmount === 0 || collateralAmount === 0}
-          >Confirm</button>
+            onClick={supply}
+            disabled={supplyAmount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

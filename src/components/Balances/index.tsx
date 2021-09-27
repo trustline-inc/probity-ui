@@ -1,5 +1,6 @@
 import React from 'react';
 import useSWR from 'swr';
+import web3 from "web3";
 import Nav from 'react-bootstrap/Nav'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -23,9 +24,10 @@ function Balances() {
   const { account, library } = useWeb3React<Web3Provider>()
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", utils.formatBytes32String("FLR"), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256("FLR"), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
+  console.log(vault)
   const { data: aureiBalance, mutate: mutateDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
@@ -100,7 +102,7 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-12">
                   <h6>Used Collateral</h6>
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.lockedCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
                 </div>
               </div>
               <hr />
