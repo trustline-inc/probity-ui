@@ -13,6 +13,8 @@ interface Props {
   collateralAmount: number;
   aureiAmount: number;
   rate: any;
+  borrow: () => void;
+  loading: boolean;
   maxBorrow: number;
   setMaxBorrow: (maxBorrow: number) => void;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -24,6 +26,8 @@ function BorrowActivity({
   collateralAmount,
   aureiAmount,
   rate,
+  loading,
+  borrow,
   maxBorrow,
   setMaxBorrow,
   onAureiAmountChange,
@@ -44,7 +48,6 @@ function BorrowActivity({
       try {
         const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
         const supply = Number(utils.formatEther(totalCapital.div(RAY)));
-        console.log(borrows, supply)
         const newBorrows = borrows + Number(aureiAmount);
         const newUtilization = (newBorrows / supply);
         const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
@@ -114,6 +117,17 @@ function BorrowActivity({
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2"><span>Collateral Ratio:</span><br />{collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
           </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12 mt-4 d-grid">
+          <button
+            className="btn btn-primary btn-lg mt-4"
+            onClick={borrow}
+            disabled={aureiAmount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

@@ -132,7 +132,7 @@ function Navbar() {
               activeClassName="active"
               to="/capital"
             >
-              <i className="fas fa-coins" /> Yield
+              <i className="fas fa-coins" /> Capital
             </NavLink>
           </li>
           <li className="nav-item my-1">

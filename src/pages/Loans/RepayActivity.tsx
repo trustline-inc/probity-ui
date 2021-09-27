@@ -5,18 +5,23 @@ interface Props {
   collateralRatio: number;
   collateralAmount: number;
   aureiAmount: number;
+  rate: number;
+  loading: boolean;
+  repay: () => void;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function RepayActivity({
+  rate,
+  repay,
+  loading,
+  aureiAmount,
   collateralRatio,
   collateralAmount,
   onAureiAmountChange,
   onCollateralAmountChange
 }: Props) {
-
-
   return (
     <>
       <label className="form-label">
@@ -56,6 +61,17 @@ function RepayActivity({
               </small>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12 mt-4 d-grid">
+          <button
+            className="btn btn-primary btn-lg mt-4"
+            onClick={repay}
+            disabled={aureiAmount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

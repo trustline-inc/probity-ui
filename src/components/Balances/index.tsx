@@ -43,9 +43,11 @@ function Balances() {
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', TREASURY_ADDRESS], {
+  console.log("totalDebt:", totalDebt.toString())
+  const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE_ADDRESS, 'totalCapital'], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
+  console.log("totalCapital:", totalCapital.toString())
 
   React.useEffect(() => {
     if (library) {
@@ -146,13 +148,13 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-12">
                   <h6>Debt</h6>
-                  <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-12">
                   <h6>Capital</h6>
-                  <span className="text-truncate">{totalSupply ? numeral(utils.formatEther(totalSupply)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{totalCapital ? numeral(utils.formatEther(totalCapital.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
                 </div>
               </div>
             </>

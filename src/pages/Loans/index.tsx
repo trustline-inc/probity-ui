@@ -3,15 +3,21 @@ import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { Contract, utils } from "ethers";
 import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { WAD, AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
+import {
+  WAD,
+  NATIVE_COLLATERAL_ADDRESS,
+  TELLER_ADDRESS,
+  TREASURY_ADDRESS,
+  VAULT_ENGINE_ADDRESS
+} from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -27,12 +33,13 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxBorrow, setMaxBorrow] = React.useState(0)
+  const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', utils.formatBytes32String("FLR"), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', web3.utils.keccak256("FLR"), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: rate } = useSWR([TELLER_ADDRESS, 'getAPR'], {
+  const { data: rate } = useSWR([TELLER_ADDRESS, 'APR'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
 
@@ -44,62 +51,78 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const borrow = async () => {
     if (library && account) {
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      setLoading(true)
 
       try {
-        const result = await vault.modifyDebt(
+        // Deposit collateral
+        var result = await nativeCollateral.deposit(
+          {
+            gasLimit: web3.utils.toWei('400000', 'wei'),
+            value: WAD.mul(collateralAmount)
+          }
+        );
+        var data = await result.wait();
+        ctx.updateTransactions(data);
+
+        // Modify debt
+        result = await vault.modifyDebt(
           web3.utils.keccak256("FLR"),
           TREASURY_ADDRESS,
           WAD.mul(collateralAmount),
           WAD.mul(aureiAmount)
         );
-        const data = await result.wait();
+        data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
       }
     }
+
+    setLoading(false)
   }
 
   const repay = async () => {
     if (library && account) {
-      const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
-      const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
-
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
+      const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      setLoading(true)
+      console.log(WAD.mul(collateralAmount).mul(-1).toString(), WAD.mul(aureiAmount).mul(-1).toString())
       try {
-        var result, data;
-        result = await aurei.approve(
-          TELLER_ADDRESS,
-          utils.parseUnits(aureiAmount.toString(), "ether").toString()
+        // Modify debt
+        var result = await vault.modifyDebt(
+          web3.utils.keccak256("FLR"),
+          TREASURY_ADDRESS,
+          WAD.mul(collateralAmount).mul(-1),
+          WAD.mul(aureiAmount).mul(-1)
         );
-        data = await result.wait();
+        var data = await result.wait();
         ctx.updateTransactions(data);
-        result = await teller.repay(
-          utils.parseUnits(aureiAmount.toString(), "ether").toString(),
-          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          { 
-            gasLimit: web3.utils.toWei('400000', 'wei')
-          }
-        );
+
+        // Withdraw collateral
+        result = await nativeCollateral.withdraw(WAD.mul(collateralAmount));
         data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
       }
+
+      setLoading(false)
     }
   }
 
   const onAureiAmountChange = (event: any) => {
-    const amount = event.target.value;
+    const amount = Number(event.target.value);
     setAureiAmount(amount);
   }
 
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault[0]).toString()) - Number(delta);
+    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.usedCollateral).toString()) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.freeCollateral.add(vault.usedCollateral)).toString()) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
@@ -110,10 +133,10 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) + Number(aureiAmount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) - Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) - Number(aureiAmount)));
           break;
       }
     }
@@ -152,6 +175,8 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                 activity === ActivityType.Borrow && (
                   <BorrowActivity
                     rate={rate}
+                    borrow={borrow}
+                    loading={loading}
                     maxBorrow={maxBorrow}
                     aureiAmount={aureiAmount}
                     setMaxBorrow={setMaxBorrow}
@@ -166,6 +191,9 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
               {
                 activity === ActivityType.Repay && (
                   <RepayActivity
+                    rate={rate}
+                    repay={repay}
+                    loading={loading}
                     aureiAmount={aureiAmount}
                     collateralRatio={collateralRatio}
                     collateralAmount={collateralAmount}
@@ -174,19 +202,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                   />
                 )
               }
-
-              <div className="row">
-                <div className="col-12 mt-4 d-grid">
-                  <button
-                    className="btn btn-primary btn-lg mt-4"
-                    onClick={() => {
-                      if (activity === (ActivityType.Borrow as ActivityType)) borrow()
-                      if (activity === (ActivityType.Repay as ActivityType)) repay()
-                    }}
-                    disabled={aureiAmount === 0 || collateralAmount === 0}
-                  >Confirm</button>
-                </div>
-              </div>
             </>
           </Activity>
         </div>
