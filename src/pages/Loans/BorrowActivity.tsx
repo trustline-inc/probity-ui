@@ -42,7 +42,7 @@ function BorrowActivity({
   React.useEffect(() => {
     if (totalDebt && totalCapital) {
       try {
-        const borrows = Number(utils.formatEther(totalDebt));
+        const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
         const supply = Number(utils.formatEther(totalCapital.div(RAY)));
         console.log(borrows, supply)
         const newBorrows = borrows + Number(aureiAmount);
@@ -50,7 +50,9 @@ function BorrowActivity({
         const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
         setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
         setMaxBorrow(supply - borrows)
-      } catch(e) {console.log(e)}
+      } catch(e) {
+        console.log(e)
+      }
     }
   }, [rate, aureiAmount, totalDebt, totalCapital, setMaxBorrow])
 
