@@ -5,13 +5,13 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { Contract, utils } from "ethers";
 import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { AUREI_ADDRESS, TELLER_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
-import VaultABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { WAD, AUREI_ADDRESS, TELLER_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -29,11 +29,8 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const [maxBorrow, setMaxBorrow] = React.useState(0)
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, VaultABI.abi),
-  })
-  const { data: debtBalance } = useSWR([TELLER_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, TellerABI.abi),
+  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', utils.formatBytes32String("FLR"), account], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
   const { data: rate } = useSWR([TELLER_ADDRESS, 'getAPR'], {
     fetcher: fetcher(library, TellerABI.abi),
@@ -47,15 +44,14 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const borrow = async () => {
     if (library && account) {
-      const teller = new Contract(TELLER_ADDRESS, TellerABI.abi, library.getSigner())
+      const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
 
       try {
-        const result = await teller.createLoan(
-          utils.parseUnits(aureiAmount.toString(), "ether").toString(),
-          { 
-            gasLimit: web3.utils.toWei('400000', 'wei'),
-            value: utils.parseUnits(collateralAmount.toString(), "ether").toString()
-          }
+        const result = await vault.modifyDebt(
+          web3.utils.keccak256("FLR"),
+          TREASURY_ADDRESS,
+          WAD.mul(collateralAmount),
+          WAD.mul(aureiAmount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -104,24 +100,24 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     var totalAmount;
     const delta = Number(event.target.value);
     if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault[0]).toString()) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault[0]).toString()) + Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.freeCollateral.add(vault.usedCollateral)).toString()) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }
 
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {
-    if (debtBalance) {
+    if (vault) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) + Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(aureiAmount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(debtBalance).toString()) - Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) - Number(aureiAmount)));
           break;
       }
     }
-  }, [totalCollateral, collateralPrice, aureiAmount, debtBalance, activity]);
+  }, [totalCollateral, collateralPrice, aureiAmount, vault, activity]);
 
   // Ensure loan size input does not exceed maximum
   React.useEffect(() => {

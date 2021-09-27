@@ -12,7 +12,7 @@ import SupplyActivity from "./SupplyActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { ETHER, NATIVE_COLLATERAL_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
+import { WAD, NATIVE_COLLATERAL_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
 import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
@@ -131,7 +131,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
         var result = await nativeCollateral.deposit(
           {
             gasLimit: web3.utils.toWei('400000', 'wei'),
-            value: ETHER.mul(collateralAmount)
+            value: WAD.mul(collateralAmount)
           }
         );
         var data = await result.wait();
@@ -141,8 +141,8 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
         result = await vaultEngine.modifySupply(
           web3.utils.keccak256("FLR"),
           TREASURY_ADDRESS,
-          ETHER.mul(collateralAmount),
-          ETHER.mul(supplyAmount)
+          WAD.mul(collateralAmount),
+          WAD.mul(supplyAmount)
         );
         data = await result.wait();
         ctx.updateTransactions(data);

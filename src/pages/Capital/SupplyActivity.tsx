@@ -24,7 +24,7 @@ function StakingActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="equityIssuanceInput" className="form-label">
+          <label htmlFor="supplyAmount" className="form-label">
             Capital<br/>
             <small className="form-text text-muted">
               Amount of Aurei to mint
@@ -35,7 +35,7 @@ function StakingActivity({
               type="number"
               min={0}
               className="form-control"
-              id="equityIssuanceInput"
+              id="supplyAmount"
               placeholder="0.000000000000000000"
               onChange={onSupplyAmountChange}
             />

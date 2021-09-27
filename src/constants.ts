@@ -14,5 +14,7 @@ export const TREASURY_ADDRESS          = process.env && process.env.REACT_APP_TR
 export const VAULT_ENGINE_ADDRESS      = process.env && process.env.REACT_APP_VAULT_ENGINE_ADDRESS      ? process.env.REACT_APP_VAULT_ENGINE_ADDRESS      : "0x39361717bF9C5C2F0e882D3D39fd7e45a4b7d94D";
 
 // Other constants
-export const ETHER = BigNumber.from("1000000000000000000");
+export const RAD = BigNumber.from("1000000000000000000000000000000000000000000000");
+export const RAY = BigNumber.from("1000000000000000000000000000");
+export const WAD = BigNumber.from("1000000000000000000");
 export const VERSION = process.env.REACT_APP_VERSION

@@ -5,8 +5,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
-import { TELLER_ADDRESS } from '../../constants';
-import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import { RAY, VAULT_ENGINE_ADDRESS } from '../../constants';
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 
 interface Props {
   collateralRatio: number;
@@ -32,21 +32,27 @@ function BorrowActivity({
   const { library } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
 
-  const { data: utilization } = useSWR([TELLER_ADDRESS, 'getUtilization'], {
-    fetcher: fetcher(library, TellerABI.abi),
+  const { data: totalDebt } = useSWR([VAULT_ENGINE_ADDRESS, "totalDebt"], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
+  })
+  const { data: totalCapital } = useSWR([VAULT_ENGINE_ADDRESS, "totalCapital"], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
   React.useEffect(() => {
-    if (utilization) {
-      const borrows = Number(utils.formatEther(utilization[0].toString()));
-      const supply = Number(utils.formatEther(utilization[1].toString()));
-      const newBorrows = borrows + Number(aureiAmount);
-      const newUtilization = (newBorrows / supply);
-      const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-      setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
-      setMaxBorrow(supply - borrows)
+    if (totalDebt && totalCapital) {
+      try {
+        const borrows = Number(utils.formatEther(totalDebt));
+        const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+        console.log(borrows, supply)
+        const newBorrows = borrows + Number(aureiAmount);
+        const newUtilization = (newBorrows / supply);
+        const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+        setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+        setMaxBorrow(supply - borrows)
+      } catch(e) {console.log(e)}
     }
-  }, [rate, aureiAmount, utilization, setMaxBorrow])
+  }, [rate, aureiAmount, totalDebt, totalCapital, setMaxBorrow])
 
   return (
     <>
@@ -57,7 +63,14 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" max={maxBorrow} placeholder="0.000000000000000000" className="form-control" value={aureiAmount ? aureiAmount : ""} onChange={onAureiAmountChange} />
+        <input
+          type="number"
+          min="0.000000000000000000"
+          max={maxBorrow}
+          placeholder="0.000000000000000000"
+          className="form-control"
+          value={aureiAmount ? aureiAmount : ""}
+          onChange={onAureiAmountChange} />
         <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>
       <div className="row pt-3 pb-1">
@@ -82,8 +95,15 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group mb-3">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={(event) => {
-           onCollateralAmountChange(event) }} />
+        <input
+          type="number"
+          min="0.000000000000000000"
+          placeholder="0.000000000000000000"
+          className="form-control"
+          onChange={(event) => {
+            onCollateralAmountChange(event)
+          }}
+        />
         <span className="input-group-text font-monospace">{"FLR"}</span>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
