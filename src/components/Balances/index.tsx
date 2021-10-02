@@ -14,7 +14,6 @@ import {
   RAY,
   AUREI_ADDRESS,
   TCN_TOKEN_ADDRESS,
-  TREASURY_ADDRESS,
   VAULT_ENGINE_ADDRESS
 } from "../../constants";
 import './index.css';
@@ -28,7 +27,7 @@ function Balances() {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256("FLR"), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: aureiBalance, mutate: mutateDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', account], {
+  const { data: aurBalance, mutate: mutateAurBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
   const { data: interestBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'TCN', account], {
@@ -43,17 +42,15 @@ function Balances() {
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'totalDebt'], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  console.log("totalDebt:", totalDebt.toString())
   const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE_ADDRESS, 'totalCapital'], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  console.log("totalCapital:", totalCapital.toString())
 
   React.useEffect(() => {
     if (library) {
       library.on("block", () => {
         mutateVault(undefined, true);
-        mutateDebt(undefined, true);
+        mutateAurBalance(undefined, true);
         mutateTotalAurei(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateTcnBalance(undefined, true);
@@ -113,7 +110,7 @@ function Balances() {
                 <div className="col-12">
                   <h6>Assets</h6>
                 </div>
-                <span className="text-truncate">{aureiBalance ? numeral(utils.formatEther(aureiBalance.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
+                <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
                 <br/>
                 <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance)).format('0,0.0[00000000000000000]') : null} TCN</span>
               </div>

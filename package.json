@@ -16,6 +16,7 @@
     "@types/react-dom": "^17.0.0",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
+    "@web3-react/ledger-connector": "^6.1.9",
     "axios": "^0.21.1",
     "bootstrap": "5.1.0",
     "ethers": "^5.4.7",
@@ -36,6 +37,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:https": "HTTPS=true SSL_CRT_FILE=./local-dev.pem SSL_KEY_FILE=./local-dev-key.pem react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

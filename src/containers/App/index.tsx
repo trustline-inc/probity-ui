@@ -11,8 +11,8 @@ import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
+import ConnectWalletModal from "../../components/ConnectorModal"
 import { FTSO_ADDRESS } from '../../constants';
-import { injected } from "../../connectors";
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
@@ -20,14 +20,18 @@ import Loans from "../../pages/Loans";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
+import { VERSION } from '../../constants';
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
 
 function App() {
+  const [showConnectorModal, setShowConnectorModal] = useState(false);
+  const handleClose = () => setShowConnectorModal(false);
+  const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
   const [collateralPrice, setCollateralPrice] = useState(0.00);
-  const { activate, active, library } = useWeb3React<Web3Provider>()
+  const { active, library, error } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
     "displayInfoAlert",
     true
@@ -41,10 +45,6 @@ function App() {
   const { data, mutate } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
-
-  const onClick = () => {
-    activate(injected);
-  };
 
   useEffect(() => {
     const runEffect = async () => {
@@ -87,6 +87,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <ConnectWalletModal show={showConnectorModal} handleClose={handleClose} />
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
             <EventContext.Provider value={{ transactions, updateTransactions }}>
@@ -105,7 +106,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Probity is now live on <a href="https://trustline.co" target="blank">Trustline's</a> private Coston testnet until a public network is available.
+                      Probity is now live on a private Coston testnet hosted by <a href="https://trustline.co" target="blank">Trustline</a> until a public testnet is available.
                       <button
                         type="button"
                         className="btn-close"
@@ -136,14 +137,26 @@ function App() {
                           app to connect your wallet.
                         </div>
                       ) : (
-                          <div className="shadow-sm border p-5 mt-5 bg-white rounded">
-                          <h3>Please select a wallet to connect to this dapp:</h3>
+                          <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
+                          <h3>Connect a wallet to enter</h3>
+                          {
+                            (() => {
+                              switch (error?.name) {
+                                case "UnsupportedChainIdError":
+                                  return <span className="text-danger">{error.message}</span>
+                                case "TransportError":
+                                  return <span className="text-danger">{error.message}</span>
+                                default:
+                                  return JSON.stringify(error)
+                              }
+                            })()
+                          }
                           <br />
                           <br />
                           <button
                             className="btn btn-outline-success"
                             type="button"
-                            onClick={onClick}
+                            onClick={handleShow}
                           >
                             <i className="fas fa-wallet mr-2" /> Connect wallet
                           </button>
@@ -190,7 +203,13 @@ function App() {
               </div>
               <div className="row">
                 <div className="col-md-12 mt-5">
-                  <SocialLinks />
+                  <div className="text-center">
+                    <SocialLinks />
+                    <div className="spacer spacer-1" />
+                    <small className="container-fluid text-muted" id="version">
+                      v{VERSION}
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>

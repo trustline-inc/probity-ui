@@ -52,6 +52,20 @@ npm start
 
 This starts the application at [`http://localhost:3000`](http://localhost:3000).
 
+## Development
+
+### Ledger Connector
+
+TLS is required for developing the Ledger connector. It's easiest to install [mkcert](https://github.com/FiloSottile/mkcert) to create a cert.
+
+```
+# Example with hostnames and private IP addresses
+mkcert -install
+mkcert -cert-file local-dev.pem -key-file local-dev-key.pem trustline.dev "*.trustline.dev" localhost 127.0.0.1 10.0.0.44
+```
+
+Then you can use the `start:https` script.
+
 ## Deployment
 
 **1. Update the version**
