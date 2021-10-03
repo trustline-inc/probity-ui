@@ -11,12 +11,13 @@ import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
-import ConnectWalletModal from "../../components/ConnectorModal"
+import ConnectorModal from "../../components/ConnectorModal"
 import { FTSO_ADDRESS } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
 import Loans from "../../pages/Loans";
+import Collateral from "../../pages/Collateral";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -87,7 +88,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <ConnectWalletModal show={showConnectorModal} handleClose={handleClose} />
+        <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
             <EventContext.Provider value={{ transactions, updateTransactions }}>
@@ -171,6 +172,9 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
+                        <Route path="/collateral">
+                          <Collateral collateralPrice={collateralPrice} />
+                        </Route>
                         <Route path="/stake">
                           <Capital collateralPrice={collateralPrice} />
                         </Route>

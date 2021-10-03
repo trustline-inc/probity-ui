@@ -52,14 +52,14 @@ function ConnectWalletModal({ show, handleClose }: Props) {
   const { activate } = useWeb3React<Web3Provider>();
 
   return (
-    <Modal show={show} onHide={handleClose} size="lg">
+    <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Choose a Connector</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Row xs={1} md={2} className="g-4">
           <Col>
-            <Connector title={"Metamask"} body={"Browser extension and app"} onClick={() => onClick(injected)} icon={metamaskIcon} />
+            <Connector title={"Metamask"} body={"Browser extension/app"} onClick={() => onClick(injected)} icon={metamaskIcon} />
           </Col>
           <Col>
             <Connector title={"Ledger"} body={"Coming soon"} onClick={() => onClick(ledger.connect(19))} icon={ledgerIcon} disabled />

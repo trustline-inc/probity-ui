@@ -4,7 +4,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
-import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { Contract, utils } from "ethers";
 import web3 from "web3";
@@ -13,7 +12,6 @@ import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
 import {
   WAD,
-  NATIVE_COLLATERAL_ADDRESS,
   TELLER_ADDRESS,
   TREASURY_ADDRESS,
   VAULT_ENGINE_ADDRESS
@@ -51,29 +49,18 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const borrow = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
-        // Deposit collateral
-        var result = await nativeCollateral.deposit(
-          {
-            gasLimit: web3.utils.toWei('400000', 'wei'),
-            value: WAD.mul(collateralAmount)
-          }
-        );
-        var data = await result.wait();
-        ctx.updateTransactions(data);
-
         // Modify debt
-        result = await vault.modifyDebt(
+        const result = await vault.modifyDebt(
           web3.utils.keccak256("FLR"),
           TREASURY_ADDRESS,
           WAD.mul(collateralAmount),
           WAD.mul(aureiAmount)
         );
-        data = await result.wait();
+        const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
@@ -86,24 +73,18 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const repay = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
-      console.log(WAD.mul(collateralAmount).mul(-1).toString(), WAD.mul(aureiAmount).mul(-1).toString())
+
       try {
         // Modify debt
-        var result = await vault.modifyDebt(
+        const result = await vault.modifyDebt(
           web3.utils.keccak256("FLR"),
           TREASURY_ADDRESS,
-          WAD.mul(collateralAmount).mul(-1),
-          WAD.mul(aureiAmount).mul(-1)
+          WAD.mul(-collateralAmount),
+          WAD.mul(-aureiAmount)
         );
-        var data = await result.wait();
-        ctx.updateTransactions(data);
-
-        // Withdraw collateral
-        result = await nativeCollateral.withdraw(WAD.mul(collateralAmount));
-        data = await result.wait();
+        const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);

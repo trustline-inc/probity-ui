@@ -93,14 +93,18 @@ function Balances() {
             <>
               <h5>Collateral</h5>
               <div className="row my-2">
-                <div className="col-12">
-                  <h6>Free Collateral</h6>
+                <div className="col-6">
+                  Available
+                </div>
+                <div className="col-6">
                   <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
-                <div className="col-12">
-                  <h6>Used Collateral</h6>
+                <div className="col-6">
+                  Locked
+                </div>
+                <div className="col-6">
                   <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
                 </div>
               </div>

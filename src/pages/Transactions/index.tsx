@@ -12,6 +12,7 @@ export default function Transactions() {
 
   const rows = ctx.transactions.map((tx: any, index) => {
     const event = tx.events.find((event: any) => event.event)
+    if (event) console.log(event.args[0].toString())
     if (event === undefined) return null;
     return (
       <React.Fragment key={index}>

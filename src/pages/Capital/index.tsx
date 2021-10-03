@@ -12,8 +12,7 @@ import SupplyActivity from "./SupplyActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { WAD, NATIVE_COLLATERAL_ADDRESS, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
-import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import { WAD, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
@@ -118,33 +117,22 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   })
 
   /**
-   * @function supply
+   * @function mint
    */
-   const supply = async () => {
+   const mint = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL_ADDRESS, NativeCollateralABI.abi, library.getSigner())
       const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
-        // Deposit collateral
-        var result = await nativeCollateral.deposit(
-          {
-            gasLimit: web3.utils.toWei('400000', 'wei'),
-            value: WAD.mul(collateralAmount)
-          }
-        );
-        var data = await result.wait();
-        ctx.updateTransactions(data);
-
         // Modify supply
-        result = await vaultEngine.modifySupply(
+        const result = await vaultEngine.modifySupply(
           web3.utils.keccak256("FLR"),
           TREASURY_ADDRESS,
           WAD.mul(collateralAmount),
           WAD.mul(supplyAmount)
         );
-        data = await result.wait();
+        const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
@@ -155,19 +143,19 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   }
 
   /**
-   * @function redeem
+   * @function burn
    */
-  const redeem = async () => {
+  const burn = async () => {
     if (library && account) {
-      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      setLoading(true)
 
       try {
-        const result = await treasury.redeem(
-          utils.parseUnits(collateralAmount.toString(), "ether").toString(),
-          utils.parseUnits(supplyAmount.toString(), "ether").toString(),
-          {
-            gasLimit: web3.utils.toWei('400000', 'wei')
-          }
+        const result = await vaultEngine.modifySupply(
+          web3.utils.keccak256("FLR"),
+          TREASURY_ADDRESS,
+          WAD.mul(-collateralAmount),
+          WAD.mul(-supplyAmount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -207,7 +195,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
     <>
       <header className="pt-2">
         <h1>Capital Management</h1>
-        <p className="lead">Staking assets to create Aurei capital allows you to earn interest.</p>
+        <p className="lead">Mint Aurei to earn interest from loans created by Probity.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -216,10 +204,10 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/supply"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Supply</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/supply"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Mint</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Burn</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Withdraw</NavLink>
@@ -235,7 +223,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
                   collateralAmount={collateralAmount}
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
-                  supply={supply}
+                  supply={mint}
                   loading={loading}
                   onCollateralAmountChange={onCollateralAmountChange}
                   onSupplyAmountChange={onSupplyAmountChange}
@@ -250,7 +238,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
                   onSupplyAmountChange={onSupplyAmountChange}
-                  redeem={redeem}
+                  redeem={burn}
                 />
               )
             }
