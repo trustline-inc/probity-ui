@@ -1,4 +1,13 @@
 import { BigNumber } from "ethers";
+import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
+import BridgeABI from "@trustline-inc/probity/artifacts/contracts/Bridge.sol/Bridge.json";
+import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
+import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
+import TcnTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
+import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 
 /**
  * Contract addresses
@@ -12,6 +21,21 @@ export const TCN_TOKEN_ADDRESS         = process.env && process.env.REACT_APP_TC
 export const TELLER_ADDRESS            = process.env && process.env.REACT_APP_TELLER_ADDRESS            ? process.env.REACT_APP_TELLER_ADDRESS            : "0xf56dAde9c66c6bE12E5B529909066135e61834c8";
 export const TREASURY_ADDRESS          = process.env && process.env.REACT_APP_TREASURY_ADDRESS          ? process.env.REACT_APP_TREASURY_ADDRESS          : "0x0581F116aB4Fe1F5bEBCd3dE0d66612D0F6C1EC6";
 export const VAULT_ENGINE_ADDRESS      = process.env && process.env.REACT_APP_VAULT_ENGINE_ADDRESS      ? process.env.REACT_APP_VAULT_ENGINE_ADDRESS      : "0x39361717bF9C5C2F0e882D3D39fd7e45a4b7d94D";
+
+/**
+ * Contract ABIs
+ */
+export const INTERFACES = {
+  [AUREI_ADDRESS]: AureiABI,
+  [BRIDGE_ADDRESS]: BridgeABI,
+  [FTSO_ADDRESS]: FtsoABI,
+  [NATIVE_COLLATERAL_ADDRESS]: NativeCollateralABI,
+  [REGISTRY_ADDRESS]: RegistryABI,
+  [TCN_TOKEN_ADDRESS]: TcnTokenABI,
+  [TELLER_ADDRESS]: TellerABI,
+  [TREASURY_ADDRESS]: TreasuryABI,
+  [VAULT_ENGINE_ADDRESS]: VaultEngineABI
+}
 
 // Other constants
 export const RAD = BigNumber.from("1000000000000000000000000000000000000000000000");

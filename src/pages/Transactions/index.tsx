@@ -1,18 +1,27 @@
-import { BigNumber, utils } from "ethers"
+import web3 from "web3"
+import { BigNumber, Contract, utils } from "ethers"
 import React, { useContext } from "react"
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import numeral from "numeral";
+import { INTERFACES } from "../../constants";
 
 export default function Transactions() {
-  const { active } = useWeb3React<Web3Provider>();
+  const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
-
   const rows = ctx.transactions.map((tx: any, index) => {
+    const contract = new Contract(tx.to, INTERFACES[tx.to].abi, library?.getSigner())
     const event = tx.events.find((event: any) => event.event)
-    if (event) console.log(event.args[0].toString())
+    console.log("event:", event)
+    if (event) {
+      const parsedEvent = contract.interface.parseLog(event);
+      console.log("parsed:", parsedEvent)
+      if (parsedEvent) {
+        console.log(web3.utils.toAscii(parsedEvent.args[0]))
+      }
+    }
     if (event === undefined) return null;
     return (
       <React.Fragment key={index}>
