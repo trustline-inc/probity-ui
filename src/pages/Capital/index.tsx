@@ -248,6 +248,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
                   interestAmount={interestAmount}
                   onInterestAmountChange={onInterestAmountChange}
                   withdraw={withdraw}
+                  loading={loading}
                   setInterestType={setInterestType}
                   interestType={interestType}
                 />

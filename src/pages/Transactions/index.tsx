@@ -12,15 +12,15 @@ export default function Transactions() {
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
   const rows = ctx.transactions.map((tx: any, index) => {
-    const contract = new Contract(tx.to, INTERFACES[tx.to].abi, library?.getSigner())
+    // const contract = new Contract(tx.to, INTERFACES[tx.to].abi, library?.getSigner())
     const event = tx.events.find((event: any) => event.event)
     console.log("event:", event)
     if (event) {
-      const parsedEvent = contract.interface.parseLog(event);
-      console.log("parsed:", parsedEvent)
-      if (parsedEvent) {
-        console.log(web3.utils.toAscii(parsedEvent.args[0]))
-      }
+      // const parsedEvent = contract.interface.parseLog(event);
+      // console.log("parsed:", parsedEvent)
+      // if (parsedEvent) {
+        // console.log(web3.utils.toAscii(parsedEvent.args[0]))
+      // }
     }
     if (event === undefined) return null;
     return (

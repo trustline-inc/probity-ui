@@ -15,8 +15,8 @@ interface Props {
   rate: any;
   borrow: () => void;
   loading: boolean;
-  maxBorrow: number;
-  setMaxBorrow: (maxBorrow: number) => void;
+  maxSize: number;
+  setMaxSize: (maxSize: number) => void;
   onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -28,8 +28,8 @@ function BorrowActivity({
   rate,
   loading,
   borrow,
-  maxBorrow,
-  setMaxBorrow,
+  maxSize,
+  setMaxSize,
   onAureiAmountChange,
   onCollateralAmountChange
 }: Props) {
@@ -52,12 +52,12 @@ function BorrowActivity({
         const newUtilization = (newBorrows / supply);
         const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
         setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
-        setMaxBorrow(supply - borrows)
+        setMaxSize(supply - borrows)
       } catch(e) {
         console.log(e)
       }
     }
-  }, [rate, aureiAmount, totalDebt, totalCapital, setMaxBorrow])
+  }, [rate, aureiAmount, totalDebt, totalCapital, setMaxSize])
 
   return (
     <>
@@ -71,10 +71,9 @@ function BorrowActivity({
         <input
           type="number"
           min="0.000000000000000000"
-          max={maxBorrow}
+          max={maxSize}
           placeholder="0.000000000000000000"
           className="form-control"
-          value={aureiAmount ? aureiAmount : ""}
           onChange={onAureiAmountChange} />
         <span className="input-group-text font-monospace">{"AUR"}</span>
       </div>

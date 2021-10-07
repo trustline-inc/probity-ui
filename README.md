@@ -27,6 +27,8 @@ npm install
 
 This will install React, Web3, and Probity libraries.
 
+If you're working with a local development build of Solaris, make sure that you `tsc` in the Solaris directory and install the package with `npm install --force ../solaris`.
+
 **3. Set environment variables**
 
 Create `.env.local` and set contract addresses. For example:

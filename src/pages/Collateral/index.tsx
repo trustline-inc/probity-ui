@@ -96,7 +96,8 @@ function Collateral({ collateralPrice }: { collateralPrice: number }) {
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {
     if (vault) {
-      setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString())));
+      const newRatio = (totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()))
+      setCollateralRatio(isFinite(newRatio) ? newRatio : 0);
     }
   }, [totalCollateral, collateralPrice, vault, activity]);
 

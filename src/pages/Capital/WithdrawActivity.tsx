@@ -4,6 +4,7 @@ interface Props {
   interestAmount: number;
   onInterestAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   withdraw: (amount: number) => void;
+  loading: boolean;
   setInterestType: (type: string) => void;
   interestType: string;
 }
@@ -12,6 +13,7 @@ function WithdrawActivity({
   interestAmount,
   onInterestAmountChange,
   withdraw,
+  loading,
   setInterestType,
   interestType
 }: Props) {
@@ -61,8 +63,10 @@ function WithdrawActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={() => { withdraw(interestAmount) }}
-            disabled={interestAmount === 0}
-          >Confirm</button>
+            disabled={interestAmount === 0 || loading}
+          >
+            {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm" }
+          </button>
         </div>
       </div>
     </>

@@ -1,11 +1,11 @@
 import React, { useContext, useRef } from "react";
-import web3 from "web3";
 import { Modal } from "bootstrap";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import QRCode from "react-qr-code";
+import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
-import { Contract, utils } from "ethers";
+import { Contract } from "ethers";
 import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import BridgeABI from "@trustline-inc/probity/artifacts/contracts/Bridge.sol/Bridge.json";
@@ -55,24 +55,45 @@ export default function Transfers() {
           const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
 
           try {
-            var result, data;
-            result = await aurei.approve(
-              BRIDGE_ADDRESS,
-              utils.parseUnits(aureiAmount.toString(), "ether").toString()
-            );
-            data = await result.wait();
-            ctx.updateTransactions(data);
-            result = await bridge.transferAureiToXRP(
-              address,
-              // Divide by 1e3 because max precision on XRPL is 10e-15.
-              utils.parseUnits(aureiAmount.toString(), "ether").div(1e3).toString(),
-              (Date.now() / 1000).toFixed(0),
-              {
-                gasPrice: web3.utils.toWei('225', 'Gwei')
-              }
-            );
-            data = await result.wait();
-            ctx.updateTransactions(data);
+            const issuer = {
+              address: "rpWNDcbPe9PZndvWFLK1w1DuNhzbsgtPqG",
+              secret: "shnYUmJcLFZWAAaUg7vDNSrSEQx5F"
+            }
+            const receiver = {
+              address: "rDkNWp5gYs4mSt8pXYD6GVF85YK9XxmRKW",
+              secret: "sptH3HxFUVghwQJHWnADnQwPY457o"
+            }
+            const transfer = new solaris.Transfer({
+              direction: {
+                source: "LOCAL",
+                destination: "XRPL_TESTNET"
+              },
+              amount: aureiAmount,
+              token: AUREI_ADDRESS,
+              signer: library.getSigner()
+            })
+
+            const balance = await aurei.balanceOf(account)
+            console.log("balance:", balance.toString())
+
+            let tx = await transfer.approve()
+            await tx.wait()
+            console.log("approved")
+
+            tx = await transfer.initiate(issuer.address)
+            await tx.wait()
+            console.log("initiated")
+
+            let status = await bridge.getIssuerStatus(issuer.address);
+            console.log("status:", status)
+
+            await transfer.issueTokens("XRPL_TESTNET", issuer, receiver)
+
+            tx = await transfer.verifyIssuance()
+            await tx.wait()
+
+            status = await bridge.getIssuerStatus(issuer.address);
+            console.log("status:", status)
             setLoading(false)
           } catch (error) {
             console.log(error);
@@ -144,7 +165,9 @@ export default function Transfers() {
                 className="btn btn-primary btn-lg mt-4"
                 onClick={initiateTransfer}
                 disabled={aureiAmount === 0 || username === "" || loading}
-              >Confirm</button>
+              >
+                {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
+              </button>
             </div>
           </div>
         </Activity>
