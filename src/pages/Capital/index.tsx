@@ -93,25 +93,13 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
     if (library) {
       const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
       const deposit = treasury.filters.Deposit(null, null)
-      // const redemption = treasury.filters.Redemption(null, null, null, account)
-      const withdrawal = treasury.filters.Withdrawal(null, null)
 
       library.on(deposit, (event) => {
         console.log('Deposit Event:', event);
       })
 
-      // library.on(redemption, (event) => {
-      //   console.log('Redemption Event:', event);
-      // })
-
-      library.on(withdrawal, (event) => {
-        console.log('Withdrawal Event:', event);
-      })
-
       return () => {
         library.removeAllListeners(deposit)
-        // library.removeAllListeners(redemption)
-        library.removeAllListeners(withdrawal)
       }
     }
   })

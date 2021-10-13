@@ -3,7 +3,6 @@ import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
@@ -17,8 +16,7 @@ import {
   TELLER_ADDRESS,
   TREASURY_ADDRESS,
   VAULT_ENGINE_ADDRESS,
-  AUREI_ADDRESS,
-  RAY
+  RAD
 } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
@@ -106,24 +104,12 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
    */
      const withdraw = async () => {
       if (library && account) {
-        const treasury = new Contract("0xD11EcC22b794b6E5312FbF507191f8Cf1a4155F6", TreasuryABI.abi, library.getSigner())
-        const aurei = new Contract("0x7c0B4863DB0176c09EB6F9B636b50Fa109594259", AureiABI.abi, library.getSigner())
-        const vaultEngine = new Contract("0x8Ae6D9d64Ef3F9c125516207A9da1c87531c3Eee", VaultEngineABI.abi, library.getSigner())
+        const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
         setLoading(true)
         try {
-          const addr = await treasury.aurei()
-          console.log("aur addr:", addr)
-          let balance = await aurei.totalSupply()
-          console.log("supply:", balance.toString())
-          console.log("AUR balance before:", balance.toString())
-          const amount = BigNumber.from(aureiAmount).mul(RAY)
-          console.log("amount:", amount.toString())
+          const amount = BigNumber.from(aureiAmount).mul(RAD)
           const result = await treasury.withdrawAurei(amount);
-          console.log("result", result)
           const data = await result.wait();
-          console.log("data", data)
-          balance = await aurei.balanceOf(account)
-          console.log("AUR balance after :", balance.toString())
           ctx.updateTransactions(data);
         } catch (error) {
           console.log(error);
@@ -133,38 +119,18 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       }
   }
 
-  // Listener for Aurei Transfer event
+  // Listener for Treasury events
   React.useEffect(() => {
     if (library) {
+      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const withdrawal = treasury.filters.Withdrawal(null, null)
 
-      const filter = {
-        address: "0xcf9173ec85f051a509F4c21Ecb5EaaEDC1A98a21",
-        topics: [
-          utils.id("Transfer(address,address,uint256)")
-        ]
-      }
-
-      const treasury = new Contract("0xf6D099B6C81ab597071f954700b73b3810e31c9D", TreasuryABI.abi, library.getSigner())
-      const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
-
-      aurei.on("Transfer", (to, amount, from) => {
-        console.log("Transfer")
-        console.log(to, amount, from);
-      });
-
-      treasury.on("Withdrawal", (user, amount) => {
-        console.log("Withdrawal")
-        console.log(user, amount.toString());
-      });
-
-      // const transfer = aurei.filters.Transfer(null, null)
-
-      // library.on(filter, (event) => {
-      //   console.log('Transfer Event:', event);
-      // })
+      library.on(withdrawal, (event) => {
+        console.log('Withdrawal Event:', event);
+      })
 
       return () => {
-        // library.removeAllListeners(transfer)
+        library.removeAllListeners(withdrawal)
       }
     }
   })
