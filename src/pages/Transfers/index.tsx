@@ -5,10 +5,10 @@ import { Web3Provider } from '@ethersproject/providers';
 import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
-import { Contract } from "ethers";
-import { AUREI_ADDRESS, BRIDGE_ADDRESS } from '../../constants';
-import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import BridgeABI from "@trustline-inc/probity/artifacts/contracts/Bridge.sol/Bridge.json";
+import { BigNumber, Contract } from "ethers";
+import { AUREI_ADDRESS, BRIDGE_ADDRESS, STATE_CONNECTOR_ADDRESS, WAD } from '../../constants';
+import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
+import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
@@ -47,17 +47,18 @@ export default function Transfers() {
       const json = await response.json()
 
       if (json.addresses.length > 0) {
-        // Take the first one for now
+        // Take the first one for now.
+        // TODO: Prompt for signing via Xumm or other means
         const address = json.addresses[0].addressDetails.address;
 
         if (library && account) {
-          const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
           const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+          const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
 
           try {
             const issuer = {
-              address: "rpWNDcbPe9PZndvWFLK1w1DuNhzbsgtPqG",
-              secret: "shnYUmJcLFZWAAaUg7vDNSrSEQx5F"
+              address: "rp1wKYNjcXn6i5J1HsttmCWtgYHNCL2Nh9",
+              secret: "shPUTM1oGgARNy1NqfJLFWh75RYqP"
             }
             const receiver = {
               address: "rDkNWp5gYs4mSt8pXYD6GVF85YK9XxmRKW",
@@ -68,32 +69,22 @@ export default function Transfers() {
                 source: "LOCAL",
                 destination: "XRPL_TESTNET"
               },
-              amount: aureiAmount,
+              amount: BigNumber.from(aureiAmount).mul(WAD),
               token: AUREI_ADDRESS,
+              bridge: BRIDGE_ADDRESS,
               signer: library.getSigner()
             })
 
-            const balance = await aurei.balanceOf(account)
-            console.log("balance:", balance.toString())
-
             let tx = await transfer.approve()
             await tx.wait()
-            console.log("approved")
-
             tx = await transfer.initiate(issuer.address)
             await tx.wait()
-            console.log("initiated")
-
-            let status = await bridge.getIssuerStatus(issuer.address);
-            console.log("status:", status)
-
             await transfer.issueTokens("XRPL_TESTNET", issuer, receiver)
-
+            await stateConnector.setFinality(true);
             tx = await transfer.verifyIssuance()
             await tx.wait()
-
-            status = await bridge.getIssuerStatus(issuer.address);
-            console.log("status:", status)
+            const status = await bridge.getIssuerStatus(issuer.address);
+            console.log("Status:", status)
             setLoading(false)
           } catch (error) {
             console.log(error);
