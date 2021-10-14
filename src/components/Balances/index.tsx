@@ -140,7 +140,7 @@ function Balances() {
                 </div>
                 <div className="col-6">
                   <h6>ERC20 Tokens</h6>
-                  <span className="text-truncate">{aureiERC20Balance ? utils.formatEther(aureiERC20Balance) : null} AUR</span>
+                  <span className="text-truncate">{aureiERC20Balance ? numeral(utils.formatEther(aureiERC20Balance)).format('0,0.0[00000000000000000]') : null} AUR</span>
                   <br/>
                   <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : null} TCN</span>
                 </div>
