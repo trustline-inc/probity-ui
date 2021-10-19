@@ -8,6 +8,7 @@ import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import TcnTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
 import { utils } from "ethers";
+import { getNativeTokenSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import numeral from "numeral";
 import {
@@ -21,10 +22,10 @@ import './index.css';
 function Balances() {
   enum BalanceType { Individual, Aggregate }
   const [selected, setSelected] = React.useState(BalanceType.Individual)
-  const { account, library } = useWeb3React<Web3Provider>()
+  const { account, library, chainId } = useWeb3React<Web3Provider>()
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256("FLR"), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
   const { data: aurBalance, mutate: mutateAurBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'aur', account], {
@@ -100,7 +101,7 @@ function Balances() {
                   Available
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -108,7 +109,7 @@ function Balances() {
                   Locked
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} FLR</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr />
