@@ -2388,10 +2388,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@trustline-inc/probity@^0.5.0-alpha2":
-  version "0.5.0-alpha2"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/0.5.0-alpha2/1e8264ca2aed5244f18364c3f63a7bd3a01e04912c5320d59b9accbc8a08db40#8f63dd0191454697aa836654d32eb90810659d67"
-  integrity sha512-8sZYX+2nulL0Pg4xNVXVxskPjserPN9GduQZ3+JHxKQ/j2miGEyxRlVL5oYxWs4h9NLL3bI9sPaCa6VbBV2VwQ==
+"@trustline-inc/probity@^0.7.0-alpha1":
+  version "0.7.0-alpha1"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/0.7.0-alpha1/14b312ef1b71ee01976040297edc7f9131b2ab85d3767748ec1dea4a651f43e5#af9703f6e74c2a750663631304a725bbdaa12055"
+  integrity sha512-mslvd8DRrux0G118vzvGglvBF4+JCcOtrspoZbtifx8i3TiA2dWKuB7cgpzCygpvPTrzXsD5WqJWsZWv1t7PaA==
 
 "@trustline/solaris@file:../solaris":
   version "0.2.0"
