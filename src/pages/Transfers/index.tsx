@@ -129,7 +129,7 @@ export default function Transfers() {
         {active && <Info />}
       </header>
       <p className="lead">Send Aurei to the Trustline App</p>
-      <p className="text-secondary"><span className="fa fa-info-circle"></span> This action will ask you to sign an <code>Approve</code> and a <code>transferAureiToXRPL</code> transaction.</p>
+      <p className="text-secondary"><span className="fa fa-info-circle"></span> This action will ask you to sign an <code>approve</code>, <code>createIssuer</code>, <code>issueTokens</code>, and a <code>verifyIssuance</code> transaction.</p>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
