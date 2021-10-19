@@ -107,7 +107,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
         const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
         setLoading(true)
         try {
-          const amount = BigNumber.from(aureiAmount).mul(RAD)
+          const amount = BigNumber.from(aureiAmount).mul(WAD)
           const result = await treasury.withdrawAurei(amount);
           const data = await result.wait();
           ctx.updateTransactions(data);
