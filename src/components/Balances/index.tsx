@@ -27,10 +27,10 @@ function Balances() {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256("FLR"), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: aurBalance, mutate: mutateAurBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'AUR', account], {
+  const { data: aurBalance, mutate: mutateAurBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'aur', account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'TCN', account], {
+  const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'tcn', account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
   const { data: aureiERC20Balance, mutate: mutateAureiERC20Balance } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
@@ -134,15 +134,15 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-6">
                   <h6>Vault Tokens</h6>
-                  <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance)).format('0,0.0[00000000000000000]') : "0"} AUR</span>
                   <br/>
-                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance)).format('0,0.0[00000000000000000]') : null} TCN</span>
+                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
                 <div className="col-6">
                   <h6>ERC20 Tokens</h6>
-                  <span className="text-truncate">{aureiERC20Balance ? numeral(utils.formatEther(aureiERC20Balance)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{aureiERC20Balance ? numeral(utils.formatEther(aureiERC20Balance)).format('0,0.0[00000000000000000]') : "0"} AUR</span>
                   <br/>
-                  <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : null} TCN</span>
+                  <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
               </div>
               <br/>

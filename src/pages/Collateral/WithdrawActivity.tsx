@@ -1,9 +1,7 @@
 import React from "react";
-import PriceFeed from "../../components/PriceFeed"
 
 interface Props {
   collateralAmount: number;
-  collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   withdraw: () => void;
   loading: boolean;
@@ -11,7 +9,6 @@ interface Props {
 
 function WithdrawActivity({
   collateralAmount,
-  collateralRatio,
   onCollateralAmountChange,
   withdraw,
   loading
@@ -36,24 +33,6 @@ function WithdrawActivity({
               onChange={onCollateralAmountChange}
             />
             <span className="input-group-text font-monospace">{"FLR"}</span>
-          </div>
-        </div>
-      </div>
-      <PriceFeed collateralAmount={collateralAmount} />
-      <div className="row">
-        <div className="col-12">
-          <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2">
-              <span>Collateral Ratio:</span>
-              <br />
-              <small className="text-muted">
-                {collateralAmount ? (
-                  collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>
-                ) : (
-                  <span>N/A</span>
-                )}
-              </small>
-            </div>
           </div>
         </div>
       </div>

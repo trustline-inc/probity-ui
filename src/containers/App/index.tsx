@@ -173,7 +173,7 @@ function App() {
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
                         <Route path="/collateral">
-                          <Collateral collateralPrice={collateralPrice} />
+                          <Collateral />
                         </Route>
                         <Route path="/stake">
                           <Capital collateralPrice={collateralPrice} />

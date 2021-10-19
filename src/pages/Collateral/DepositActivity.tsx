@@ -3,7 +3,6 @@ import PriceFeed from "../../components/PriceFeed";
 
 interface Props {
   collateralAmount: number;
-  collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
   deposit: () => void;
@@ -11,7 +10,6 @@ interface Props {
 
 function DepositActivity({
   collateralAmount,
-  collateralRatio,
   onCollateralAmountChange,
   loading,
   deposit
@@ -40,13 +38,6 @@ function DepositActivity({
         </div>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
-      <div className="row">
-        <div className="col-12">
-          <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2"><span>Collateral Ratio:</span><br />{collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
-          </div>
-        </div>
-      </div>
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button
