@@ -1,7 +1,8 @@
 import { BigNumber } from "ethers";
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
+import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
 import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
+import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -14,6 +15,7 @@ import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/V
  * Contract addresses
  */
 export const AUREI_ADDRESS             = process.env && process.env.REACT_APP_AUREI_ADDRESS             ? process.env.REACT_APP_AUREI_ADDRESS             : "0xcf9173ec85f051a509F4c21Ecb5EaaEDC1A98a21";
+export const AUCTIONEER_ADDRESS        = process.env && process.env.REACT_APP_AUCTIONEER_ADDRESS        ? process.env.REACT_APP_AUCTIONEER_ADDRESS        : "0x1aEf23136b3335b8E98a1a3A3A8324DfeA9C06E1";
 export const BRIDGE_ADDRESS            = process.env && process.env.REACT_APP_BRIDGE_ADDRESS            ? process.env.REACT_APP_BRIDGE_ADDRESS            : "0xB03C54535380286D61C06b64442DA1Edd9c01F10";
 export const FTSO_ADDRESS              = process.env && process.env.REACT_APP_FTSO_ADDRESS              ? process.env.REACT_APP_FTSO_ADDRESS              : "0x4ECaE26B874eb41A4cE87379E19E27E7034E4b5D";
 export const NATIVE_COLLATERAL_ADDRESS = process.env && process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS ? process.env.REACT_APP_NATIVE_COLLATERAL_ADDRESS : "0x0450790BCEFCfd953491f5130DFD3b572C67285F";
@@ -29,6 +31,7 @@ export const VAULT_ENGINE_ADDRESS      = process.env && process.env.REACT_APP_VA
  */
 export const INTERFACES = {
   [AUREI_ADDRESS]: AureiABI,
+  [AUCTIONEER_ADDRESS]: AuctioneerABI,
   [BRIDGE_ADDRESS]: BridgeABI,
   [FTSO_ADDRESS]: FtsoABI,
   [NATIVE_COLLATERAL_ADDRESS]: NativeCollateralABI,
