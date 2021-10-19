@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/test/Ftso.sol/Ftso.json";
+import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import ConnectorModal from "../../components/ConnectorModal"
 import { FTSO_ADDRESS } from '../../constants';
 import Navbar from "../../components/Navbar";
