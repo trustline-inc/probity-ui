@@ -88,22 +88,6 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
     if (location.pathname === "/capital/withdraw") setActivity(ActivityType.Interest);
   }, [location])
 
-  // Listener for Treasury events
-  React.useEffect(() => {
-    if (library) {
-      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
-      const deposit = treasury.filters.Deposit(null, null)
-
-      library.on(deposit, (event) => {
-        console.log('Deposit Event:', event);
-      })
-
-      return () => {
-        library.removeAllListeners(deposit)
-      }
-    }
-  })
-
   /**
    * @function mint
    */

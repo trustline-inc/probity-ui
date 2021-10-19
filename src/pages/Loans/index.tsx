@@ -16,7 +16,6 @@ import {
   TELLER_ADDRESS,
   TREASURY_ADDRESS,
   VAULT_ENGINE_ADDRESS,
-  RAD
 } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
@@ -118,22 +117,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
         setLoading(false)
       }
   }
-
-  // Listener for Treasury events
-  React.useEffect(() => {
-    if (library) {
-      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
-      const withdrawal = treasury.filters.Withdrawal(null, null)
-
-      library.on(withdrawal, (event) => {
-        console.log('Withdrawal Event:', event);
-      })
-
-      return () => {
-        library.removeAllListeners(withdrawal)
-      }
-    }
-  })
 
   const onAureiAmountChange = (event: any) => {
     const amount = Number(event.target.value);
