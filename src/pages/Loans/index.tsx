@@ -39,7 +39,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', web3.utils.keccak256("FLR"), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: rate } = useSWR([TELLER_ADDRESS, 'APR'], {
+  const { data: rate } = useSWR([TELLER_ADDRESS, 'apr'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
 
