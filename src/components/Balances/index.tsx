@@ -134,9 +134,9 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-6">
                   <h6>Vault Tokens</h6>
-                  <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance)).format('0,0.0[00000000000000000]') : "0"} AUR</span>
+                  <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} AUR</span>
                   <br/>
-                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
+                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
                 <div className="col-6">
                   <h6>ERC20 Tokens</h6>
