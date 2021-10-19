@@ -123,7 +123,7 @@ function Balances() {
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  <h6>Supply</h6>
+                  <h6>Supplied</h6>
                 </div>
                 <div className="col-6">
                 <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} AUR</span>
