@@ -1,5 +1,5 @@
-import React, { useContext, useRef } from "react";
-import { Modal } from "bootstrap";
+import React, { useContext } from "react";
+import { Button, Form, Modal } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import QRCode from "react-qr-code";
@@ -12,15 +12,63 @@ import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/State
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
+import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
+import { PairingTypes } from "@walletconnect/types";
 
 export default function Transfers() {
-  const modalRef = useRef(null);
   const [loading, setLoading] = React.useState(false)
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
+  const [transferStage, setTransferStage] = React.useState("Pending Transfer")
   const ctx = useContext(EventContext)
+  const [showTransferModal, setShowTransferModal] = React.useState(false);
+  const [transferModalText, setTransferModalText] = React.useState("");
+  const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
+
+  const handleClose = () => setShowTransferModal(false);
+  const handleShow = () => setShowTransferModal(true);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const client = await WalletConnectClient.init({
+          apiKey: "28f4820aced00becb7371afffb64bd15",
+          relayProvider: "wss://relay.walletconnect.com",
+          metadata: {
+            name: "Probity",
+            description: "Probity",
+            url: "#",
+            icons: ["https://walletconnect.com/walletconnect-logo.png"],
+          },
+        });
+
+        client.on(
+          CLIENT_EVENTS.pairing.proposal,
+          async (proposal: PairingTypes.Proposal) => {
+            // uri should be shared with the Wallet either through QR Code scanning or mobile deep linking
+            const { uri } = proposal.signal.params;
+            console.log("uri", uri)
+          }
+        );
+
+        const session = await client.connect({
+          permissions: {
+            blockchain: {
+              chains: ["eip155:1"],
+            },
+            jsonrpc: {
+              methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"],
+            },
+          },
+        });
+        console.log("session", session)
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [])
 
   const onAureiAmountChange = (event: any) => {
     const amount = event.target.value;
@@ -35,6 +83,7 @@ export default function Transfers() {
   const initiateTransfer = async () => {
     try {
       setLoading(true)
+      setShowTransferModal(true)
       const headers = new Headers()
       headers.append('Accept', 'application/xrpl-testnet+json')
       headers.append('PayID-Version', '1.0')
@@ -75,21 +124,35 @@ export default function Transfers() {
               signer: library.getSigner()
             })
 
+            setTransferStage("Pre-Transfer")
+            setTransferModalText(`Permit the Bridge contract to spend your AUR for the transfer.`)
             let tx = await transfer.approve()
+            setTransferModalText(`Permit tx sent, please wait for a block confirmation.`)
             await tx.wait()
+            setTransferStage("Pending Transfer")
+            setTransferModalText(`Initiate the transfer with issuer address ${issuer.address}.`)
             tx = await transfer.initiate(issuer.address)
+            setTransferModalText(`Transfer initiated with issuer address ${issuer.address}, please wait.`)
             await tx.wait()
+            setTransferStage("In-Progress Transfer")
+            setTransferModalText(`Issue tokens on the XRP Ledger as ${issuer.address}.`)
             await transfer.issueTokens("XRPL_TESTNET", issuer, receiver)
+            setTransferModalText(`Tokens issued.`)
             await stateConnector.setFinality(true);
+            setTransferModalText(`Finality set to true. Please verify the issuance.`)
             tx = await transfer.verifyIssuance()
+            setTransferModalText(`Verifying issuance, please wait.`)
             await tx.wait()
+            setTransferStage("Completed Transfer")
+            setTransferModalText(`Done.`)
             const status = await bridge.getIssuerStatus(issuer.address);
-            console.log("Status:", status)
+            setTransferModalText(`Issuer status: ${status}`)
             setLoading(false)
           } catch (error) {
             console.log(error);
             setError(error);
             setLoading(false)
+            setShowTransferModal(false)
           }
         }
       }
@@ -99,30 +162,70 @@ export default function Transfers() {
     }
   }
 
-  const closeModal = () => {
-    const modal = new Modal(modalRef.current!, {})
-    modal.hide();
-  }
-
   return (
     <>
       {
-        <div className="modal" ref={modalRef} id="qr_code" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Scan QR Code</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div className="modal-body d-flex justify-content-center">
-                <QRCode value={account!} />
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal}>Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Modal show={showTransferModal} onHide={handleClose}>
+          <Modal.Header>
+            <Modal.Title>{transferStage}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ minHeight: 150 }}>
+            {transferModalText}
+            {
+              transferStage === "Pre-Transfer" && (
+                <Form className="py-3">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Bridge Address</Form.Label>
+                    <Form.Control type="text" readOnly value={BRIDGE_ADDRESS} />
+                    <Form.Text className="text-muted">
+                      This is the address of the Bridge contract.
+                    </Form.Text>
+                  </Form.Group>
+                </Form>
+              )
+            }
+            {
+              transferStage === "Pending Transfer" && (
+                <Form className="py-3">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Issuer Address</Form.Label>
+                    <Form.Control type="text" placeholder="Enter issuing address" />
+                    <Form.Text className="text-muted">
+                      This is an XRP Ledger account that you control.
+                    </Form.Text>
+                  </Form.Group>
+                  <Button variant="primary" type="submit">
+                    Submit
+                  </Button>
+                </Form>
+              )
+            }
+          </Modal.Body>
+          {
+            !loading && (
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            )
+          }
+        </Modal>
+      }
+      {
+        <Modal show={showQRCodeModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Scan QR Code</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="d-flex justify-content-center">
+            <QRCode value={account!} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       }
       <header className="pt-2">
         <h1>Transfers</h1>
@@ -170,10 +273,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 my-4 d-grid">
               <button
                 className="btn btn-primary btn-lg"
-                onClick={() => {
-                  const modal = new Modal(modalRef.current!, {})
-                  modal.show();
-                }}
+                onClick={() => handleShow() }
               ><i className="fa fa-qrcode"/> Press for QR Code</button>
             </div>
           </div>
