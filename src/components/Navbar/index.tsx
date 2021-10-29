@@ -15,7 +15,7 @@ import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
 
 function Balance() {
-  const { account, library } = useWeb3React<Web3Provider>();
+  const { account, library, chainId } = useWeb3React<Web3Provider>();
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library),
   });
@@ -173,20 +173,26 @@ function Navbar() {
                 &nbsp;Connected
               </div>
               <div className="spacer spacer-1" />
-              <Button
-                variant="light"
-                onClick={handleFaucetRequest}
-                disabled={requestingTestCoins}
-              >
-                {
-                  requestingTestCoins ? (
-                    <i className="fas fa-circle-notch fa-spin"></i>
-                  ) : (
-                    <span><i className="mr-2" /> Request CFLR</span>
-                  )
-                }
-              </Button>
-              <div className="spacer spacer-1" />
+              {
+                chainId === 16 && (
+                  <>
+                    <Button
+                      variant="light"
+                      onClick={handleFaucetRequest}
+                      disabled={requestingTestCoins}
+                    >
+                      {
+                        requestingTestCoins ? (
+                          <i className="fas fa-circle-notch fa-spin"></i>
+                        ) : (
+                          <span><i className="mr-2" /> Request CFLR</span>
+                        )
+                      }
+                    </Button>
+                    <div className="spacer spacer-1" />
+                  </>
+                )
+              }
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (
