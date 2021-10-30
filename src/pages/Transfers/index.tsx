@@ -26,13 +26,12 @@ export default function Transfers() {
   const [error, setError] = React.useState<any|null>(null);
   const [transferStage, setTransferStage] = React.useState("Pending Transfer")
   const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
-  const ctx = useContext(EventContext)
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [transferModalText, setTransferModalText] = React.useState("");
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
+  const ctx = useContext(EventContext)
 
-  const handleClose = () => { setShowTransferModal(false); setLoading(false) };
-  const handleShow = () => setShowTransferModal(true);
+  const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
 
   // React.useEffect(() => {
   //   (async () => {
@@ -216,7 +215,7 @@ export default function Transfers() {
   return (
     <>
       {
-        <Modal show={showTransferModal} onHide={handleClose}>
+        <Modal show={showTransferModal} onHide={handleCloseTransferModal}>
           <Modal.Header>
             <Modal.Title>{transferStage}</Modal.Title>
           </Modal.Header>
@@ -255,7 +254,7 @@ export default function Transfers() {
           {
             !loading && (
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="secondary" onClick={handleCloseTransferModal}>
                   Close
                 </Button>
               </Modal.Footer>
@@ -264,7 +263,7 @@ export default function Transfers() {
         </Modal>
       }
       {
-        <Modal show={showQRCodeModal} onHide={handleClose}>
+        <Modal show={showQRCodeModal}>
           <Modal.Header closeButton>
             <Modal.Title>Scan QR Code</Modal.Title>
           </Modal.Header>
@@ -272,7 +271,7 @@ export default function Transfers() {
             <QRCode value={account!} />
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={() => setShowQRCodeModal(false)}>
               Close
             </Button>
           </Modal.Footer>
@@ -282,7 +281,12 @@ export default function Transfers() {
         <h1>Transfers</h1>
         {active && <Info />}
       </header>
-      <p className="text-secondary"><span className="fa fa-info-circle"></span> This feature uses <a href="https://walletconnect.com" target="blank">WalletConnect</a> to send Aurei to a <a href="https://paystring.org/" target="blank">PayString</a>-supported wallet.</p>
+      <div className="text-secondary d-flex mb-3">
+        <div className="d-flex align-items-center me-2">
+          <span className="fa fa-info-circle"></span>
+        </div>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger via the Solaris bridge.</p>
+      </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <h4 className="text-center">Send Aurei</h4>
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
@@ -325,7 +329,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 my-4 d-grid">
               <button
                 className="btn btn-primary btn-lg"
-                onClick={() => handleShow() }
+                onClick={() => setShowQRCodeModal(true) }
               ><i className="fa fa-qrcode"/> Press for QR Code</button>
             </div>
           </div>
