@@ -301,7 +301,7 @@ export default function Transfers() {
           </div>
           <div className="row mt-3">
             <div className="col-md-8 offset-md-2">
-              <label className="form-label">PayString Username</label>
+              <label className="form-label">PayString Address</label>
               <div className="input-group mb-3">
                 <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
                 <span className="input-group-text">$</span>
