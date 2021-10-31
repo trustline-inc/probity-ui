@@ -107,7 +107,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Probity is currently live on a private Coston testnet hosted by <a href="https://trustline.co" target="blank">Trustline</a>. The Songbird release will be coming soon!
+                      Probity is currently live on a private Coston testnet hosted by <a href="https://trustline.co" target="blank">Trustline</a>. The Songbird release is coming soon!
                       <button
                         type="button"
                         className="btn-close"
