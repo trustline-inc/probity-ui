@@ -2,6 +2,9 @@ import React, { useContext } from "react";
 import { Button, Form, Modal } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import Web3 from "web3"
+import axios from "axios"
+import { RippleAPI } from "ripple-lib"
 import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
@@ -14,13 +17,14 @@ import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
+import { walletconnect } from "../../connectors"
 // import { PairingTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const [loading, setLoading] = React.useState(false)
-  const { account, active, library, connector } = useWeb3React<Web3Provider>()
+  const { account, active, library, activate, deactivate } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
+  const [issuerAddress, setIssuerAddress] = React.useState("");
   const [domain, setDomain] = React.useState("")
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
@@ -29,6 +33,7 @@ export default function Transfers() {
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [transferModalText, setTransferModalText] = React.useState("");
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
+  const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const ctx = useContext(EventContext)
 
   const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
@@ -90,54 +95,6 @@ export default function Transfers() {
     setDomain(domain);
   }
 
-  const initiateTransfer = async () => {
-    if (library) {
-      const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
-      const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
-
-      const issuer = {
-        address: "rp1wKYNjcXn6i5J1HsttmCWtgYHNCL2Nh9",
-        secret: "shPUTM1oGgARNy1NqfJLFWh75RYqP"
-      }
-      const receiver = {
-        address: "rDkNWp5gYs4mSt8pXYD6GVF85YK9XxmRKW",
-        secret: "sptH3HxFUVghwQJHWnADnQwPY457o"
-      }
-
-      let data = await transferObj!.createIssuer(issuer.address)
-
-      const transactionParameters = {
-        to: BRIDGE_ADDRESS,
-        from: account,
-        data,
-      };
-
-      console.log("transactionParameters:", transactionParameters)
-      setTransferModalText(`Transfer initiated with issuer address ${issuer.address}, please wait.`)
-      console.log(await connector?.getProvider())
-      let txHash = await library.provider.request!({
-        method: 'eth_sendTransaction',
-        params: [transactionParameters]
-      })
-      console.log("txHash", txHash)
-      // await transactionResponse.wait()
-      setTransferStage("In-Progress Transfer")
-      setTransferModalText(`Issue tokens on the XRP Ledger as ${issuer.address}.`)
-      await transferObj!.issueTokens("XRPL_TESTNET", issuer, receiver)
-      setTransferModalText(`Tokens issued.`)
-      await stateConnector.setFinality(true);
-      setTransferModalText(`Finality set to true. Please verify the issuance.`)
-      let transactionResponse = await transferObj!.verifyIssuance()
-      setTransferModalText(`Verifying issuance, please wait.`)
-      // await tx.wait()
-      setTransferStage("Completed Transfer")
-      setTransferModalText(`Done.`)
-      const status = await bridge.getIssuerStatus(issuer.address);
-      setTransferModalText(`Issuer status: ${status}`)
-      setLoading(false)
-    }
-  }
-
   const prepareTransfer = async () => {
     try {
       setLoading(true)
@@ -159,15 +116,6 @@ export default function Transfers() {
         const address = json.addresses[0].addressDetails.address;
 
         if (library && account) {
-          const issuer = {
-            address: "rp1wKYNjcXn6i5J1HsttmCWtgYHNCL2Nh9",
-            secret: "shPUTM1oGgARNy1NqfJLFWh75RYqP"
-          }
-          const receiver = {
-            address: "rDkNWp5gYs4mSt8pXYD6GVF85YK9XxmRKW",
-            secret: "sptH3HxFUVghwQJHWnADnQwPY457o"
-          }
-
           const transfer = new solaris.Transfer({
             direction: {
               source: "LOCAL",
@@ -185,19 +133,35 @@ export default function Transfers() {
             const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
             const allowance = await aurei.allowance(account, BRIDGE_ADDRESS)
 
-            if (Number(utils.formatEther(allowance)) > aureiAmount) {
+            if (Number(utils.formatEther(allowance)) < Number(aureiAmount)) {
               setTransferStage("Pre-Transfer")
               setTransferModalText(`Permit the Bridge contract to spend your AUR for the transfer.`)
-              let transactionRequest = await transfer.approve()
-              setTransferModalText(`Permit tx sent, please wait for a block confirmation.`)
-              // const signedTransaction = await library.getSigner().signTransaction(transactionRequest)
-              const transactionResponse = await library.sendTransaction(transactionRequest)
-              await transactionResponse.wait()
+              let data = await transfer.approve()
+              const transactionObject = {
+                to: AUREI_ADDRESS,
+                from: account,
+                data
+              };
+              await web3.eth.sendTransaction((transactionObject as any))
+              setTransferModalText(`Bridge contract allowance created successfully.`)
+              // TODO: Create tx event in context
             }
-
+            const api = new RippleAPI({ server: "wss://s.altnet.rippletest.net" })
+            const issuer = api.generateXAddress({ includeClassicAddress: true });
+            await axios({
+              url: "https://faucet.altnet.rippletest.net/accounts",
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              data: {
+                destination: issuer.address,
+                amount: 1000
+              }
+            })
             setTransferStage("Pending Transfer")
-            setTransferModalText(`Initiate the transfer with issuer address ${issuer.address}.`)
-
+            setTransferModalText(`Initiate the transfer with address ${issuer.address}.`)
+            setIssuerAddress(issuer.address!)
           } catch (error) {
             console.log(error);
             setError(error);
@@ -208,6 +172,37 @@ export default function Transfers() {
       }
     } catch (error) {
       console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const initiateTransfer = async () => {
+    if (library) {
+      const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+      const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
+
+      let data = await transferObj!.createIssuer(issuerAddress)
+      const transactionObject = {
+        to: BRIDGE_ADDRESS,
+        from: account,
+        data
+      };
+      await web3.eth.sendTransaction((transactionObject as any))
+      setTransferStage("In-Progress Transfer")
+      setTransferModalText(`Issue tokens on the XRP Ledger as ${issuerAddress}.`)
+      deactivate()
+      activate(walletconnect.connect(16))
+      // await transferObj!.issueTokens("XRPL_TESTNET", issuer, receiver)
+      // setTransferModalText(`Tokens issued.`)
+      // await stateConnector.setFinality(true);
+      // setTransferModalText(`Finality set to true. Please verify the issuance.`)
+      // let transactionResponse = await transferObj!.verifyIssuance()
+      // setTransferModalText(`Verifying issuance, please wait.`)
+      // await tx.wait()
+      // setTransferStage("Completed Transfer")
+      // setTransferModalText(`Done.`)
+      // const status = await bridge.getIssuerStatus(issuer.address);
+      // setTransferModalText(`Issuer status: ${status}`)
       setLoading(false)
     }
   }
@@ -285,7 +280,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger via the Solaris bridge.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger via <a href="https://trustline.co/solaris" target="blank">Solaris</a>.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <h4 className="text-center">Send Aurei</h4>
