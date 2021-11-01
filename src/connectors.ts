@@ -28,9 +28,4 @@ export const ledger = {
   })
 };
 
-export const walletconnect = {
-  connect: (chainId: number) => new WalletConnectConnector({
-    rpc: { [chainId]: RPC_URLS[chainId] },
-    qrcode: true
-  })
-}
+export const walletconnect = new WalletConnectConnector({})

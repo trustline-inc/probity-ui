@@ -17,12 +17,11 @@ import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
-import { walletconnect } from "../../connectors"
-// import { PairingTypes } from "@walletconnect/types";
+import { PairingTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const [loading, setLoading] = React.useState(false)
-  const { account, active, library, activate, deactivate } = useWeb3React<Web3Provider>()
+  const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [issuerAddress, setIssuerAddress] = React.useState("");
   const [domain, setDomain] = React.useState("")
@@ -38,47 +37,11 @@ export default function Transfers() {
 
   const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
 
-  // React.useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       walletconnect.on(URI_AVAILABLE, uri => {})
+  React.useEffect(() => {
+    (async () => {
 
-  //       const client = await WalletConnectClient.init({
-  //         apiKey: "28f4820aced00becb7371afffb64bd15",
-  //         relayProvider: "wss://relay.walletconnect.com",
-  //         metadata: {
-  //           name: "Probity",
-  //           description: "Probity",
-  //           url: "#",
-  //           icons: ["https://walletconnect.com/walletconnect-logo.png"],
-  //         },
-  //       });
-
-  //       client.on(
-  //         CLIENT_EVENTS.pairing.proposal,
-  //         async (proposal: PairingTypes.Proposal) => {
-  //           // uri should be shared with the Wallet either through QR Code scanning or mobile deep linking
-  //           const { uri } = proposal.signal.params;
-  //           console.log("uri", uri)
-  //         }
-  //       );
-
-  //       const session = await client.connect({
-  //         permissions: {
-  //           blockchain: {
-  //             chains: ["eip155:1"],
-  //           },
-  //           jsonrpc: {
-  //             methods: ["eth_sendTransaction", "personal_sign", "eth_signTypedData"],
-  //           },
-  //         },
-  //       });
-  //       console.log("session", session)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   })()
-  // }, [])
+    })()
+  }, [])
 
   const onAureiAmountChange = (event: any) => {
     const amount = event.target.value;
@@ -190,8 +153,6 @@ export default function Transfers() {
       await web3.eth.sendTransaction((transactionObject as any))
       setTransferStage("In-Progress Transfer")
       setTransferModalText(`Issue tokens on the XRP Ledger as ${issuerAddress}.`)
-      deactivate()
-      activate(walletconnect.connect(16))
       // await transferObj!.issueTokens("XRPL_TESTNET", issuer, receiver)
       // setTransferModalText(`Tokens issued.`)
       // await stateConnector.setFinality(true);

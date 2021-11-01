@@ -3202,7 +3202,7 @@
   resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.6.6.tgz#8d644e2a390e494e40424c60272e91b4820bf0d4"
   integrity sha512-op77cxexOmQQN36XB1sYouNTlBRV0Rup/2NYK8A1ffdwXa3a6HLHHdhBM7I/I9BVmRXoZ4+XoOnPKGGrYtlS3g==
 
-"@walletconnect/types@^2.0.0-beta.20":
+"@walletconnect/types@^2.0.0-beta.19", "@walletconnect/types@^2.0.0-beta.20":
   version "2.0.0-beta.20"
   resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-2.0.0-beta.20.tgz#115b1c939264e5dcb14474e68cee3a79fdbe7c80"
   integrity sha512-WtTqkbZyEA8l68asaVCDm+PbCKqXN6YI+sM3oM69VCaPOK2Fhq4D3jFqHgZtCvKdrR4NMqb/dsd93dIZrBA+sw==
