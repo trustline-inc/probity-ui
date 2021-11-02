@@ -122,7 +122,7 @@ function App() {
                 </div>
               </div>
               <div className="row">
-                <div className="offset-md-3 offset-lg-4 col-lg-4 col-md-6  col-sm-12">
+                <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
                   {!active && (
                     <>
                       {mobileDevice ? (
@@ -146,6 +146,8 @@ function App() {
                                 case "UnsupportedChainIdError":
                                   return <span className="text-danger">{error.message}</span>
                                 case "TransportError":
+                                  return <span className="text-danger">{error.message}</span>
+                                case "NoEthereumProviderError":
                                   return <span className="text-danger">{error.message}</span>
                                 default:
                                   return JSON.stringify(error)

@@ -35,7 +35,7 @@ function Connector({ title, body, icon, disabled, onClick }: any) {
       onMouseOut={onMouseOut}
       onClick={_onClick}
     >
-      <Card.Img variant="top" src={icon} className="p-5" />
+      <Card.Img variant="top" src={icon} className="p-5 card-image" />
       <Card.Body className="text-center">
         <Card.Title>{title}</Card.Title>
         <Card.Body><small className="text-muted">{body}</small></Card.Body>

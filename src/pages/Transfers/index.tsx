@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
-import { Button, Form, Modal } from "react-bootstrap"
+import { Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
+import QRCodeModal from "@walletconnect/qrcode-modal";
+import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
 import axios from "axios"
 import { RippleAPI } from "ripple-lib"
@@ -9,7 +11,16 @@ import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
-import { AUREI_ADDRESS, BRIDGE_ADDRESS, STATE_CONNECTOR_ADDRESS, WAD } from '../../constants';
+import {
+  AUREI_ADDRESS,
+  BRIDGE_ADDRESS,
+  DEFAULT_APP_METADATA,
+  DEFAULT_LOGGER,
+  DEFAULT_METHODS,
+  DEFAULT_RELAY_PROVIDER,
+  STATE_CONNECTOR_ADDRESS,
+  WAD
+} from '../../constants';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -17,11 +28,15 @@ import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
-import { PairingTypes } from "@walletconnect/types";
+import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
+  const [uri, setUri] = React.useState("")
+  const [modal, setModal] = React.useState("")
+  const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
+  const [pairings, setPairings] = React.useState<string[]|undefined>()
+  const [client, setClient] = React.useState<WalletConnectClient|undefined>()
   const [loading, setLoading] = React.useState(false)
-  const { account, active, library } = useWeb3React<Web3Provider>()
   const [username, setUsername] = React.useState("");
   const [issuerAddress, setIssuerAddress] = React.useState("");
   const [domain, setDomain] = React.useState("")
@@ -30,16 +45,55 @@ export default function Transfers() {
   const [transferStage, setTransferStage] = React.useState("Pending Transfer")
   const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
   const [showTransferModal, setShowTransferModal] = React.useState(false);
+  const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
   const [transferModalText, setTransferModalText] = React.useState("");
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
+  const { account, active, library } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const ctx = useContext(EventContext)
 
+  // WalletConnect modals
+  const openPairingModal = () => setWalletConnectModal({ pending: false, type: "pairing" });
+  const openRequestModal = () => setWalletConnectModal({ pending: true, type: "request" });
+  const openPingModal = () => setWalletConnectModal({ pending: true, type: "ping" });
+  const openModal = (type: string) => setWalletConnectModal({ pending: false, type });
+  const closeModal = () => setWalletConnectModal({ pending: false, type: "" });
+
+  // Transfer modal
   const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
 
+  /**
+   * Initializes the WalletConnect client and subscribe to events
+   */
   React.useEffect(() => {
     (async () => {
+      const _client = await WalletConnectClient.init({
+        logger: DEFAULT_LOGGER,
+        relayProvider: DEFAULT_RELAY_PROVIDER,
+      });
+      setClient(_client)
+      _client.on(
+        CLIENT_EVENTS.pairing.proposal,
+        async (proposal: PairingTypes.Proposal) => {
+          const { uri: _uri } = proposal.signal.params;
+          console.log(_uri)
+          setUri(_uri);
+          console.log("EVENT", "QR Code Modal open");
+          QRCodeModal.open(_uri, () => {
+            console.log("EVENT", "QR Code Modal closed");
+          });
+        },
+      );
 
+      _client.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
+        if (typeof _client === "undefined") return;
+        setPairings(_client.pairing.topics);
+      });
+
+      _client.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
+        if (session.topic !== session?.topic) return;
+        console.log("EVENT", "session_deleted");
+      });
     })()
   }, [])
 
@@ -57,6 +111,59 @@ export default function Transfers() {
     const domain = event.target.value.replace(/[^a-zA-Z\d].[^a-zA-Z]/ig, "");
     setDomain(domain);
   }
+
+  const onConnect = () => {
+    if (typeof client === "undefined") {
+      throw new Error("WalletConnect is not initialized");
+    }
+    if (client.pairing.topics.length) {
+      return openPairingModal();
+    }
+    connect();
+  };
+
+  const connect = async (pairing?: { topic: string }) => {
+    if (typeof client === "undefined") {
+      throw new Error("WalletConnect is not initialized");
+    }
+    if (modal === "pairing") {
+      closeModal();
+    }
+    try {
+      const methods: string[] = DEFAULT_METHODS.flat()
+      const session = await client.connect({
+        metadata: getAppMetadata() || DEFAULT_APP_METADATA,
+        pairing,
+        permissions: {
+          blockchain: {
+            chains: ["xrpl:mainnet"],
+          },
+          jsonrpc: {
+            methods,
+          },
+        },
+      });
+      console.log(session)
+
+      onSessionConnected(session);
+    } catch (e) {
+      // ignore rejection
+      console.log(e)
+    }
+
+    // close modal in case it was open
+    QRCodeModal.close();
+  };
+
+  const onSessionConnected = async (_session: SessionTypes.Settled) => {
+    setSession(_session)
+    onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
+  };
+
+  const onSessionUpdate = async (accounts: string[], chains: string[]) => {
+    // this.setState({ chains, accounts });
+    // await this.getAccountBalances();
+  };
 
   const prepareTransfer = async () => {
     try {
@@ -164,7 +271,9 @@ export default function Transfers() {
       // setTransferModalText(`Done.`)
       // const status = await bridge.getIssuerStatus(issuer.address);
       // setTransferModalText(`Issuer status: ${status}`)
+      setShowTransferModal(false)
       setLoading(false)
+      onConnect()
     }
   }
 
@@ -200,9 +309,17 @@ export default function Transfers() {
                       This is an XRP Ledger account that you control.
                     </Form.Text>
                   </Form.Group>
-                  <Button variant="primary" onClick={initiateTransfer}>
-                    Submit
-                  </Button>
+                  <Container>
+                    <Row>
+                      <Col />
+                      <Col className="d-grid">
+                        <Button variant="primary" onClick={initiateTransfer}>
+                          Submit
+                        </Button>
+                      </Col>
+                      <Col />
+                    </Row>
+                  </Container>
                 </Form>
               )
             }
@@ -241,7 +358,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger via <a href="https://trustline.co/solaris" target="blank">Solaris</a>.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <h4 className="text-center">Send Aurei</h4>

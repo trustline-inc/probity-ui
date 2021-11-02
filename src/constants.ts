@@ -43,6 +43,17 @@ export const INTERFACES = {
   [VAULT_ENGINE_ADDRESS]: VaultEngineABI
 }
 
+// WalletConnect
+export const DEFAULT_APP_METADATA = {
+  name: "Probity",
+  description: "A decentralized credit system",
+  url: "https://probity.finance/",
+  icons: ["https://probity.finance/probity-logo.png"],
+};
+export const DEFAULT_LOGGER = "debug"
+export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.org";
+export const DEFAULT_METHODS = ["eth_sendTransaction", "personal_sign", "eth_signTypedData"];
+
 // Other constants
 export const RAD = BigNumber.from("1000000000000000000000000000000000000000000000");
 export const RAY = BigNumber.from("1000000000000000000000000000");
