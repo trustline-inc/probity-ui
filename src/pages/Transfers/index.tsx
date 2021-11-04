@@ -3,7 +3,7 @@ import { Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
-import { ERROR, getAppMetadata } from "@walletconnect/utils";
+import { getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
 import axios from "axios"
 import { RippleAPI } from "ripple-lib"
@@ -31,18 +31,17 @@ import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
-  const [uri, setUri] = React.useState("")
   const [modal, setModal] = React.useState("")
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
-  const [client, setClient] = React.useState<WalletConnectClient|undefined>()
+  const [transferInProgress, setTransferInProgress] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [username, setUsername] = React.useState("");
   const [issuerAddress, setIssuerAddress] = React.useState("");
   const [domain, setDomain] = React.useState("")
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
-  const [transferStage, setTransferStage] = React.useState("Pending Transfer")
+  const [transferStage, setTransferStage] = React.useState("")
   const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
@@ -50,6 +49,7 @@ export default function Transfers() {
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
   const { account, active, library } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
+  const client = React.useRef<WalletConnectClient>()
   const ctx = useContext(EventContext)
 
   // WalletConnect modals
@@ -66,35 +66,41 @@ export default function Transfers() {
    * Initializes the WalletConnect client and subscribe to events
    */
   React.useEffect(() => {
-    (async () => {
-      const _client = await WalletConnectClient.init({
-        logger: DEFAULT_LOGGER,
-        relayProvider: DEFAULT_RELAY_PROVIDER,
-      });
-      setClient(_client)
-      _client.on(
-        CLIENT_EVENTS.pairing.proposal,
-        async (proposal: PairingTypes.Proposal) => {
-          const { uri: _uri } = proposal.signal.params;
-          console.log(_uri)
-          setUri(_uri);
-          console.log("EVENT", "QR Code Modal open");
-          QRCodeModal.open(_uri, () => {
-            console.log("EVENT", "QR Code Modal closed");
-          });
-        },
-      );
+    try {
+      (async () => {
+        client.current = await WalletConnectClient.init({
+          controller: false,
+          logger: DEFAULT_LOGGER,
+          relayProvider: DEFAULT_RELAY_PROVIDER,
+        });
 
-      _client.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
-        if (typeof _client === "undefined") return;
-        setPairings(_client.pairing.topics);
-      });
+        client.current.on(
+          CLIENT_EVENTS.pairing.proposal,
+          async (proposal: PairingTypes.Proposal) => {
+            const { uri } = proposal.signal.params;
+            console.log("EVENT", "QR Code Modal open");
+            QRCodeModal.open(uri, () => {
+              console.log("EVENT", "QR Code Modal closed");
+            });
+          },
+        );
+  
+        client.current.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
+          if (typeof client.current === "undefined") return;
+          setPairings(client.current.pairing.topics);
+        });
+  
+        client.current.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
+          if (session.topic !== session?.topic) return;
+          console.log("EVENT", "session_deleted");
+        });
 
-      _client.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
-        if (session.topic !== session?.topic) return;
-        console.log("EVENT", "session_deleted");
-      });
-    })()
+      })()
+    } catch (error) {
+      console.log("connection error")
+      alert(JSON.stringify(error))
+      console.error(error)
+    }
   }, [])
 
   const onAureiAmountChange = (event: any) => {
@@ -113,17 +119,21 @@ export default function Transfers() {
   }
 
   const onConnect = () => {
-    if (typeof client === "undefined") {
+    if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
-    if (client.pairing.topics.length) {
+    if (client.current.pairing.topics.length) {
       return openPairingModal();
     }
     connect();
   };
 
+  /**
+   * Connects to relay server and awaits for session establishment.
+   * @param pairing 
+   */
   const connect = async (pairing?: { topic: string }) => {
-    if (typeof client === "undefined") {
+    if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
     if (modal === "pairing") {
@@ -131,19 +141,19 @@ export default function Transfers() {
     }
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
-      const session = await client.connect({
+      const session = await client.current.connect({
         metadata: getAppMetadata() || DEFAULT_APP_METADATA,
         pairing,
         permissions: {
           blockchain: {
-            chains: ["xrpl:mainnet"],
+            chains: ["xrpl:2"],
           },
           jsonrpc: {
             methods,
           },
         },
       });
-      console.log(session)
+      console.log("session", session)
 
       onSessionConnected(session);
     } catch (e) {
@@ -155,16 +165,72 @@ export default function Transfers() {
     QRCodeModal.close();
   };
 
+  /**
+   * Runs when WalletConnect session is created.
+   * @param _session 
+   */
   const onSessionConnected = async (_session: SessionTypes.Settled) => {
     setSession(_session)
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
+
+    openRequestModal();
+
+    // Make RPC request
+    const result = await client.current!.request({
+      topic: _session.topic,
+      chainId: "xrpl:2",
+      request: {
+        method: "createTrustLine",
+        params: [
+          "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
+          "AUR"
+        ],
+      },
+    });
+
+    // If result is true, then the trust line was created
+    console.log("result", result)
+
+    // Display modal for token issuance
+    setShowTransferModal(true)
+    setTransferStage("Token Issuance")
+    setTransferModalText(`Issue ${aureiAmount} AUR from ${issuerAddress} to your account. Ensure that rippling is enabled and then blackhole the issuing account.`)
   };
+
+  /**
+   * @function verifyIssuance
+   */
+  const verifyIssuance = async () => {
+    if (library) {
+      const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+      const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
+      await stateConnector.setFinality(true);
+      setTransferModalText(`Finality set to true. Verifying issuance...`)
+      console.log("verifying issuance...")
+      let data = await transferObj!.verifyIssuance()
+      console.log("data", data)
+      setTransferModalText(`Verifying issuance, please wait.`)
+      const transactionObject = {
+        to: BRIDGE_ADDRESS,
+        from: account,
+        data
+      };
+      await web3.eth.sendTransaction((transactionObject as any))
+      setTransferStage("Completed Transfer")
+      setTransferModalText(`Done.`)
+      const status = await bridge.getIssuerStatus(issuerAddress);
+      setTransferModalText(`Issuer status: ${status}`)
+    }
+  }
 
   const onSessionUpdate = async (accounts: string[], chains: string[]) => {
-    // this.setState({ chains, accounts });
-    // await this.getAccountBalances();
+    console.log("accounts", accounts)
+    console.log("chains", chains)
   };
 
+  /**
+   * Creates Bridge allowance and funds issuing account.
+   */
   const prepareTransfer = async () => {
     try {
       setLoading(true)
@@ -182,7 +248,6 @@ export default function Transfers() {
 
       if (json.addresses.length > 0) {
         // Take the first one for now.
-        // TODO: Prompt for signing via Xumm or other means
         const address = json.addresses[0].addressDetails.address;
 
         if (library && account) {
@@ -194,7 +259,8 @@ export default function Transfers() {
             amount: BigNumber.from(aureiAmount).mul(WAD),
             tokenAddress: AUREI_ADDRESS,
             bridgeAddress: BRIDGE_ADDRESS,
-            provider: library
+            provider: library,
+            signer: library.getSigner() as any
           })
           setTransferObj(transfer)
 
@@ -246,11 +312,12 @@ export default function Transfers() {
     }
   }
 
+  /**
+   * Initiates the transfer after approval.
+   */
   const initiateTransfer = async () => {
     if (library) {
-      const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
-      const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
-
+      setTransferInProgress(true)
       let data = await transferObj!.createIssuer(issuerAddress)
       const transactionObject = {
         to: BRIDGE_ADDRESS,
@@ -259,22 +326,17 @@ export default function Transfers() {
       };
       await web3.eth.sendTransaction((transactionObject as any))
       setTransferStage("In-Progress Transfer")
-      setTransferModalText(`Issue tokens on the XRP Ledger as ${issuerAddress}.`)
-      // await transferObj!.issueTokens("XRPL_TESTNET", issuer, receiver)
-      // setTransferModalText(`Tokens issued.`)
-      // await stateConnector.setFinality(true);
-      // setTransferModalText(`Finality set to true. Please verify the issuance.`)
-      // let transactionResponse = await transferObj!.verifyIssuance()
-      // setTransferModalText(`Verifying issuance, please wait.`)
-      // await tx.wait()
-      // setTransferStage("Completed Transfer")
-      // setTransferModalText(`Done.`)
-      // const status = await bridge.getIssuerStatus(issuer.address);
-      // setTransferModalText(`Issuer status: ${status}`)
-      setShowTransferModal(false)
-      setLoading(false)
-      onConnect()
+      setTransferModalText(`Set up issuer ${issuerAddress}. The account must have the required reserve.`)
     }
+  }
+
+  /**
+   * Creates a trust line with the issuing address via WalletConnect
+   */
+  const createTrustLine = async () => {
+    setShowTransferModal(false)
+    setLoading(false)
+    onConnect()
   }
 
   return (
@@ -313,14 +375,44 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" onClick={initiateTransfer}>
-                          Submit
+                        <Button variant="primary" onClick={initiateTransfer} disabled={transferInProgress}>
+                          { transferInProgress ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
                       <Col />
                     </Row>
                   </Container>
                 </Form>
+              )
+            }
+            {
+              transferStage === "In-Progress Transfer" && (
+                <Container className="mt-4">
+                  <Row>
+                    <Col />
+                    <Col className="d-grid">
+                      <Button variant="primary" onClick={createTrustLine}>
+                        Done
+                      </Button>
+                    </Col>
+                    <Col />
+                  </Row>
+                </Container>
+              )
+            }
+            {
+              transferStage === "Token Issuance" && (
+                <Container className="mt-4">
+                  <Row>
+                    <Col />
+                    <Col className="d-grid">
+                      <Button variant="primary" onClick={verifyIssuance}>
+                        Done
+                      </Button>
+                    </Col>
+                    <Col />
+                  </Row>
+                </Container>
               )
             }
           </Modal.Body>
@@ -358,7 +450,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <h4 className="text-center">Send Aurei</h4>

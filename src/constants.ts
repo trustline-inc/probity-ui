@@ -52,7 +52,7 @@ export const DEFAULT_APP_METADATA = {
 };
 export const DEFAULT_LOGGER = "debug"
 export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.org";
-export const DEFAULT_METHODS = ["eth_sendTransaction", "personal_sign", "eth_signTypedData"];
+export const DEFAULT_METHODS = ["createTrustLine"];
 
 // Other constants
 export const RAD = BigNumber.from("1000000000000000000000000000000000000000000000");
