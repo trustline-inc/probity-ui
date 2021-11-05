@@ -5,8 +5,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
-import axios from "axios"
-import { RippleAPI } from "ripple-lib"
 import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
@@ -31,13 +29,14 @@ import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
-  const [modal, setModal] = React.useState("")
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [username, setUsername] = React.useState("");
   const [issuerAddress, setIssuerAddress] = React.useState("");
+  const [receiverAddress, setReceiverAddress] = React.useState("");
+  const [transactionID, setTransactionID] = React.useState("");
   const [domain, setDomain] = React.useState("")
   const [aureiAmount, setAureiAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
@@ -45,7 +44,7 @@ export default function Transfers() {
   const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
-  const [transferModalText, setTransferModalText] = React.useState("");
+  const [transferModalBody, setTransferModalBody] = React.useState<any>();
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
   const { account, active, library } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
@@ -103,6 +102,8 @@ export default function Transfers() {
     }
   }, [])
 
+  // Input Event Handlers
+
   const onAureiAmountChange = (event: any) => {
     const amount = event.target.value;
     setAureiAmount(amount);
@@ -118,25 +119,17 @@ export default function Transfers() {
     setDomain(domain);
   }
 
-  const onConnect = () => {
-    if (typeof client.current === "undefined") {
-      throw new Error("WalletConnect is not initialized");
-    }
-    if (client.current.pairing.topics.length) {
-      return openPairingModal();
-    }
-    connect();
-  };
-
   /**
-   * Connects to relay server and awaits for session establishment.
+   * @function connect
    * @param pairing 
+   * Connects to relay server and awaits for session establishment.
    */
   const connect = async (pairing?: { topic: string }) => {
+    console.log("connecting to relay server")
     if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
-    if (modal === "pairing") {
+    if (walletConnectModal.type === "pairing") {
       closeModal();
     }
     try {
@@ -166,8 +159,9 @@ export default function Transfers() {
   };
 
   /**
-   * Runs when WalletConnect session is created.
-   * @param _session 
+   * @function onSessionConnected
+   * @param _session
+   * Runs when WalletConnect session is created. Called in `connect`.
    */
   const onSessionConnected = async (_session: SessionTypes.Settled) => {
     setSession(_session)
@@ -191,10 +185,16 @@ export default function Transfers() {
     // If result is true, then the trust line was created
     console.log("result", result)
 
-    // Display modal for token issuance
-    setShowTransferModal(true)
-    setTransferStage("Token Issuance")
-    setTransferModalText(`Issue ${aureiAmount} AUR from ${issuerAddress} to your account. Ensure that rippling is enabled and then blackhole the issuing account.`)
+    if (result) {
+      // Display modal for token issuance
+      setShowTransferModal(true)
+      setTransferStage("Token Issuance")
+      setTransferModalBody(`Issue ${aureiAmount} AUR from ${issuerAddress} to ${receiverAddress}. Xumm's Token Creator xApp is recommended (Press the QR code scan button → View more xApps → Token Creator). The issuing account must be blackholed.`)
+    } else {
+      // TODO: Handle request failure.
+      console.error("Session request failed.")
+    }
+
   };
 
   /**
@@ -205,11 +205,10 @@ export default function Transfers() {
       const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
       const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
       await stateConnector.setFinality(true);
-      setTransferModalText(`Finality set to true. Verifying issuance...`)
-      console.log("verifying issuance...")
-      let data = await transferObj!.verifyIssuance()
+      setTransferModalBody(`Verifying issuance, please wait...`)
+      console.log("transactionID", transactionID)
+      let data = await transferObj!.verifyIssuance(transactionID)
       console.log("data", data)
-      setTransferModalText(`Verifying issuance, please wait.`)
       const transactionObject = {
         to: BRIDGE_ADDRESS,
         from: account,
@@ -217,9 +216,9 @@ export default function Transfers() {
       };
       await web3.eth.sendTransaction((transactionObject as any))
       setTransferStage("Completed Transfer")
-      setTransferModalText(`Done.`)
+      setTransferModalBody(`Done.`)
       const status = await bridge.getIssuerStatus(issuerAddress);
-      setTransferModalText(`Issuer status: ${status}`)
+      setTransferModalBody(`Issuer status: ${status}`)
     }
   }
 
@@ -249,6 +248,7 @@ export default function Transfers() {
       if (json.addresses.length > 0) {
         // Take the first one for now.
         const address = json.addresses[0].addressDetails.address;
+        setReceiverAddress(address)
 
         if (library && account) {
           const transfer = new solaris.Transfer({
@@ -271,33 +271,36 @@ export default function Transfers() {
 
             if (Number(utils.formatEther(allowance)) < Number(aureiAmount)) {
               setTransferStage("Pre-Transfer")
-              setTransferModalText(`Permit the Bridge contract to spend your AUR for the transfer.`)
+              setTransferModalBody(`Permit the Bridge contract to spend your AUR for the transfer.`)
               let data = await transfer.approve()
               const transactionObject = {
                 to: AUREI_ADDRESS,
                 from: account,
                 data
               };
-              await web3.eth.sendTransaction((transactionObject as any))
-              setTransferModalText(`Bridge contract allowance created successfully.`)
-              // TODO: Create tx event in context
+              const result = await web3.eth.sendTransaction((transactionObject as any))
+              setTransferModalBody(`Bridge contract allowance created successfully.`)
+              ctx.updateTransactions(result);
             }
-            const api = new RippleAPI({ server: "wss://s.altnet.rippletest.net" })
-            const issuer = api.generateXAddress({ includeClassicAddress: true });
-            await axios({
-              url: "https://faucet.altnet.rippletest.net/accounts",
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              data: {
-                destination: issuer.address,
-                amount: 1000
-              }
-            })
             setTransferStage("Pending Transfer")
-            setTransferModalText(`Initiate the transfer with address ${issuer.address}.`)
-            setIssuerAddress(issuer.address!)
+            setTransferModalBody(
+              <>
+                <p>
+                  Create a new issuing account. The <a href="https://xumm.app/" target="blank">Xumm</a> app is recommended so that you can use the Token Creator <a href="https://xumm.readme.io/docs/what-are-xapps" target="blank">xApp</a> for a future step (tip: using this xApp will cost an additional 50 XRP). Enter the issuing address below when it is set up.
+                </p>
+                <p>If you are using the Xumm app, you can create a new account by going to the Home tab → Switch Account (top right) → Add account → Create a new account. Read the following prompts carefully.</p>
+                <div className="text-muted"><span className="fa fa-warning" /> Switch to the testnet in Xumm by going to the Settings tab → Advanced → Node → Choose any testnet option.</div>
+              </>
+            )
+            // The code below is only there for testing purposes, and should be removed.
+            //
+            // setTransferStage("In-Progress Transfer")
+            // setTransferModalBody(
+            //   <>
+            //     <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
+            //     <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
+            //   </>
+            // )
           } catch (error) {
             console.log(error);
             setError(error);
@@ -316,17 +319,27 @@ export default function Transfers() {
    * Initiates the transfer after approval.
    */
   const initiateTransfer = async () => {
-    if (library) {
-      setTransferInProgress(true)
-      let data = await transferObj!.createIssuer(issuerAddress)
-      const transactionObject = {
-        to: BRIDGE_ADDRESS,
-        from: account,
-        data
-      };
-      await web3.eth.sendTransaction((transactionObject as any))
-      setTransferStage("In-Progress Transfer")
-      setTransferModalText(`Set up issuer ${issuerAddress}. The account must have the required reserve.`)
+    try {
+      if (library) {
+        setTransferInProgress(true)
+        let data = await transferObj!.createIssuer(issuerAddress)
+        const transactionObject = {
+          to: BRIDGE_ADDRESS,
+          from: account,
+          data
+        };
+        const result = await web3.eth.sendTransaction((transactionObject as any))
+        console.log("result", result)
+        setTransferStage("In-Progress Transfer")
+        setTransferModalBody(
+          <>
+            <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
+          </>
+        )
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -336,7 +349,14 @@ export default function Transfers() {
   const createTrustLine = async () => {
     setShowTransferModal(false)
     setLoading(false)
-    onConnect()
+    if (typeof client.current === "undefined") {
+      throw new Error("WalletConnect is not initialized");
+    }
+    if (client.current.pairing.topics.length) {
+      console.log("opening pairing modal")
+      return openPairingModal();
+    }
+    connect();
   }
 
   return (
@@ -347,7 +367,9 @@ export default function Transfers() {
             <Modal.Title>{transferStage}</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ minHeight: 150 }}>
-            {transferModalText}
+            {/* TODO: can we put the modal body text in the elements below? */}
+            {transferModalBody}
+            {/* Forms */}
             {
               transferStage === "Pre-Transfer" && (
                 <Form className="py-3">
@@ -365,13 +387,13 @@ export default function Transfers() {
               transferStage === "Pending Transfer" && (
                 <Form className="py-3">
                   <Form.Group className="mb-3">
-                    <Form.Label>Issuer Address</Form.Label>
-                    <Form.Control type="text" placeholder="Enter issuing address" />
+                    <Form.Label>Issuing Address</Form.Label>
+                    <Form.Control type="text" placeholder="Enter issuing address" onChange={(event) => { setIssuerAddress(event.target.value) }} />
                     <Form.Text className="text-muted">
                       This is an XRP Ledger account that you control.
                     </Form.Text>
                   </Form.Group>
-                  <Container>
+                  <Container className="mt-3">
                     <Row>
                       <Col />
                       <Col className="d-grid">
@@ -402,17 +424,26 @@ export default function Transfers() {
             }
             {
               transferStage === "Token Issuance" && (
-                <Container className="mt-4">
-                  <Row>
-                    <Col />
-                    <Col className="d-grid">
-                      <Button variant="primary" onClick={verifyIssuance}>
-                        Done
-                      </Button>
-                    </Col>
-                    <Col />
-                  </Row>
-                </Container>
+                <Form className="py-3">
+                  <Form.Group className="mb-3">
+                    <Form.Label>Transaction ID</Form.Label>
+                    <Form.Control type="text" placeholder="Enter transaction ID" onChange={(event) => { setTransactionID(event.target.value) }} />
+                    <Form.Text className="text-muted">
+                      The transaction ID of the issuance.
+                    </Form.Text>
+                  </Form.Group>
+                  <Container className="mt-4">
+                    <Row>
+                      <Col />
+                      <Col className="d-grid">
+                        <Button variant="primary" onClick={verifyIssuance}>
+                          Done
+                        </Button>
+                      </Col>
+                      <Col />
+                    </Row>
+                  </Container>
+                </Form>
               )
             }
           </Modal.Body>
