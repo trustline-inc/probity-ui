@@ -3,7 +3,7 @@ import { Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
-import { getAppMetadata } from "@walletconnect/utils";
+import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
 import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
@@ -159,6 +159,24 @@ export default function Transfers() {
   };
 
   /**
+   * @function disconnect
+   * Ends session and disconnects from the relay server.
+   */
+  const disconnect = async () => {
+    if (typeof client.current === "undefined") {
+      throw new Error("WalletConnect is not initialized");
+    }
+    if (typeof session === "undefined") {
+      throw new Error("Session is not connected");
+    }
+    await client.current.disconnect({
+      topic: session.topic,
+      reason: ERROR.USER_DISCONNECTED.format(),
+    });
+    console.log("disconnected")
+  };
+
+  /**
    * @function onSessionConnected
    * @param _session
    * Runs when WalletConnect session is created. Called in `connect`.
@@ -189,7 +207,20 @@ export default function Transfers() {
       // Display modal for token issuance
       setShowTransferModal(true)
       setTransferStage("Token Issuance")
-      setTransferModalBody(`Issue ${aureiAmount} AUR from ${issuerAddress} to ${receiverAddress}. Xumm's Token Creator xApp is recommended (Press the QR code scan button → View more xApps → Token Creator). The issuing account must be blackholed.`)
+      setTransferModalBody(
+        <>
+          <p>
+            Issue precisely {aureiAmount} AUR from the issuing account to the receiving account.
+          </p>
+          <div>
+            From: <code>{issuerAddress}</code><br/>
+            To:   <code>{receiverAddress}</code>
+          </div>
+          <p className="mt-3">
+            Xumm's Token Creator xApp is recommended (In Xumm, press the QR code scanner tab → View more xApps → Token Creator). The issuing account must be blackholed.
+          </p>
+        </>
+      )
     } else {
       // TODO: Handle request failure.
       console.error("Session request failed.")
@@ -201,25 +232,31 @@ export default function Transfers() {
    * @function verifyIssuance
    */
   const verifyIssuance = async () => {
-    if (library) {
-      const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
-      const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
-      await stateConnector.setFinality(true);
-      setTransferModalBody(`Verifying issuance, please wait...`)
-      console.log("transactionID", transactionID)
-      let data = await transferObj!.verifyIssuance(transactionID)
-      console.log("data", data)
-      const transactionObject = {
-        to: BRIDGE_ADDRESS,
-        from: account,
-        data
-      };
-      await web3.eth.sendTransaction((transactionObject as any))
-      setTransferStage("Completed Transfer")
-      setTransferModalBody(`Done.`)
-      const status = await bridge.getIssuerStatus(issuerAddress);
-      setTransferModalBody(`Issuer status: ${status}`)
+    try {
+      if (library) {
+        setLoading(true)
+        const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+        const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
+        await stateConnector.setFinality(true);
+        setTransferModalBody(`Verifying issuance, please wait...`)
+        let data = await transferObj!.verifyIssuance(transactionID)
+        const transactionObject = {
+          to: BRIDGE_ADDRESS,
+          from: account,
+          data
+        };
+        const result = await web3.eth.sendTransaction((transactionObject as any))
+        console.log("result", result)
+        setTransferStage("Completed Transfer")
+        setTransferModalBody(`Done.`)
+        const status = await bridge.getIssuerStatus(issuerAddress);
+        setTransferModalBody(`Issuer status: ${status}`)
+        await disconnect()
+      }
+    } catch (error) {
+      console.error(error)
     }
+    setLoading(false)
   }
 
   const onSessionUpdate = async (accounts: string[], chains: string[]) => {
@@ -290,10 +327,11 @@ export default function Transfers() {
                 </p>
                 <p>If you are using the Xumm app, you can create a new account by going to the Home tab → Switch Account (top right) → Add account → Create a new account. Read the following prompts carefully.</p>
                 <div className="text-muted"><span className="fa fa-warning" /> Switch to the testnet in Xumm by going to the Settings tab → Advanced → Node → Choose any testnet option.</div>
+                <p className="mt-3">Once you have the account created, you can press the <i className="fas fa-share-alt"></i> button in Xumm to share/copy it.</p>
               </>
             )
+
             // The code below is only there for testing purposes, and should be removed.
-            //
             // setTransferStage("In-Progress Transfer")
             // setTransferModalBody(
             //   <>
@@ -323,13 +361,13 @@ export default function Transfers() {
       if (library) {
         setTransferInProgress(true)
         let data = await transferObj!.createIssuer(issuerAddress)
+        setTransferObj(transferObj)
         const transactionObject = {
           to: BRIDGE_ADDRESS,
           from: account,
           data
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
-        console.log("result", result)
         setTransferStage("In-Progress Transfer")
         setTransferModalBody(
           <>
@@ -447,15 +485,6 @@ export default function Transfers() {
               )
             }
           </Modal.Body>
-          {
-            !loading && (
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseTransferModal}>
-                  Close
-                </Button>
-              </Modal.Footer>
-            )
-          }
         </Modal>
       }
       {
