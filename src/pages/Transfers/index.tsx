@@ -20,7 +20,6 @@ import {
   WAD
 } from '../../constants';
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
@@ -339,6 +338,7 @@ export default function Transfers() {
           data
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
+        console.log("result", result)
         setTransferStage("In-Progress Transfer")
         setTransferModalBody(
           <>
@@ -378,40 +378,20 @@ export default function Transfers() {
         if (library) {
           await disconnect()
           setLoading(true)
-          const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
           const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
-          await stateConnector.setFinality(true);
+          let result = await stateConnector.setFinality(true);
+          await result.wait()
           setTransferModalBody(`Verifying issuance, please wait...`)
           let data = await transferObj!.verifyIssuance(transactionID, issuerAddress)
-          console.log("data", data)
           const transactionObject = {
             to: BRIDGE_ADDRESS,
             from: account,
             data
           };
-          let status = await bridge.getIssuerStatus(issuerAddress);
-          console.log("status", status)
-          console.log(
-            utils.id(transactionID),
-            "source",
-            issuerAddress,
-            0,
-            Number(aureiAmount)
-          )
-          const transactionResponse = await bridge.completeIssuance(
-            utils.id(transactionID),
-            "source",
-            issuerAddress,
-            0,
-            Number(aureiAmount)
-          )
-          console.log("transactionResponse.data", transactionResponse.data)
-          // const result = await web3.eth.sendTransaction((transactionObject as any))
-          // console.log("result", result)
+          result = await web3.eth.sendTransaction((transactionObject as any))
+          console.log("result", result)
           setTransferStage("Completed Transfer")
           setTransferModalBody(`Done.`)
-          status = await bridge.getIssuerStatus(issuerAddress);
-          setTransferModalBody(`Issuer status: ${status}`)
         }
       } catch (error) {
         console.error(error)
