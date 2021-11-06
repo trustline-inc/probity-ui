@@ -228,43 +228,13 @@ export default function Transfers() {
 
   };
 
-  /**
-   * @function verifyIssuance
-   */
-  const verifyIssuance = async () => {
-    try {
-      if (library) {
-        setLoading(true)
-        const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
-        const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
-        await stateConnector.setFinality(true);
-        setTransferModalBody(`Verifying issuance, please wait...`)
-        let data = await transferObj!.verifyIssuance(transactionID)
-        const transactionObject = {
-          to: BRIDGE_ADDRESS,
-          from: account,
-          data
-        };
-        const result = await web3.eth.sendTransaction((transactionObject as any))
-        console.log("result", result)
-        setTransferStage("Completed Transfer")
-        setTransferModalBody(`Done.`)
-        const status = await bridge.getIssuerStatus(issuerAddress);
-        setTransferModalBody(`Issuer status: ${status}`)
-        await disconnect()
-      }
-    } catch (error) {
-      console.error(error)
-    }
-    setLoading(false)
-  }
-
   const onSessionUpdate = async (accounts: string[], chains: string[]) => {
     console.log("accounts", accounts)
     console.log("chains", chains)
   };
 
   /**
+   * @function prepareTransfer
    * Creates Bridge allowance and funds issuing account.
    */
   const prepareTransfer = async () => {
@@ -354,6 +324,7 @@ export default function Transfers() {
   }
 
   /**
+   * @function initiateTransfer
    * Initiates the transfer after approval.
    */
   const initiateTransfer = async () => {
@@ -382,6 +353,7 @@ export default function Transfers() {
   }
 
   /**
+   * @function createTrustLine
    * Creates a trust line with the issuing address via WalletConnect
    */
   const createTrustLine = async () => {
@@ -396,6 +368,56 @@ export default function Transfers() {
     }
     connect();
   }
+
+  /**
+   * @function verifyIssuance
+   * Called after issuance transaction / blackholing issuer account
+   */
+     const verifyIssuance = async () => {
+      try {
+        if (library) {
+          await disconnect()
+          setLoading(true)
+          const bridge = new Contract(BRIDGE_ADDRESS, BridgeABI.abi, library.getSigner())
+          const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
+          await stateConnector.setFinality(true);
+          setTransferModalBody(`Verifying issuance, please wait...`)
+          let data = await transferObj!.verifyIssuance(transactionID, issuerAddress)
+          console.log("data", data)
+          const transactionObject = {
+            to: BRIDGE_ADDRESS,
+            from: account,
+            data
+          };
+          let status = await bridge.getIssuerStatus(issuerAddress);
+          console.log("status", status)
+          console.log(
+            utils.id(transactionID),
+            "source",
+            issuerAddress,
+            0,
+            Number(aureiAmount)
+          )
+          const transactionResponse = await bridge.completeIssuance(
+            utils.id(transactionID),
+            "source",
+            issuerAddress,
+            0,
+            Number(aureiAmount)
+          )
+          console.log("transactionResponse.data", transactionResponse.data)
+          // const result = await web3.eth.sendTransaction((transactionObject as any))
+          // console.log("result", result)
+          setTransferStage("Completed Transfer")
+          setTransferModalBody(`Done.`)
+          status = await bridge.getIssuerStatus(issuerAddress);
+          setTransferModalBody(`Issuer status: ${status}`)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+      setLoading(false)
+    }
 
   return (
     <>
@@ -426,7 +448,7 @@ export default function Transfers() {
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Issuing Address</Form.Label>
-                    <Form.Control type="text" placeholder="Enter issuing address" onChange={(event) => { setIssuerAddress(event.target.value) }} />
+                    <Form.Control type="text" placeholder="Enter issuing address" onChange={(event: any) => { setIssuerAddress(event.target.value) }} />
                     <Form.Text className="text-muted">
                       This is an XRP Ledger account that you control.
                     </Form.Text>
@@ -465,7 +487,7 @@ export default function Transfers() {
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Transaction ID</Form.Label>
-                    <Form.Control type="text" placeholder="Enter transaction ID" onChange={(event) => { setTransactionID(event.target.value) }} />
+                    <Form.Control type="text" placeholder="Enter transaction ID" onChange={(event: any) => { setTransactionID(event.target.value) }} />
                     <Form.Text className="text-muted">
                       The transaction ID of the issuance.
                     </Form.Text>
