@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import NativeCollateralABI from "@trustline/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import { Contract } from "ethers";
 import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
@@ -10,6 +9,7 @@ import Activity from "../../containers/Activity";
 import {
   WAD,
   NATIVE_COLLATERAL,
+  INTERFACES
 } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
@@ -33,7 +33,7 @@ function Collateral() {
 
   const deposit = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL, NativeCollateralABI.abi, library.getSigner())
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL, INTERFACES[NATIVE_COLLATERAL].abi, library.getSigner())
       setLoading(true)
 
       try {
@@ -57,7 +57,7 @@ function Collateral() {
 
   const withdraw = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL, NativeCollateralABI.abi, library.getSigner())
+      const nativeCollateral = new Contract(NATIVE_COLLATERAL, INTERFACES[NATIVE_COLLATERAL].abi, library.getSigner())
       setLoading(true)
 
       try {
