@@ -18,7 +18,7 @@ export const getStablecoinSymbol = (chainId: number) => {
     case 14:
       return "AUR"
     case 16:
-      return "PHI"
+      return "AUR"
     case 19:
       return "PHI"
     default:
@@ -31,7 +31,7 @@ export const getStablecoinName = (chainId: number) => {
     case 14:
       return "Aurei"
     case 16:
-      return "Phi"
+      return "Aurei"
     case 19:
       return "Phi"
     default:
@@ -44,7 +44,7 @@ export const getStablecoinABI = (chainId: number) => {
     case 14:
       return INTERFACES[AUREI]
     case 16:
-      return INTERFACES[PHI]
+      return INTERFACES[AUREI]
     case 19:
       return INTERFACES[PHI]
     default:
@@ -57,7 +57,7 @@ export const getStablecoinAddress = (chainId: number) => {
     case 14:
       return AUREI
     case 16:
-      return PHI
+      return AUREI
     case 19:
       return PHI
     default:
