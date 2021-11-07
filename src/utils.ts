@@ -1,6 +1,4 @@
-import AureiABI from "@trustline/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import PhiABI from "@trustline/probity/artifacts/contracts/probity/tokens/Phi.sol/Phi.json";
-import { AUREI, PHI } from "./constants";
+import { AUREI, PHI, INTERFACES } from "./constants";
 
 export const getNativeTokenSymbol = (chainId: number) => {
   switch (chainId) {
@@ -44,13 +42,13 @@ export const getStablecoinName = (chainId: number) => {
 export const getStablecoinABI = (chainId: number) => {
   switch (chainId) {
     case 14:
-      return AureiABI
+      return INTERFACES[AUREI]
     case 16:
-      return PhiABI
+      return INTERFACES[PHI]
     case 19:
-      return PhiABI
+      return INTERFACES[PHI]
     default:
-      return AureiABI
+      return INTERFACES[AUREI]
   }
 }
 
