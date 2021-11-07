@@ -27,6 +27,7 @@ import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
+  const [currentTransfer, setCurrentTransfer] = React.useState<any>(localStorage.getItem('probity-transfer'));
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
@@ -38,8 +39,7 @@ export default function Transfers() {
   const [domain, setDomain] = React.useState("")
   const [transferAmount, setTransferAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
-  const [transferStage, setTransferStage] = React.useState("")
-  const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
+  const [transferStage, setTransferStage] = React.useState(currentTransfer?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
@@ -49,11 +49,11 @@ export default function Transfers() {
   const client = React.useRef<WalletConnectClient>()
   const ctx = useContext(EventContext)
 
+  console.log("currentTransfer:", currentTransfer)
+
   // WalletConnect modals
   const openPairingModal = () => setWalletConnectModal({ pending: false, type: "pairing" });
   const openRequestModal = () => setWalletConnectModal({ pending: true, type: "request" });
-  const openPingModal = () => setWalletConnectModal({ pending: true, type: "ping" });
-  const openModal = (type: string) => setWalletConnectModal({ pending: false, type });
   const closeModal = () => setWalletConnectModal({ pending: false, type: "" });
 
   // Transfer modal
@@ -65,39 +65,59 @@ export default function Transfers() {
   React.useEffect(() => {
     (async () => {
       try {
-        client.current = await WalletConnectClient.init({
-          controller: false,
-          logger: DEFAULT_LOGGER,
-          relayProvider: DEFAULT_RELAY_PROVIDER,
-        });
+        if (!client.current) {
+          client.current = await WalletConnectClient.init({
+            controller: false,
+            logger: DEFAULT_LOGGER,
+            relayProvider: DEFAULT_RELAY_PROVIDER,
+          });
 
-        client.current.on(
-          CLIENT_EVENTS.pairing.proposal,
-          async (proposal: PairingTypes.Proposal) => {
-            const { uri } = proposal.signal.params;
-            console.log("EVENT", "QR Code Modal open");
-            QRCodeModal.open(uri, () => {
-              console.log("EVENT", "QR Code Modal closed");
-            });
-          },
-        );
-  
-        client.current.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
-          if (typeof client.current === "undefined") return;
-          setPairings(client.current.pairing.topics);
-        });
-  
-        client.current.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
-          if (session.topic !== session?.topic) return;
-          console.log("EVENT", "session_deleted");
-        });
+          client.current.on(
+            CLIENT_EVENTS.pairing.proposal,
+            async (proposal: PairingTypes.Proposal) => {
+              const { uri } = proposal.signal.params;
+              console.log("EVENT", "QR Code Modal open");
+              QRCodeModal.open(uri, () => {
+                console.log("EVENT", "QR Code Modal closed");
+              });
+            },
+          );
+
+          client.current.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
+            if (typeof client.current === "undefined") return;
+            setPairings(client.current.pairing.topics);
+          });
+
+          client.current.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
+            if (session.topic !== session?.topic) return;
+            console.log("EVENT", "session_deleted");
+          });
+        }
+
+        if (pairings) console.log("pairings", pairings)
       } catch (error) {
         console.log("connection error")
         alert(JSON.stringify(error))
         console.error(error)
       }
     })()
-  }, [])
+
+    return () => {
+      if (client.current && session) {
+        client.current.disconnect({
+          topic: session.topic,
+          reason: ERROR.USER_DISCONNECTED.format(),
+        });
+      }
+    }
+  }, [session, pairings])
+
+  /**
+   * Save every update to the current transfer
+   */
+  React.useEffect(() => {
+    localStorage.setItem('probity-transfer', JSON.stringify(currentTransfer));
+  }, [currentTransfer]);
 
   // Input Event Handlers
 
@@ -266,7 +286,10 @@ export default function Transfers() {
             provider: library,
             signer: library.getSigner() as any
           })
-          setTransferObj(transfer)
+          setCurrentTransfer({
+            stage: "Pre-Transfer",
+            amount: transferAmount.toString()
+          })
 
           try {
             // First check the allowance
@@ -328,8 +351,7 @@ export default function Transfers() {
     try {
       if (library) {
         setTransferInProgress(true)
-        let data = await transferObj!.createIssuer(issuerAddress)
-        setTransferObj(transferObj)
+        let data = await currentTransfer!.createIssuer(issuerAddress)
         const transactionObject = {
           to: BRIDGE,
           from: account,
@@ -337,6 +359,11 @@ export default function Transfers() {
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
         console.log("result", result)
+        setCurrentTransfer({
+          stage: "In-Progress Transfer",
+          issuerAddress: issuerAddress,
+          ...currentTransfer
+        })
         setTransferStage("In-Progress Transfer")
         setTransferModalBody(
           <>
@@ -380,7 +407,7 @@ export default function Transfers() {
           let result = await stateConnector.setFinality(true);
           await result.wait()
           setTransferModalBody(`Verifying issuance, please wait...`)
-          let data = await transferObj!.verifyIssuance(transactionID, issuerAddress)
+          let data = await currentTransfer!.verifyIssuance(transactionID, issuerAddress)
           const transactionObject = {
             to: BRIDGE,
             from: account,
@@ -388,6 +415,7 @@ export default function Transfers() {
           };
           result = await web3.eth.sendTransaction((transactionObject as any))
           console.log("result", result)
+          setCurrentTransfer(null)
           setTransferStage("Completed Transfer")
           setTransferModalBody(`Done.`)
         }
