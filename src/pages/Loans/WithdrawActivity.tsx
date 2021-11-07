@@ -25,9 +25,9 @@ function WithdrawActivity({
       <div className="row">
         <div className="col-12 mb-4">
           <label htmlFor="collateralConversionInput" className="form-label">
-            {getStablecoinName(chainId!)}<br/>
+            Withdrawal Amount<br/>
             <small className="form-text text-muted">
-              Amount of {getStablecoinName(chainId!)} to withdraw
+              Amount of ERC20 {getStablecoinName(chainId!)} to withdraw
             </small>
           </label>
           <div className="input-group">
