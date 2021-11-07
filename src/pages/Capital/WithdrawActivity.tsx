@@ -1,4 +1,6 @@
+import { useWeb3React } from "@web3-react/core"
 import React from "react"
+import { getStablecoinSymbol } from "../../utils"
 
 interface Props {
   interestAmount: number;
@@ -17,6 +19,8 @@ function WithdrawActivity({
   setInterestType,
   interestType
 }: Props) {
+  const { chainId } = useWeb3React()
+
   return (
     <>
       <div className="row">
@@ -29,8 +33,8 @@ function WithdrawActivity({
                 <label className="form-check-label" htmlFor="TCN">TCN</label>
               </div>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onChange={() => { setInterestType("AUR") }} />
-                <label className="form-check-label" htmlFor="AUR">AUR</label>
+                <input className="form-check-input" type="radio" name="interestType" id={getStablecoinSymbol(chainId!)} value={getStablecoinSymbol(chainId!)} checked={interestType === getStablecoinSymbol(chainId!)} onChange={() => { setInterestType(getStablecoinSymbol(chainId!)) }} />
+                <label className="form-check-label" htmlFor={getStablecoinSymbol(chainId!)}>{getStablecoinSymbol(chainId!)}</label>
               </div>
             </div>
           </div>

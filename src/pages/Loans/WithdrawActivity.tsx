@@ -1,8 +1,10 @@
+import { useWeb3React } from "@web3-react/core"
 import React from "react"
+import { getStablecoinName, getStablecoinSymbol } from "../../utils"
 
 interface Props {
-  aureiAmount: number;
-  onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  amount: number;
+  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   withdraw: (amount: number) => void;
   loading: boolean;
   maxSize: number;
@@ -10,20 +12,22 @@ interface Props {
 }
 
 function WithdrawActivity({
-  aureiAmount,
-  onAureiAmountChange,
+  amount,
+  onAmountChange,
   withdraw,
   loading,
   maxSize,
 }: Props) {
+  const { chainId } = useWeb3React()
+
   return (
     <>
       <div className="row">
         <div className="col-12 mb-4">
           <label htmlFor="collateralConversionInput" className="form-label">
-            Aurei<br/>
+            {getStablecoinName(chainId!)}<br/>
             <small className="form-text text-muted">
-              Amount of Aurei to withdraw
+              Amount of {getStablecoinName(chainId!)} to withdraw
             </small>
           </label>
           <div className="input-group">
@@ -31,12 +35,12 @@ function WithdrawActivity({
               type="number"
               min={0}
               className="form-control"
-              id="aureiAmountInput"
+              id="amountInput"
               max={maxSize}
               placeholder="0.000000000000000000"
-              onChange={onAureiAmountChange}
+              onChange={onAmountChange}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
@@ -45,8 +49,8 @@ function WithdrawActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={() => { withdraw(aureiAmount) }}
-            disabled={aureiAmount === 0 || loading}
+            onClick={() => { withdraw(amount) }}
+            disabled={amount === 0 || loading}
           >
             {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm" }
           </button>

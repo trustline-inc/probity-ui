@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
@@ -12,14 +12,15 @@ import SupplyActivity from "./SupplyActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { WAD, TREASURY_ADDRESS, VAULT_ENGINE_ADDRESS } from '../../constants';
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { WAD, TREASURY, VAULT_ENGINE } from '../../constants';
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
+import { getNativeTokenSymbol, getStablecoinName } from '../../utils';
 
 function Capital({ collateralPrice }: { collateralPrice: number }) {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
   const [loading, setLoading] = React.useState(false);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -31,7 +32,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("TCN")
 
-  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', utils.formatBytes32String("FLR"), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.formatBytes32String(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
@@ -93,14 +94,14 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
    const mint = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
         // Modify supply
         const result = await vaultEngine.modifySupply(
-          web3.utils.keccak256("FLR"),
-          TREASURY_ADDRESS,
+          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          TREASURY,
           WAD.mul(collateralAmount),
           WAD.mul(supplyAmount)
         );
@@ -119,13 +120,13 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
   const burn = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
         const result = await vaultEngine.modifySupply(
-          web3.utils.keccak256("FLR"),
-          TREASURY_ADDRESS,
+          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          TREASURY,
           WAD.mul(-collateralAmount),
           WAD.mul(-supplyAmount)
         );
@@ -143,7 +144,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
    */
     const withdraw = async () => {
     if (library && account) {
-      const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
 
       try {
         const isTCN = interestType === "TCN";
@@ -167,7 +168,7 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
     <>
       <header className="pt-2">
         <h1>Capital Management</h1>
-        <p className="lead">Mint Aurei to earn interest from loans created by Probity.</p>
+        <p className="lead">Mint {getStablecoinName(chainId!)} to earn interest from loans created by Probity.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

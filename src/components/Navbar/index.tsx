@@ -13,6 +13,7 @@ import logo from "../../assets/probity.png";
 import "./index.css";
 import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
+import { getNativeTokenSymbol } from "../../utils";
 
 function Balance() {
   const { account, library, chainId } = useWeb3React<Web3Provider>();
@@ -37,7 +38,7 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} FLR
+        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} {getNativeTokenSymbol(chainId!)}
       </span>
     </div>
   );
@@ -89,7 +90,7 @@ function Navbar() {
         const cooldown = now.setDate(now.getDate() + 1);
         window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
         alert(
-          `Sent 1,000 CFLR to ${account}. Testnet fund requests are limited to once per day.`
+          `Sent 1,000 ${getNativeTokenSymbol(chainId!)} to ${account}. Testnet fund requests are limited to once per day.`
         )
       }
     } catch (error) {
@@ -185,7 +186,7 @@ function Navbar() {
                         requestingTestCoins ? (
                           <i className="fas fa-circle-notch fa-spin"></i>
                         ) : (
-                          <span><i className="mr-2" /> Request CFLR</span>
+                          <span><i className="mr-2" /> Request {getNativeTokenSymbol(chainId!)}</span>
                         )
                       }
                     </Button>

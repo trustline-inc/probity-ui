@@ -10,22 +10,21 @@ import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
-  AUREI_ADDRESS,
-  BRIDGE_ADDRESS,
+  BRIDGE,
   DEFAULT_APP_METADATA,
   DEFAULT_LOGGER,
   DEFAULT_METHODS,
   DEFAULT_RELAY_PROVIDER,
-  STATE_CONNECTOR_ADDRESS,
-  WAD
+  STATE_CONNECTOR,
+  WAD,
+  INTERFACES
 } from '../../constants';
-import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
+import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
@@ -37,7 +36,7 @@ export default function Transfers() {
   const [receiverAddress, setReceiverAddress] = React.useState("");
   const [transactionID, setTransactionID] = React.useState("");
   const [domain, setDomain] = React.useState("")
-  const [aureiAmount, setAureiAmount] = React.useState(0);
+  const [transferAmount, setTransferAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
   const [transferStage, setTransferStage] = React.useState("")
   const [transferObj, setTransferObj] = React.useState<solaris.Transfer|null>(null)
@@ -45,7 +44,7 @@ export default function Transfers() {
   const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const client = React.useRef<WalletConnectClient>()
   const ctx = useContext(EventContext)
@@ -64,8 +63,8 @@ export default function Transfers() {
    * Initializes the WalletConnect client and subscribe to events
    */
   React.useEffect(() => {
-    try {
-      (async () => {
+    (async () => {
+      try {
         client.current = await WalletConnectClient.init({
           controller: false,
           logger: DEFAULT_LOGGER,
@@ -92,20 +91,19 @@ export default function Transfers() {
           if (session.topic !== session?.topic) return;
           console.log("EVENT", "session_deleted");
         });
-
-      })()
-    } catch (error) {
-      console.log("connection error")
-      alert(JSON.stringify(error))
-      console.error(error)
-    }
+      } catch (error) {
+        console.log("connection error")
+        alert(JSON.stringify(error))
+        console.error(error)
+      }
+    })()
   }, [])
 
   // Input Event Handlers
 
-  const onAureiAmountChange = (event: any) => {
+  const onTransferAmountChange = (event: any) => {
     const amount = event.target.value;
-    setAureiAmount(amount);
+    setTransferAmount(amount);
   }
 
   const onUsernameChange = (event: any) => {
@@ -209,7 +207,7 @@ export default function Transfers() {
       setTransferModalBody(
         <>
           <p>
-            Issue precisely {aureiAmount} AUR from the issuing account to the receiving account.
+            Issue precisely {transferAmount} {getStablecoinSymbol(chainId!)} from the issuing account to the receiving account.
           </p>
           <div>
             From: <code>{issuerAddress}</code><br/>
@@ -262,9 +260,9 @@ export default function Transfers() {
               source: "LOCAL",
               destination: "XRPL_TESTNET"
             },
-            amount: BigNumber.from(aureiAmount).mul(WAD),
-            tokenAddress: AUREI_ADDRESS,
-            bridgeAddress: BRIDGE_ADDRESS,
+            amount: BigNumber.from(transferAmount).mul(WAD),
+            tokenAddress: getStablecoinAddress(chainId!),
+            bridgeAddress: BRIDGE,
             provider: library,
             signer: library.getSigner() as any
           })
@@ -272,15 +270,15 @@ export default function Transfers() {
 
           try {
             // First check the allowance
-            const aurei = new Contract(AUREI_ADDRESS, AureiABI.abi, library.getSigner())
-            const allowance = await aurei.allowance(account, BRIDGE_ADDRESS)
+            const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
+            const allowance = await stablecoin.allowance(account, BRIDGE)
 
-            if (Number(utils.formatEther(allowance)) < Number(aureiAmount)) {
+            if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
               setTransferStage("Pre-Transfer")
-              setTransferModalBody(`Permit the Bridge contract to spend your AUR for the transfer.`)
+              setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
               let data = await transfer.approve()
               const transactionObject = {
-                to: AUREI_ADDRESS,
+                to: getStablecoinAddress(chainId!),
                 from: account,
                 data
               };
@@ -333,7 +331,7 @@ export default function Transfers() {
         let data = await transferObj!.createIssuer(issuerAddress)
         setTransferObj(transferObj)
         const transactionObject = {
-          to: BRIDGE_ADDRESS,
+          to: BRIDGE,
           from: account,
           data
         };
@@ -378,13 +376,13 @@ export default function Transfers() {
         if (library) {
           await disconnect()
           setLoading(true)
-          const stateConnector = new Contract(STATE_CONNECTOR_ADDRESS, StateConnectorABI.abi, library.getSigner())
+          const stateConnector = new Contract(STATE_CONNECTOR, INTERFACES[STATE_CONNECTOR].abi, library.getSigner())
           let result = await stateConnector.setFinality(true);
           await result.wait()
           setTransferModalBody(`Verifying issuance, please wait...`)
           let data = await transferObj!.verifyIssuance(transactionID, issuerAddress)
           const transactionObject = {
-            to: BRIDGE_ADDRESS,
+            to: BRIDGE,
             from: account,
             data
           };
@@ -415,7 +413,7 @@ export default function Transfers() {
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Bridge Address</Form.Label>
-                    <Form.Control type="text" readOnly value={BRIDGE_ADDRESS} />
+                    <Form.Control type="text" readOnly value={BRIDGE} />
                     <Form.Text className="text-muted">
                       This is the address of the Bridge contract.
                     </Form.Text>
@@ -512,17 +510,17 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer Aurei between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>. Only recommended for advanced users.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer {getStablecoinName(chainId!)} between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <h4 className="text-center">Send Aurei</h4>
+        <h4 className="text-center">Send {getStablecoinName(chainId!)}</h4>
         <Activity active={active} activity={ActivityType.Transfer} error={error}>
           <div className="row">
             <div className="col-md-8 offset-md-2">
               <label className="form-label">Amount</label>
               <div className="input-group">
-                <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={aureiAmount ? aureiAmount : ""} onChange={onAureiAmountChange} />
-                <span className="input-group-text font-monospace">{"AUR"}</span>
+                <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={transferAmount ? transferAmount : ""} onChange={onTransferAmountChange} />
+                <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
               </div>
             </div>
           </div>
@@ -541,7 +539,7 @@ export default function Transfers() {
               <button
                 className="btn btn-primary btn-lg mt-4"
                 onClick={prepareTransfer}
-                disabled={aureiAmount === 0 || username === "" || domain === "" || loading}
+                disabled={transferAmount === 0 || username === "" || domain === "" || loading}
               >
                 {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
               </button>
@@ -550,7 +548,7 @@ export default function Transfers() {
         </Activity>
       </section>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <h4 className="text-center">Receive Aurei</h4>
+        <h4 className="text-center">Receive {getStablecoinName(chainId!)}</h4>
         <Activity active={active} activity={ActivityType.Transfer} error={null}>
           <div className="row">
             <div className="col-md-8 offset-md-2 my-4 d-grid">

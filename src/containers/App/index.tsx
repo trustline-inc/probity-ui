@@ -10,9 +10,9 @@ import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
+import FtsoABI from "@trustline/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import ConnectorModal from "../../components/ConnectorModal"
-import { FTSO_ADDRESS } from '../../constants';
+import { FTSO } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Capital from "../../pages/Capital";
@@ -43,7 +43,7 @@ function App() {
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
     setTransactions(newTxs);
   };
-  const { data, mutate } = useSWR([FTSO_ADDRESS, 'getCurrentPrice'], {
+  const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
@@ -54,7 +54,7 @@ function App() {
       } else {
         if (library) {
           try {
-            const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
+            const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
             const result = await ftso.getCurrentPrice();
             setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
           } catch (error) {

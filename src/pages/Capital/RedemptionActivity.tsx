@@ -1,5 +1,8 @@
 import React from "react";
+import { useWeb3React } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed"
+import { getNativeTokenSymbol, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralAmount: number;
@@ -18,6 +21,8 @@ function RedemptionActivity({
   onSupplyAmountChange,
   redeem
 }: Props) {
+  const { chainId } = useWeb3React<Web3Provider>()
+
   return (
     <>
       <div className="row mb-4">
@@ -25,7 +30,7 @@ function RedemptionActivity({
           <label htmlFor="equityRedemptionAmount" className="form-label">
             Capital<br/>
             <small className="form-text text-muted">
-              Amount of Aurei to burn
+              Amount of {getStablecoinName(chainId!)} to burn
             </small>
           </label>
           <div className="input-group">
@@ -37,7 +42,7 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onSupplyAmountChange}
             />
-            <span className="input-group-text font-monospace">{"AUR"}</span>
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
@@ -58,7 +63,7 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{"FLR"}</span>
+            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
           </div>
         </div>
       </div>

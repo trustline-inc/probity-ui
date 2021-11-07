@@ -3,9 +3,9 @@ import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { BigNumber, Contract, utils } from "ethers";
 import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
@@ -13,33 +13,34 @@ import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
 import {
   WAD,
-  TELLER_ADDRESS,
-  TREASURY_ADDRESS,
-  VAULT_ENGINE_ADDRESS,
+  TELLER,
+  TREASURY,
+  VAULT_ENGINE,
 } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import WithdrawActivity from './WithdrawActivity';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
+import { getNativeTokenSymbol } from '../../utils';
 
 function Loans({ collateralPrice }: { collateralPrice: number }) {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [totalCollateral, setTotalCollateral] = React.useState(0);
-  const [aureiAmount, setAureiAmount] = React.useState(0);
+  const [amount, setBorrowAmount] = React.useState(0);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ENGINE_ADDRESS, 'vaults', web3.utils.keccak256("FLR"), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: rate } = useSWR([TELLER_ADDRESS, 'apr'], {
+  const { data: rate } = useSWR([TELLER, 'apr'], {
     fetcher: fetcher(library, TellerABI.abi),
   })
 
@@ -52,16 +53,16 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const borrow = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
         // Modify debt
         const result = await vaultEngine.modifyDebt(
-          web3.utils.keccak256("FLR"),
-          TREASURY_ADDRESS,
+          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          TREASURY,
           WAD.mul(collateralAmount),
-          WAD.mul(aureiAmount)
+          WAD.mul(amount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -76,16 +77,16 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   const repay = async () => {
     if (library && account) {
-      const vault = new Contract(VAULT_ENGINE_ADDRESS, VaultEngineABI.abi, library.getSigner())
+      const vault = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {
         // Modify debt
         const result = await vault.modifyDebt(
-          web3.utils.keccak256("FLR"),
-          TREASURY_ADDRESS,
+          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          TREASURY,
           WAD.mul(-collateralAmount),
-          WAD.mul(-aureiAmount)
+          WAD.mul(-amount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -103,11 +104,12 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
    */
      const withdraw = async () => {
       if (library && account) {
-        const treasury = new Contract(TREASURY_ADDRESS, TreasuryABI.abi, library.getSigner())
+        const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
         setLoading(true)
         try {
-          const amount = BigNumber.from(aureiAmount).mul(WAD)
-          const result = await treasury.withdrawAurei(amount);
+          const result = await treasury.withdrawAurei(
+            BigNumber.from(amount).mul(WAD)
+          );
           const data = await result.wait();
           ctx.updateTransactions(data);
         } catch (error) {
@@ -118,9 +120,9 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       }
   }
 
-  const onAureiAmountChange = (event: any) => {
+  const onAmountChange = (event: any) => {
     const amount = Number(event.target.value);
-    setAureiAmount(amount);
+    setBorrowAmount(amount);
   }
 
   const onCollateralAmountChange = (event: any) => {
@@ -137,14 +139,14 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) + Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) + Number(amount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) - Number(aureiAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt).toString()) + Number(utils.formatEther(vault.capital).toString()) - Number(amount)));
           break;
       }
     }
-  }, [totalCollateral, collateralPrice, aureiAmount, vault, activity]);
+  }, [totalCollateral, collateralPrice, amount, vault, activity]);
 
   return (
     <>
@@ -180,11 +182,11 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                     borrow={borrow}
                     loading={loading}
                     maxSize={maxSize}
-                    aureiAmount={aureiAmount}
+                    amount={amount}
                     setMaxSize={setMaxSize}
                     collateralRatio={collateralRatio}
                     collateralAmount={collateralAmount}
-                    onAureiAmountChange={onAureiAmountChange}
+                    onAmountChange={onAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
                   />
                 )
@@ -195,10 +197,10 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                     rate={rate}
                     repay={repay}
                     loading={loading}
-                    aureiAmount={aureiAmount}
+                    amount={amount}
                     collateralRatio={collateralRatio}
                     collateralAmount={collateralAmount}
-                    onAureiAmountChange={onAureiAmountChange}
+                    onAmountChange={onAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
                   />
                 )
@@ -208,8 +210,8 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                   <WithdrawActivity
                     maxSize={maxSize}
                     setMaxSize={setMaxSize}
-                    aureiAmount={aureiAmount}
-                    onAureiAmountChange={onAureiAmountChange}
+                    amount={amount}
+                    onAmountChange={onAmountChange}
                     withdraw={withdraw}
                     loading={loading}
                   />

@@ -4,18 +4,15 @@ import web3 from "web3";
 import Nav from 'react-bootstrap/Nav'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
-import TcnTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
 import { utils } from "ethers";
-import { getNativeTokenSymbol } from "../../utils"
+import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import numeral from "numeral";
 import {
   RAY,
-  AUREI_ADDRESS,
-  TCN_TOKEN_ADDRESS,
-  VAULT_ENGINE_ADDRESS
+  TCN_TOKEN,
+  VAULT_ENGINE,
+  INTERFACES
 } from "../../constants";
 import './index.css';
 
@@ -25,39 +22,39 @@ function Balances() {
   const { account, library, chainId } = useWeb3React<Web3Provider>()
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE_ADDRESS, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: aurBalance, mutate: mutateAurBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'aur', account], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+  const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'aur', account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE_ADDRESS, 'tcn', account], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+  const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'tcn', account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: aureiERC20Balance, mutate: mutateAureiERC20Balance } = useSWR([AUREI_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, AureiABI.abi),
+  const { data: stablecoinBalance, mutate: mutateStablecoinBalance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
+    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
-  const { data: tcnERC20Balance, mutate: mutateTcnERC20Balance } = useSWR([TCN_TOKEN_ADDRESS, 'balanceOf', account], {
-    fetcher: fetcher(library, TcnTokenABI.abi),
+  const { data: tcnERC20Balance, mutate: mutateTcnERC20Balance } = useSWR([TCN_TOKEN, 'balanceOf', account], {
+    fetcher: fetcher(library, INTERFACES[TCN_TOKEN].abi),
   })
-  const { data: totalAurei, mutate: mutateTotalAurei } = useSWR([AUREI_ADDRESS, 'totalSupply'], {
-    fetcher: fetcher(library, AureiABI.abi),
+  const { data: totalStablecoinSupply, mutate: mutatetotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
+    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
-  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE_ADDRESS, 'totalDebt'], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE_ADDRESS, 'totalCapital'], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+  const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
   React.useEffect(() => {
     if (library) {
       library.on("block", () => {
         mutateVault(undefined, true);
-        mutateAurBalance(undefined, true);
-        mutateTotalAurei(undefined, true);
+        mutateVaultStablecoinBalance(undefined, true);
+        mutatetotalStablecoinSupply(undefined, true);
         mutateTotalDebt(undefined, true);
-        mutateAureiERC20Balance(undefined, true);
+        mutateStablecoinBalance(undefined, true);
         mutateTcnERC20Balance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
@@ -119,7 +116,7 @@ function Balances() {
                   <h6>Loan Balance</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -127,7 +124,7 @@ function Balances() {
                   <h6>Supplied</h6>
                 </div>
                 <div className="col-6">
-                <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr/>
@@ -135,13 +132,13 @@ function Balances() {
               <div className="row my-2 text-truncate">
                 <div className="col-6">
                   <h6>Vault Tokens</h6>
-                  <span className="text-truncate">{aurBalance ? numeral(utils.formatEther(aurBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} AUR</span>
+                  <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
                   <br/>
                   <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
                 <div className="col-6">
                   <h6>ERC20 Tokens</h6>
-                  <span className="text-truncate">{aureiERC20Balance ? numeral(utils.formatEther(aureiERC20Balance)).format('0,0.0[00000000000000000]') : "0"} AUR</span>
+                  <span className="text-truncate">{stablecoinBalance ? numeral(utils.formatEther(stablecoinBalance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
                   <br/>
                   <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
@@ -156,7 +153,7 @@ function Balances() {
                   <h6>Circulating Supply</h6>
                 </div>
                   <div className="col-6">
-                  <span className="text-truncate">{totalAurei ? numeral(utils.formatEther(totalAurei)).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{totalStablecoinSupply ? numeral(utils.formatEther(totalStablecoinSupply)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -164,7 +161,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalCapital ? numeral(utils.formatEther(totalCapital.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{totalCapital ? numeral(utils.formatEther(totalCapital.div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -172,7 +169,7 @@ function Balances() {
                   <h6>Outstanding Loans</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.div(RAY))).format('0,0.0[00000000000000000]') : null} AUR</span>
+                  <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
             </>

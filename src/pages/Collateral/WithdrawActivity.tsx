@@ -1,4 +1,6 @@
-import React from "react";
+import { useWeb3React } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
+import { getNativeTokenSymbol } from "../../utils";
 
 interface Props {
   collateralAmount: number;
@@ -13,6 +15,8 @@ function WithdrawActivity({
   withdraw,
   loading
 }: Props) {
+  const { chainId } = useWeb3React<Web3Provider>()
+
   return (
     <>
       <div className="row mb-4">
@@ -32,7 +36,7 @@ function WithdrawActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{"FLR"}</span>
+            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
           </div>
         </div>
       </div>

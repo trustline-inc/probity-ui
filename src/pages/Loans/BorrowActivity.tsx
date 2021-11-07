@@ -5,41 +5,42 @@ import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
-import { RAY, VAULT_ENGINE_ADDRESS } from '../../constants';
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { RAY, VAULT_ENGINE } from '../../constants';
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralRatio: number;
   collateralAmount: number;
-  aureiAmount: number;
+  amount: number;
   rate: any;
   borrow: () => void;
   loading: boolean;
   maxSize: number;
   setMaxSize: (maxSize: number) => void;
-  onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function BorrowActivity({
   collateralRatio,
   collateralAmount,
-  aureiAmount,
+  amount,
   rate,
   loading,
   borrow,
   maxSize,
   setMaxSize,
-  onAureiAmountChange,
+  onAmountChange,
   onCollateralAmountChange
 }: Props) {
   const { library } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
 
-  const { data: totalDebt } = useSWR([VAULT_ENGINE_ADDRESS, "totalDebt"], {
+  const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalCapital } = useSWR([VAULT_ENGINE_ADDRESS, "totalCapital"], {
+  const { data: totalCapital } = useSWR([VAULT_ENGINE, "totalCapital"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
@@ -48,7 +49,7 @@ function BorrowActivity({
       try {
         const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
         const supply = Number(utils.formatEther(totalCapital.div(RAY)));
-        const newBorrows = borrows + Number(aureiAmount);
+        const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
         const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
         setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
@@ -57,7 +58,9 @@ function BorrowActivity({
         console.log(e)
       }
     }
-  }, [rate, aureiAmount, totalDebt, totalCapital, setMaxSize])
+  }, [rate, amount, totalDebt, totalCapital, setMaxSize])
+
+  const { chainId } = useWeb3React<Web3Provider>()
 
   return (
     <>
@@ -74,8 +77,8 @@ function BorrowActivity({
           max={maxSize}
           placeholder="0.000000000000000000"
           className="form-control"
-          onChange={onAureiAmountChange} />
-        <span className="input-group-text font-monospace">{"AUR"}</span>
+          onChange={onAmountChange} />
+        <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
       </div>
       <div className="row pt-3 pb-1">
         <div className="col-12">
@@ -84,7 +87,7 @@ function BorrowActivity({
               <span className="text-muted">Estimated APR</span>
               <br />
               {rate && (
-                aureiAmount ? (
+                amount ? (
                   Math.min(estimatedAPR, 100)
                 ) : utils.formatEther(rate.div("10000000").toString().slice(2))
               )}%
@@ -108,7 +111,7 @@ function BorrowActivity({
             onCollateralAmountChange(event)
           }}
         />
-        <span className="input-group-text font-monospace">{"FLR"}</span>
+        <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">
@@ -123,7 +126,7 @@ function BorrowActivity({
           <button
             className="btn btn-primary btn-lg mt-4"
             onClick={borrow}
-            disabled={aureiAmount === 0 || collateralAmount === 0 || loading}
+            disabled={amount === 0 || collateralAmount === 0 || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>
