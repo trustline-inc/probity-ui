@@ -27,7 +27,8 @@ import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
-  const [currentTransfer, setCurrentTransfer] = React.useState<any>(localStorage.getItem('probity-transfer'));
+  const [transfer, setTransfer] = React.useState<any>()
+  const [transferData, setTransferData] = React.useState<any>(localStorage.getItem('probity-transfer'));
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
@@ -39,7 +40,7 @@ export default function Transfers() {
   const [domain, setDomain] = React.useState("")
   const [transferAmount, setTransferAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
-  const [transferStage, setTransferStage] = React.useState(currentTransfer?.stage || "")
+  const [transferStage, setTransferStage] = React.useState(transferData?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
@@ -48,8 +49,6 @@ export default function Transfers() {
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const client = React.useRef<WalletConnectClient>()
   const ctx = useContext(EventContext)
-
-  console.log("currentTransfer:", currentTransfer)
 
   // WalletConnect modals
   const openPairingModal = () => setWalletConnectModal({ pending: false, type: "pairing" });
@@ -116,8 +115,8 @@ export default function Transfers() {
    * Save every update to the current transfer
    */
   React.useEffect(() => {
-    localStorage.setItem('probity-transfer', JSON.stringify(currentTransfer));
-  }, [currentTransfer]);
+    localStorage.setItem('probity-transfer', JSON.stringify(transferData));
+  }, [transferData]);
 
   // Input Event Handlers
 
@@ -275,7 +274,7 @@ export default function Transfers() {
         setReceiverAddress(address)
 
         if (library && account) {
-          const transfer = new solaris.Transfer({
+          const _transfer = new solaris.Transfer({
             direction: {
               source: "LOCAL",
               destination: "XRPL_TESTNET"
@@ -286,7 +285,8 @@ export default function Transfers() {
             provider: library,
             signer: library.getSigner() as any
           })
-          setCurrentTransfer({
+          setTransfer(_transfer)
+          setTransferData({
             stage: "Pre-Transfer",
             amount: transferAmount.toString()
           })
@@ -299,7 +299,7 @@ export default function Transfers() {
             if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
               setTransferStage("Pre-Transfer")
               setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
-              let data = await transfer.approve()
+              let data = await _transfer.approve()
               const transactionObject = {
                 to: getStablecoinAddress(chainId!),
                 from: account,
@@ -351,7 +351,7 @@ export default function Transfers() {
     try {
       if (library) {
         setTransferInProgress(true)
-        let data = await currentTransfer!.createIssuer(issuerAddress)
+        let data = await transfer!.createIssuer(issuerAddress)
         const transactionObject = {
           to: BRIDGE,
           from: account,
@@ -359,10 +359,10 @@ export default function Transfers() {
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
         console.log("result", result)
-        setCurrentTransfer({
+        setTransferData({
           stage: "In-Progress Transfer",
           issuerAddress: issuerAddress,
-          ...currentTransfer
+          ...transferData
         })
         setTransferStage("In-Progress Transfer")
         setTransferModalBody(
@@ -407,7 +407,7 @@ export default function Transfers() {
           let result = await stateConnector.setFinality(true);
           await result.wait()
           setTransferModalBody(`Verifying issuance, please wait...`)
-          let data = await currentTransfer!.verifyIssuance(transactionID, issuerAddress)
+          let data = await transfer!.verifyIssuance(transactionID, issuerAddress)
           const transactionObject = {
             to: BRIDGE,
             from: account,
@@ -415,7 +415,7 @@ export default function Transfers() {
           };
           result = await web3.eth.sendTransaction((transactionObject as any))
           console.log("result", result)
-          setCurrentTransfer(null)
+          setTransferData(null)
           setTransferStage("Completed Transfer")
           setTransferModalBody(`Done.`)
         }
