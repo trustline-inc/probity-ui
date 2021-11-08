@@ -177,14 +177,11 @@ function App() {
                         <Route path="/collateral">
                           <Collateral />
                         </Route>
-                        <Route path="/stake">
+                        <Route path="/capital">
                           <Capital collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/loans">
                           <Loans collateralPrice={collateralPrice} />
-                        </Route>
-                        <Route path="/transactions">
-                          <Transactions />
                         </Route>
                         <Route path="/transfers">
                           <Transfers />
@@ -192,8 +189,8 @@ function App() {
                         <Route path="/auctions">
                           <Auctions collateralPrice={collateralPrice} />
                         </Route>
-                        <Route path="/">
-                          <Capital collateralPrice={collateralPrice} />
+                        <Route path="/transactions">
+                          <Transactions />
                         </Route>
                       </Switch>
                     </EventContext.Provider>

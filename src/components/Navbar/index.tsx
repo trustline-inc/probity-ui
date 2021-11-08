@@ -133,17 +133,17 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-hand-holding-usd"></i> Loans
-            </NavLink>
-          </li>
-          <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"
               to="/capital"
             >
               <i className="fa fa-coins"></i> Capital
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/loans">
+              <i className="fas fa-hand-holding-usd"></i> Loans
             </NavLink>
           </li>
           <li className="nav-item my-1">
