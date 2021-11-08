@@ -1,5 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
+import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol } from "../../utils";
 
 interface Props {
@@ -40,6 +41,7 @@ function WithdrawActivity({
           </div>
         </div>
       </div>
+      <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button
