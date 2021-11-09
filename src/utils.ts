@@ -42,25 +42,25 @@ export const getStablecoinName = (chainId: number) => {
 export const getStablecoinABI = (chainId: number) => {
   switch (chainId) {
     case 14:
-      return INTERFACES[AUREI]
+      return INTERFACES[AUREI.toLowerCase()]
     case 16:
-      return INTERFACES[AUREI]
+      return INTERFACES[AUREI.toLowerCase()]
     case 19:
-      return INTERFACES[PHI]
+      return INTERFACES[PHI.toLowerCase()]
     default:
-      return INTERFACES[AUREI]
+      return INTERFACES[AUREI.toLowerCase()]
   }
 }
 
 export const getStablecoinAddress = (chainId: number) => {
   switch (chainId) {
     case 14:
-      return AUREI
+      return AUREI.toLowerCase()
     case 16:
-      return AUREI
+      return AUREI.toLowerCase()
     case 19:
-      return PHI
+      return PHI.toLowerCase()
     default:
-      return AUREI
+      return AUREI.toLowerCase()
   }
 }

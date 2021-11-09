@@ -5,7 +5,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
-import { INTERFACES } from "../../constants";
+import { INTERFACES, WAD } from "../../constants";
 
 function RowToggle({ eventKey, name, tx }: any) {
   const decoratedOnClick = useAccordionButton(eventKey);
@@ -28,13 +28,10 @@ export default function Transactions() {
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
   const rows = ctx.transactions.map((tx: any, index) => {
-    console.log("tx.to", tx.to)
-    const contract = new Contract(tx.to, INTERFACES[tx.to].abi, library?.getSigner())
+    const contract = new Contract(tx.to, INTERFACES[tx.to.toLowerCase()].abi, library?.getSigner())
     const INDEX = tx.logs.length > 1 ? 1: 0 // Change this later
     let log = contract.interface.parseLog(tx.logs[INDEX]);
     const name = log.name
-    console.log(name)
-    console.log(log.args)
 
     return (
       <React.Fragment key={index}>
@@ -73,6 +70,16 @@ export default function Transactions() {
             <Accordion.Collapse eventKey={index.toString()} className="border">
               <div className="d-flex justify-content-around pt-2">
                 <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
+              </div>
+            </Accordion.Collapse>
+          )
+        }
+        {
+          (name === "Approval") && (
+            <Accordion.Collapse eventKey={index.toString()} className="border">
+              <div className="d-flex justify-content-around pt-2">
+                <p>Spender: {log.args.spender}</p>
+                <p>Value: {log.args.value.div(WAD).toString()}</p>
               </div>
             </Accordion.Collapse>
           )

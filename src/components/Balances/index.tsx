@@ -23,28 +23,28 @@ function Balances() {
 
   // Read data from deployed contracts
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
   })
   const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'aur', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
   })
   const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'tcn', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
   })
-  const { data: stablecoinBalance, mutate: mutateStablecoinBalance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
+  const { data: stablecoinERC20Balance, mutate: mutateStablecoinERC20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: tcnERC20Balance, mutate: mutateTcnERC20Balance } = useSWR([TCN_TOKEN, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[TCN_TOKEN].abi),
+    fetcher: fetcher(library, INTERFACES[TCN_TOKEN.toLowerCase()].abi),
   })
   const { data: totalStablecoinSupply, mutate: mutatetotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
   })
   const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
   })
 
   React.useEffect(() => {
@@ -54,7 +54,7 @@ function Balances() {
         mutateVaultStablecoinBalance(undefined, true);
         mutatetotalStablecoinSupply(undefined, true);
         mutateTotalDebt(undefined, true);
-        mutateStablecoinBalance(undefined, true);
+        mutateStablecoinERC20Balance(undefined, true);
         mutateTcnERC20Balance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
@@ -142,7 +142,7 @@ function Balances() {
                   ERC20 AUR
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{stablecoinBalance ? numeral(utils.formatEther(stablecoinBalance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row text-truncate my-2 mt-4">
