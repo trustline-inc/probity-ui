@@ -42,18 +42,12 @@ export default function Transfers() {
   const [error, setError] = React.useState<any|null>(null);
   const [transferStage, setTransferStage] = React.useState(transferData?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
-  const [walletConnectModal, setWalletConnectModal] = React.useState({ pending: false, type: "" })
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
   const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const client = React.useRef<WalletConnectClient>()
   const ctx = useContext(EventContext)
-
-  // WalletConnect modals
-  const openPairingModal = () => setWalletConnectModal({ pending: false, type: "pairing" });
-  const openRequestModal = () => setWalletConnectModal({ pending: true, type: "request" });
-  const closeModal = () => setWalletConnectModal({ pending: false, type: "" });
 
   // Transfer modal
   const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
@@ -115,6 +109,7 @@ export default function Transfers() {
    * Save every update to the current transfer
    */
   React.useEffect(() => {
+    console.log("updating transferData", transferData)
     localStorage.setItem('probity-transfer', JSON.stringify(transferData));
   }, [transferData]);
 
@@ -145,9 +140,7 @@ export default function Transfers() {
     if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
-    if (walletConnectModal.type === "pairing") {
-      closeModal();
-    }
+
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
       const session = await client.current.connect({
@@ -201,8 +194,6 @@ export default function Transfers() {
     setSession(_session)
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
 
-    openRequestModal();
-
     // Make RPC request
     const result = await client.current!.request({
       topic: _session.topic,
@@ -233,7 +224,7 @@ export default function Transfers() {
             To:   <code>{receiverAddress}</code>
           </div>
           <p className="mt-3">
-            Xumm's Token Creator xApp is recommended (In Xumm, press the QR code scanner tab → View more xApps → Token Creator). The issuing account must be blackholed.
+            We recommend you use <a href="https://graph.trustline.co" target="blank">XRPL Composer</a> to issue the tokens from the <i>Validate</i> tab.
           </p>
         </>
       )
@@ -248,6 +239,24 @@ export default function Transfers() {
     console.log("accounts", accounts)
     console.log("chains", chains)
   };
+
+  /**
+   * @function openTransferModal
+   * Opens the transfer modal at the current stage
+   */
+  const openTransferModal = async () => {
+    switch (transferStage) {
+      case "Pending Transfer":
+        await prepareTransfer()
+        break;
+      case "In-Progress Transfer":
+        await verifyIssuance()
+        break;
+      default:
+        await prepareTransfer()
+        break;
+    }
+  }
 
   /**
    * @function prepareTransfer
@@ -291,44 +300,38 @@ export default function Transfers() {
             amount: transferAmount.toString()
           })
 
-          try {
-            // First check the allowance
-            const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
-            const allowance = await stablecoin.allowance(account, BRIDGE)
+          // First check the allowance
+          const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
+          const allowance = await stablecoin.allowance(account, BRIDGE)
 
-            if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
-              setTransferStage("Pre-Transfer")
-              setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
-              let data = await _transfer.approve()
-              const transactionObject = {
-                to: getStablecoinAddress(chainId!),
-                from: account,
-                data
-              };
-              const result = await web3.eth.sendTransaction((transactionObject as any))
-              setTransferModalBody(`Bridge contract allowance created successfully.`)
-              ctx.updateTransactions(result);
-            }
-            setTransferStage("Pending Transfer")
-            setTransferModalBody(
-              <>
-                <p>
-                  The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
-                </p>
-                <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
-              </>
-            )
-          } catch (error) {
-            console.log(error);
-            setError(error);
-            setLoading(false)
-            setShowTransferModal(false)
+          if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
+            setTransferStage("Pre-Transfer")
+            setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
+            let data = await _transfer.approve()
+            const transactionObject = {
+              to: getStablecoinAddress(chainId!),
+              from: account,
+              data
+            };
+            const result = await web3.eth.sendTransaction((transactionObject as any))
+            setTransferModalBody(`Bridge contract allowance created successfully.`)
+            ctx.updateTransactions(result);
           }
+          setTransferStage("Pending Transfer")
+          setTransferModalBody(
+            <>
+              <p>
+                The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
+              </p>
+              <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
+            </>
+          )
         }
       }
     } catch (error) {
-      console.log(error)
+      setError(error);
       setLoading(false)
+      setShowTransferModal(false)
     }
   }
 
@@ -360,11 +363,14 @@ export default function Transfers() {
               If you used XRPL Composer in the last step, you do not need to use the transaction sender tool.
             </Alert>
             <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
-            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>AUR</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
           </>
         )
       }
     } catch (error) {
+      setTransferInProgress(false)
+      setLoading(false)
+      setShowTransferModal(false)
       console.error(error)
     }
   }
@@ -379,10 +385,7 @@ export default function Transfers() {
     if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
-    if (client.current.pairing.topics.length) {
-      console.log("opening pairing modal")
-      return openPairingModal();
-    }
+
     connect();
   }
 
@@ -558,7 +561,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 mt-4 d-grid">
               <button
                 className="btn btn-primary btn-lg mt-4"
-                onClick={prepareTransfer}
+                onClick={openTransferModal}
                 disabled={transferAmount === 0 || username === "" || domain === "" || loading}
               >
                 {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
