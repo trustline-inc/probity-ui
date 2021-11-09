@@ -201,7 +201,7 @@ export default function Transfers() {
       request: {
         method: "createTrustLine",
         params: [
-          "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn",
+          issuerAddress,
           "AUR"
         ],
       },
