@@ -320,15 +320,6 @@ export default function Transfers() {
                 <p className="mt-3">Once you have the account created, you can press the <i className="fas fa-share-alt"></i> button in Xumm to share/copy it.</p>
               </>
             )
-
-            // The code below is only there for testing purposes, and should be removed.
-            // setTransferStage("In-Progress Transfer")
-            // setTransferModalBody(
-            //   <>
-            //     <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
-            //     <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
-            //   </>
-            // )
           } catch (error) {
             console.log(error);
             setError(error);
@@ -531,7 +522,7 @@ export default function Transfers() {
         </Modal>
       }
       <header className="pt-2">
-        <h1>Transfers</h1>
+        <h1>Network Transfers</h1>
         {active && <Info />}
       </header>
       <div className="text-secondary d-flex mb-3">
