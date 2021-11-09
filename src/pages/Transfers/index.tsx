@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
+import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
@@ -313,11 +313,9 @@ export default function Transfers() {
             setTransferModalBody(
               <>
                 <p>
-                  Create a new issuing account. The <a href="https://xumm.app/" target="blank">Xumm</a> app is recommended so that you can use the Token Creator <a href="https://xumm.readme.io/docs/what-are-xapps" target="blank">xApp</a> for a future step (tip: using this xApp will cost an additional 50 XRP). Enter the issuing address below when it is set up.
+                  The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
                 </p>
-                <p>If you are using the Xumm app, you can create a new account by going to the Home tab → Switch Account (top right) → Add account → Create a new account. Read the following prompts carefully.</p>
-                <div className="text-muted"><span className="fa fa-warning" /> Switch to the testnet in Xumm by going to the Settings tab → Advanced → Node → Choose any testnet option.</div>
-                <p className="mt-3">Once you have the account created, you can press the <i className="fas fa-share-alt"></i> button in Xumm to share/copy it.</p>
+                <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
               </>
             )
           } catch (error) {
@@ -358,6 +356,9 @@ export default function Transfers() {
         setTransferStage("In-Progress Transfer")
         setTransferModalBody(
           <>
+            <Alert variant="info">
+              If you used XRPL Composer in the last step, you do not need to use the transaction sender tool.
+            </Alert>
             <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
             <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
           </>
