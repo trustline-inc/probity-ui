@@ -1,7 +1,7 @@
 import React from 'react';
 import useSWR from 'swr';
 import web3 from "web3";
-import Nav from 'react-bootstrap/Nav'
+import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { utils } from "ethers";
@@ -92,7 +92,7 @@ function Balances() {
         {
           selected === BalanceType.Individual ? (
             <>
-              <h5>Collateral</h5>
+              <h5>Assets</h5>
               <div className="row my-2">
                 <div className="col-6">
                   Available
@@ -103,17 +103,17 @@ function Balances() {
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Locked
+                  Encumbered
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr />
-              <h5>Balance Sheet</h5>
+              <h5>Treasury & Loans</h5>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  <h6>Loan Balance</h6>
+                  Loan Balance
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
@@ -121,34 +121,51 @@ function Balances() {
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  <h6>Supplied</h6>
+                  Capital Balance
                 </div>
                 <div className="col-6">
                 <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr/>
-              <h5>Tokens</h5>
-              <div className="row my-2 text-truncate">
+              <h5>Stablecoins</h5>
+              <div className="row text-truncate my-2">
                 <div className="col-6">
-                  <h6>Vault Tokens</h6>
-                  <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
-                  <br/>
-                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} TCN</span>
+                  Vault AUR                
                 </div>
                 <div className="col-6">
-                  <h6>ERC20 Tokens</h6>
+                  <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row text-truncate my-2">
+                <div className="col-6">
+                  ERC20 AUR
+                </div>
+                <div className="col-6">
                   <span className="text-truncate">{stablecoinBalance ? numeral(utils.formatEther(stablecoinBalance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
-                  <br/>
+                </div>
+              </div>
+              <div className="row text-truncate my-2 mt-4">
+                <div className="col-6">
+                  Vault TCN
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} TCN</span>
+                </div>
+              </div>
+              <div className="row text-truncate my-2">
+                <div className="col-6">
+                  ERC20 TCN                 
+                </div>
+                <div className="col-6">
                   <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
                 </div>
               </div>
-              <br/>
             </>
           ) : (
             <>
-              <h5>Economic Stats</h5>
-              <div className="row my-2 text-truncate">
+              <h5>System Stats</h5>
+              <div className="row my-2 mt-4 text-truncate">
                 <div className="col-6">
                   <h6>Circulating Supply</h6>
                 </div>

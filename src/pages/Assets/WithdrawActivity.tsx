@@ -1,4 +1,3 @@
-import React from "react"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
@@ -7,15 +6,15 @@ import { getNativeTokenSymbol } from "../../utils";
 interface Props {
   collateralAmount: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  withdraw: () => void;
   loading: boolean;
-  deposit: () => void;
 }
 
-function DepositActivity({
+function WithdrawActivity({
   collateralAmount,
   onCollateralAmountChange,
-  loading,
-  deposit
+  withdraw,
+  loading
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
 
@@ -23,10 +22,10 @@ function DepositActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="collateralConversionInput" className="form-label">
-            Collateral<br/>
+          <label htmlFor="collateralRedemptionAmount" className="form-label">
+            Amount<br/>
             <small className="form-text text-muted">
-              Amount of collateral to deposit
+              The amount of {getNativeTokenSymbol(chainId!)} to withdraw
             </small>
           </label>
           <div className="input-group">
@@ -34,7 +33,7 @@ function DepositActivity({
               type="number"
               min={0}
               className="form-control"
-              id="collateralConversionInput"
+              id="collateralRedemptionAmount"
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
@@ -48,7 +47,7 @@ function DepositActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={deposit}
+            onClick={withdraw}
             disabled={collateralAmount === 0 || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
@@ -59,4 +58,4 @@ function DepositActivity({
   )
 }
 
-export default DepositActivity
+export default WithdrawActivity

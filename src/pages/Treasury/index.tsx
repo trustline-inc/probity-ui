@@ -8,7 +8,7 @@ import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
-import SupplyActivity from "./SupplyActivity";
+import StakeActivity from "./StakeActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
@@ -16,9 +16,9 @@ import { WAD, TREASURY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol, getStablecoinName } from '../../utils';
+import { getNativeTokenSymbol } from '../../utils';
 
-function Capital({ collateralPrice }: { collateralPrice: number }) {
+function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
@@ -84,9 +84,9 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/capital/supply")  setActivity(ActivityType.Supply);
-    if (location.pathname === "/capital/redeem") setActivity(ActivityType.Redeem);
-    if (location.pathname === "/capital/withdraw") setActivity(ActivityType.Interest);
+    if (location.pathname === "/treasury/stake")  setActivity(ActivityType.Supply);
+    if (location.pathname === "/treasury/redeem") setActivity(ActivityType.Redeem);
+    if (location.pathname === "/treasury/withdraw") setActivity(ActivityType.Interest);
   }, [location])
 
   /**
@@ -167,8 +167,8 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   return (
     <>
       <header className="pt-2">
-        <h1>Capital Management</h1>
-        <p className="lead">Mint {getStablecoinName(chainId!)} to earn interest from loans created by Probity.</p>
+        <h1>Treasury Management</h1>
+        <p className="lead">Stake assets to earn yield from loans created by Probity.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -177,22 +177,22 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/supply"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Mint</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/stake"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Stake</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Burn</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/capital/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
           <hr />
-          {/* Capital Management Activities */}
+          {/* Treasury Management Activities */}
           <Activity active={active} activity={activity} error={error}>
             {
               activity === ActivityType.Supply && (
-                <SupplyActivity
+                <StakeActivity
                   collateralAmount={collateralAmount}
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
@@ -234,4 +234,4 @@ function Capital({ collateralPrice }: { collateralPrice: number }) {
   );
 }
 
-export default Capital;
+export default Treasury;

@@ -43,9 +43,9 @@ function WithdrawActivity({
       <div className="row">
         <div className="col-12 mb-4">
           <label htmlFor="collateralConversionInput" className="form-label">
-            Interest<br/>
+            Amount<br/>
             <small className="form-text text-muted">
-              Amount of interest to withdraw
+              The amount of interest to withdraw
             </small>
           </label>
           <div className="input-group">

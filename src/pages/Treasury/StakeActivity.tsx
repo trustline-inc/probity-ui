@@ -2,7 +2,7 @@ import React from "react"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
-import { getNativeTokenSymbol, getStablecoinName, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralAmount: number;
@@ -29,31 +29,13 @@ function StakingActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="supplyAmount" className="form-label">
-            Capital<br/>
-            <small className="form-text text-muted">
-              Amount of {getStablecoinName(chainId!)} to mint
-            </small>
-          </label>
-          <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="supplyAmount"
-              placeholder="0.000000000000000000"
-              onChange={onSupplyAmountChange}
-            />
-            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
-          </div>
+          <p className="text-muted">Your stake must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
-      </div>
-      <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
-            Collateral<br/>
+            Amount<br/>
             <small className="form-text text-muted">
-              Amount of collateral to lock
+              The amount of asset to stake
             </small>
           </label>
           <div className="input-group">
@@ -66,6 +48,27 @@ function StakingActivity({
               onChange={onCollateralAmountChange}
             />
             <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+          </div>
+        </div>
+      </div>
+      <div className="row mb-4">
+        <div className="col-12">
+          <label htmlFor="supplyAmount" className="form-label">
+            Loan Capital<br/>
+            <small className="form-text text-muted">
+              The amount of loan capital to create
+            </small>
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              id="supplyAmount"
+              placeholder="0.000000000000000000"
+              onChange={onSupplyAmountChange}
+            />
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>

@@ -15,9 +15,9 @@ import ConnectorModal from "../../components/ConnectorModal"
 import { FTSO } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
-import Capital from "../../pages/Capital";
+import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
-import Collateral from "../../pages/Collateral";
+import Assets from "../../pages/Assets";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -174,11 +174,11 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
-                        <Route path="/collateral">
-                          <Collateral />
+                        <Route path="/assets">
+                          <Assets />
                         </Route>
-                        <Route path="/capital">
-                          <Capital collateralPrice={collateralPrice} />
+                        <Route path="/treasury">
+                          <Treasury collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/loans">
                           <Loans collateralPrice={collateralPrice} />
