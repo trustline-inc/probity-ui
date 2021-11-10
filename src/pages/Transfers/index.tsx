@@ -350,7 +350,7 @@ export default function Transfers() {
           data
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
-        console.log("result", result)
+        ctx.updateTransactions(result);
         setTransferData({
           stage: "In-Progress Transfer",
           issuerAddress: issuerAddress,
@@ -409,7 +409,7 @@ export default function Transfers() {
             data
           };
           result = await web3.eth.sendTransaction((transactionObject as any))
-          console.log("result", result)
+          ctx.updateTransactions(result);
           setTransferData(null)
           setTransferStage("Completed Transfer")
           setTransferModalBody(`Done.`)

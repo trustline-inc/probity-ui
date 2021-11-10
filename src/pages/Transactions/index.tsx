@@ -30,66 +30,116 @@ export default function Transactions() {
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
   const rows = ctx.transactions.map((tx: any, index) => {
-    const checksumAddress = web3.utils.toChecksumAddress(tx.to)
-    const contract = new Contract(checksumAddress, INTERFACES[checksumAddress].abi, library?.getSigner())
-    const INDEX = tx.logs.length > 1 ? 1: 0 // Change this later
-    let log = contract.interface.parseLog(tx.logs[INDEX]);
-    const name = log.name
-
-    return (
-      <React.Fragment key={index}>
-        <RowToggle eventKey={index.toString()} name={name} tx={tx} />
-        {
-          (name === "DepositNativeCrypto" || name === "WithdrawNativeCrypto") && (
-            <Accordion.Collapse eventKey={index.toString()} className="border">
-              <div className="d-flex justify-content-around pt-2">
-                <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
-              </div>
-            </Accordion.Collapse>
-          )
-        }
-        {
-          (name === "SupplyModified") && (
-            <Accordion.Collapse eventKey={index.toString()} className="border">
-              <div className="d-flex justify-content-around pt-2">
-                <p>ΔCapital: {utils.formatEther(log.args.capitalAmount).toString()}</p>
-                <p>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</p>
-              </div>
-            </Accordion.Collapse>
-          )
-        }
-        {
-          (name === "DebtModified") && (
-            <Accordion.Collapse eventKey={index.toString()} className="border">
-              <div className="d-flex justify-content-around pt-2">
-                <p>ΔDebt: {utils.formatEther(log.args.debtAmount).toString()}</p>
-                <p>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</p>
-              </div>
-            </Accordion.Collapse>
-          )
-        }
-        {
-          (name === "WithdrawAurei") && (
-            <Accordion.Collapse eventKey={index.toString()} className="border">
-              <div className="d-flex justify-content-around pt-2">
-                <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
-              </div>
-            </Accordion.Collapse>
-          )
-        }
-        {
-          (name === "Approval") && (
-            <Accordion.Collapse eventKey={index.toString()} className="border">
-              <div className="d-flex justify-content-around pt-2">
-                <p>Spender: {log.args.spender}</p>
-                <p>Value: {log.args.value.div(WAD).toString()}</p>
-              </div>
-            </Accordion.Collapse>
-          )
-        }
-      </React.Fragment>
-    )
-  });
+    return tx.logs.map((element: any, idx: number) => {
+      const checksumAddress = web3.utils.toChecksumAddress(element.address)
+      const contract = new Contract(element.address, INTERFACES[checksumAddress].abi, library?.getSigner())
+      let log = contract.interface.parseLog(element);
+      const name = log.name
+      return (
+        <React.Fragment key={(index + idx)}>
+          <RowToggle eventKey={(index + idx).toString()} name={name} tx={tx} />
+          {
+            (name === "DepositNativeCrypto" || name === "WithdrawNativeCrypto") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "SupplyModified") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>ΔCapital: {utils.formatEther(log.args.capitalAmount).toString()}</p>
+                  <p>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "DebtModified") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>ΔDebt: {utils.formatEther(log.args.debtAmount).toString()}</p>
+                  <p>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "WithdrawAurei") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "Approval") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Spender: {log.args.spender}</p>
+                  <p>Value: {log.args.value.div(WAD).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "Transfer") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="pt-2">
+                  <p>From: {log.args.from}</p>
+                  <p>To: {log.args.to}</p>
+                  <p>Amount: {utils.formatEther(log.args.value.toString()).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "IssuancePending") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Issuer: {log.args.issuer}</p>
+                  <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "IssuanceCompleted") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Issuer: {log.args.issuer}</p>
+                  <p>Amount: {utils.formatEther(log.args.amount).toString()}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "IssuanceCanceled") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="d-flex justify-content-around pt-2">
+                  <p>Issuer: {log.args.issuer}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+          {
+            (name === "RedemptionCompleted") && (
+              <Accordion.Collapse eventKey={(index + idx).toString()} className="border">
+                <div className="pt-2">
+                  <p>XRPL Tx ID: {log.args.xrplTxId}</p>
+                  <p>Amount: {log.args.amount}</p>
+                </div>
+              </Accordion.Collapse>
+            )
+          }
+        </React.Fragment>
+      )
+    });
+  })
 
   return (
     <>
