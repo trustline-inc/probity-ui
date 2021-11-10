@@ -30,7 +30,8 @@ export default function Transactions() {
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
   const rows = ctx.transactions.map((tx: any, index) => {
-    const contract = new Contract(web3.utils.toChecksumAddress(tx.to), INTERFACES[tx.to].abi, library?.getSigner())
+    const checksumAddress = web3.utils.toChecksumAddress(tx.to)
+    const contract = new Contract(checksumAddress, INTERFACES[checksumAddress].abi, library?.getSigner())
     const INDEX = tx.logs.length > 1 ? 1: 0 // Change this later
     let log = contract.interface.parseLog(tx.logs[INDEX]);
     const name = log.name
