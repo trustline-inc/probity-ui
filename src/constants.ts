@@ -33,18 +33,18 @@ export const VAULT_ENGINE      = process.env && process.env.REACT_APP_VAULT_ENGI
  * Contract addresses are lowercase because web3.eth.sendTransaction returns `tx.to` in lowercase.
  */
 export const INTERFACES = {
-  [AUREI.toLowerCase()]: AureiABI,
-  [PHI.toLowerCase()]: PhiABI,
-  [AUCTIONEER.toLowerCase()]: AuctioneerABI,
-  [BRIDGE.toLowerCase()]: BridgeABI,
-  [FTSO.toLowerCase()]: FtsoABI,
-  [NATIVE_COLLATERAL.toLowerCase()]: NativeCollateralABI,
-  [REGISTRY.toLowerCase()]: RegistryABI,
-  [STATE_CONNECTOR.toLowerCase()]: StateConnectorABI,
-  [TCN_TOKEN.toLowerCase()]: TcnTokenABI,
-  [TELLER.toLowerCase()]: TellerABI,
-  [TREASURY.toLowerCase()]: TreasuryABI,
-  [VAULT_ENGINE.toLowerCase()]: VaultEngineABI
+  [AUREI]: AureiABI,
+  [PHI]: PhiABI,
+  [AUCTIONEER]: AuctioneerABI,
+  [BRIDGE]: BridgeABI,
+  [FTSO]: FtsoABI,
+  [NATIVE_COLLATERAL]: NativeCollateralABI,
+  [REGISTRY]: RegistryABI,
+  [STATE_CONNECTOR]: StateConnectorABI,
+  [TCN_TOKEN]: TcnTokenABI,
+  [TELLER]: TellerABI,
+  [TREASURY]: TreasuryABI,
+  [VAULT_ENGINE]: VaultEngineABI
 }
 
 // WalletConnect

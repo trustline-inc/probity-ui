@@ -1,4 +1,5 @@
 import { Contract, utils } from "ethers"
+import Web3 from "web3"
 import React, { useContext } from "react"
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useWeb3React } from "@web3-react/core";
@@ -25,10 +26,11 @@ function RowToggle({ eventKey, name, tx }: any) {
 }
 
 export default function Transactions() {
+  const web3 = new Web3(Web3.givenProvider || "http://localhost:9560/ext/bc/C/rpc");
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
   const rows = ctx.transactions.map((tx: any, index) => {
-    const contract = new Contract(tx.to, INTERFACES[tx.to.toLowerCase()].abi, library?.getSigner())
+    const contract = new Contract(web3.utils.toChecksumAddress(tx.to), INTERFACES[tx.to].abi, library?.getSigner())
     const INDEX = tx.logs.length > 1 ? 1: 0 // Change this later
     let log = contract.interface.parseLog(tx.logs[INDEX]);
     const name = log.name

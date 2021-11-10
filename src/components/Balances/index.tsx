@@ -23,28 +23,28 @@ function Balances() {
 
   // Read data from deployed contracts
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'aur', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'tcn', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: stablecoinERC20Balance, mutate: mutateStablecoinERC20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: tcnERC20Balance, mutate: mutateTcnERC20Balance } = useSWR([TCN_TOKEN, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[TCN_TOKEN.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[TCN_TOKEN].abi),
   })
   const { data: totalStablecoinSupply, mutate: mutatetotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE.toLowerCase()].abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
   React.useEffect(() => {
