@@ -5,7 +5,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
-import QRCode from "react-qr-code";
 import * as solaris from "@trustline/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
@@ -43,7 +42,6 @@ export default function Transfers() {
   const [transferStage, setTransferStage] = React.useState(transferData?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
-  const [showQRCodeModal, setShowQRCodeModal] = React.useState(false);
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const client = React.useRef<WalletConnectClient>()
@@ -195,7 +193,7 @@ export default function Transfers() {
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
 
     // Make RPC request
-    const result = await client.current!.request({
+    const success: boolean = await client.current!.request({
       topic: _session.topic,
       chainId: "xrpl:2",
       request: {
@@ -207,13 +205,11 @@ export default function Transfers() {
       },
     });
 
-    // If result is true, then the trust line was created
-    console.log("result", result)
-
-    if (result) {
+    // If success is true, then the trust line was created
+    if (success) {
       // Display modal for token issuance
       setShowTransferModal(true)
-      setTransferStage("Token Issuance")
+      setTransferStage("OUTBOUND_TOKEN_ISSUANCE")
       setTransferModalBody(
         <>
           <p>
@@ -246,10 +242,10 @@ export default function Transfers() {
    */
   const openTransferModal = async () => {
     switch (transferStage) {
-      case "Pending Transfer":
+      case "OUTBOUND_PENDING":
         await prepareTransfer()
         break;
-      case "In-Progress Transfer":
+      case "OUTBOUND_IN_PROGRESS":
         await verifyIssuance()
         break;
       default:
@@ -296,7 +292,7 @@ export default function Transfers() {
           })
           setTransfer(_transfer)
           setTransferData({
-            stage: "Pre-Transfer",
+            stage: "OUTBOUND_PERMIT",
             amount: transferAmount.toString()
           })
 
@@ -305,7 +301,7 @@ export default function Transfers() {
           const allowance = await stablecoin.allowance(account, BRIDGE)
 
           if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
-            setTransferStage("Pre-Transfer")
+            setTransferStage("OUTBOUND_PERMIT")
             setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
             let data = await _transfer.approve()
             const transactionObject = {
@@ -317,7 +313,7 @@ export default function Transfers() {
             setTransferModalBody(`Bridge contract allowance created successfully.`)
             ctx.updateTransactions(result);
           }
-          setTransferStage("Pending Transfer")
+          setTransferStage("OUTBOUND_PENDING")
           setTransferModalBody(
             <>
               <p>
@@ -352,11 +348,11 @@ export default function Transfers() {
         const result = await web3.eth.sendTransaction((transactionObject as any))
         ctx.updateTransactions(result);
         setTransferData({
-          stage: "In-Progress Transfer",
+          stage: "OUTBOUND_IN_PROGRESS",
           issuerAddress: issuerAddress,
           ...transferData
         })
-        setTransferStage("In-Progress Transfer")
+        setTransferStage("OUTBOUND_IN_PROGRESS")
         setTransferModalBody(
           <>
             <Alert variant="info">
@@ -393,32 +389,84 @@ export default function Transfers() {
    * @function verifyIssuance
    * Called after issuance transaction / blackholing issuer account
    */
-     const verifyIssuance = async () => {
-      try {
-        if (library) {
-          await disconnect()
-          setLoading(true)
-          const stateConnector = new Contract(STATE_CONNECTOR, INTERFACES[STATE_CONNECTOR].abi, library.getSigner())
-          let result = await stateConnector.setFinality(true);
-          await result.wait()
-          setTransferModalBody(`Verifying issuance, please wait...`)
-          let data = await transfer!.verifyIssuance(transactionID, issuerAddress)
-          const transactionObject = {
-            to: BRIDGE,
-            from: account,
-            data
-          };
-          result = await web3.eth.sendTransaction((transactionObject as any))
-          ctx.updateTransactions(result);
-          setTransferData(null)
-          setTransferStage("Completed Transfer")
-          setTransferModalBody(`Done.`)
-        }
-      } catch (error) {
-        console.error(error)
+    const verifyIssuance = async () => {
+    try {
+      if (library) {
+        await disconnect()
+        setLoading(true)
+        const stateConnector = new Contract(STATE_CONNECTOR, INTERFACES[STATE_CONNECTOR].abi, library.getSigner())
+        let result = await stateConnector.setFinality(true);
+        await result.wait()
+        setTransferModalBody(`Verifying issuance, please wait...`)
+        let data = await transfer!.verifyIssuance(transactionID, issuerAddress)
+        const transactionObject = {
+          to: BRIDGE,
+          from: account,
+          data
+        };
+        result = await web3.eth.sendTransaction((transactionObject as any))
+        ctx.updateTransactions(result);
+        setTransferData(null)
+        setTransferStage("OUTBOUND_COMPLETED")
+        setTransferModalBody(
+          <div className="d-flex justify-content-center align-items-center my-5">
+            Done.
+          </div>
+        )
       }
-      setLoading(false)
+    } catch (error) {
+      console.error(error)
     }
+    setLoading(false)
+  }
+
+  /**
+   * @function createRedemptionReservation
+   * Creates a window for the initiator to prove a redemption transaction
+   */
+  const createRedemptionReservation = async () => {
+    try {
+      setLoading(true)
+      setTransferStage("INBOUND_REDEMPTION_RESERVATION")
+      setTransferModalBody(
+        <div className="d-flex flex-column justify-content-center align-items-center my-5">
+          <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
+          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+        </div>
+      )
+      let data = await transfer!.createRedemptionReservation(account, issuerAddress)
+      const transactionObject = {
+        to: BRIDGE,
+        from: account,
+        data
+      };
+      const result = await web3.eth.sendTransaction((transactionObject as any))
+      ctx.updateTransactions(result);
+      setTransferData(null)
+      setShowTransferModal(true);
+    } catch (error) {
+      console.log("error", error)
+    }
+    setLoading(false)
+  }
+
+  const requestXrplRedemptionTransaction = () => {
+    try {
+      setTransferStage("INBOUND_REDEMPTION_TRANSACTION")
+      console.log("Testing XRPL redemption transaction")
+      setTransferModalBody(
+        <div className="d-flex flex-column justify-content-center align-items-center my-5">
+          <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
+          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+          <button className="btn btn-primary my-4" onClick={() => { console.log("test") }}>Continue</button>
+        </div>
+      )
+    } catch (error) {
+      console.log("error", error)
+    }
+  }
+
+  const completeRedemption = async () => {}
 
   return (
     <>
@@ -432,7 +480,7 @@ export default function Transfers() {
             {transferModalBody}
             {/* Forms */}
             {
-              transferStage === "Pre-Transfer" && (
+              transferStage === "OUTBOUND_PERMIT" && (
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Bridge Address</Form.Label>
@@ -445,7 +493,7 @@ export default function Transfers() {
               )
             }
             {
-              transferStage === "Pending Transfer" && (
+              transferStage === "OUTBOUND_PENDING" && (
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Issuing Address</Form.Label>
@@ -469,7 +517,7 @@ export default function Transfers() {
               )
             }
             {
-              transferStage === "In-Progress Transfer" && (
+              transferStage === "OUTBOUND_IN_PROGRESS" && (
                 <Container className="mt-4">
                   <Row>
                     <Col />
@@ -484,7 +532,7 @@ export default function Transfers() {
               )
             }
             {
-              transferStage === "Token Issuance" && (
+              transferStage === "OUTBOUND_TOKEN_ISSUANCE" && (
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Transaction ID</Form.Label>
@@ -507,22 +555,24 @@ export default function Transfers() {
                 </Form>
               )
             }
+            {
+              transferStage === "INBOUND_REDEMPTION_RESERVATION" && (
+                <Form className="py-3">
+                  <Form.Group className="mb-3">
+                  <Form.Label>Issuer Address</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Issuing account address (temporary)"
+                      onChange={(event: any) => { setIssuerAddress(event.target.value) }}
+                    />
+                    <Form.Text className="text-muted">
+                      The address of an issuing account.
+                    </Form.Text>
+                  </Form.Group>
+                </Form>
+              )
+            }
           </Modal.Body>
-        </Modal>
-      }
-      {
-        <Modal show={showQRCodeModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Scan QR Code</Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="d-flex justify-content-center">
-            <QRCode value={account!} />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowQRCodeModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
         </Modal>
       }
       <header className="pt-2">
@@ -577,7 +627,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 my-4 d-grid">
               <button
                 className="btn btn-primary btn-lg"
-                onClick={() => setShowQRCodeModal(true) }
+                onClick={createRedemptionReservation}
               ><i className="fa fa-qrcode"/> Press for QR Code</button>
             </div>
           </div>
