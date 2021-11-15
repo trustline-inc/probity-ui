@@ -107,11 +107,27 @@ export default function Transfers() {
    * Save every update to the current transfer
    */
   React.useEffect(() => {
-    console.log("updating transferData", transferData)
-    localStorage.setItem('probity-transfer', JSON.stringify(transferData));
+    if (transferData === null) return localStorage.removeItem("probity-transfer")
+    localStorage.setItem("probity-transfer", JSON.stringify(transferData));
+    console.log("transferData updated:", transferData)
   }, [transferData]);
 
-  // Input Event Handlers
+  /**
+   * Only triggers on page load. Gets redemption reservations and valid issuers.
+   */
+  React.useEffect(() => {
+    // Get redemption reservations
+    const _transfer = localStorage.getItem("probity-transfer")
+    if (_transfer && JSON.parse(_transfer)?.reservation) {
+      console.log("reservation found", JSON.parse(_transfer)?.reservation)
+    }
+
+    // TODO: Get valid issuers
+  }, [])
+
+  /**
+   * Input event handlers
+   */
 
   const onTransferAmountChange = (event: any) => {
     const amount = event.target.value;
@@ -237,10 +253,10 @@ export default function Transfers() {
   };
 
   /**
-   * @function openTransferModal
+   * @function openOutboundTransferModal
    * Opens the transfer modal at the current stage
    */
-  const openTransferModal = async () => {
+  const openOutboundTransferModal = async () => {
     switch (transferStage) {
       case "OUTBOUND_PENDING":
         await prepareTransfer()
@@ -255,10 +271,25 @@ export default function Transfers() {
   }
 
   /**
+   * @function openInboundTransferModal
+   * Opens the transfer modal at the current stage
+   */
+     const openInboundTransferModal = async () => {
+      switch (transferStage) {
+        case "INBOUND_REDEMPTION_RESERVATION":
+          await createRedemptionReservation()
+          break;
+        default:
+          await prepareRedemption()
+          break;
+      }
+    }
+
+  /**
    * @function getStageReadableName
    * Returns a human-readable string for the stage
    */
-  const getStageReadableName = async () => {
+  const getStageReadableName = () => {
     switch (transferStage) {
       case "OUTBOUND_PERMIT":
         return "Outbound Transfer Approval"
@@ -272,6 +303,8 @@ export default function Transfers() {
         return "Inbound Transfer Reservation"
       case "INBOUND_REDEMPTION_TRANSACTION":
         return "Inbound Transfer Transaction"
+      default:
+        return "Loading..."
     }
   }
 
@@ -442,10 +475,10 @@ export default function Transfers() {
   }
 
   /**
-   * @function createRedemptionReservation
-   * Creates a window for the initiator to prove a redemption transaction
+   * @function prepareRedemption
+   * Prompts the user for the issuing address
    */
-  const createRedemptionReservation = async () => {
+  const prepareRedemption = async () => {
     try {
       setLoading(true)
       const _transfer = new solaris.Transfer({
@@ -453,7 +486,6 @@ export default function Transfers() {
           source: "XRPL",
           destination: "FLARE"
         },
-        amount: BigNumber.from("1").mul(WAD),
         tokenAddress: getStablecoinAddress(chainId!),
         bridgeAddress: BRIDGE,
         provider: library,
@@ -467,7 +499,22 @@ export default function Transfers() {
           <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
         </div>
       )
-      let data = await _transfer!.createRedemptionReservation(account!, issuerAddress)
+      setShowTransferModal(true);
+    } catch (error) {
+      console.log("error", error)
+    }
+    setLoading(false)
+  }
+
+  /**
+   * @function createRedemptionReservation
+   * Creates a window for the initiator to prove a redemption transaction
+   */
+  const createRedemptionReservation = async () => {
+    try {
+      setLoading(true)
+      setTransferStage("INBOUND_REDEMPTION_RESERVATION")
+      let data = await transfer!.createRedemptionReservation(account!, issuerAddress)
       const transactionObject = {
         to: BRIDGE,
         from: account,
@@ -476,9 +523,13 @@ export default function Transfers() {
       const result = await web3.eth.sendTransaction((transactionObject as any))
       ctx.updateTransactions(result);
       setTransferData({
-        stage: "INBOUND_REDEMPTION_RESERVATION"
+        stage: "INBOUND_REDEMPTION_RESERVATION",
+        reservation: {
+          source: account!,
+          issuer: issuerAddress
+        }
       })
-      setShowTransferModal(true);
+      console.log("reservation created")
     } catch (error) {
       console.log("error", error)
     }
@@ -604,6 +655,17 @@ export default function Transfers() {
                       The address of an issuing account.
                     </Form.Text>
                   </Form.Group>
+                  <Container className="mt-3">
+                    <Row>
+                      <Col />
+                      <Col className="d-grid">
+                        <Button variant="primary" onClick={createRedemptionReservation} disabled={transferInProgress}>
+                          { transferInProgress ? "Waiting..." : "Submit" }
+                        </Button>
+                      </Col>
+                      <Col />
+                    </Row>
+                  </Container>
                 </Form>
               )
             }
@@ -646,7 +708,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 mt-4 d-grid">
               <button
                 className="btn btn-primary btn-lg mt-4"
-                onClick={openTransferModal}
+                onClick={openOutboundTransferModal}
                 disabled={transferAmount === 0 || username === "" || domain === "" || loading}
               >
                 {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
@@ -662,7 +724,7 @@ export default function Transfers() {
             <div className="col-md-8 offset-md-2 my-4 d-grid">
               <button
                 className="btn btn-primary btn-lg"
-                onClick={createRedemptionReservation}
+                onClick={openInboundTransferModal}
               ><i className="fa fa-qrcode"/> Press for QR Code</button>
             </div>
           </div>
