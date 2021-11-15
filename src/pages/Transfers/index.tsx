@@ -28,6 +28,7 @@ import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "..
 export default function Transfers() {
   const [transfer, setTransfer] = React.useState<any>()
   const [transferData, setTransferData] = React.useState<any>(localStorage.getItem('probity-transfer'));
+  const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>()
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
@@ -122,7 +123,12 @@ export default function Transfers() {
       console.log("reservation found", JSON.parse(_transfer)?.reservation)
     }
 
-    // TODO: Get valid issuers
+    (async () => {
+      // Get verified issuers
+      const bridge = new Contract(BRIDGE, INTERFACES[BRIDGE].abi, library)
+      const _verifiedIssuers = await bridge.getVerifiedIssuers()
+      setVerifiedIssuers(_verifiedIssuers)
+    })()
   }, [])
 
   /**
@@ -277,7 +283,7 @@ export default function Transfers() {
      const openInboundTransferModal = async () => {
       switch (transferStage) {
         case "INBOUND_REDEMPTION_RESERVATION":
-          await createRedemptionReservation()
+          await prepareRedemption()
           break;
         default:
           await prepareRedemption()
@@ -497,6 +503,20 @@ export default function Transfers() {
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
           <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
           <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+          {
+            verifiedIssuers.length ? (
+              <>
+                <p>First, please enter a verified issuer.</p>
+                <ul>
+                  {verifiedIssuers.map((issuer: string, index: number) => <li key={index}>{issuer}</li>)}
+                </ul>
+              </>
+            ) : (
+              <Alert variant="danger">
+                There are no verified issuers yet. To create a verified issuer, please complete the outbound transfer flow.
+              </Alert>
+            )
+          }
         </div>
       )
       setShowTransferModal(true);
@@ -523,13 +543,13 @@ export default function Transfers() {
       const result = await web3.eth.sendTransaction((transactionObject as any))
       ctx.updateTransactions(result);
       setTransferData({
-        stage: "INBOUND_REDEMPTION_RESERVATION",
+        stage: "INBOUND_REDEMPTION_TRANSACTION",
         reservation: {
           source: account!,
           issuer: issuerAddress
         }
       })
-      console.log("reservation created")
+      setTransferStage("INBOUND_REDEMPTION_TRANSACTION")
     } catch (error) {
       console.log("error", error)
     }
@@ -659,7 +679,35 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" onClick={createRedemptionReservation} disabled={transferInProgress}>
+                        <Button variant="primary" disabled={verifiedIssuers.length === 0 || transferInProgress} onClick={createRedemptionReservation}>
+                          { transferInProgress ? "Waiting..." : "Submit" }
+                        </Button>
+                      </Col>
+                      <Col />
+                    </Row>
+                  </Container>
+                </Form>
+              )
+            }
+            {
+              transferStage === "INBOUND_REDEMPTION_TRANSACTION" && (
+                <Form className="py-3">
+                  <Form.Group className="mb-3">
+                  <Form.Label>Transaction ID</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter transaction ID"
+                      onChange={(event: any) => { console.log(event.target.value) }}
+                    />
+                    <Form.Text className="text-muted">
+                      The redemption transaction ID.
+                    </Form.Text>
+                  </Form.Group>
+                  <Container className="mt-3">
+                    <Row>
+                      <Col />
+                      <Col className="d-grid">
+                        <Button variant="primary" disabled={transferInProgress} onClick={() => { console.log("not implemented") }}>
                           { transferInProgress ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
