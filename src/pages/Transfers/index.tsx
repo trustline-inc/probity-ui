@@ -255,6 +255,27 @@ export default function Transfers() {
   }
 
   /**
+   * @function getStageReadableName
+   * Returns a human-readable string for the stage
+   */
+  const getStageReadableName = async () => {
+    switch (transferStage) {
+      case "OUTBOUND_PERMIT":
+        return "Outbound Transfer Approval"
+      case "OUTBOUND_PENDING":
+        return "Outbound Transfer Pending"
+      case "OUTBOUND_IN_PROGRESS":
+        return "Outbound Transfer In-Progress"
+      case "OUTBOUND_COMPLETE":
+        return "Outbound Transfer Complete"
+      case "INBOUND_REDEMPTION_RESERVATION":
+        return "Inbound Transfer Reservation"
+      case "INBOUND_REDEMPTION_TRANSACTION":
+        return "Inbound Transfer Transaction"
+    }
+  }
+
+  /**
    * @function prepareTransfer
    * Creates Bridge allowance and funds issuing account.
    */
@@ -427,6 +448,18 @@ export default function Transfers() {
   const createRedemptionReservation = async () => {
     try {
       setLoading(true)
+      const _transfer = new solaris.Transfer({
+        direction: {
+          source: "XRPL",
+          destination: "FLARE"
+        },
+        amount: BigNumber.from("1").mul(WAD),
+        tokenAddress: getStablecoinAddress(chainId!),
+        bridgeAddress: BRIDGE,
+        provider: library,
+        signer: library!.getSigner() as any
+      })
+      setTransfer(_transfer)
       setTransferStage("INBOUND_REDEMPTION_RESERVATION")
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
@@ -434,7 +467,7 @@ export default function Transfers() {
           <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
         </div>
       )
-      let data = await transfer!.createRedemptionReservation(account, issuerAddress)
+      let data = await _transfer!.createRedemptionReservation(account!, issuerAddress)
       const transactionObject = {
         to: BRIDGE,
         from: account,
@@ -442,7 +475,9 @@ export default function Transfers() {
       };
       const result = await web3.eth.sendTransaction((transactionObject as any))
       ctx.updateTransactions(result);
-      setTransferData(null)
+      setTransferData({
+        stage: "INBOUND_REDEMPTION_RESERVATION"
+      })
       setShowTransferModal(true);
     } catch (error) {
       console.log("error", error)
@@ -473,7 +508,7 @@ export default function Transfers() {
       {
         <Modal show={showTransferModal} onHide={handleCloseTransferModal}>
           <Modal.Header>
-            <Modal.Title>{transferStage}</Modal.Title>
+            <Modal.Title>{getStageReadableName()}</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ minHeight: 150 }}>
             {/* TODO: can we put the modal body text in the elements below? */}
