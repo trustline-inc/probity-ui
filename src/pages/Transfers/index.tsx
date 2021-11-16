@@ -285,6 +285,9 @@ export default function Transfers() {
         case "INBOUND_REDEMPTION_RESERVATION":
           await prepareRedemption()
           break;
+        case "INBOUND_REDEMPTION_TRANSACTION":
+          await requestXrplRedemptionTransaction()
+          break;
         default:
           await prepareRedemption()
           break;
@@ -501,8 +504,6 @@ export default function Transfers() {
       setTransferStage("INBOUND_REDEMPTION_RESERVATION")
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
-          <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
-          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
           {
             verifiedIssuers.length ? (
               <>
@@ -533,7 +534,6 @@ export default function Transfers() {
   const createRedemptionReservation = async () => {
     try {
       setLoading(true)
-      setTransferStage("INBOUND_REDEMPTION_RESERVATION")
       let data = await transfer!.createRedemptionReservation(account!, issuerAddress)
       const transactionObject = {
         to: BRIDGE,
@@ -556,8 +556,13 @@ export default function Transfers() {
     setLoading(false)
   }
 
-  const requestXrplRedemptionTransaction = () => {
+  /**
+   * @function requestXrplRedemptionTransaction
+   * Displays info about the QR code on the next screen
+   */
+  const requestXrplRedemptionTransaction = async () => {
     try {
+      setShowTransferModal(true)
       setTransferStage("INBOUND_REDEMPTION_TRANSACTION")
       console.log("Testing XRPL redemption transaction")
       setTransferModalBody(
