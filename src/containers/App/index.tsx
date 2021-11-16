@@ -8,26 +8,31 @@ import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
-import { Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import FtsoABI from "@trustline-inc/aurei/artifacts/contracts/Ftso.sol/Ftso.json";
-import { FTSO_ADDRESS } from '../../constants';
-import { injected } from "../../connectors";
+import FtsoABI from "@trustline/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
+import ConnectorModal from "../../components/ConnectorModal"
+import { FTSO } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
-import Capital from "../../pages/Capital";
+import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
+import Assets from "../../pages/Assets";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
+import { VERSION } from '../../constants';
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
 
 function App() {
+  const [showConnectorModal, setShowConnectorModal] = useState(false);
+  const handleClose = () => setShowConnectorModal(false);
+  const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
   const [collateralPrice, setCollateralPrice] = useState(0.00);
-  const { activate, active, library } = useWeb3React<Web3Provider>()
+  const { active, library, error } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
     "displayInfoAlert",
     true
@@ -38,24 +43,20 @@ function App() {
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
     setTransactions(newTxs);
   };
-  const { data: price, mutate: mutatePrice } = useSWR([FTSO_ADDRESS, 'getPrice'], {
+  const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
-  const onClick = () => {
-    activate(injected);
-  };
-
   useEffect(() => {
     const runEffect = async () => {
-      if (price !== undefined) {
-        setCollateralPrice(price.toNumber() / 100);
+      if (data !== undefined) {
+        setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
       } else {
         if (library) {
           try {
-            const ftso = new Contract(FTSO_ADDRESS, FtsoABI.abi, library.getSigner())
-            const result = await ftso.getPrice();
-            setCollateralPrice(Number(result.toString()) / 100);
+            const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
+            const result = await ftso.getCurrentPrice();
+            setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
           } catch (error) {
             console.error(error)
           }
@@ -63,19 +64,19 @@ function App() {
       }
     }
     runEffect();
-  }, [library, price]);
+  }, [library, data]);
 
   useEffect(() => {
     if (library) {
       library.on("block", () => {
-        mutatePrice(undefined, true);
+        mutate(undefined, true);
       });
 
       return () => {
         library.removeAllListeners("block");
       };
     }
-  }, [library, mutatePrice]);
+  }, [library, mutate]);
 
   useEffect(() => {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
@@ -87,6 +88,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
             <EventContext.Provider value={{ transactions, updateTransactions }}>
@@ -105,7 +107,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Probity is now live on <a href="https://trustline.co" target="blank">Trustline's</a> private Coston testnet until a public network is available.
+                      Probity is currently running on a test network only. The Songbird release is scheduled to be available for customers on 1/1/22.
                       <button
                         type="button"
                         className="btn-close"
@@ -120,7 +122,7 @@ function App() {
                 </div>
               </div>
               <div className="row">
-                <div className="offset-md-3 offset-lg-4 col-lg-4 col-md-6  col-sm-12">
+                <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
                   {!active && (
                     <>
                       {mobileDevice ? (
@@ -136,14 +138,28 @@ function App() {
                           app to connect your wallet.
                         </div>
                       ) : (
-                          <div className="shadow-sm border p-5 mt-5 bg-white rounded">
-                          <h3>Please select a wallet to connect to this dapp:</h3>
+                          <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
+                          <h3>Connect a wallet to enter</h3>
+                          {
+                            (() => {
+                              switch (error?.name) {
+                                case "UnsupportedChainIdError":
+                                  return <span className="text-danger">{error.message}</span>
+                                case "TransportError":
+                                  return <span className="text-danger">{error.message}</span>
+                                case "NoEthereumProviderError":
+                                  return <span className="text-danger">{error.message}</span>
+                                default:
+                                  return JSON.stringify(error)
+                              }
+                            })()
+                          }
                           <br />
                           <br />
                           <button
                             className="btn btn-outline-success"
                             type="button"
-                            onClick={onClick}
+                            onClick={handleShow}
                           >
                             <i className="fas fa-wallet mr-2" /> Connect wallet
                           </button>
@@ -158,14 +174,14 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
-                        <Route path="/stake">
-                          <Capital collateralPrice={collateralPrice} />
+                        <Route path="/assets">
+                          <Assets />
+                        </Route>
+                        <Route path="/treasury">
+                          <Treasury collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/loans">
                           <Loans collateralPrice={collateralPrice} />
-                        </Route>
-                        <Route path="/transactions">
-                          <Transactions />
                         </Route>
                         <Route path="/transfers">
                           <Transfers />
@@ -173,8 +189,8 @@ function App() {
                         <Route path="/auctions">
                           <Auctions collateralPrice={collateralPrice} />
                         </Route>
-                        <Route path="/">
-                          <Capital collateralPrice={collateralPrice} />
+                        <Route path="/transactions">
+                          <Transactions />
                         </Route>
                       </Switch>
                     </EventContext.Provider>
@@ -190,7 +206,13 @@ function App() {
               </div>
               <div className="row">
                 <div className="col-md-12 mt-5">
-                  <SocialLinks />
+                  <div className="text-center">
+                    <SocialLinks />
+                    <div className="spacer spacer-1" />
+                    <small className="container-fluid text-muted" id="version">
+                      v{VERSION}
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# certificates
+local-dev.pem
+local-dev-key.pem
+
 # dependencies
 /node_modules
 .npmrc

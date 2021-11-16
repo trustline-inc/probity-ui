@@ -1,21 +1,22 @@
 import React, { useState, useContext } from "react";
+import { Button } from "react-bootstrap"
 import useSWR from "swr";
 import axios from "axios";
 import numeral from "numeral";
 import { NavLink } from "react-router-dom";
+import { injected } from "../../connectors";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
-import { injected } from "../../connectors";
 import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
 import "./index.css";
 import SocialLinks from "../Social";
-import { VERSION } from '../../constants';
 import EventContext from "../../contexts/TransactionContext"
+import { getNativeTokenSymbol } from "../../utils";
 
 function Balance() {
-  const { account, library } = useWeb3React<Web3Provider>();
+  const { account, library, chainId } = useWeb3React<Web3Provider>();
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library),
   });
@@ -37,22 +38,18 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} FLR
+        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} {getNativeTokenSymbol(chainId!)}
       </span>
     </div>
   );
 }
 
 function Navbar() {
-  const { chainId, activate, active } = useWeb3React<Web3Provider>();
+  const { chainId, active, activate, deactivate } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
   const { account } = useWeb3React<Web3Provider>();
   const [requestingTestCoins, setRequestingTestCoins] = useState(false)
-
-  const onClick = () => {
-    activate(injected);
-  };
 
   // Copy state temporarily to flip it. Seems to work better than just 
   // inverting the boolean in the onClick itself
@@ -93,7 +90,7 @@ function Navbar() {
         const cooldown = now.setDate(now.getDate() + 1);
         window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
         alert(
-          `Sent 1,000 CFLR to ${account}. Testnet fund requests are limited to once per day.`
+          `Sent 1,000 ${getNativeTokenSymbol(chainId!)} to ${account}. Testnet fund requests are limited to once per day.`
         )
       }
     } catch (error) {
@@ -102,9 +99,13 @@ function Navbar() {
     }
   }
 
+  const onClick = () => {
+    activate(injected);
+  };
+
 
   return (
-    <nav className="d-flex flex-column align-items-end left-nav-flex h-100">
+    <nav className="d-flex flex-column align-items-end h-100">
       <div className="container-fluid mb-3">
         <div className="d-flex flex-row justify-content-between">
           <div className="mb-3">
@@ -127,17 +128,22 @@ function Navbar() {
 
         <ul className={`navbar-nav my-4 ${mobileMenuVisibility ? 'mobile-visible' : ''}`}>
           <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/assets">
+              <i className="fas fa-wallet"></i> Assets
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/capital"
+              to="/treasury"
             >
-              <i className="fas fa-coins" /> Stake
+              <i className="fa fa-landmark"></i> Treasury
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill-wave-alt" /> Borrow
+              <i className="fas fa-hand-holding-usd"></i> Loans
             </NavLink>
           </li>
           <li className="nav-item my-1">
@@ -157,7 +163,7 @@ function Navbar() {
           </li>
         </ul>
         <div className="spacer spacer-1" />
-        <form className="row gx-3 gy-2 align-items-center">
+        <form className="row gx-3 gy-2 align-items-center" style={{ display: "block" }}>
           {chainId ? (
             <div className="chain-info">Chain ID: {chainId}</div>
           ) : null}
@@ -168,25 +174,29 @@ function Navbar() {
                 &nbsp;Connected
               </div>
               <div className="spacer spacer-1" />
-              <div>
-                <button
-                  className="btn btn-light"
-                  type="button"
-                  style={{ width: 140 }}
-                  onClick={handleFaucetRequest}
-                  disabled={requestingTestCoins}
-                >
-                  {
-                    requestingTestCoins ? (
-                      <i className="fas fa-circle-notch fa-spin"></i>
-                    ) : (
-                      <span><i className="mr-2" /> Request CFLR</span>
-                    )
-                  }
-                </button>
-              </div>
+              {
+                chainId === 16 && (
+                  <>
+                    <Button
+                      variant="light"
+                      onClick={handleFaucetRequest}
+                      disabled={requestingTestCoins}
+                    >
+                      {
+                        requestingTestCoins ? (
+                          <i className="fas fa-circle-notch fa-spin"></i>
+                        ) : (
+                          <span><i className="mr-2" /> Request {getNativeTokenSymbol(chainId!)}</span>
+                        )
+                      }
+                    </Button>
+                    <div className="spacer spacer-1" />
+                  </>
+                )
+              }
+              <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
-          ) : (
+          ): (
             <div className="mt-2">
               <button
                 className="btn btn-light text-success"
@@ -199,10 +209,9 @@ function Navbar() {
           )}
         </form>
       </div>
-      <SocialLinks />
-      <small className="mt-3 container-fluid text-center">
-        v{VERSION}
-      </small>
+      <div className="mt-auto container-fluid text-center">
+        <SocialLinks />
+      </div>
     </nav>
   );
 }

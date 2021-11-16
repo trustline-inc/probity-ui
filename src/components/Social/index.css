@@ -9,7 +9,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.page-container .social-links {
+.page-container .social-links, .page-container #version {
   display: none;
 }
 
@@ -18,7 +18,7 @@
     display: none;
   }
 
-  .page-container .social-links {
+  .page-container .social-links, .page-container #version {
     display: block;
   }
 

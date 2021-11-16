@@ -1,52 +1,39 @@
 import React from "react";
+import { useWeb3React } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed"
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralAmount: number;
-  equityAmount: number;
+  supplyAmount: number;
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   redeem: () => void;
 }
 
 function RedemptionActivity({
   collateralAmount,
-  equityAmount,
+  supplyAmount,
   collateralRatio,
   onCollateralAmountChange,
-  onEquityAmountChange,
+  onSupplyAmountChange,
   redeem
 }: Props) {
+  const { chainId } = useWeb3React<Web3Provider>()
+
   return (
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="equityRedemptionAmount" className="form-label">
-            Capital<br/>
-            <small className="form-text text-muted">
-              Amount of Aurei to burn
-            </small>
-          </label>
-          <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="equityRedemptionAmount"
-              placeholder="0.000000000000000000"
-              onChange={onEquityAmountChange}
-            />
-            <span className="input-group-text font-monospace">{"AUR"}</span>
-          </div>
+          <p className="text-muted">Your stake must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
-      </div>
-      <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="collateralRedemptionAmount" className="form-label">
-            Collateral<br/>
+            Amount<br/>
             <small className="form-text text-muted">
-              Amount of collateral to unlock
+              The amount of asset to redeem
             </small>
           </label>
           <div className="input-group">
@@ -58,7 +45,28 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{"FLR"}</span>
+            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+          </div>
+        </div>
+      </div>
+      <div className="row mb-4">
+        <div className="col-12">
+          <label htmlFor="loanCapitalAmount" className="form-label">
+            Loan Capital<br/>
+            <small className="form-text text-muted">
+              The amount of loan capital to remove
+            </small>
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              id="loanCapitalAmount"
+              placeholder="0.000000000000000000"
+              onChange={onSupplyAmountChange}
+            />
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
@@ -86,7 +94,7 @@ function RedemptionActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={redeem}
-            disabled={equityAmount === 0 || collateralAmount === 0}
+            disabled={supplyAmount === 0 || collateralAmount === 0}
           >Confirm</button>
         </div>
       </div>

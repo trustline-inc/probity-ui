@@ -5,48 +5,62 @@ import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
-import { TELLER_ADDRESS } from '../../constants';
-import TellerABI from "@trustline-inc/aurei/artifacts/contracts/Teller.sol/Teller.json";
+import { RAY, VAULT_ENGINE } from '../../constants';
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralRatio: number;
   collateralAmount: number;
-  aureiAmount: number;
+  amount: number;
   rate: any;
-  maxBorrow: number;
-  setMaxBorrow: (maxBorrow: number) => void;
-  onAureiAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  borrow: () => void;
+  loading: boolean;
+  maxSize: number;
+  setMaxSize: (maxSize: number) => void;
+  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function BorrowActivity({
   collateralRatio,
   collateralAmount,
-  aureiAmount,
+  amount,
   rate,
-  maxBorrow,
-  setMaxBorrow,
-  onAureiAmountChange,
+  loading,
+  borrow,
+  maxSize,
+  setMaxSize,
+  onAmountChange,
   onCollateralAmountChange
 }: Props) {
   const { library } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
 
-  const { data: utilization } = useSWR([TELLER_ADDRESS, 'getUtilization'], {
-    fetcher: fetcher(library, TellerABI.abi),
+  const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
+  })
+  const { data: totalCapital } = useSWR([VAULT_ENGINE, "totalCapital"], {
+    fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
   React.useEffect(() => {
-    if (utilization) {
-      const borrows = Number(utils.formatEther(utilization[0].toString()));
-      const supply = Number(utils.formatEther(utilization[1].toString()));
-      const newBorrows = borrows + Number(aureiAmount);
-      const newUtilization = (newBorrows / supply);
-      const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-      setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
-      setMaxBorrow(supply - borrows)
+    if (totalDebt && totalCapital) {
+      try {
+        const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
+        const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+        const newBorrows = borrows + Number(amount);
+        const newUtilization = (newBorrows / supply);
+        const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+        setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+        setMaxSize(supply - borrows)
+      } catch(e) {
+        console.log(e)
+      }
     }
-  }, [rate, aureiAmount, utilization, setMaxBorrow])
+  }, [rate, amount, totalDebt, totalCapital, setMaxSize])
+
+  const { chainId } = useWeb3React<Web3Provider>()
 
   return (
     <>
@@ -57,8 +71,14 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" max={maxBorrow} placeholder="0.000000000000000000" className="form-control" value={aureiAmount ? aureiAmount : ""} onChange={onAureiAmountChange} />
-        <span className="input-group-text font-monospace">{"AUR"}</span>
+        <input
+          type="number"
+          min="0.000000000000000000"
+          max={maxSize}
+          placeholder="0.000000000000000000"
+          className="form-control"
+          onChange={onAmountChange} />
+        <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
       </div>
       <div className="row pt-3 pb-1">
         <div className="col-12">
@@ -67,7 +87,7 @@ function BorrowActivity({
               <span className="text-muted">Estimated APR</span>
               <br />
               {rate && (
-                aureiAmount ? (
+                amount ? (
                   Math.min(estimatedAPR, 100)
                 ) : utils.formatEther(rate.div("10000000").toString().slice(2))
               )}%
@@ -82,9 +102,16 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group mb-3">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={(event) => {
-           onCollateralAmountChange(event) }} />
-        <span className="input-group-text font-monospace">{"FLR"}</span>
+        <input
+          type="number"
+          min="0.000000000000000000"
+          placeholder="0.000000000000000000"
+          className="form-control"
+          onChange={(event) => {
+            onCollateralAmountChange(event)
+          }}
+        />
+        <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">
@@ -92,6 +119,17 @@ function BorrowActivity({
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2"><span>Collateral Ratio:</span><br />{collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
           </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12 mt-4 d-grid">
+          <button
+            className="btn btn-primary btn-lg mt-4"
+            onClick={borrow}
+            disabled={amount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

@@ -1,52 +1,41 @@
 import React from "react"
+import { useWeb3React } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
   collateralAmount: number;
-  equityAmount: number;
+  supplyAmount: number;
   collateralRatio: number;
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  stake: () => void;
+  onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  supply: () => void;
+  loading: boolean;
 }
 
 function StakingActivity({
   collateralAmount,
-  equityAmount,
+  supplyAmount,
   collateralRatio,
   onCollateralAmountChange,
-  onEquityAmountChange,
-  stake
+  onSupplyAmountChange,
+  supply,
+  loading
 }: Props) {
+  const { chainId } = useWeb3React<Web3Provider>()
+
   return (
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="equityIssuanceInput" className="form-label">
-            Capital<br/>
-            <small className="form-text text-muted">
-              Amount of Aurei to mint
-            </small>
-          </label>
-          <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="equityIssuanceInput"
-              placeholder="0.000000000000000000"
-              onChange={onEquityAmountChange}
-            />
-            <span className="input-group-text font-monospace">{"AUR"}</span>
-          </div>
+          <p className="text-muted">Your stake must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
-      </div>
-      <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
-            Collateral<br/>
+            Amount<br/>
             <small className="form-text text-muted">
-              Amount of collateral to lock
+              The amount of asset to stake
             </small>
           </label>
           <div className="input-group">
@@ -58,7 +47,28 @@ function StakingActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{"FLR"}</span>
+            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+          </div>
+        </div>
+      </div>
+      <div className="row mb-4">
+        <div className="col-12">
+          <label htmlFor="supplyAmount" className="form-label">
+            Loan Capital<br/>
+            <small className="form-text text-muted">
+              The amount of loan capital to create
+            </small>
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              id="supplyAmount"
+              placeholder="0.000000000000000000"
+              onChange={onSupplyAmountChange}
+            />
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
@@ -75,9 +85,11 @@ function StakingActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={stake}
-            disabled={equityAmount === 0 || collateralAmount === 0}
-          >Confirm</button>
+            onClick={supply}
+            disabled={supplyAmount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

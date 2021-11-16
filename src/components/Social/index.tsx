@@ -3,7 +3,7 @@ import "./index.css";
 
 function SocialLinks() {
   return (
-    <div className="social-links mt-auto container-fluid text-center">
+    <div className="social-links container-fluid text-center mt-5">
       <a target="blank" href="https://twitter.com/ProbityDAO" className="mx-2">
         <i className="fab fa-twitter"></i>
       </a>
@@ -13,13 +13,10 @@ function SocialLinks() {
       <a target="blank" href="https://t.me/joinchat/ldcoqlTUyLIyNDIx" className="mx-2">
         <i className="fab fa-telegram"></i>
       </a>
-      <a target="blank" href="https://trustline-inc.medium.com/probity-is-available-on-the-testnet-bf87d287173d" className="mx-2">
-        <i className="fab fa-medium"></i>
-      </a>
       <a target="blank" href="https://github.com/probitydao" className="mx-2">
         <i className="fab fa-github"></i>
       </a>
-      <a target="blank" href="https://docs.trustline.co/trustline/" className="mx-2">
+      <a target="blank" href="https://docs.trustline.co/probity/" className="mx-2">
         <i className="fa fa-book"></i>
       </a>
     </div>

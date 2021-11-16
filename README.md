@@ -27,18 +27,23 @@ npm install
 
 This will install React, Web3, and Probity libraries.
 
+If you're working with a local development build of Solaris, make sure that you `tsc` in the Solaris directory and install the package with `npm install --force ../solaris`.
+
 **3. Set environment variables**
 
 Create `.env.local` and set contract addresses. For example:
 
 ```
-REACT_APP_AUREI_ADDRESS    = 0x907060A75939C8bdF525355cF48F37Fde33f651F
-REACT_APP_BRIDGE_ADDRESS   = 0xb6f0184c26DBDe79E19325259f79f8eB0B07aAD6
-REACT_APP_REGISTRY_ADDRESS = 0x5056586C0BC91ff6B54268366D9539D4c78FeD0b
-REACT_APP_TCNTOKEN_ADDRESS = 0x82756dc5c3a74422C1a95227e9A8832e33C337cb
-REACT_APP_TELLER_ADDRESS   = 0x6C60a89CA41F8535F6c86Cce715035C0b5BC8b68
-REACT_APP_TREASURY_ADDRESS = 0x9Afe05e7D152EBEf01e6C3d42a43c8f426C95f5b
-REACT_APP_VAULT_ADDRESS    = 0x32dfE359aa1E100Ba8CfBF5f38BcBdb3f55e8a06
+REACT_APP_AUREI             = 0x9CcEB5dFbACaA5bdD90d6343d312D944F8288636
+REACT_APP_BRIDGE            = 0xDAb5EADe7C774638E3e5151b9504abe159B455C1
+REACT_APP_FTSO              = 0x352D0cFD3cc9825c13C2f69B1d6a128c6Ea8D804
+REACT_APP_NATIVE_COLLATERAL = 0xd529C9a7c1c221677894B679560928646E64702D
+REACT_APP_REGISTRY          = 0xBBf387879F189e762fd3c619374A8A38B9e31dd7
+REACT_APP_TCN_TOKEN         = 0x8FeBE2379eb6217a27C0D0B010Cee12158590722
+REACT_APP_TELLER            = 0x63F2314eD99c381E0385204d051CD3195619e337
+REACT_APP_TREASURY          = 0x97C81A29094Aa97b2D94715D07dC2a4384F110BD
+REACT_APP_VAULT_ENGINE      = 0x4dc0705d18Fce70DBBeaAa6e4aCBf6CEf96c78f4
+REACT_APP_VERSION           = $npm_package_version
 ```
 
 **4. Start the app**
@@ -48,6 +53,20 @@ npm start
 ```
 
 This starts the application at [`http://localhost:3000`](http://localhost:3000).
+
+## Development
+
+### Ledger Connector
+
+TLS is required for developing the Ledger connector. It's easiest to install [mkcert](https://github.com/FiloSottile/mkcert) to create a cert.
+
+```
+# Example with hostnames and private IP addresses
+mkcert -install
+mkcert -cert-file local-dev.pem -key-file local-dev-key.pem trustline.dev "*.trustline.dev" localhost 127.0.0.1 10.0.0.44
+```
+
+Then you can use the `start:https` script.
 
 ## Deployment
 
