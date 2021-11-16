@@ -113,18 +113,18 @@ function Balances() {
               <h5>Treasury & Loans</h5>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Loan Balance
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
                   Capital Balance
                 </div>
                 <div className="col-6">
                 <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  Loan Balance
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr/>
