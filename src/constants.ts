@@ -55,7 +55,7 @@ export const DEFAULT_APP_METADATA = {
   icons: ["https://probity.finance/probity-logo.png"],
 };
 export const DEFAULT_LOGGER = "debug"
-export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.org";
+export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.com";
 export const DEFAULT_METHODS = ["createTrustLine"];
 
 // Other constants
