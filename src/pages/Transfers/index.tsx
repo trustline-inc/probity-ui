@@ -26,8 +26,11 @@ import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
+  const storage = localStorage.getItem('probity-transfer')
   const [transfer, setTransfer] = React.useState<any>()
-  const [transferData, setTransferData] = React.useState<any>(localStorage.getItem('probity-transfer'));
+  const [transferData, setTransferData] = React.useState<any>(
+    storage ? JSON.parse(storage) : null
+  );
   const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>()
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
@@ -62,6 +65,7 @@ export default function Transfers() {
             controller: false,
             logger: DEFAULT_LOGGER,
             relayProvider: DEFAULT_RELAY_PROVIDER,
+            apiKey: process.env.REACT_APP_WALLETCONNECT_API_KEY
           });
 
           client.current.on(
@@ -265,13 +269,13 @@ export default function Transfers() {
   const openOutboundTransferModal = async () => {
     switch (transferStage) {
       case "OUTBOUND_PENDING":
-        await prepareTransfer()
+        await permitBridgeSpending()
         break;
       case "OUTBOUND_IN_PROGRESS":
         await verifyIssuance()
         break;
       default:
-        await prepareTransfer()
+        await permitBridgeSpending()
         break;
     }
   }
@@ -318,10 +322,10 @@ export default function Transfers() {
   }
 
   /**
-   * @function prepareTransfer
-   * Creates Bridge allowance and funds issuing account.
+   * @function permitBridgeSpending
+   * Creates Bridge ERC20 allowance
    */
-  const prepareTransfer = async () => {
+  const permitBridgeSpending = async () => {
     try {
       setLoading(true)
       setShowTransferModal(true)
@@ -377,6 +381,10 @@ export default function Transfers() {
             ctx.updateTransactions(result);
           }
           setTransferStage("OUTBOUND_PENDING")
+          setTransferData({
+            stage: "OUTBOUND_PENDING",
+            amount: transferAmount.toString()
+          })
           setTransferModalBody(
             <>
               <p>
@@ -395,10 +403,10 @@ export default function Transfers() {
   }
 
   /**
-   * @function initiateTransfer
-   * Initiates the transfer after approval.
+   * @function createIssuer
+   * Creates an issuer in the Bridge contract
    */
-  const initiateTransfer = async () => {
+  const createIssuer = async () => {
     try {
       if (library) {
         setTransferInProgress(true)
@@ -410,12 +418,12 @@ export default function Transfers() {
         };
         const result = await web3.eth.sendTransaction((transactionObject as any))
         ctx.updateTransactions(result);
+        setTransferStage("OUTBOUND_IN_PROGRESS")
         setTransferData({
           stage: "OUTBOUND_IN_PROGRESS",
           issuerAddress: issuerAddress,
-          ...transferData
+          amount: transferData.amount
         })
-        setTransferStage("OUTBOUND_IN_PROGRESS")
         setTransferModalBody(
           <>
             <Alert variant="info">
@@ -617,7 +625,7 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" onClick={initiateTransfer} disabled={transferInProgress}>
+                        <Button variant="primary" onClick={createIssuer} disabled={transferInProgress}>
                           { transferInProgress ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
