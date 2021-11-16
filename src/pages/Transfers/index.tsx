@@ -503,7 +503,7 @@ export default function Transfers() {
       setTransfer(_transfer)
       setTransferStage("INBOUND_REDEMPTION_RESERVATION")
       setTransferModalBody(
-        <div className="d-flex flex-column justify-content-center align-items-center my-5">
+        <div className="d-flex flex-column justify-content-center align-items-center">
           {
             verifiedIssuers.length ? (
               <>
