@@ -160,7 +160,7 @@ export default function Transfers() {
    * Connects to relay server and awaits for session establishment.
    */
   const connect = async (pairing?: { topic: string }) => {
-    console.log("connecting to relay server")
+    console.log("Connecting to relay server")
     if (typeof client.current === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
@@ -236,6 +236,10 @@ export default function Transfers() {
       // Display modal for token issuance
       setShowTransferModal(true)
       setTransferStage("OUTBOUND_TOKEN_ISSUANCE")
+      setTransferData({
+        ...transferData,
+        stage: "OUTBOUND_TOKEN_ISSUANCE"
+      })
       setTransferModalBody(
         <>
           <p>
@@ -272,7 +276,7 @@ export default function Transfers() {
         await permitBridgeSpending()
         break;
       case "OUTBOUND_IN_PROGRESS":
-        await verifyIssuance()
+        await createTrustLine()
         break;
       default:
         await permitBridgeSpending()
@@ -310,7 +314,9 @@ export default function Transfers() {
         return "Outbound Transfer Pending"
       case "OUTBOUND_IN_PROGRESS":
         return "Outbound Transfer In-Progress"
-      case "OUTBOUND_COMPLETE":
+      case "OUTBOUND_TOKEN_ISSUANCE":
+        return "Token Issuance"
+      case "OUTBOUND_COMPLETED":
         return "Outbound Transfer Complete"
       case "INBOUND_REDEMPTION_RESERVATION":
         return "Inbound Transfer Reservation"
@@ -360,7 +366,8 @@ export default function Transfers() {
           setTransfer(_transfer)
           setTransferData({
             stage: "OUTBOUND_PERMIT",
-            amount: transferAmount.toString()
+            amount: transferAmount.toString(),
+            username
           })
 
           // First check the allowance
@@ -382,8 +389,8 @@ export default function Transfers() {
           }
           setTransferStage("OUTBOUND_PENDING")
           setTransferData({
-            stage: "OUTBOUND_PENDING",
-            amount: transferAmount.toString()
+            ...transferData,
+            stage: "OUTBOUND_PENDING"
           })
           setTransferModalBody(
             <>
@@ -420,9 +427,9 @@ export default function Transfers() {
         ctx.updateTransactions(result);
         setTransferStage("OUTBOUND_IN_PROGRESS")
         setTransferData({
+          ...transferData,
           stage: "OUTBOUND_IN_PROGRESS",
-          issuerAddress: issuerAddress,
-          amount: transferData.amount
+          issuerAddress: issuerAddress
         })
         setTransferModalBody(
           <>
@@ -463,7 +470,6 @@ export default function Transfers() {
     const verifyIssuance = async () => {
     try {
       if (library) {
-        await disconnect()
         setLoading(true)
         const stateConnector = new Contract(STATE_CONNECTOR, INTERFACES[STATE_CONNECTOR].abi, library.getSigner())
         let result = await stateConnector.setFinality(true);
@@ -558,6 +564,7 @@ export default function Transfers() {
         }
       })
       setTransferStage("INBOUND_REDEMPTION_TRANSACTION")
+      setTransferModalBody(<></>)
     } catch (error) {
       console.log("error", error)
     }
@@ -572,7 +579,6 @@ export default function Transfers() {
     try {
       setShowTransferModal(true)
       setTransferStage("INBOUND_REDEMPTION_TRANSACTION")
-      console.log("Testing XRPL redemption transaction")
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
           <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
@@ -705,6 +711,7 @@ export default function Transfers() {
             {
               transferStage === "INBOUND_REDEMPTION_TRANSACTION" && (
                 <Form className="py-3">
+                  <p>Create the redemption transaction to <code>{issuerAddress}</code>.</p>
                   <Form.Group className="mb-3">
                   <Form.Label>Transaction ID</Form.Label>
                     <Form.Control
