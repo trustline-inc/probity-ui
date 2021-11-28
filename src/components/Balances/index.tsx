@@ -46,6 +46,9 @@ function Balances() {
   const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
+  const { data: collateralType, mutate: mutateCollateralType } = useSWR([VAULT_ENGINE, 'collateralTypes', web3.utils.keccak256(getNativeTokenSymbol(chainId!))], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
 
   React.useEffect(() => {
     if (library) {
@@ -58,6 +61,7 @@ function Balances() {
         mutateTcnERC20Balance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
+        mutateCollateralType(undefined, true);
       });
 
       return () => {
@@ -116,15 +120,15 @@ function Balances() {
                   Capital Balance
                 </div>
                 <div className="col-6">
-                <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.capital)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.capital.mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Loan Balance
+                  Debt Balance
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{vault ? numeral(utils.formatEther(vault.debt)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.debt.mul(collateralType.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr/>
@@ -178,15 +182,15 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalCapital ? numeral(utils.formatEther(totalCapital.div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalCapital && collateralType ? numeral(utils.formatEther(totalCapital.div(RAY).mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  <h6>Outstanding Loans</h6>
+                  <h6>Total Debt</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalDebt ? numeral(utils.formatEther(totalDebt.div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalDebt && collateralType ? numeral(utils.formatEther(totalDebt.div(RAY).mul(collateralType.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
             </>
