@@ -185,6 +185,7 @@ function Balances() {
                 </div>
               </div>
               <div className="row text-truncate my-2 mt-4">
+                <h5>Voting Power</h5>
                 <div className="col-6">
                   Vault TCN
                 </div>
