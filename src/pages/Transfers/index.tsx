@@ -48,7 +48,7 @@ export default function Transfers() {
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
-  const client = React.useRef<WalletConnectClient>()
+  const [client, setClient] = React.useState<WalletConnectClient>()
   const ctx = useContext(EventContext)
 
   // Transfer modal
@@ -60,15 +60,15 @@ export default function Transfers() {
   React.useEffect(() => {
     (async () => {
       try {
-        if (!client.current) {
-          client.current = await WalletConnectClient.init({
+        if (!client) {
+          const _client = await WalletConnectClient.init({
             controller: false,
             logger: DEFAULT_LOGGER,
             relayProvider: DEFAULT_RELAY_PROVIDER,
             apiKey: process.env.REACT_APP_WALLETCONNECT_API_KEY
           });
 
-          client.current.on(
+          _client.on(
             CLIENT_EVENTS.pairing.proposal,
             async (proposal: PairingTypes.Proposal) => {
               const { uri } = proposal.signal.params;
@@ -79,18 +79,25 @@ export default function Transfers() {
             },
           );
 
-          client.current.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
-            if (typeof client.current === "undefined") return;
-            setPairings(client.current.pairing.topics);
+          _client.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
+            if (typeof _client === "undefined") return;
+            setPairings(_client.pairing.topics);
           });
 
-          client.current.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
+          _client.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
             if (session.topic !== session?.topic) return;
             console.log("EVENT", "session_deleted");
           });
-        }
 
-        if (pairings) console.log("pairings", pairings)
+          setClient(_client)
+          setPairings(_client.pairing.topics);
+          if (typeof session !== "undefined") return;
+          // populates existing session to state (assume only the top one)
+          if (_client.session.topics.length) {
+            const session = await _client.session.get(_client.session.topics[0]);
+            onSessionConnected(session);
+          }
+        }
       } catch (error) {
         console.log("connection error")
         alert(JSON.stringify(error))
@@ -99,8 +106,10 @@ export default function Transfers() {
     })()
 
     return () => {
-      if (client.current && session) {
-        client.current.disconnect({
+      console.log("cleaning up")
+      if (client && session) {
+        console.log("attempting disconnect")
+        client.disconnect({
           topic: session.topic,
           reason: ERROR.USER_DISCONNECTED.format(),
         });
@@ -161,13 +170,13 @@ export default function Transfers() {
    */
   const connect = async (pairing?: { topic: string }) => {
     console.log("Connecting to relay server")
-    if (typeof client.current === "undefined") {
+    if (typeof client === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
 
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
-      const session = await client.current.connect({
+      const session = await client.connect({
         metadata: getAppMetadata() || DEFAULT_APP_METADATA,
         pairing,
         permissions: {
@@ -196,13 +205,13 @@ export default function Transfers() {
    * Ends session and disconnects from the relay server.
    */
   const disconnect = async () => {
-    if (typeof client.current === "undefined") {
+    if (typeof client === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
     if (typeof session === "undefined") {
       throw new Error("Session is not connected");
     }
-    await client.current.disconnect({
+    await client.disconnect({
       topic: session.topic,
       reason: ERROR.USER_DISCONNECTED.format(),
     });
@@ -215,11 +224,12 @@ export default function Transfers() {
    * Runs when WalletConnect session is created. Called in `connect`.
    */
   const onSessionConnected = async (_session: SessionTypes.Settled) => {
+    console.log("Connected to session", _session)
     setSession(_session)
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
 
     // Make RPC request
-    const success: boolean = await client.current!.request({
+    const success: boolean = await client!.request({
       topic: _session.topic,
       chainId: "xrpl:2",
       request: {
@@ -456,7 +466,7 @@ export default function Transfers() {
   const createTrustLine = async () => {
     setShowTransferModal(false)
     setLoading(false)
-    if (typeof client.current === "undefined") {
+    if (typeof client === "undefined") {
       throw new Error("WalletConnect is not initialized");
     }
 

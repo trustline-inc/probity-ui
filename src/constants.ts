@@ -4,6 +4,8 @@ import PhiABI from "@trustline/probity/artifacts/contracts/probity/tokens/Phi.so
 import AuctioneerABI from "@trustline/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
 import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
 import FtsoABI from "@trustline/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
+import LiquidatorABI from "@trustline/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
+import PriceFeedABI from "@trustline/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeCollateralABI from "@trustline/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import RegistryABI from "@trustline/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -20,6 +22,8 @@ export const PHI               = process.env && process.env.REACT_APP_PHI       
 export const AUCTIONEER        = process.env && process.env.REACT_APP_AUCTIONEER        ? process.env.REACT_APP_AUCTIONEER        : "0x1aEf23136b3335b8E98a1a3A3A8324DfeA9C06E1";
 export const BRIDGE            = process.env && process.env.REACT_APP_BRIDGE            ? process.env.REACT_APP_BRIDGE            : "0xB03C54535380286D61C06b64442DA1Edd9c01F10";
 export const FTSO              = process.env && process.env.REACT_APP_FTSO              ? process.env.REACT_APP_FTSO              : "0x4ECaE26B874eb41A4cE87379E19E27E7034E4b5D";
+export const LIQUIDATOR        = process.env && process.env.REACT_APP_LIQUIDATOR        ? process.env.REACT_APP_LIQUIDATOR        : ""
+export const PRICE_FEED        = process.env && process.env.REACT_APP_PRICE_FEED        ? process.env.REACT_APP_PRICE_FEED        : "0x065C8C939d6B1C578ff4025AC8F06E1E6D846DB7";
 export const NATIVE_COLLATERAL = process.env && process.env.REACT_APP_NATIVE_COLLATERAL ? process.env.REACT_APP_NATIVE_COLLATERAL : "0x0450790BCEFCfd953491f5130DFD3b572C67285F";
 export const REGISTRY          = process.env && process.env.REACT_APP_REGISTRY          ? process.env.REACT_APP_REGISTRY          : "0x36514a1557476410b34B46903E73407D61679Bb8";
 export const STATE_CONNECTOR   = process.env && process.env.REACT_APP_STATE_CONNECTOR   ? process.env.REACT_APP_STATE_CONNECTOR   : "0x36514a1557476410b34B46903E73407D61679Bb8";
@@ -38,6 +42,8 @@ export const INTERFACES = {
   [AUCTIONEER]: AuctioneerABI,
   [BRIDGE]: BridgeABI,
   [FTSO]: FtsoABI,
+  [LIQUIDATOR]: LiquidatorABI,
+  [PRICE_FEED]: PriceFeedABI,
   [NATIVE_COLLATERAL]: NativeCollateralABI,
   [REGISTRY]: RegistryABI,
   [STATE_CONNECTOR]: StateConnectorABI,

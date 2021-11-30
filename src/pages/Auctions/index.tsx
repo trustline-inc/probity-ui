@@ -1,14 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { TELLER, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
+import { LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
+import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getStablecoinAddress, getStablecoinSymbol } from "../../utils";
+import { getStablecoinAddress, getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -21,73 +22,84 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
   useEffect(() => {
     if (library) {
-      const runEffect = async () => {
+      (async () => {
         const vault = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
-        const _users = await vault.getUsers();
+        const _users = await vault.getUserList();
         setUsers(_users);
-      }
-
-      runEffect();
+      })()
     }
   }, [library])
 
   useEffect(() => {
     if (library) {
-      const runEffect = async () => {
+      (async () => {
         setLoading(true)
         const _vaults: any[] = [];
         for (let address of users) {
-          const teller = new Contract(TELLER, INTERFACES[TELLER].abi, library.getSigner())
-          const treasury = new Contract(TREASURY, INTERFACES[TREASURY].abi, library.getSigner())
-          const vault = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
-          const debt = await teller.balanceOf(address);
-          const capital = await treasury.capitalOf(address);
-          const [loanCollateral, stakedCollateral] = await vault.balanceOf(address);
+          const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+          const {
+            capital,
+            debt,
+            usedCollateral
+          } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), address);
+          const {
+            debtAccumulator,
+            price
+          } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
+
+          // Get the vault's debt and capital
+          const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+          console.log("debtAndCapital", utils.formatEther(debtAndCapital).toString())
+          console.log("usedCollateral", utils.formatEther(usedCollateral).toString())
+
+          // Get the current collateral ratio
+          const collateralRatio = `${usedCollateral.mul(100).div(debtAndCapital).toString()}%`
+          console.log("collateralRatio", collateralRatio)
+
+          // Check if it's liquidation eligible
+          const liquidationEligible = debtAndCapital.gt(usedCollateral.mul(price).div(RAY))
+          console.log("liquidationEligible", liquidationEligible)
+
           _vaults.push({
             address: address,
-            debt: numeral(utils.formatEther(debt.toString()).toString()).format('$0,0.00'),
-            capital: numeral(utils.formatEther(capital.toString()).toString()).format('$0,0.00'),
-            loanCollateral: numeral(Number(utils.formatEther(loanCollateral.toString())) * collateralPrice).format('$0,0.00'),
-            stakedCollateral: numeral(Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice).format('$0,0.00'),
-            loanLiquidationEligible: Number(utils.formatEther(loanCollateral.toString())) * collateralPrice < (Number(utils.formatEther(debt.toString())) * 1.5),
-            capitalLiquidationEligible: Number(utils.formatEther(stakedCollateral.toString())) * collateralPrice < (Number(utils.formatEther(capital.toString())) * 1.5),
+            debt: numeral(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format('$0,0.00'),
+            capital: numeral(utils.formatEther(capital).toString()).format('$0,0.00'),
+            collateralRatio,
+            liquidationEligible,
           });
         }
         setVaults(_vaults);
         setLoading(false)
-      }
-
-      runEffect();
+      })()
     }
-  }, [library, users, collateralPrice])
+  }, [library, users, collateralPrice, chainId])
 
   const liquidate = async (address: string, type: string) => {
     if (library) {
       const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
-      const teller = new Contract(TELLER, INTERFACES[TELLER].abi, library.getSigner())
-      const treasury = new Contract(TREASURY, INTERFACES[TREASURY].abi, library.getSigner())
+      const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
-      try {
-        let result, data;
-        if (type === "debt") {
-          result = await stablecoin.approve(
-            TELLER,
-            utils.parseEther(price.toString()).toString()
-          );
-          data = await result.wait();
-          ctx.updateTransactions(data);
-          result = await teller.liquidate(address, utils.parseEther(price.toString()).toString());
-          data = await result.wait();
-          ctx.updateTransactions(data);
-        } else {
-          result = await treasury.liquidate(address)
-          data = await result.wait();
-          ctx.updateTransactions(data);
-        }
-      } catch (error) {
-        console.error(error)
-        setError(error);
-      }
+      // try {
+      //   let result, data;
+      //   if (type === "debt") {
+      //     result = await stablecoin.approve(
+      //       TELLER,
+      //       utils.parseEther(price.toString()).toString()
+      //     );
+      //     data = await result.wait();
+      //     ctx.updateTransactions(data);
+      //     result = await teller.liquidate(address, utils.parseEther(price.toString()).toString());
+      //     data = await result.wait();
+      //     ctx.updateTransactions(data);
+      //   } else {
+      //     result = await treasury.liquidate(address)
+      //     data = await result.wait();
+      //     ctx.updateTransactions(data);
+      //   }
+      // } catch (error) {
+      //   console.error(error)
+      //   setError(error);
+      // }
     }
   }
 

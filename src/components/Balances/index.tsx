@@ -4,12 +4,13 @@ import web3 from "web3";
 import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { utils } from "ethers";
+import { Contract, utils } from "ethers";
 import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import numeral from "numeral";
 import {
   RAY,
+  FTSO,
   TCN_TOKEN,
   VAULT_ENGINE,
   INTERFACES
@@ -20,6 +21,7 @@ function Balances() {
   enum BalanceType { Individual, Aggregate }
   const [selected, setSelected] = React.useState(BalanceType.Individual)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
+  const [collateralRatio, setCollateralRatio] = React.useState("")
 
   // Read data from deployed contracts
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
@@ -69,6 +71,31 @@ function Balances() {
       };
     }
   });
+
+  React.useEffect(() => {
+    if (library) {
+      (async () => {
+        const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+        const {
+          capital,
+          debt,
+          usedCollateral
+        } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account);
+        const {
+          debtAccumulator
+        } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
+        const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
+        const { _price } = await ftsoContract.getCurrentPrice()
+
+        // Get the vault's debt and capital
+        const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+
+        // Get the current collateral ratio
+        const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+        setCollateralRatio(_collateralRatio)
+      })()
+    }
+  }, [account, library, chainId])
 
   if (!vault) return null;
   return (
@@ -129,6 +156,14 @@ function Balances() {
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.debt.mul(collateralType.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  Collateral Ratio
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{collateralRatio}</span>
                 </div>
               </div>
               <hr/>
