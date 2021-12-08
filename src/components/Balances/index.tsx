@@ -172,7 +172,7 @@ function Balances() {
               <h5>Stablecoins</h5>
               <div className="row text-truncate my-2">
                 <div className="col-6">
-                  Vault AUR                
+                  Vault {getStablecoinSymbol(chainId!)}
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
@@ -180,7 +180,7 @@ function Balances() {
               </div>
               <div className="row text-truncate my-2">
                 <div className="col-6">
-                  ERC20 AUR
+                  ERC20 {getStablecoinSymbol(chainId!)}
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>

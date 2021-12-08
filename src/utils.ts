@@ -5,7 +5,7 @@ export const getNativeTokenSymbol = (chainId: number) => {
     case 14:
       return "FLR"
     case 16:
-      return "FLR"
+      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL_LOCAL || "FLR"
     case 19:
       return "SGB"
     default:
@@ -18,7 +18,7 @@ export const getStablecoinSymbol = (chainId: number) => {
     case 14:
       return "AUR"
     case 16:
-      return "AUR"
+      return process.env.REACT_APP_STABLECOIN_SYMBOL_LOCAL || "AUR"
     case 19:
       return "PHI"
     default:
@@ -31,7 +31,7 @@ export const getStablecoinName = (chainId: number) => {
     case 14:
       return "Aurei"
     case 16:
-      return "Aurei"
+      return process.env.REACT_APP_STABLECOIN_NAME_LOCAL || "Aurei"
     case 19:
       return "Phi"
     default:
@@ -44,7 +44,12 @@ export const getStablecoinABI = (chainId: number) => {
     case 14:
       return INTERFACES[AUREI]
     case 16:
-      return INTERFACES[AUREI]
+      if (process.env.REACT_APP_STABLECOIN_SYMBOL_LOCAL === "AUR")
+        return INTERFACES[AUREI]
+      if (process.env.REACT_APP_STABLECOIN_SYMBOL_LOCAL === "PHI")
+        return INTERFACES[PHI]
+      else
+        return INTERFACES[AUREI]
     case 19:
       return INTERFACES[PHI]
     default:
@@ -57,7 +62,12 @@ export const getStablecoinAddress = (chainId: number) => {
     case 14:
       return AUREI
     case 16:
-      return AUREI
+      if (process.env.REACT_APP_STABLECOIN_SYMBOL_LOCAL === "AUR")
+        return AUREI
+      if (process.env.REACT_APP_STABLECOIN_SYMBOL_LOCAL === "PHI")
+        return PHI
+      else
+        return AUREI
     case 19:
       return PHI
     default:
