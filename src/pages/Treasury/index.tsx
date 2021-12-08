@@ -30,7 +30,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const [totalCollateral, setTotalCollateral] = React.useState(0);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const ctx = useContext(EventContext)
-  const [interestType, setInterestType] = React.useState("TCN")
+  const [interestType, setInterestType] = React.useState("PBT")
 
   const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.formatBytes32String(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
@@ -147,10 +147,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
 
       try {
-        const isTCN = interestType === "TCN";
+        const isPBT = interestType === "PBT";
         const result = await treasury.withdraw(
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
-          isTCN,
+          isPBT,
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }

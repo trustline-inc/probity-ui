@@ -9,7 +9,7 @@ import PriceFeedABI from "@trustline/probity/artifacts/contracts/probity/PriceFe
 import NativeCollateralABI from "@trustline/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import RegistryABI from "@trustline/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
-import TcnTokenABI from "@trustline/probity/artifacts/contracts/probity/tokens/TcnToken.sol/TcnToken.json";
+import PbtTokenABI from "@trustline/probity/artifacts/contracts/probity/tokens/PbtToken.sol/PbtToken.json";
 import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
@@ -27,7 +27,7 @@ export const PRICE_FEED        = process.env && process.env.REACT_APP_PRICE_FEED
 export const NATIVE_COLLATERAL = process.env && process.env.REACT_APP_NATIVE_COLLATERAL ? process.env.REACT_APP_NATIVE_COLLATERAL : "0x0450790BCEFCfd953491f5130DFD3b572C67285F";
 export const REGISTRY          = process.env && process.env.REACT_APP_REGISTRY          ? process.env.REACT_APP_REGISTRY          : "0x36514a1557476410b34B46903E73407D61679Bb8";
 export const STATE_CONNECTOR   = process.env && process.env.REACT_APP_STATE_CONNECTOR   ? process.env.REACT_APP_STATE_CONNECTOR   : "0x36514a1557476410b34B46903E73407D61679Bb8";
-export const TCN_TOKEN         = process.env && process.env.REACT_APP_TCN_TOKEN         ? process.env.REACT_APP_TCN_TOKEN         : "0x82756dc5c3a74422C1a95227e9A8832e33C337cb";
+export const PBT_TOKEN         = process.env && process.env.REACT_APP_PBT_TOKEN         ? process.env.REACT_APP_PBT_TOKEN         : "0x82756dc5c3a74422C1a95227e9A8832e33C337cb";
 export const TELLER            = process.env && process.env.REACT_APP_TELLER            ? process.env.REACT_APP_TELLER            : "0x91931c05B6A0e130bf30Cc53e2d57048750952B1";
 export const TREASURY          = process.env && process.env.REACT_APP_TREASURY          ? process.env.REACT_APP_TREASURY          : "0xf6D099B6C81ab597071f954700b73b3810e31c9D";
 export const VAULT_ENGINE      = process.env && process.env.REACT_APP_VAULT_ENGINE      ? process.env.REACT_APP_VAULT_ENGINE      : "0x7F3951BD4B5939348CE1546B247E988FA61aeeA5";
@@ -47,7 +47,7 @@ export const INTERFACES = {
   [NATIVE_COLLATERAL]: NativeCollateralABI,
   [REGISTRY]: RegistryABI,
   [STATE_CONNECTOR]: StateConnectorABI,
-  [TCN_TOKEN]: TcnTokenABI,
+  [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
   [TREASURY]: TreasuryABI,
   [VAULT_ENGINE]: VaultEngineABI

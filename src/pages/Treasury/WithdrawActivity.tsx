@@ -29,8 +29,8 @@ function WithdrawActivity({
             <div className="m-2">
               <span>Token Type</span><br/>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="TCN" value="TCN" checked={interestType === "TCN"} onChange={() => { setInterestType("TCN") }} />
-                <label className="form-check-label" htmlFor="TCN">TCN</label>
+                <input className="form-check-input" type="radio" name="interestType" id="PBT" value="PBT" checked={interestType === "PBT"} onChange={() => { setInterestType("PBT") }} />
+                <label className="form-check-label" htmlFor="PBT">PBT</label>
               </div>
               <div className="form-check form-check-inline">
                 <input className="form-check-input" type="radio" name="interestType" id={getStablecoinSymbol(chainId!)} value={getStablecoinSymbol(chainId!)} checked={interestType === getStablecoinSymbol(chainId!)} onChange={() => { setInterestType(getStablecoinSymbol(chainId!)) }} />

@@ -11,7 +11,7 @@ import numeral from "numeral";
 import {
   RAY,
   FTSO,
-  TCN_TOKEN,
+  PBT_TOKEN,
   VAULT_ENGINE,
   INTERFACES
 } from "../../constants";
@@ -30,14 +30,14 @@ function Balances() {
   const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'aur', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: tcnBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'tcn', account], {
+  const { data: pbtBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'pbt', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: stablecoinERC20Balance, mutate: mutateStablecoinERC20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
-  const { data: tcnERC20Balance, mutate: mutateTcnERC20Balance } = useSWR([TCN_TOKEN, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[TCN_TOKEN].abi),
+  const { data: pbtERC20Balance, mutate: mutatePbtERC20Balance } = useSWR([PBT_TOKEN, 'balanceOf', account], {
+    fetcher: fetcher(library, INTERFACES[PBT_TOKEN].abi),
   })
   const { data: totalStablecoinSupply, mutate: mutatetotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
@@ -60,7 +60,7 @@ function Balances() {
         mutatetotalStablecoinSupply(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateStablecoinERC20Balance(undefined, true);
-        mutateTcnERC20Balance(undefined, true);
+        mutatePbtERC20Balance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateInterestBalance(undefined, true);
         mutateCollateralType(undefined, true);
@@ -187,18 +187,18 @@ function Balances() {
               <div className="row text-truncate my-2 mt-4">
                 <h5>Voting Power</h5>
                 <div className="col-6">
-                  Vault TCN
+                  Vault PBT
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{tcnBalance ? numeral(utils.formatEther(tcnBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} TCN</span>
+                  <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} PBT</span>
                 </div>
               </div>
               <div className="row text-truncate my-2">
                 <div className="col-6">
-                  ERC20 TCN                 
+                  ERC20 PBT                 
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{tcnERC20Balance ? numeral(utils.formatEther(tcnERC20Balance)).format('0,0.0[00000000000000000]') : "0"} TCN</span>
+                  <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[00000000000000000]') : "0"} PBT</span>
                 </div>
               </div>
             </>
