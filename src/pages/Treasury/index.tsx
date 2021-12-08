@@ -13,7 +13,7 @@ import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
 import { WAD, TREASURY, VAULT_ENGINE } from '../../constants';
-import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
@@ -99,11 +99,12 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
       try {
         // Modify supply
-        const result = await vaultEngine.modifySupply(
+        const result = await vaultEngine.connect(library.getSigner()).modifySupply(
           web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
-          WAD.mul(supplyAmount)
+          WAD.mul(supplyAmount),
+          { gasLimit: 300000 }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -124,7 +125,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
       setLoading(true)
 
       try {
-        const result = await vaultEngine.modifySupply(
+        const result = await vaultEngine.connect(library.getSigner()).modifySupply(
           web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),

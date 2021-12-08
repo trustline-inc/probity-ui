@@ -12,7 +12,7 @@ import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/State
 import PbtTokenABI from "@trustline/probity/artifacts/contracts/probity/tokens/PbtToken.sol/PbtToken.json";
 import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineSBABI from "@trustline/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
 
 /**
  * Contract addresses
@@ -50,7 +50,7 @@ export const INTERFACES = {
   [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
   [TREASURY]: TreasuryABI,
-  [VAULT_ENGINE]: VaultEngineABI
+  [VAULT_ENGINE]: VaultEngineSBABI
 }
 
 // WalletConnect
