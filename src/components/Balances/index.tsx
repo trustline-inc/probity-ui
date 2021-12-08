@@ -27,7 +27,7 @@ function Balances() {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'aur', account], {
+  const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: pbtBalance, mutate: mutateInterestBalance } = useSWR([VAULT_ENGINE, 'pbt', account], {
@@ -149,7 +149,7 @@ function Balances() {
                   Capital Balance
                 </div>
                 <div className="col-6">
-                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.capital.mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.capital.mul(collateralType.capitalAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -157,7 +157,7 @@ function Balances() {
                   Debt Balance
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.debt.mul(collateralType.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.debt.mul(collateralType.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
