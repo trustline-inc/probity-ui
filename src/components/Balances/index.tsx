@@ -94,6 +94,8 @@ function Balances() {
         if (debtAndCapital.toNumber()) {
           const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
           setCollateralRatio(_collateralRatio)
+        } else {
+          setCollateralRatio("0%")
         }
       })()
     }
