@@ -12,8 +12,7 @@ import StakeActivity from "./StakeActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { WAD, TREASURY, VAULT_ENGINE } from '../../constants';
-import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
+import { WAD, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
@@ -33,7 +32,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const [interestType, setInterestType] = React.useState("PBT")
 
   const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.formatBytes32String(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, VaultEngineABI.abi),
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
   /**
@@ -94,13 +93,13 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
    */
    const mint = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
 
       try {
         // Modify supply
         const result = await vaultEngine.connect(library.getSigner()).modifySupply(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.formatBytes32String(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
           WAD.mul(supplyAmount),
@@ -121,12 +120,12 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
    */
   const burn = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
 
       try {
         const result = await vaultEngine.connect(library.getSigner()).modifySupply(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.formatBytes32String(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),
           WAD.mul(-supplyAmount)
