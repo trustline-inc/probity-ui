@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import axios from "axios"
 import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -159,7 +160,10 @@ export default function Transfers() {
   }
 
   const onDomainChange = (event: any) => {
-    const domain = event.target.value.replace(/[^a-zA-Z\d].[^a-zA-Z]/ig, "");
+    let domain = event.target.value
+    if (process.env.NODE_ENV === "production") {
+      domain = domain.replace(/[^a-zA-Z\d].[^a-zA-Z]/ig, "");
+    }
     setDomain(domain);
   }
 
@@ -345,20 +349,18 @@ export default function Transfers() {
     try {
       setLoading(true)
       setShowTransferModal(true)
-      const headers = new Headers()
-      headers.append('Accept', 'application/xrpl-testnet+json')
-      headers.append('PayID-Version', '1.0')
 
-      const response = await fetch(new Request(`https://${domain}/${username}`), {
+      const response = await axios(`http://${domain}/${username}`, {
         method: 'GET',
-        headers
+        headers: {
+          'Accept': 'application/xrpl-testnet+json',
+          'PayID-Version': '1.0'
+        }
       })
 
-      const json = await response.json()
-
-      if (json.addresses.length > 0) {
+      if (response.data.addresses.length > 0) {
         // Take the first one for now.
-        const address = json.addresses[0].addressDetails.address;
+        const address = response.data.addresses[0].addressDetails.address;
         setReceiverAddress(address)
 
         if (library && account) {
