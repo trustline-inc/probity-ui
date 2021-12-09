@@ -107,7 +107,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
         const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
         setLoading(true)
         try {
-          const result = await treasury.withdrawAurei(
+          const result = await treasury.withdrawStablecoin(
             BigNumber.from(amount).mul(WAD)
           );
           const data = await result.wait();

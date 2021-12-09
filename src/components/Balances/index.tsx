@@ -91,7 +91,7 @@ function Balances() {
         const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
 
         // Get the current collateral ratio
-        if (debtAndCapital.toNumber()) {
+        if (debtAndCapital) {
           const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
           setCollateralRatio(_collateralRatio)
         } else {
