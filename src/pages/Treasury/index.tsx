@@ -43,7 +43,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.capital)) - Number(delta);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.usedCollateral)) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.usedCollateral)) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
@@ -56,10 +56,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Supply:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(supplyAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(supplyAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) - Number(supplyAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) - Number(supplyAmount)));
           break;
       }
     }
@@ -99,7 +99,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
       try {
         // Modify supply
-        const result = await vaultEngine.connect(library.getSigner()).modifySupply(
+        const result = await vaultEngine.modifySupply(
           web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
