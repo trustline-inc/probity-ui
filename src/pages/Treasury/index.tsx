@@ -43,8 +43,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.capital).toString()) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault.freeCollateral + vault.usedCollateral).toString()) + Number(delta);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.capital)) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.usedCollateral)) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }
@@ -56,10 +56,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Supply:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital).toString()) + Number(supplyAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(supplyAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital).toString()) - Number(supplyAmount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) - Number(supplyAmount)));
           break;
       }
     }
@@ -72,8 +72,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const onSupplyAmountChange = (event: any) => {
     const amount = Number(event.target.value)
     setSupplyAmount(amount);
-    if (supplyAmount > 0)
+    if (supplyAmount > 0) {
+      console.log("totalCollateral", totalCollateral)
       setCollateralRatio(totalCollateral / amount);
+    }
   }
 
   const onInterestAmountChange = (event: any) => {
