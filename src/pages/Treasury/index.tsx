@@ -73,7 +73,6 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     const amount = Number(event.target.value)
     setSupplyAmount(amount);
     if (supplyAmount > 0) {
-      console.log("totalCollateral", totalCollateral)
       setCollateralRatio(totalCollateral / amount);
     }
   }
