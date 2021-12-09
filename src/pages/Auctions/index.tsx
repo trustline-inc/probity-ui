@@ -44,7 +44,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), address);
           const {
             debtAccumulator,
-            price
+            adjustedPrice
           } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
 
           // Get the vault's debt and capital
@@ -57,7 +57,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
-          const liquidationEligible = debtAndCapital.gt(usedCollateral.mul(price).div(RAY))
+          const liquidationEligible = debtAndCapital.gt(usedCollateral.mul(adjustedPrice).div(RAY))
           console.log("liquidationEligible", liquidationEligible)
 
           _vaults.push({
