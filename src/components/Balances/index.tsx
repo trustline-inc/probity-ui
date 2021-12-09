@@ -22,6 +22,7 @@ function Balances() {
   const [selected, setSelected] = React.useState(BalanceType.Individual)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
   const [collateralRatio, setCollateralRatio] = React.useState("")
+  const [estimatedAPR, setEstimatedAPR] = React.useState("")
 
   // Read data from deployed contracts
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
@@ -71,6 +72,17 @@ function Balances() {
       };
     }
   });
+
+  /**
+   * Update the current APR
+   */
+  React.useEffect(() => {
+    const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
+    const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+    const newUtilization = (borrows / supply);
+    const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+    setEstimatedAPR(`${(Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)}%`)
+  }, [totalCapital, totalDebt])
 
   React.useEffect(() => {
     if (library) {
@@ -168,6 +180,14 @@ function Balances() {
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{collateralRatio}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  Current APR
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{estimatedAPR}</span>
                 </div>
               </div>
               <hr/>
