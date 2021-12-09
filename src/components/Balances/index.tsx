@@ -78,6 +78,7 @@ function Balances() {
    */
   React.useEffect(() => {
     if (totalDebt && totalCapital) {
+      if (totalCapital.toString() === "0" || totalDebt.toString() === "0") return setEstimatedAPR("0%")
       const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
       const supply = Number(utils.formatEther(totalCapital.div(RAY)));
       const newUtilization = (borrows / supply);
@@ -105,7 +106,7 @@ function Balances() {
         const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
 
         // Get the current collateral ratio
-        if (debtAndCapital) {
+        if (debtAndCapital.toString() !== "0") {
           const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
           setCollateralRatio(_collateralRatio)
         } else {
