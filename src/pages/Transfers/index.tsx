@@ -240,7 +240,7 @@ export default function Transfers() {
         method: "createTrustLine",
         params: [
           issuerAddress,
-          "AUR"
+          "PHI"
         ],
       },
     });
@@ -449,7 +449,7 @@ export default function Transfers() {
               If you used XRPL Composer in the last step, you do not need to use the transaction sender tool.
             </Alert>
             <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
-            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>AUR</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>PHI</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
           </>
         )
       }
@@ -594,7 +594,7 @@ export default function Transfers() {
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
           <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
-          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → PHI → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
           <button className="btn btn-primary my-4" onClick={() => { console.log("test") }}>Continue</button>
         </div>
       )

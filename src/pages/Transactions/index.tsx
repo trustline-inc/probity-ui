@@ -70,7 +70,7 @@ export default function Transactions() {
             )
           }
           {
-            (name === "WithdrawAurei") && (
+            (name === "WithdrawStablecoin") && (
               <Accordion.Collapse eventKey={(key).toString()} className="border">
                 <div className="d-flex justify-content-around p-4">
                   <div>Amount: {utils.formatEther(log.args.amount).toString()}</div>
