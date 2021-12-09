@@ -77,11 +77,13 @@ function Balances() {
    * Update the current APR
    */
   React.useEffect(() => {
-    const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
-    const supply = Number(utils.formatEther(totalCapital.div(RAY)));
-    const newUtilization = (borrows / supply);
-    const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-    setEstimatedAPR(`${(Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)}%`)
+    if (totalDebt && totalCapital) {
+      const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
+      const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+      const newUtilization = (borrows / supply);
+      const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+      setEstimatedAPR(`${(Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)}%`)
+    }
   }, [totalCapital, totalDebt])
 
   React.useEffect(() => {
