@@ -114,7 +114,7 @@ function Balances() {
         }
       })()
     }
-  }, [account, library, chainId])
+  }, [account, library, chainId, totalDebt, totalCapital])
 
   if (!vault) return null;
   return (
