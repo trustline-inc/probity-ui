@@ -47,6 +47,8 @@ export default function Transfers() {
   const [transferStage, setTransferStage] = React.useState(transferData?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
+  const [usePayStringProtocol, setUsePayStringProtocol] = React.useState(true)
+  const [xrpAddress, setXrpAddress] = React.useState("")
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
   const [client, setClient] = React.useState<WalletConnectClient>()
@@ -165,6 +167,11 @@ export default function Transfers() {
       domain = domain.replace(/[^a-zA-Z\d].[^a-zA-Z]/ig, "");
     }
     setDomain(domain);
+  }
+
+  const onXrpAddressChange = (event: any) => {
+    let address = event.target.value
+    setXrpAddress(address)
   }
 
   /**
@@ -350,69 +357,73 @@ export default function Transfers() {
       setLoading(true)
       setShowTransferModal(true)
 
-      const response = await axios(`http://${domain}/${username}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/xrpl-testnet+json',
-          'PayID-Version': '1.0'
-        }
-      })
-
-      if (response.data.addresses.length > 0) {
-        // Take the first one for now.
-        const address = response.data.addresses[0].addressDetails.address;
-        setReceiverAddress(address)
-
-        if (library && account) {
-          const _transfer = new solaris.Transfer({
-            direction: {
-              source: "LOCAL",
-              destination: "XRPL_TESTNET"
-            },
-            amount: BigNumber.from(transferAmount).mul(WAD),
-            tokenAddress: getStablecoinAddress(chainId!),
-            bridgeAddress: BRIDGE,
-            provider: library,
-            signer: library.getSigner() as any
-          })
-          setTransfer(_transfer)
-          setTransferData({
-            stage: "OUTBOUND_PERMIT",
-            amount: transferAmount.toString(),
-            username
-          })
-
-          // First check the allowance
-          const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
-          const allowance = await stablecoin.allowance(account, BRIDGE)
-
-          if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
-            setTransferStage("OUTBOUND_PERMIT")
-            setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
-            let data = await _transfer.approve()
-            const transactionObject = {
-              to: getStablecoinAddress(chainId!),
-              from: account,
-              data
-            };
-            const result = await web3.eth.sendTransaction((transactionObject as any))
-            setTransferModalBody(`Bridge contract allowance created successfully.`)
-            ctx.updateTransactions(result);
+      if (usePayStringProtocol) {
+        const response = await axios(`http://${domain}/${username}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/xrpl-testnet+json',
+            'PayID-Version': '1.0'
           }
-          setTransferStage("OUTBOUND_PENDING")
-          setTransferData({
-            ...transferData,
-            stage: "OUTBOUND_PENDING"
-          })
-          setTransferModalBody(
-            <>
-              <p>
-                The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
-              </p>
-              <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
-            </>
-          )
+        })
+
+        if (response.data.addresses.length > 0) {
+          // Take the first one for now.
+          const address = response.data.addresses[0].addressDetails.address;
+          setReceiverAddress(address)
         }
+      } else {
+        setReceiverAddress(xrpAddress)
+      }
+
+      if (library && account) {
+        const _transfer = new solaris.Transfer({
+          direction: {
+            source: "LOCAL",
+            destination: "XRPL_TESTNET"
+          },
+          amount: BigNumber.from(transferAmount).mul(WAD),
+          tokenAddress: getStablecoinAddress(chainId!),
+          bridgeAddress: BRIDGE,
+          provider: library,
+          signer: library.getSigner() as any
+        })
+        setTransfer(_transfer)
+        setTransferData({
+          stage: "OUTBOUND_PERMIT",
+          amount: transferAmount.toString(),
+          username
+        })
+
+        // First check the allowance
+        const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
+        const allowance = await stablecoin.allowance(account, BRIDGE)
+
+        if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
+          setTransferStage("OUTBOUND_PERMIT")
+          setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
+          let data = await _transfer.approve()
+          const transactionObject = {
+            to: getStablecoinAddress(chainId!),
+            from: account,
+            data
+          };
+          const result = await web3.eth.sendTransaction((transactionObject as any))
+          setTransferModalBody(`Bridge contract allowance created successfully.`)
+          ctx.updateTransactions(result);
+        }
+        setTransferStage("OUTBOUND_PENDING")
+        setTransferData({
+          ...transferData,
+          stage: "OUTBOUND_PENDING"
+        })
+        setTransferModalBody(
+          <>
+            <p>
+              The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
+            </p>
+            <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
+          </>
+        )
       }
     } catch (error) {
       setError(error);
@@ -776,20 +787,43 @@ export default function Transfers() {
           </div>
           <div className="row mt-3">
             <div className="col-md-8 offset-md-2">
-              <label className="form-label">PayString Address</label>
-              <div className="input-group mb-3">
-                <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
-                <span className="input-group-text">$</span>
-                <input type="text" className="form-control" value={domain} onChange={onDomainChange} placeholder="trustline.app" aria-label="domain" />
+              <div className="form-check">
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onClick={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
+                <label className="form-check-label" htmlFor="flexCheckDefault">
+                  Use PayString Protocol
+                </label>
               </div>
             </div>
           </div>
+          {
+            usePayStringProtocol ? (
+            <div className="row mt-3">
+              <div className="col-md-8 offset-md-2">
+                <label className="form-label">PayString Address</label>
+                <div className="input-group mb-3">
+                  <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
+                  <span className="input-group-text">$</span>
+                  <input type="text" className="form-control" value={domain} onChange={onDomainChange} placeholder="trustline.app" aria-label="domain" />
+                </div>
+              </div>
+            </div>
+            ) : (
+              <div className="row mt-3">
+                <div className="col-md-8 offset-md-2">
+                  <label className="form-label">XRP Address</label>
+                  <div className="input-group mb-3">
+                    <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
+                  </div>
+                </div>
+              </div>
+            )
+          }
           <div className="row">
             <div className="col-md-8 offset-md-2 mt-4 d-grid">
               <button
                 className="btn btn-primary btn-lg mt-4"
                 onClick={openOutboundTransferModal}
-                disabled={transferAmount === 0 || username === "" || domain === "" || loading}
+                disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || loading}
               >
                 {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
               </button>
