@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
+import { FTSO, LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -53,7 +53,9 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           console.log("usedCollateral", utils.formatEther(usedCollateral).toString())
 
           // Get the current collateral ratio
-          const collateralRatio = `${usedCollateral.mul(100).div(debtAndCapital).toString()}%`
+          const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
+          const { _price } = await ftsoContract.getCurrentPrice()
+          const collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
           console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
