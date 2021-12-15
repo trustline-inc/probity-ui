@@ -11,6 +11,7 @@ interface Props {
   onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   redeem: () => void;
+  loading: boolean;
 }
 
 function RedemptionActivity({
@@ -19,7 +20,8 @@ function RedemptionActivity({
   collateralRatio,
   onCollateralAmountChange,
   onSupplyAmountChange,
-  redeem
+  redeem,
+  loading
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
 
@@ -94,8 +96,10 @@ function RedemptionActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={redeem}
-            disabled={supplyAmount === 0 || collateralAmount === 0}
-          >Confirm</button>
+            disabled={supplyAmount === 0 || collateralAmount === 0 || loading}
+          >
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
+          </button>
         </div>
       </div>
     </>

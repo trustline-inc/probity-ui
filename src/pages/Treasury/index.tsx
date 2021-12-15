@@ -137,6 +137,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         console.log(error);
         setError(error);
       }
+      setLoading(false)
     }
   }
 
@@ -213,6 +214,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                   collateralRatio={collateralRatio}
                   onSupplyAmountChange={onSupplyAmountChange}
                   redeem={burn}
+                  loading={loading}
                 />
               )
             }
