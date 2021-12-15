@@ -116,7 +116,7 @@ export default function Transfers() {
         });
       }
     }
-  }, [session, pairings])
+  }, [session, pairings, client])
 
   /**
    * Save every update to the current transfer
@@ -143,7 +143,7 @@ export default function Transfers() {
       const _verifiedIssuers = await bridge.getVerifiedIssuers()
       setVerifiedIssuers(_verifiedIssuers)
     })()
-  }, [])
+  }, [library])
 
   /**
    * Input event handlers
