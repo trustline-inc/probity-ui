@@ -67,8 +67,8 @@ export default function Transfers() {
           const _client = await WalletConnectClient.init({
             controller: false,
             logger: DEFAULT_LOGGER,
-            relayProvider: DEFAULT_RELAY_PROVIDER,
-            apiKey: process.env.REACT_APP_WALLETCONNECT_API_KEY
+            relayUrl: DEFAULT_RELAY_PROVIDER,
+            projectId: process.env.REACT_APP_WALLETCONNECT_API_KEY
           });
 
           _client.on(
@@ -788,7 +788,7 @@ export default function Transfers() {
           <div className="row mt-3">
             <div className="col-md-8 offset-md-2">
               <div className="form-check">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onClick={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
                 <label className="form-check-label" htmlFor="flexCheckDefault">
                   Use PayString Protocol
                 </label>

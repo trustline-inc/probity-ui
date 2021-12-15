@@ -15,10 +15,10 @@
     "@types/numeral": "^2.0.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@walletconnect/utils": "^2.0.0-beta.19",
+    "@walletconnect/client": "^2.0.0-beta.20.6",
     "@walletconnect/qrcode-modal": "^2.0.0-alpha.20",
-    "@walletconnect/client": "^2.0.0-beta.20.5",
-    "@walletconnect/types": "^2.0.0-beta.19",
+    "@walletconnect/types": "^2.0.0-beta.20.4",
+    "@walletconnect/utils": "^2.0.0-beta.20.4",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/ledger-connector": "^6.1.9",
@@ -41,6 +41,7 @@
     "web3-react": "^5.0.5"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "start": "react-scripts start",
     "start:https": "HTTPS=true SSL_CRT_FILE=./local-dev.pem SSL_KEY_FILE=./local-dev-key.pem react-scripts start",
     "build": "react-scripts build",
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.0.16",
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "patch-package": "^6.4.7"
   }
 }

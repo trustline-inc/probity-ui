@@ -107,7 +107,7 @@ function App() {
                       <strong>
                         <i className="fas fa-exclamation-circle"></i> Notice
                       </strong>{" "}
-                      Probity is currently running on a test network only. The Songbird release is scheduled to be available for customers on 1/1/22.
+                      Probity is currently running on a test network only. The Songbird release is scheduled to be available for limited testing in Q1 2022.
                       <button
                         type="button"
                         className="btn-close"
