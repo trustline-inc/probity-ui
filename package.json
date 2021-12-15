@@ -17,7 +17,7 @@
     "@types/react-dom": "^17.0.0",
     "@walletconnect/utils": "^2.0.0-beta.19",
     "@walletconnect/qrcode-modal": "^2.0.0-alpha.20",
-    "@walletconnect/client": "^2.0.0-beta.20.2",
+    "@walletconnect/client": "^2.0.0-beta.20.5",
     "@walletconnect/types": "^2.0.0-beta.19",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
