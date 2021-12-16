@@ -60,7 +60,6 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
           // Check if it's liquidation eligible
           const liquidationEligible = debtAndCapital.gt(usedCollateral.mul(adjustedPrice).div(RAY))
-          console.log("liquidationEligible", liquidationEligible)
 
           _vaults.push({
             address: address,
@@ -76,36 +75,30 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     }
   }, [library, users, collateralPrice, chainId])
 
-  const liquidate = async (address: string, type: string) => {
+  const liquidate = async (address: string) => {
     if (library) {
       const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
-      // try {
-      //   let result, data;
-      //   if (type === "debt") {
-      //     result = await stablecoin.approve(
-      //       TELLER,
-      //       utils.parseEther(price.toString()).toString()
-      //     );
-      //     data = await result.wait();
-      //     ctx.updateTransactions(data);
-      //     result = await teller.liquidate(address, utils.parseEther(price.toString()).toString());
-      //     data = await result.wait();
-      //     ctx.updateTransactions(data);
-      //   } else {
-      //     result = await treasury.liquidate(address)
-      //     data = await result.wait();
-      //     ctx.updateTransactions(data);
-      //   }
-      // } catch (error) {
-      //   console.error(error)
-      //   setError(error);
-      // }
+      try {
+        let result, data;
+        result = await stablecoin.approve(
+          LIQUIDATOR,
+          utils.parseEther(price.toString()).toString()
+        );
+        data = await result.wait();
+        ctx.updateTransactions(data);
+        result = await liquidator.liquidateVault(web3.utils.keccak256("SGB"), address);
+        data = await result.wait();
+        ctx.updateTransactions(data);
+      } catch (error) {
+        console.error(error)
+        setError(error);
+      }
     }
   }
 
-  const liquidationEligibleVaults = vaults.filter((vault: any) => vault.loanLiquidationEligible || vault.capitalLiquidationEligible).map((vault: any, index: number) => {
+  const liquidationEligibleVaults = vaults.filter((vault: any) => vault.liquidationEligible).map((vault: any, index: number) => {
     return (
       <div key={index} className="row">
         <div className="col-8 border">
@@ -115,15 +108,11 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <div className="mb-3">
               <label htmlFor="purchase_price" className="form-label">Purchase Price</label>
-              <input type="number" className="form-control" id="purchase_price" placeholder="0.00" onChange={event => setPrice(Number(event.target.value))} disabled={!vault.loanLiquidationEligible} />
+              <input type="number" className="form-control" id="purchase_price" placeholder="0.00" onChange={event => setPrice(Number(event.target.value))} disabled={!vault.liquidationEligible} />
               <small className="text-muted">Purchase price in {getStablecoinSymbol(chainId!)} (debt liquidation)</small>
             </div>
-            <button className="btn btn-primary my-2 w-100" disabled={!vault.loanLiquidationEligible} onClick={() => liquidate(vault.address, "debt")}>
-              Liquidate Debt
-            </button>
-            <br/>
-            <button className="btn btn-primary w-100" disabled={!vault.capitalLiquidationEligible} onClick={() => liquidate(vault.address, "capital")}>
-              Liquidate Capital
+            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault.address)}>
+              Liquidate Vault
             </button>
           </div>
         </div>
@@ -132,7 +121,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     )
   })
 
-  const nonEligibleVaults = vaults.filter((vault: any) => !vault.loanLiquidationEligible && !vault.capitalLiquidationEligible).map((vault: any, index: number) => {
+  const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible && !vault.capitalLiquidationEligible).map((vault: any, index: number) => {
     return (
       <div key={index} className="row">
         <div className="col-12 border">
