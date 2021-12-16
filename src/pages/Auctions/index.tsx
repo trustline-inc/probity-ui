@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getStablecoinAddress, getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -49,13 +49,17 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
           // Get the vault's debt and capital
           const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
-          console.log("debtAndCapital", utils.formatEther(debtAndCapital).toString())
-          console.log("usedCollateral", utils.formatEther(usedCollateral).toString())
 
           // Get the current collateral ratio
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
-          const collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+
+          let collateralRatio
+          if (usedCollateral.gt(0)) {
+            collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+          } else {
+            collateralRatio = `0%`
+          }
           console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
@@ -77,19 +81,11 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
   const liquidate = async (address: string) => {
     if (library) {
-      const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
       try {
-        let result, data;
-        result = await stablecoin.approve(
-          LIQUIDATOR,
-          utils.parseEther(price.toString()).toString()
-        );
-        data = await result.wait();
-        ctx.updateTransactions(data);
-        result = await liquidator.liquidateVault(web3.utils.keccak256("SGB"), address);
-        data = await result.wait();
+        const result = await liquidator.liquidateVault(web3.utils.keccak256("SGB"), address);
+        const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.error(error)
