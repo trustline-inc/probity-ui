@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { AUCTIONEER, INTERFACES, RAY } from '../../constants';
+import { AUCTIONEER, INTERFACES, RESERVE_POOL } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -58,23 +58,29 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
             No auctions running
           </div>
         ) : 
-          auctions.map((auction: any) => {
-            return (
-              <pre>
-                {
-                  JSON.stringify({
-                    beneficiary: auction?.beneficiary,
-                    collId: auction?.collId,
-                    debt: auction?.debt?.toString(),
-                    isOver: auction?.isOver,
-                    lot: auction?.lot?.toString(),
-                    owner: auction?.owner,
-                    startPrice: auction?.startPrice?.toString(),
-                    startTime: auction?.startTime?.toString()
-                  }, null, 2)
-                }
-            </pre>
-          )})
+          <>
+            <div className="alert alert-info">
+              <code>{RESERVE_POOL}</code> is the Reserve Pool's address.
+            </div>
+            {auctions.map((auction: any) => {
+              return (
+                <pre>
+                  {
+                    JSON.stringify({
+                      beneficiary: auction?.beneficiary,
+                      collId: auction?.collId,
+                      debt: auction?.debt?.toString(),
+                      isOver: auction?.isOver,
+                      lot: auction?.lot?.toString(),
+                      owner: auction?.owner,
+                      startPrice: auction?.startPrice?.toString(),
+                      startTime: auction?.startTime?.toString()
+                    }, null, 2)
+                  }
+                </pre>
+              )
+            })}
+        </>
       }
     </Activity>
   )

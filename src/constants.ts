@@ -8,6 +8,7 @@ import LiquidatorABI from "@trustline/probity/artifacts/contracts/probity/Liquid
 import PriceFeedABI from "@trustline/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeCollateralABI from "@trustline/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import RegistryABI from "@trustline/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
+import ReservePoolABI from "@trustline/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
 import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import PbtTokenABI from "@trustline/probity/artifacts/contracts/probity/tokens/PbtToken.sol/PbtToken.json";
 import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
@@ -28,6 +29,7 @@ export const NATIVE_COLLATERAL = process.env && process.env.REACT_APP_NATIVE_COL
 export const REGISTRY          = process.env && process.env.REACT_APP_REGISTRY          ? process.env.REACT_APP_REGISTRY          : "";
 export const STATE_CONNECTOR   = process.env && process.env.REACT_APP_STATE_CONNECTOR   ? process.env.REACT_APP_STATE_CONNECTOR   : "";
 export const PBT_TOKEN         = process.env && process.env.REACT_APP_PBT_TOKEN         ? process.env.REACT_APP_PBT_TOKEN         : "";
+export const RESERVE_POOL      = process.env && process.env.REACT_APP_RESERVE_POOL      ? process.env.REACT_APP_RESERVE_POOL      : "";
 export const TELLER            = process.env && process.env.REACT_APP_TELLER            ? process.env.REACT_APP_TELLER            : "";
 export const TREASURY          = process.env && process.env.REACT_APP_TREASURY          ? process.env.REACT_APP_TREASURY          : "";
 export const VAULT_ENGINE      = process.env && process.env.REACT_APP_VAULT_ENGINE      ? process.env.REACT_APP_VAULT_ENGINE      : "";
@@ -46,6 +48,7 @@ export const INTERFACES = {
   [PRICE_FEED]: PriceFeedABI,
   [NATIVE_COLLATERAL]: NativeCollateralABI,
   [REGISTRY]: RegistryABI,
+  [RESERVE_POOL]: ReservePoolABI,
   [STATE_CONNECTOR]: StateConnectorABI,
   [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
