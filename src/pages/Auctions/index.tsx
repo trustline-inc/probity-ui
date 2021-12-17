@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { AUCTIONEER, INTERFACES, RESERVE_POOL } from '../../constants';
+import { AUCTIONEER, INTERFACES, RESERVE_POOL, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -69,12 +69,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                     JSON.stringify({
                       beneficiary: auction?.beneficiary,
                       collId: getCollateralId(auction?.collId),
-                      debt: auction?.debt?.toString(),
+                      debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
                       isOver: auction?.isOver,
-                      lot: auction?.lot?.toString(),
+                      lot: utils.formatEther(auction?.lot)?.toString(),
                       owner: auction?.owner,
-                      startPrice: auction?.startPrice?.toString(),
-                      startTime: auction?.startTime?.toString()
+                      startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
+                      startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
                     }, null, 2)
                   }
                 </pre>
