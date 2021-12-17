@@ -21,6 +21,7 @@ import Assets from "../../pages/Assets";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
+import Liquidations from "../../pages/Liquidations";
 import { VERSION } from '../../constants';
 import "./index.css";
 import SocialLinks from "../../components/Social";
@@ -187,6 +188,9 @@ function App() {
                         </Route>
                         <Route path="/transfers">
                           <Transfers />
+                        </Route>
+                        <Route path="/liquidations">
+                          <Liquidations collateralPrice={collateralPrice} />
                         </Route>
                         <Route path="/auctions">
                           <Auctions collateralPrice={collateralPrice} />
