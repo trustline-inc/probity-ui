@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { FTSO, LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
+import { AUCTIONEER, INTERFACES, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -13,10 +13,37 @@ import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
-  const [auctions, setAuctions] = useState([]);
+  const [auctions, setAuctions] = useState<any[]>([]);
+  const [auctionCount, setAuctionCount] = useState(0)
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   const ctx = useContext(EventContext)
+
+  useEffect(() => {
+    if (library) {
+      (async () => {
+        const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
+        const _auctionCount = await auctioneer.auctionCount()
+        console.log("_auctionCount", _auctionCount.toString())
+        setAuctionCount(_auctionCount);
+      })()
+    }
+  }, [library])
+
+  useEffect(() => {
+    if (library && auctionCount) {
+      (async () => {
+        const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
+        const _auctions = []
+        for (let i = 0; i < auctionCount; i++) {
+          const auction: any = await auctioneer.auctions(i)
+          _auctions.push(auction)
+        }
+        console.log(_auctions)
+        setAuctions(_auctions);
+      })()
+    }
+  }, [library, auctionCount])
 
   return (
     <Activity active={active} activity={ActivityType.Liquidate} error={error}>
@@ -30,7 +57,24 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
           <div className="d-flex justify-content-center align-items-center py-5">
             No auctions running
           </div>
-        ) : auctions
+        ) : 
+          auctions.map((auction: any) => {
+            return (
+              <pre>
+                {
+                  JSON.stringify({
+                    beneficiary: auction?.beneficiary,
+                    collId: auction?.collId,
+                    debt: auction?.debt?.toString(),
+                    isOver: auction?.isOver,
+                    lot: auction?.lot?.toString(),
+                    owner: auction?.owner,
+                    startPrice: auction?.startPrice?.toString(),
+                    startTime: auction?.startTime?.toString()
+                  }, null, 2)
+                }
+            </pre>
+          )})
       }
     </Activity>
   )
