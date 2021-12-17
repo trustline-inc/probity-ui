@@ -149,6 +149,8 @@ function App() {
                                   return <span className="text-danger">{error.message}</span>
                                 case "NoEthereumProviderError":
                                   return <span className="text-danger">{error.message}</span>
+                                case undefined:
+                                  return <span className="text-danger">{error?.message}</span>
                                 default:
                                   return JSON.stringify(error)
                               }
