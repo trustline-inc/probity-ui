@@ -9,13 +9,12 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 
 function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [vaults, setVaults] = useState<any>([]);
-  const [price, setPrice] = useState(0.00);
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   const ctx = useContext(EventContext)
@@ -79,12 +78,12 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
     }
   }, [library, users, collateralPrice, chainId])
 
-  const liquidate = async (address: string) => {
+  const liquidate = async (collId: string, address: string) => {
     if (library) {
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
       try {
-        const result = await liquidator.liquidateVault(web3.utils.keccak256("SGB"), address);
+        const result = await liquidator.liquidateVault(web3.utils.keccak256(collId), address);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -102,7 +101,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         </div>
         <div className="col-4 d-flex justify-content-center align-items-center">
           <div>
-            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault.address)}>
+            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault.collId, vault.address)}>
               Liquidate Vault
             </button>
           </div>
@@ -112,7 +111,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
     )
   })
 
-  const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible && !vault.capitalLiquidationEligible).map((vault: any, index: number) => {
+  const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible).map((vault: any, index: number) => {
     return (
       <div key={index} className="row">
         <div className="col-12 border">

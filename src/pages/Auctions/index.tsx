@@ -22,10 +22,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library) {
       (async () => {
+        setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctionCount = await auctioneer.auctionCount()
         console.log("_auctionCount", _auctionCount.toString())
         setAuctionCount(_auctionCount);
+        setLoading(false)
       })()
     }
   }, [library])
@@ -33,6 +35,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   useEffect(() => {
     if (library && auctionCount) {
       (async () => {
+        setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctions = []
         for (let i = 0; i < auctionCount; i++) {
@@ -41,6 +44,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
         }
         console.log(_auctions)
         setAuctions(_auctions);
+        setLoading(false)
       })()
     }
   }, [library, auctionCount])
@@ -64,20 +68,26 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
             </div>
             {auctions.map((auction: any) => {
               return (
-                <pre>
-                  {
-                    JSON.stringify({
-                      beneficiary: auction?.beneficiary,
-                      collId: getCollateralId(auction?.collId),
-                      debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
-                      isOver: auction?.isOver,
-                      lot: utils.formatEther(auction?.lot)?.toString(),
-                      owner: auction?.owner,
-                      startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
-                      startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
-                    }, null, 2)
-                  }
-                </pre>
+                <div className="card my-3">
+                  <div className="card-body">
+                    <h6>Details</h6>
+                    <pre>
+                      {
+                        JSON.stringify({
+                          beneficiary: auction?.beneficiary,
+                          collId: getCollateralId(auction?.collId),
+                          debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
+                          isOver: auction?.isOver,
+                          lot: utils.formatEther(auction?.lot)?.toString(),
+                          owner: auction?.owner,
+                          startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
+                          startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
+                        }, null, 2)
+                      }
+                    </pre>
+                    <h6>Bids</h6>
+                  </div>
+                </div>
               )
             })}
         </>
