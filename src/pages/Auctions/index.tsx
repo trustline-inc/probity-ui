@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getCollateralId } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -68,7 +68,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                   {
                     JSON.stringify({
                       beneficiary: auction?.beneficiary,
-                      collId: auction?.collId,
+                      collId: getCollateralId(auction?.collId),
                       debt: auction?.debt?.toString(),
                       isOver: auction?.isOver,
                       lot: auction?.lot?.toString(),
