@@ -66,26 +66,41 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
             <div className="alert alert-info">
               <code>{RESERVE_POOL}</code> is the Reserve Pool's address.
             </div>
-            {auctions.map((auction: any) => {
+            {auctions.map((auction: any, index: number) => {
               return (
-                <div className="card my-3">
+                <div className="card my-3" key={index}>
                   <div className="card-body">
-                    <h6>Details</h6>
-                    <pre>
-                      {
-                        JSON.stringify({
-                          beneficiary: auction?.beneficiary,
-                          collId: getCollateralId(auction?.collId),
-                          debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
-                          isOver: auction?.isOver,
-                          lot: utils.formatEther(auction?.lot)?.toString(),
-                          owner: auction?.owner,
-                          startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
-                          startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
-                        }, null, 2)
-                      }
-                    </pre>
-                    <h6>Bids</h6>
+                    <div className="row">
+                      <div className="col-8">
+                        <h6>Details</h6>
+                        <pre className="mt-3">
+                          {
+                            JSON.stringify({
+                              beneficiary: auction?.beneficiary,
+                              collId: getCollateralId(auction?.collId),
+                              debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
+                              isOver: auction?.isOver,
+                              lot: utils.formatEther(auction?.lot)?.toString(),
+                              owner: auction?.owner,
+                              startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
+                              startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
+                            }, null, 2)
+                          }
+                        </pre>
+                      </div>
+                      <div className="col-4 d-flex justify-content-center align-items-center">
+                        <div>
+                          <button className="btn btn-primary w-100" disabled={true} onClick={() => { return }}>
+                            Place Bid
+                          </button>
+                          <button className="btn btn-primary w-100 my-3" disabled={true} onClick={() => { return }}>
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                      <hr className="my-3" />
+                      <h6>Bids</h6>
+                    </div>
                   </div>
                 </div>
               )
