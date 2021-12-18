@@ -6,16 +6,16 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
-import numeral from "numeral";
-import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getCollateralId, getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getCollateralId, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
   const [metamaskLoading, setMetamaskLoading] = useState(false)
   const [bidPrice, setBidPrice] = useState<number>(0.00)
   const [bidLot, setBidLot] = useState<number>(0.00)
+  const [lot, setLot] = useState<number>(0.00)
+  const [maxPrice, setMaxPrice] = useState<number>(0.00)
   const [auctions, setAuctions] = useState<any[]>([]);
   const [auctionCount, setAuctionCount] = useState(0)
   const { library, active, chainId } = useWeb3React<Web3Provider>()
@@ -71,6 +71,16 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     setBidLot(value)
   }
 
+  const onChangeMaxPrice = (event: any) => {
+    const { value } = event.target
+    setMaxPrice(value)
+  }
+
+  const onChangeLot = (event: any) => {
+    const { value } = event.target
+    setLot(value)
+  }
+
   const placeBid = async (auctionId: number) => {
     try {
       console.log("placing bid:", bidPrice)
@@ -86,8 +96,18 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     }
   }
 
-  const buyNow = (auctionId: number, lot: number, maxPrice: number) => {
-    console.log("attempting buy it now")
+  const buyNow = async (auctionId: number, lot: number, maxPrice: number) => {
+    try {
+      console.log("buying")
+      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const tx = await auctioneer.buyItNow(auctionId, lot, maxPrice)
+      setMetamaskLoading(true)
+      await tx.wait()
+      setMetamaskLoading(false)
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    }
   }
 
   const finalizeSale = async (auctionId: number) => {
@@ -126,9 +146,9 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
               return (
                 <div className="card my-3" key={index}>
                   <div className="card-body">
+                    <h6>Details</h6>
                     <div className="row">
                       <div className="col-8">
-                        <h6>Details</h6>
                         <pre className="mt-3">
                           {
                             JSON.stringify({
@@ -147,6 +167,37 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                       <div className="col-4 d-flex justify-content-center align-items-center">
                         <div>
                           <div className="my-3">
+                            <label>Lot ({collId})</label>
+                            <input className="form-control" placeholder="0.00" onChange={onChangeLot} />
+                          </div>
+                          <div className="my-3">
+                            <label>Max Price ({getStablecoinSymbol(chainId!)})</label>
+                            <input className="form-control" placeholder="0.00" onChange={onChangeMaxPrice} />
+                          </div>
+                          <button className="btn btn-outline-primary my-3 w-100" onClick={() => buyNow(auction.id, lot, maxPrice)}>
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <hr className="my-3" />
+                    <h6>Bidding</h6>
+                    <div className="row">
+                      <div className="col-8 d-flex justify-content-center align-items-center text-center">
+                        <div>
+                          <h6>Current High Bid</h6>
+                          {
+                            auction.highestBid ? (
+                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
+                            ) : (
+                              <p className="text-muted">No bids</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className="col-4 d-flex justify-content-center align-items-center">
+                        <div>
+                          <div className="my-3">
                             <label>Bid Lot ({collId})</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidLot} />
                           </div>
@@ -161,24 +212,6 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                             Finalize Sale
                           </button>
                         </div>
-                      </div>
-                    </div>
-                    <hr className="my-3" />
-                    <div className="row">
-                      <div className="col-8">
-                        <h6>Current High Bid:</h6>
-                        {
-                          auction.highestBid ? (
-                            <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
-                          ) : (
-                            <p className="text-muted">No bids</p>
-                          )
-                        }
-                      </div>
-                      <div className="col-4 d-flex justify-content-center align-items-center">
-                        <button className="btn btn-outline-primary w-100 my-3" onClick={() => buyNow(auction.id, 0, 0)}>
-                          Buy Now
-                        </button>
                       </div>
                     </div>
                   </div>
