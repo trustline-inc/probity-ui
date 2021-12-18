@@ -9,10 +9,13 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getCollateralId } from "../../utils";
+import { getCollateralId, getStablecoinSymbol, getNativeTokenSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
+  const [metamaskLoading, setMetamaskLoading] = useState(false)
+  const [bidPrice, setBidPrice] = useState<number>(0.00)
+  const [bidLot, setBidLot] = useState<number>(0.00)
   const [auctions, setAuctions] = useState<any[]>([]);
   const [auctionCount, setAuctionCount] = useState(0)
   const { library, active, chainId } = useWeb3React<Web3Provider>()
@@ -38,9 +41,11 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctions = []
-        for (let i = 0; i < auctionCount; i++) {
-          const auction: any = await auctioneer.auctions(i)
-          _auctions.push(auction)
+        for (let id = 0; id < auctionCount; id++) {
+          const auction: any = await auctioneer.auctions(id)
+          const _nextHighestBidder = await auctioneer.nextHighestBidder(id, "0x0000000000000000000000000000000000000000")
+          console.log("_nextHighestBidder", _nextHighestBidder)
+          _auctions.push({ ...auction, id })
         }
         console.log(_auctions)
         setAuctions(_auctions);
@@ -48,6 +53,35 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
       })()
     }
   }, [library, auctionCount])
+
+  const onChangeBidPrice = (event: any) => {
+    const { value } = event.target
+    setBidPrice(value)
+  }
+
+  const onChangeBidLot = (event: any) => {
+    const { value } = event.target
+    setBidLot(value)
+  }
+
+  const placeBid = async (id: number) => {
+    try {
+      console.log("placing bid:", bidPrice)
+      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const bidLot = 0
+      const tx = await auctioneer.placeBid(id, bidPrice, bidLot)
+      setMetamaskLoading(true)
+      await tx.wait()
+      setMetamaskLoading(false)
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    }
+  }
+
+  const buyNow = () => {
+    console.log("attempting buy")
+  }
 
   return (
     <Activity active={active} activity={ActivityType.Liquidate} error={error}>
@@ -67,6 +101,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
               <code>{RESERVE_POOL}</code> is the Reserve Pool's address.
             </div>
             {auctions.map((auction: any, index: number) => {
+              const collId = getCollateralId(auction?.collId)
               return (
                 <div className="card my-3" key={index}>
                   <div className="card-body">
@@ -77,7 +112,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                           {
                             JSON.stringify({
                               beneficiary: auction?.beneficiary,
-                              collId: getCollateralId(auction?.collId),
+                              collId,
                               debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
                               isOver: auction?.isOver,
                               lot: utils.formatEther(auction?.lot)?.toString(),
@@ -90,10 +125,18 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                       </div>
                       <div className="col-4 d-flex justify-content-center align-items-center">
                         <div>
-                          <button className="btn btn-primary w-100" disabled={true} onClick={() => { return }}>
-                            Place Bid
+                          <div className=" my-3">
+                            <label>Bid Lot ({collId})</label>
+                            <input className="form-control" placeholder="0.00" onChange={onChangeBidLot} />
+                          </div>
+                          <div className=" my-3">
+                            <label>Bid Price ({getStablecoinSymbol(chainId!)})</label>
+                            <input className="form-control" placeholder="0.00" onChange={onChangeBidPrice} />
+                          </div>
+                          <button className="btn btn-primary w-100" disabled={metamaskLoading || (!bidPrice || !bidLot)} onClick={(event) => placeBid(auction.id)}>
+                            { metamaskLoading ? <i className="fa fa-spinner fa-spin"></i> : "Place Bid" }
                           </button>
-                          <button className="btn btn-primary w-100 my-3" disabled={true} onClick={() => { return }}>
+                          <button className="btn btn-outline-secondary w-100 my-3" onClick={buyNow}>
                             Buy Now
                           </button>
                         </div>
