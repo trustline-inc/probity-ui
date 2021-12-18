@@ -456,10 +456,6 @@ export default function Transfers() {
         })
         setTransferModalBody(
           <>
-            <Alert variant="info">
-              If you used XRPL Composer in the last step, you do not need to use the transaction sender tool.
-            </Alert>
-            <p>Use the <a href="https://xrpl.org/tx-sender.html" target="blank">Transaction Sender</a> to fund the account with the base reserve. Enter <code>{issuerAddress}</code> as the destination address. Enter <code>10000012</code> drops of XRP (10 XRP for the account reserve and 12 drops for the transaction fee). Press "Send XRP Payment" to activate the issuing account.</p>
             <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>PHI</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
           </>
         )
