@@ -667,7 +667,7 @@ export default function Transfers() {
                     <Col />
                     <Col className="d-grid">
                       <Button variant="primary" onClick={createTrustLine}>
-                        Done
+                        Continue
                       </Button>
                     </Col>
                     <Col />
