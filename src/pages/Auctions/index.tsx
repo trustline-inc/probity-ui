@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
 import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
-import { getCollateralId, getStablecoinSymbol, getNativeTokenSymbol } from "../../utils";
+import { getCollateralId, getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -42,10 +42,17 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctions = []
         for (let id = 0; id < auctionCount; id++) {
-          const auction: any = await auctioneer.auctions(id)
-          const _nextHighestBidder = await auctioneer.nextHighestBidder(id, "0x0000000000000000000000000000000000000000")
-          console.log("_nextHighestBidder", _nextHighestBidder)
-          _auctions.push({ ...auction, id })
+          let auction: any = await auctioneer.auctions(id)
+          const HEAD = "0x0000000000000000000000000000000000000001"
+          let _nextHighestBidder = await auctioneer.nextHighestBidder(id, HEAD)
+          let highestBid
+          if (_nextHighestBidder === "0x0000000000000000000000000000000000000000") {
+            highestBid = null
+          } else {
+            highestBid = await auctioneer.bids(id, _nextHighestBidder)
+          }
+          console.log("highestBid", highestBid)
+          _auctions.push({ ...auction, id, highestBid })
         }
         console.log(_auctions)
         setAuctions(_auctions);
@@ -142,7 +149,14 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                         </div>
                       </div>
                       <hr className="my-3" />
-                      <h6>Bids</h6>
+                      <h6>Current High Bid:</h6>
+                      {
+                        auction.highestBid ? (
+                          <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
+                        ) : (
+                          <p className="text-muted">No bids</p>
+                        )
+                      }
                     </div>
                   </div>
                 </div>
