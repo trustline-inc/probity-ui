@@ -71,12 +71,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     setBidLot(value)
   }
 
-  const placeBid = async (id: number) => {
+  const placeBid = async (auctionId: number) => {
     try {
       console.log("placing bid:", bidPrice)
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
       const bidLot = 0
-      const tx = await auctioneer.placeBid(id, bidPrice, bidLot)
+      const tx = await auctioneer.placeBid(auctionId, bidPrice, bidLot)
       setMetamaskLoading(true)
       await tx.wait()
       setMetamaskLoading(false)
@@ -86,8 +86,22 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     }
   }
 
-  const buyNow = () => {
-    console.log("attempting buy")
+  const buyNow = (auctionId: number, lot: number, maxPrice: number) => {
+    console.log("attempting buy it now")
+  }
+
+  const finalizeSale = async (auctionId: number) => {
+    try {
+      console.log("finalizing sale")
+      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const tx = await auctioneer.finalizeSale(auctionId)
+      setMetamaskLoading(true)
+      await tx.wait()
+      setMetamaskLoading(false)
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    }
   }
 
   return (
@@ -132,31 +146,40 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                       </div>
                       <div className="col-4 d-flex justify-content-center align-items-center">
                         <div>
-                          <div className=" my-3">
+                          <div className="my-3">
                             <label>Bid Lot ({collId})</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidLot} />
                           </div>
-                          <div className=" my-3">
+                          <div className="my-3">
                             <label>Bid Price ({getStablecoinSymbol(chainId!)})</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidPrice} />
                           </div>
                           <button className="btn btn-primary w-100" disabled={metamaskLoading || (!bidPrice || !bidLot)} onClick={(event) => placeBid(auction.id)}>
                             { metamaskLoading ? <i className="fa fa-spinner fa-spin"></i> : "Place Bid" }
                           </button>
-                          <button className="btn btn-outline-secondary w-100 my-3" onClick={buyNow}>
-                            Buy Now
+                          <button className="btn btn-outline-secondary w-100 my-3" disabled={false} onClick={() => finalizeSale(auction.id)}>
+                            Finalize Sale
                           </button>
                         </div>
                       </div>
-                      <hr className="my-3" />
-                      <h6>Current High Bid:</h6>
-                      {
-                        auction.highestBid ? (
-                          <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
-                        ) : (
-                          <p className="text-muted">No bids</p>
-                        )
-                      }
+                    </div>
+                    <hr className="my-3" />
+                    <div className="row">
+                      <div className="col-8">
+                        <h6>Current High Bid:</h6>
+                        {
+                          auction.highestBid ? (
+                            <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
+                          ) : (
+                            <p className="text-muted">No bids</p>
+                          )
+                        }
+                      </div>
+                      <div className="col-4 d-flex justify-content-center align-items-center">
+                        <button className="btn btn-outline-primary w-100 my-3" onClick={() => buyNow(auction.id, 0, 0)}>
+                          Buy Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
