@@ -125,7 +125,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   }
 
   return (
-    <Activity active={active} activity={ActivityType.Liquidate} error={error}>
+    <Activity active={active} activity={ActivityType.Auction} error={error}>
       <h4>Auctions</h4>
       {
         loading ? (

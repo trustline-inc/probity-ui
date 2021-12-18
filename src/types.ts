@@ -1,4 +1,6 @@
 export enum Activity {
+  Auction,
+
   // Capital
   Supply,
   Redeem,
