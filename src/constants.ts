@@ -2,14 +2,14 @@ import { BigNumber } from "ethers";
 import AureiABI from "@trustline/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
 import PhiABI from "@trustline/probity/artifacts/contracts/probity/tokens/Phi.sol/Phi.json";
 import AuctioneerABI from "@trustline/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
-import BridgeABI from "@trustline/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
+import BridgeABI from "@trustline/bridge/artifacts/contracts/Bridge.sol/Bridge.json";
 import FtsoABI from "@trustline/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import LiquidatorABI from "@trustline/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeCollateralABI from "@trustline/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
 import RegistryABI from "@trustline/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import ReservePoolABI from "@trustline/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
-import StateConnectorABI from "@trustline/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
+import StateConnectorABI from "@trustline/bridge/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import PbtTokenABI from "@trustline/probity/artifacts/contracts/probity/tokens/PbtToken.sol/PbtToken.json";
 import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";

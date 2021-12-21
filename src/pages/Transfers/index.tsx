@@ -6,7 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
-import * as solaris from "@trustline/solaris"
+import * as bridge from "@trustline/bridge"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
@@ -376,7 +376,7 @@ export default function Transfers() {
       }
 
       if (library && account) {
-        const _transfer = new solaris.Transfer({
+        const _transfer = new bridge.Transfer({
           direction: {
             source: "LOCAL",
             destination: "XRPL_TESTNET"
@@ -523,7 +523,7 @@ export default function Transfers() {
   const prepareRedemption = async () => {
     try {
       setLoading(true)
-      const _transfer = new solaris.Transfer({
+      const _transfer = new bridge.Transfer({
         direction: {
           source: "XRPL",
           destination: "FLARE"
@@ -767,7 +767,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer {getStablecoinName(chainId!)} between Songbird and the XRP Ledger networks via <a href="https://trustline.co/solaris" target="blank">Solaris</a>. Only recommended for advanced users.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer {getStablecoinName(chainId!)} between Songbird and the XRP Ledger networks via Trustline's<a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <h4 className="text-center">Send {getStablecoinName(chainId!)}</h4>
