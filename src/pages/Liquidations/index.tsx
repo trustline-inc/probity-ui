@@ -7,7 +7,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import numeral from "numeral";
-import web3 from "web3";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 
@@ -40,11 +39,11 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
             capital,
             debt,
             usedCollateral
-          } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), address);
+          } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), address);
           const {
             debtAccumulator,
             adjustedPrice
-          } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
+          } = await vaultEngine.collateralTypes(utils.id(getNativeTokenSymbol(chainId!)));
 
           // Get the vault's debt and capital
           const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
@@ -83,7 +82,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
       try {
-        const result = await liquidator.liquidateVault(web3.utils.keccak256(collId), address);
+        const result = await liquidator.liquidateVault(utils.id(collId), address);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {

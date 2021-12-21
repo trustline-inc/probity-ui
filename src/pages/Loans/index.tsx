@@ -7,7 +7,6 @@ import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol
 import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { BigNumber, Contract, utils } from "ethers";
-import web3 from "web3";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
@@ -37,7 +36,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
   const { data: rate } = useSWR([TELLER, 'apr'], {
@@ -59,7 +58,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       try {
         // Modify debt
         const result = await vaultEngine.modifyDebt(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
           WAD.mul(amount)
@@ -83,7 +82,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       try {
         // Modify debt
         const result = await vault.modifyDebt(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),
           WAD.mul(-amount)

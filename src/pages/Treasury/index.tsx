@@ -31,7 +31,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -100,7 +100,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
       try {
         // Modify supply
         const result = await vaultEngine.modifySupply(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
           WAD.mul(supplyAmount),
@@ -126,7 +126,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
       try {
         const result = await vaultEngine.connect(library.getSigner()).modifySupply(
-          web3.utils.keccak256(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),
           WAD.mul(-supplyAmount)

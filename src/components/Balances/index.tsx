@@ -1,6 +1,5 @@
 import React from 'react';
 import useSWR from 'swr';
-import web3 from "web3";
 import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -25,7 +24,7 @@ function Balances() {
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
@@ -49,7 +48,7 @@ function Balances() {
   const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: collateralType, mutate: mutateCollateralType } = useSWR([VAULT_ENGINE, 'collateralTypes', web3.utils.keccak256(getNativeTokenSymbol(chainId!))], {
+  const { data: collateralType, mutate: mutateCollateralType } = useSWR([VAULT_ENGINE, 'collateralTypes', utils.id(getNativeTokenSymbol(chainId!))], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -88,18 +87,18 @@ function Balances() {
   }, [totalCapital, totalDebt])
 
   React.useEffect(() => {
-    try {
-      if (library) {
-        (async () => {
+    if (library) {
+      (async () => {
+        try {
           const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
           const {
             capital,
             debt,
             usedCollateral
-          } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account);
+          } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), account);
           const {
             debtAccumulator
-          } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
+          } = await vaultEngine.collateralTypes(utils.id(getNativeTokenSymbol(chainId!)));
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
   
@@ -113,10 +112,10 @@ function Balances() {
           } else {
             setCollateralRatio("0%")
           }
-        })()
-      }
-    } catch (error) {
-      console.log(error)
+        } catch (error) {
+          console.error(error)
+        }
+      })()
     }
   }, [account, library, chainId, totalDebt, totalCapital])
 

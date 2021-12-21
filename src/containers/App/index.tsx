@@ -49,22 +49,25 @@ function App() {
   })
 
   useEffect(() => {
-    const runEffect = async () => {
-      if (data !== undefined) {
-        setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
-      } else {
-        if (library) {
-          try {
-            const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
-            const result = await ftso.getCurrentPrice();
-            setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
-          } catch (error) {
-            console.error(error)
+    ;(async () => {
+      try {
+        if (data !== undefined) {
+          setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
+        } else {
+          if (library) {
+            try {
+              const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
+              const result = await ftso.getCurrentPrice();
+              setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
+            } catch (error) {
+              console.error(error)
+            }
           }
         }
+      } catch (error) {
+        console.error(error)
       }
-    }
-    runEffect();
+    })()
   }, [library, data]);
 
   useEffect(() => {
