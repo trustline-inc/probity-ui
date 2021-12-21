@@ -88,31 +88,35 @@ function Balances() {
   }, [totalCapital, totalDebt])
 
   React.useEffect(() => {
-    if (library) {
-      (async () => {
-        const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
-        const {
-          capital,
-          debt,
-          usedCollateral
-        } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account);
-        const {
-          debtAccumulator
-        } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
-        const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
-        const { _price } = await ftsoContract.getCurrentPrice()
-
-        // Get the vault's debt and capital
-        const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
-
-        // Get the current collateral ratio
-        if (debtAndCapital.toString() !== "0") {
-          const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
-          setCollateralRatio(_collateralRatio)
-        } else {
-          setCollateralRatio("0%")
-        }
-      })()
+    try {
+      if (library) {
+        (async () => {
+          const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+          const {
+            capital,
+            debt,
+            usedCollateral
+          } = await vaultEngine.vaults(web3.utils.keccak256(getNativeTokenSymbol(chainId!)), account);
+          const {
+            debtAccumulator
+          } = await vaultEngine.collateralTypes(web3.utils.keccak256(getNativeTokenSymbol(chainId!)));
+          const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
+          const { _price } = await ftsoContract.getCurrentPrice()
+  
+          // Get the vault's debt and capital
+          const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+  
+          // Get the current collateral ratio
+          if (debtAndCapital.toString() !== "0") {
+            const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+            setCollateralRatio(_collateralRatio)
+          } else {
+            setCollateralRatio("0%")
+          }
+        })()
+      }
+    } catch (error) {
+      console.log(error)
     }
   }, [account, library, chainId, totalDebt, totalCapital])
 
