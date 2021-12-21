@@ -240,7 +240,7 @@ export default function Transfers() {
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
 
     // Make RPC request
-    const success: boolean = await client!.request({
+    const success: boolean = await client?.request({
       topic: _session.topic,
       chainId: "xrpl:2",
       request: {
