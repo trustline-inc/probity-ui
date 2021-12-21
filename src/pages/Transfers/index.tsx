@@ -421,7 +421,7 @@ export default function Transfers() {
             <p>
               The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
             </p>
-            <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new node. Copy the address under <code>account.address</code> below.</p>
+            <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new account. Copy the address under <code>account.address</code> below.</p>
           </>
         )
       }
