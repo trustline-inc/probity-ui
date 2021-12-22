@@ -2,7 +2,7 @@ import React from "react";
 import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import FtsoABI from "@trustline/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
+import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import { utils } from "ethers";
 import numeral from "numeral";
 import { FTSO } from '../../constants';

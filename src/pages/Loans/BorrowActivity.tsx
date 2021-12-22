@@ -6,7 +6,7 @@ import PriceFeed from "../../components/PriceFeed";
 import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { RAY, VAULT_ENGINE } from '../../constants';
-import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {

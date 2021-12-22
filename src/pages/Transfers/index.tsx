@@ -6,7 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
-import * as bridge from "@trustline/bridge"
+import * as bridge from "@trustline-inc/bridge"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {

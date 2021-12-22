@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
