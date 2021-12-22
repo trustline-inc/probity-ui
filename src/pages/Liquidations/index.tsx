@@ -100,7 +100,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         </div>
         <div className="col-4 d-flex justify-content-center align-items-center">
           <div>
-            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault.collId, vault.address)}>
+            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate("SGB", vault.address)}>
               Liquidate Vault
             </button>
           </div>
