@@ -185,7 +185,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                 <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Collect Interest</NavLink>
               </li>
             </ul>
           </div>
