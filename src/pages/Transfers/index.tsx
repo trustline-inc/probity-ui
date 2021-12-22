@@ -55,7 +55,7 @@ export default function Transfers() {
   const ctx = useContext(EventContext)
 
   // Transfer modal
-  const handleCloseTransferModal = () => { setShowTransferModal(false); setLoading(false) };
+  const handleCloseTransferModal = () => { setShowTransferModal(false); setTransferInProgress(false) };
 
   /**
    * Initializes the WalletConnect client and subscribe to events
@@ -354,7 +354,7 @@ export default function Transfers() {
    */
   const permitBridgeSpending = async () => {
     try {
-      setLoading(true)
+      setTransferInProgress(true)
       setShowTransferModal(true)
 
       if (usePayStringProtocol) {
@@ -427,7 +427,7 @@ export default function Transfers() {
       }
     } catch (error) {
       setError(error);
-      setLoading(false)
+      setTransferInProgress(false)
       setShowTransferModal(false)
     }
   }
@@ -440,6 +440,7 @@ export default function Transfers() {
     try {
       if (library) {
         setTransferInProgress(true)
+        setLoading(true)
         let data = await transfer!.createIssuer(issuerAddress)
         const transactionObject = {
           to: BRIDGE,
@@ -461,8 +462,8 @@ export default function Transfers() {
         )
       }
     } catch (error) {
-      setTransferInProgress(false)
       setLoading(false)
+      setTransferInProgress(false)
       setShowTransferModal(false)
       console.error(error)
     }
@@ -650,8 +651,8 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" onClick={createIssuer} disabled={transferInProgress}>
-                          { transferInProgress ? "Waiting..." : "Submit" }
+                        <Button variant="primary" onClick={createIssuer} disabled={loading}>
+                          { loading ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
                       <Col />
@@ -689,8 +690,8 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" onClick={verifyIssuance}>
-                          Done
+                        <Button variant="primary" onClick={verifyIssuance} disabled={loading}>
+                        { loading ? "Waiting..." : "Done" }
                         </Button>
                       </Col>
                       <Col />
@@ -717,8 +718,8 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" disabled={verifiedIssuers.length === 0 || transferInProgress} onClick={createRedemptionReservation}>
-                          { transferInProgress ? "Waiting..." : "Submit" }
+                        <Button variant="primary" disabled={verifiedIssuers.length === 0 || loading} onClick={createRedemptionReservation}>
+                          { loading ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
                       <Col />
@@ -746,8 +747,8 @@ export default function Transfers() {
                     <Row>
                       <Col />
                       <Col className="d-grid">
-                        <Button variant="primary" disabled={transferInProgress} onClick={() => { console.log("not implemented") }}>
-                          { transferInProgress ? "Waiting..." : "Submit" }
+                        <Button variant="primary" disabled={loading} onClick={() => { console.log("not implemented") }}>
+                          { loading ? "Waiting..." : "Submit" }
                         </Button>
                       </Col>
                       <Col />
@@ -819,9 +820,9 @@ export default function Transfers() {
               <button
                 className="btn btn-primary btn-lg mt-4"
                 onClick={openOutboundTransferModal}
-                disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || loading}
+                disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || transferInProgress}
               >
-                {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
+                {transferInProgress ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
               </button>
             </div>
           </div>
