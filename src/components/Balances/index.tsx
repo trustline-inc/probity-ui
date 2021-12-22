@@ -203,6 +203,7 @@ function Balances() {
                   Vault {getStablecoinSymbol(chainId!)}
                 </div>
                 <div className="col-6">
+                  {/* TODO: Fix display of balances < 1 which appear as NaN */}
                   <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
