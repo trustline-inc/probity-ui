@@ -216,6 +216,7 @@ function Navbar() {
       </div>
       <div className="mt-auto container-fluid text-center">
         <SocialLinks />
+        <small>{process.env.REACT_APP_VERSION}</small>
       </div>
     </nav>
   );
