@@ -17,6 +17,7 @@ import {
   VAULT_ENGINE,
 } from '../../constants';
 import BorrowActivity from './BorrowActivity';
+import DepositActivity from './DepositActivity';
 import RepayActivity from './RepayActivity';
 import WithdrawActivity from './WithdrawActivity';
 import Info from '../../components/Info';
@@ -101,22 +102,43 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   /**
    * @function withdraw
    */
-     const withdraw = async () => {
-      if (library && account) {
-        const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
-        setLoading(true)
-        try {
-          const result = await treasury.withdrawStablecoin(
-            BigNumber.from(amount).mul(WAD)
-          );
-          const data = await result.wait();
-          ctx.updateTransactions(data);
-        } catch (error) {
-          console.log(error);
-          setError(error);
-        }
-        setLoading(false)
+    const withdraw = async () => {
+    if (library && account) {
+      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
+      setLoading(true)
+      try {
+        const result = await treasury.withdrawStablecoin(
+          BigNumber.from(amount).mul(WAD)
+        );
+        const data = await result.wait();
+        ctx.updateTransactions(data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
       }
+      setLoading(false)
+    }
+  }
+
+  /**
+   * @function deposit
+   */
+  const deposit = async () => {
+    if (library && account) {
+      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
+      setLoading(true)
+      try {
+        const result = await treasury.deposit(
+          BigNumber.from(amount).mul(WAD)
+        );
+        const data = await result.wait();
+        ctx.updateTransactions(data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+      setLoading(false)
+    }
   }
 
   const onAmountChange = (event: any) => {
@@ -168,6 +190,9 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/loans/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw); setCollateralAmount(0) }}>Withdraw</NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" activeClassName="active" to={"/loans/deposit"} onClick={() => { setActivity(ActivityType.Deposit); setCollateralAmount(0) }}>Deposit</NavLink>
+              </li>
             </ul>
           </div>
           <hr />
@@ -212,6 +237,18 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                     amount={amount}
                     onAmountChange={onAmountChange}
                     withdraw={withdraw}
+                    loading={loading}
+                  />
+                )
+              }
+              {
+                activity === ActivityType.Deposit && (
+                  <DepositActivity
+                    maxSize={maxSize}
+                    setMaxSize={setMaxSize}
+                    amount={amount}
+                    onAmountChange={onAmountChange}
+                    deposit={deposit}
                     loading={loading}
                   />
                 )
