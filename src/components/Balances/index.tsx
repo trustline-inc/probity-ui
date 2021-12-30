@@ -156,10 +156,18 @@ function Balances() {
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Encumbered
+                  Pledged
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  Total
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral.add(vault.usedCollateral))).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr />
