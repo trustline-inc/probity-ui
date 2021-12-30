@@ -85,7 +85,7 @@ function Assets() {
     <>
       <header className="pt-2">
         <h1>Asset Management</h1>
-        <p className="lead">Deposit or withdraw assets from your vault to be used for staking or as loan collateral.</p>
+        <p className="lead">Deposit or withdraw assets from your vault to be used for investments or as collateral for a loan.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

@@ -14,7 +14,7 @@ interface Props {
   loading: boolean;
 }
 
-function StakingActivity({
+function InvestingActivity({
   collateralAmount,
   supplyAmount,
   collateralRatio,
@@ -29,13 +29,13 @@ function StakingActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <p className="text-muted">Your stake must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
+          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
             Amount<br/>
             <small className="form-text text-muted">
-              The amount of asset to stake
+              The amount of asset to invest
             </small>
           </label>
           <div className="input-group">
@@ -96,4 +96,4 @@ function StakingActivity({
   )
 }
 
-export default StakingActivity
+export default InvestingActivity

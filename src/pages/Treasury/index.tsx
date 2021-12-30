@@ -8,7 +8,7 @@ import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Trea
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
-import StakeActivity from "./StakeActivity";
+import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
@@ -84,9 +84,9 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/treasury/stake")  setActivity(ActivityType.Supply);
+    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.Supply);
     if (location.pathname === "/treasury/redeem") setActivity(ActivityType.Redeem);
-    if (location.pathname === "/treasury/withdraw") setActivity(ActivityType.Interest);
+    if (location.pathname === "/treasury/collect-interest") setActivity(ActivityType.Interest);
   }, [location])
 
   /**
@@ -170,7 +170,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     <>
       <header className="pt-2">
         <h1>Treasury Management</h1>
-        <p className="lead">Stake assets to earn yield from loans created by Probity.</p>
+        <p className="lead">Invest assets to earn yield from loans created by Probity.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -179,13 +179,13 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/stake"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Stake</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Invest</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/withdraw"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Collect Interest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Collect Interest</NavLink>
               </li>
             </ul>
           </div>
@@ -194,7 +194,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           <Activity active={active} activity={activity} error={error}>
             {
               activity === ActivityType.Supply && (
-                <StakeActivity
+                <InvestActivity
                   collateralAmount={collateralAmount}
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}

@@ -29,7 +29,7 @@ function RedemptionActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <p className="text-muted">Your stake must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
+          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
         <div className="col-12">
           <label htmlFor="collateralRedemptionAmount" className="form-label">
