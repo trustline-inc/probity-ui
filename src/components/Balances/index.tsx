@@ -145,7 +145,7 @@ function Balances() {
         {
           selected === BalanceType.Individual ? (
             <>
-              <h5>Assets</h5>
+              <h5>Wallet</h5>
               <div className="row my-2">
                 <div className="col-6">
                   Available

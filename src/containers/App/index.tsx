@@ -17,7 +17,7 @@ import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
-import Assets from "../../pages/Assets";
+import Wallet from "../../pages/Wallet";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -180,8 +180,8 @@ function App() {
                   <div className="col-md-8 col-sm-12">
                     <EventContext.Provider value={{ transactions, updateTransactions }}>
                       <Switch>
-                        <Route path="/assets">
-                          <Assets />
+                        <Route path="/wallet">
+                          <Wallet />
                         </Route>
                         <Route path="/treasury">
                           <Treasury collateralPrice={collateralPrice} />

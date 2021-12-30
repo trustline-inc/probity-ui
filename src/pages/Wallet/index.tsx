@@ -16,7 +16,7 @@ import EventContext from "../../contexts/TransactionContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 
-function Assets() {
+function Wallet() {
   const location = useLocation();
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -27,8 +27,8 @@ function Assets() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/assets/deposit") setActivity(ActivityType.Deposit);
-    if (location.pathname === "/assets/withdraw") setActivity(ActivityType.Withdraw);
+    if (location.pathname === "/wallet/deposit") setActivity(ActivityType.Deposit);
+    if (location.pathname === "/wallet/withdraw") setActivity(ActivityType.Withdraw);
   }, [location])
 
   const deposit = async () => {
@@ -84,7 +84,7 @@ function Assets() {
   return (
     <>
       <header className="pt-2">
-        <h1>Asset Management</h1>
+        <h1>Wallet Management</h1>
         <p className="lead">Deposit or withdraw assets from your vault to be used for investments or as collateral for a loan.</p>
         {active && <Info />}
       </header>
@@ -94,10 +94,10 @@ function Assets() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/assets/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setCollateralAmount(0) }}>Deposit</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/wallet/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setCollateralAmount(0) }}>Deposit</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/assets/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setCollateralAmount(0) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/wallet/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setCollateralAmount(0) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
@@ -133,4 +133,4 @@ function Assets() {
   );
 }
 
-export default Assets;
+export default Wallet;
