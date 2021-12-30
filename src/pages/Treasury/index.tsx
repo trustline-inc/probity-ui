@@ -90,22 +90,24 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   }, [location])
 
   /**
-   * @function mint
+   * @function invest
    */
-   const mint = async () => {
+   const invest = async () => {
     if (library && account) {
       const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
 
       try {
         // Modify supply
-        const result = await vaultEngine.modifySupply(
+        const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
           WAD.mul(supplyAmount),
           { gasLimit: 300000 }
-        );
+        ]
+        await vaultEngine.callStatic.modifySupply(...args)
+        const result = await vaultEngine.modifySupply(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -117,20 +119,22 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   }
 
   /**
-   * @function burn
+   * @function redeem
    */
-  const burn = async () => {
+  const redeem = async () => {
     if (library && account) {
       const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
 
       try {
-        const result = await vaultEngine.connect(library.getSigner()).modifySupply(
+        const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),
           WAD.mul(-supplyAmount)
-        );
+        ]
+        await vaultEngine.callStatic.modifySupply(...args)
+        const result = await vaultEngine.connect(library.getSigner()).modifySupply(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -150,13 +154,15 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
       try {
         const isPBT = interestType === "PBT";
-        const result = await treasury.withdraw(
+        const args = [
           utils.parseUnits(interestAmount.toString(), "ether").toString(),
           isPBT,
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
-        );
+        ]
+        await treasury.callStatic.withdraw(...args)
+        const result = await treasury.withdraw(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -198,7 +204,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                   collateralAmount={collateralAmount}
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
-                  supply={mint}
+                  supply={invest}
                   loading={loading}
                   onCollateralAmountChange={onCollateralAmountChange}
                   onSupplyAmountChange={onSupplyAmountChange}
@@ -213,7 +219,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                   supplyAmount={supplyAmount}
                   collateralRatio={collateralRatio}
                   onSupplyAmountChange={onSupplyAmountChange}
-                  redeem={burn}
+                  redeem={redeem}
                   loading={loading}
                 />
               )
