@@ -38,12 +38,12 @@ function Assets() {
 
       try {
         // Deposit collateral
-        const result = await nativeCollateral.deposit(
-          {
-            gasLimit: web3.utils.toWei('400000', 'wei'),
-            value: WAD.mul(collateralAmount)
-          }
-        );
+        const args = [{
+          gasLimit: web3.utils.toWei('400000', 'wei'),
+          value: WAD.mul(collateralAmount)
+        }]
+        await nativeCollateral.callStatic.deposit(...args)
+        const result = await nativeCollateral.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -62,7 +62,9 @@ function Assets() {
 
       try {
         // Withdraw collateral
-        const result = await nativeCollateral.withdraw(WAD.mul(collateralAmount));
+        const args = [WAD.mul(collateralAmount)]
+        await nativeCollateral.callStatic.withdraw(...args)
+        const result = await nativeCollateral.withdraw(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
