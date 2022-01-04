@@ -3,61 +3,114 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import {
-  VAULT_ENGINE,
+  AUREI,
+  PHI,
+  AUCTIONEER,
+  BRIDGE,
+  FTSO,
+  LIQUIDATOR,
+  PRICE_FEED,
   NATIVE_COLLATERAL,
+  REGISTRY,
+  STATE_CONNECTOR,
+  PBT_TOKEN,
+  RESERVE_POOL,
+  TELLER,
+  TREASURY,
+  VAULT_ENGINE,
   INTERFACES
 } from '../../constants';
 
 function Status() {
   const [loading, setLoading] = React.useState(false);
   const { library } = useWeb3React<Web3Provider>()
-  const [statuses, setStatuses] = React.useState({
-    nativeCollateral: false,
-    vaultEngine: false
+  const [statuses, setStatuses] = React.useState<{ [key: string]: boolean}>({
+    AUREI: false,
+    PHI: false,
+    AUCTIONEER: false,
+    BRIDGE: false,
+    FTSO: false,
+    LIQUIDATOR: false,
+    PRICE_FEED: false,
+    NATIVE_COLLATERAL: false,
+    REGISTRY: false,
+    STATE_CONNECTOR: false,
+    PBT_TOKEN: false,
+    RESERVE_POOL: false,
+    TELLER: false,
+    TREASURY: false,
+    VAULT_ENGINE: false
   })
   const [fetched, setFetched] = React.useState(false)
+  const contracts: { [key: string]: string } = {
+    "AUREI": AUREI,
+    "PHI": PHI,
+    "AUCTIONEER": AUCTIONEER,
+    "BRIDGE": BRIDGE,
+    "FTSO": FTSO,
+    "LIQUIDATOR": LIQUIDATOR,
+    "PRICE_FEED": PRICE_FEED,
+    "NATIVE_COLLATERAL": NATIVE_COLLATERAL,
+    "REGISTRY": REGISTRY,
+    "STATE_CONNECTOR": STATE_CONNECTOR,
+    "PBT_TOKEN": PBT_TOKEN,
+    "RESERVE_POOL": RESERVE_POOL,
+    "TELLER": TELLER,
+    "TREASURY": TREASURY,
+    "VAULT_ENGINE": VAULT_ENGINE 
+  }
+
+  const objectZip = (keys: any, values: any) =>
+  keys.reduce(
+    (others: any, key: any, index: any) => ({
+      ...others,
+      [key]: values[index],
+    }),
+    {}
+  );
 
   // Fetch contract deployment statuses
   React.useEffect(() => {
     if (library && !fetched) {
       (async () => {
         setLoading(true)
-        const nativeCollateral = new Contract(NATIVE_COLLATERAL, INTERFACES[NATIVE_COLLATERAL].abi, library.getSigner())
-        const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
-        // If there is no contract currently deployed, the result is 0x.
-        if (await nativeCollateral.provider.getCode(nativeCollateral.address) !== "0x")
-          setStatuses({ ...statuses, nativeCollateral: true })
-        if (await vaultEngine.provider.getCode(vaultEngine.address) !== "0x")
-          setStatuses({ ...statuses, vaultEngine: true })
+        const responses: { [key: string]: boolean } = {}
+        for (let contract in contracts) {
+          try {
+            const address = contracts[contract]
+            const _contract = new Contract(address, INTERFACES[address].abi, library.getSigner())
+            // If there is no contract currently deployed, the result is 0x.
+            responses[contract] = (await _contract.provider.getCode(_contract.address) !== "0x")
+          } catch (error) {
+            continue
+          }
+        }
+        setStatuses(objectZip(Object.keys(responses), await Promise.all(Object.values(responses))))
         setLoading(false)
         setFetched(true)
       })()
     }
-  }, [library, statuses, fetched])
+  }, [library, fetched])
+
+  const rows = Object.keys(statuses).map(contract => {
+    return (
+      <li className="list-group-item d-flex justify-content-between align-items-center">
+        <code>{contract}</code>
+        {statuses[contract] ? (
+          <span className="badge bg-success rounded-pill">ONLINE</span>
+        ) : (
+          <span className="badge bg-danger rounded-pill">OFFLINE</span>
+        )}
+      </li>
+    )
+  })
 
   return (
     <>
       {!loading && (
         <>
           <h1>Contracts</h1>
-          <ul className="list-group">
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-              <code>NativeCollateral</code>
-              {statuses.nativeCollateral ? (
-                <span className="badge bg-success rounded-pill">ONLINE</span>
-              ) : (
-                <span className="badge bg-danger rounded-pill">OFFLINE</span>
-              )}
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-              <code>VaultEngine</code>
-              {statuses.vaultEngine ? (
-                <span className="badge bg-success rounded-pill">ONLINE</span>
-              ) : (
-                <span className="badge bg-danger rounded-pill">OFFLINE</span>
-              )}
-            </li>
-          </ul>
+          <ul className="list-group">{rows}</ul>
         </>
       )}
     </>
