@@ -43,7 +43,6 @@ function Status() {
   })
   const [fetched, setFetched] = React.useState(false)
   const contracts: { [key: string]: string } = {
-    "AUREI": AUREI,
     "PHI": PHI,
     "AUCTIONEER": AUCTIONEER,
     "BRIDGE": BRIDGE,
@@ -94,7 +93,7 @@ function Status() {
 
   const rows = Object.keys(statuses).map(contract => {
     return (
-      <li className="list-group-item d-flex justify-content-between align-items-center">
+      <li className="list-group-item d-flex justify-content-between align-items-center" key={contract}>
         <code>{contract}</code>
         {statuses[contract] ? (
           <span className="badge bg-success rounded-pill">ONLINE</span>
