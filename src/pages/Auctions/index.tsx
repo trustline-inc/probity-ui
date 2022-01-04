@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
-import EventContext from "../../contexts/TransactionContext"
+// import EventContext from "../../contexts/TransactionContext"
 import { getCollateralId, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
@@ -20,7 +20,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [auctionCount, setAuctionCount] = useState(0)
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
-  const ctx = useContext(EventContext)
+  // const ctx = useContext(EventContext)
 
   useEffect(() => {
     if (library) {

@@ -166,6 +166,11 @@ function Navbar() {
               <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
             </NavLink>
           </li>
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/status">
+              <i className="fas fa-signal" /> Status
+            </NavLink>
+          </li>
         </ul>
         <div className="spacer spacer-1" />
         <form className="row gx-3 gy-2 align-items-center" style={{ display: "block" }}>

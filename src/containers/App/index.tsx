@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   HashRouter as Router,
   Switch,
-  Route,
+  Route
 } from "react-router-dom";
 import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
@@ -22,6 +22,7 @@ import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
 import Liquidations from "../../pages/Liquidations";
+import Status from "../../pages/Status";
 import { VERSION } from '../../constants';
 import "./index.css";
 import SocialLinks from "../../components/Social";
@@ -200,6 +201,9 @@ function App() {
                         </Route>
                         <Route path="/transactions">
                           <Transactions />
+                        </Route>
+                        <Route path="/status">
+                          <Status />
                         </Route>
                       </Switch>
                     </EventContext.Provider>
