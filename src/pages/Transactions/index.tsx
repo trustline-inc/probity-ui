@@ -31,11 +31,9 @@ export default function Transactions() {
   const { active, library } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
 
-  let rows
-
-  try {
-    rows = ctx.transactions.map((tx: any, index) => {
-      return tx.logs.map((element: any, idx: number) => {
+  let rows = ctx.transactions.map((tx: any, index) => {
+    return tx.logs.map((element: any, idx: number) => {
+      try {
         const checksumAddress = web3.utils.toChecksumAddress(element.address)
         const contract = new Contract(element.address, INTERFACES[checksumAddress].abi, library?.getSigner())
         let log = contract.interface.parseLog(element);
@@ -151,11 +149,12 @@ export default function Transactions() {
             }
           </React.Fragment>
         )
-      });
-    })
-  } catch (error) {
-    rows = []
-  }
+      } catch (error) {
+        console.error(error)
+        return []
+      }
+    });
+  })
 
   return (
     <>
