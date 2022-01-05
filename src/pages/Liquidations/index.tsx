@@ -77,14 +77,23 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
     }
   }, [library, users, collateralPrice, chainId])
 
-  const liquidate = async (collId: string, address: string) => {
+  const liquidate = async (vault: any, index: number) => {
     if (library) {
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
       try {
-        const result = await liquidator.liquidateVault(utils.id(collId), address);
+        const result = await liquidator.liquidateVault(utils.id("SGB"), vault.address);
         const data = await result.wait();
         ctx.updateTransactions(data);
+        const _vaults = vaults
+        _vaults[index] = {
+          ...vault,
+          debt: "$0.00",
+          capital: "$0.00",
+          collateralRatio: "0%",
+          liquidationEligible: false
+        }
+        setVaults(_vaults)
       } catch (error) {
         console.error(error)
         setError(error);
@@ -100,8 +109,8 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         </div>
         <div className="col-4 d-flex justify-content-center align-items-center">
           <div>
-            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate("SGB", vault.address)}>
-              Liquidate Vault
+            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault, index)}>
+              {loading ? (<i className="fa fa-spinner fa-spin" />) : "Liquidate Vault"}
             </button>
           </div>
         </div>
