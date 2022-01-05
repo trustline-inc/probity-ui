@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { AUCTIONEER, INTERFACES, RESERVE_POOL, RAY } from '../../constants';
+import { AUCTIONEER, INTERFACES, RESERVE_POOL, RAY, WAD } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -98,9 +98,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
   const buyNow = async (auctionId: number, lot: number, maxPrice: number) => {
     try {
-      console.log("buying")
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
-      const tx = await auctioneer.buyItNow(auctionId, lot, maxPrice)
+      const tx = await auctioneer.buyItNow(
+        auctionId,
+        BigNumber.from(lot).mul(WAD),
+        BigNumber.from(maxPrice).mul(RAY)
+      )
       setMetamaskLoading(true)
       await tx.wait()
       setMetamaskLoading(false)
@@ -180,7 +183,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                         </div>
                       </div>
                     </div>
-                    <hr className="my-3" />
+                    {/* <hr className="my-3" />
                     <h6>Bidding</h6>
                     <div className="row">
                       <div className="col-8 d-flex justify-content-center align-items-center text-center">
@@ -213,7 +216,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )
