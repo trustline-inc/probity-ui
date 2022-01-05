@@ -2333,10 +2333,10 @@
     axios "^0.22.0"
     ripple-lib "^1.10.0"
 
-"@trustline-inc/probity@^1.0.0-alpha1":
-  version "1.0.0-alpha1"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha1/882d27f5bd8e1291fa6e91961bafba5a60784ba292fe38fd07d83bdee7befa32"
-  integrity sha512-YDY0l1ZR7TpKwlt0rYx87vL+UVds3Sq/UmZgsBGHhubZUfhWrVrJq1Zrj/OMbKmjm3oQT3XUJ4DH/WE0p5YFeA==
+"@trustline-inc/probity@^1.0.0-alpha2":
+  version "1.0.0-alpha2"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha2/b71ec67111546fd314399af5f15afb2cc789a6e99842e3bc9323f455e2f8075b#b3116929d2e4ec7af5073d04ff34b53567eb431c"
+  integrity sha512-qatp902zOx922gwlTBxh4vFdPGYHZ8UPgmZWJn2dowcRKcYR+t0OMKLWvu3x4pe3s++Vtf/WloiIwbTZ73COsA==
 
 "@types/aria-query@^4.2.0":
   version "4.2.2"
