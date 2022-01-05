@@ -98,7 +98,6 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
       setLoading(true)
 
       try {
-        // Modify supply
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
