@@ -96,13 +96,21 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     }
   }
 
-  const buyNow = async (auctionId: number, lot: number, maxPrice: number) => {
+  const buyNow = async (auctionId: number, lot: number|string, maxPrice: number|string) => {
+    // Converts decimal with precision 18 to BigNumber
+    const lotLeft = lot.toString().split(".")[0]
+    const lotRight = lot.toString().split(".")[1].padEnd(18, "0")
+    lot = lotLeft + lotRight
+    // Converts decimal with precision 27 to BigNumber
+    const maxPriceLeft = maxPrice.toString().split(".")[0]
+    const maxPriceRight = maxPrice.toString().split(".")[1].padEnd(27, "0")
+    maxPrice = maxPriceLeft + maxPriceRight
     try {
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
       const tx = await auctioneer.buyItNow(
         auctionId,
-        BigNumber.from(lot).mul(WAD),
-        BigNumber.from(maxPrice).mul(RAY)
+        BigNumber.from(lot),
+        BigNumber.from(maxPrice)
       )
       setMetamaskLoading(true)
       await tx.wait()
