@@ -105,8 +105,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           WAD.mul(supplyAmount),
           { gasLimit: 300000 }
         ]
-        await vaultEngine.callStatic.modifySupply(...args)
-        const result = await vaultEngine.modifySupply(...args);
+        await vaultEngine.callStatic.modifyCapital(...args)
+        const result = await vaultEngine.modifyCapital(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -132,8 +132,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           WAD.mul(-collateralAmount),
           WAD.mul(-supplyAmount)
         ]
-        await vaultEngine.callStatic.modifySupply(...args)
-        const result = await vaultEngine.connect(library.getSigner()).modifySupply(...args);
+        await vaultEngine.callStatic.modifyCapital(...args)
+        const result = await vaultEngine.connect(library.getSigner()).modifyCapital(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
