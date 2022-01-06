@@ -5,21 +5,21 @@ import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 interface Props {
-  collateralAmount: number;
-  supplyAmount: number;
-  collateralRatio: number;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSupplyAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  underlyingAmount: number;
+  equityAmount: number;
+  underlyingRatio: number;
+  onUnderlyingAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   supply: () => void;
   loading: boolean;
 }
 
 function InvestingActivity({
-  collateralAmount,
-  supplyAmount,
-  collateralRatio,
-  onCollateralAmountChange,
-  onSupplyAmountChange,
+  underlyingAmount,
+  equityAmount,
+  underlyingRatio,
+  onUnderlyingAmountChange,
+  onEquityAmountChange,
   supply,
   loading
 }: Props) {
@@ -29,7 +29,7 @@ function InvestingActivity({
     <>
       <div className="row mb-4">
         <div className="col-12">
-          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
+          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to equity to avoid penalties.</p>
         </div>
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
@@ -45,7 +45,7 @@ function InvestingActivity({
               className="form-control"
               id="collateralConversionInput"
               placeholder="0.000000000000000000"
-              onChange={onCollateralAmountChange}
+              onChange={onUnderlyingAmountChange}
             />
             <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
           </div>
@@ -53,10 +53,10 @@ function InvestingActivity({
       </div>
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="supplyAmount" className="form-label">
-            Loan Capital<br/>
+          <label htmlFor="equityAmount" className="form-label">
+            Equity<br/>
             <small className="form-text text-muted">
-              The amount of loan capital to create
+              The amount of shares to create
             </small>
           </label>
           <div className="input-group">
@@ -64,19 +64,19 @@ function InvestingActivity({
               type="number"
               min={0}
               className="form-control"
-              id="supplyAmount"
+              id="equityAmount"
               placeholder="0.000000000000000000"
-              onChange={onSupplyAmountChange}
+              onChange={onEquityAmountChange}
             />
             <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
-      <PriceFeed collateralAmount={collateralAmount} />
+      <PriceFeed collateralAmount={underlyingAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2"><span>Collateral Ratio:</span><br />{collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
+            <div className="m-2"><span>Collateral Ratio:</span><br />{underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ function InvestingActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={supply}
-            disabled={supplyAmount === 0 || collateralAmount === 0 || loading}
+            disabled={equityAmount === 0 || underlyingAmount === 0 || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>

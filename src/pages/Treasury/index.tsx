@@ -23,11 +23,11 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const [error, setError] = React.useState<any|null>(null);
   const [loading, setLoading] = React.useState(false);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
-  const [supplyAmount, setSupplyAmount] = React.useState(0);
+  const [equityAmount, setEquityAmount] = React.useState(0);
   const [interestAmount, setInterestAmount] = React.useState(0);
-  const [collateralAmount, setCollateralAmount] = React.useState(0);
-  const [totalCollateral, setTotalCollateral] = React.useState(0);
-  const [collateralRatio, setCollateralRatio] = React.useState(0);
+  const [underlyingAmount, setUnderlyingAmount] = React.useState(0);
+  const [totalUnderlying, setTotalUnderlying] = React.useState(0);
+  const [underlyingRatio, setUnderlyingRatio] = React.useState(0);
   const ctx = useContext(EventContext)
   const [interestType, setInterestType] = React.useState("PBT")
 
@@ -36,17 +36,17 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   })
 
   /**
-   * @function onCollateralAmountChange
+   * @function onUnderlyingAmountChange
    * @param event 
    * Updates state collateral and total collateral amounts
    */
-  const onCollateralAmountChange = (event: any) => {
+  const onUnderlyingAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
     if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.usedCollateral)) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.usedCollateral)) + Number(delta);
-    setTotalCollateral(totalAmount);
-    setCollateralAmount(delta);
+    setTotalUnderlying(totalAmount);
+    setUnderlyingAmount(delta);
   }
 
   /**
@@ -56,24 +56,24 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Supply:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(supplyAmount)));
+          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) - Number(supplyAmount)));
+          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) - Number(equityAmount)));
           break;
       }
     }
-  }, [totalCollateral, collateralPrice, supplyAmount, vault, activity]);
+  }, [totalUnderlying, collateralPrice, equityAmount, vault, activity]);
 
   /**
-   * @function onSupplyAmountChange
+   * @function onEquityAmountChange
    * @param event 
    */
-  const onSupplyAmountChange = (event: any) => {
+  const onEquityAmountChange = (event: any) => {
     const amount = Number(event.target.value)
-    setSupplyAmount(amount);
-    if (supplyAmount > 0) {
-      setCollateralRatio(totalCollateral / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(supplyAmount)));
+    setEquityAmount(amount);
+    if (equityAmount > 0) {
+      setUnderlyingRatio(totalUnderlying / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
     }
   }
 
@@ -101,8 +101,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(collateralAmount),
-          WAD.mul(supplyAmount),
+          WAD.mul(underlyingAmount),
+          WAD.mul(equityAmount),
           { gasLimit: 300000 }
         ]
         await vaultEngine.callStatic.modifyCapital(...args)
@@ -129,8 +129,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(-collateralAmount),
-          WAD.mul(-supplyAmount)
+          WAD.mul(-underlyingAmount),
+          WAD.mul(-equityAmount)
         ]
         await vaultEngine.callStatic.modifyCapital(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyCapital(...args);
@@ -184,13 +184,13 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Supply); setCollateralAmount(0) }}>Invest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Supply); setUnderlyingAmount(0) }}>Invest</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setCollateralAmount(0) }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setUnderlyingAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Interest); setCollateralAmount(0) }}>Collect Interest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Interest); setUnderlyingAmount(0) }}>Collect Interest</NavLink>
               </li>
             </ul>
           </div>
@@ -200,24 +200,24 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
             {
               activity === ActivityType.Supply && (
                 <InvestActivity
-                  collateralAmount={collateralAmount}
-                  supplyAmount={supplyAmount}
-                  collateralRatio={collateralRatio}
+                  underlyingAmount={underlyingAmount}
+                  equityAmount={equityAmount}
+                  underlyingRatio={underlyingRatio}
                   supply={invest}
                   loading={loading}
-                  onCollateralAmountChange={onCollateralAmountChange}
-                  onSupplyAmountChange={onSupplyAmountChange}
+                  onUnderlyingAmountChange={onUnderlyingAmountChange}
+                  onEquityAmountChange={onEquityAmountChange}
                 />
               )
             }
             {
               activity === ActivityType.Redeem && (
                 <RedemptionActivity
-                  collateralAmount={collateralAmount}
-                  onCollateralAmountChange={onCollateralAmountChange}
-                  supplyAmount={supplyAmount}
-                  collateralRatio={collateralRatio}
-                  onSupplyAmountChange={onSupplyAmountChange}
+                  underlyingAmount={underlyingAmount}
+                  onUnderlyingAmountChange={onUnderlyingAmountChange}
+                  equityAmount={equityAmount}
+                  underlyingRatio={underlyingRatio}
+                  onEquityAmountChange={onEquityAmountChange}
                   redeem={redeem}
                   loading={loading}
                 />

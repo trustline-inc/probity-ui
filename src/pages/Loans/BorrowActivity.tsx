@@ -40,15 +40,15 @@ function BorrowActivity({
   const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalCapital } = useSWR([VAULT_ENGINE, "totalCapital"], {
+  const { data: totalEquity } = useSWR([VAULT_ENGINE, "totalEquity"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
   React.useEffect(() => {
-    if (totalDebt && totalCapital) {
+    if (totalDebt && totalEquity) {
       try {
         const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
-        const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+        const supply = Number(utils.formatEther(totalEquity.div(RAY)));
         const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
         const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
@@ -58,7 +58,7 @@ function BorrowActivity({
         console.log(e)
       }
     }
-  }, [rate, amount, totalDebt, totalCapital, setMaxSize])
+  }, [rate, amount, totalDebt, totalEquity, setMaxSize])
 
   const { chainId } = useWeb3React<Web3Provider>()
 

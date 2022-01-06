@@ -1,7 +1,7 @@
 export enum Activity {
   Auction,
 
-  // Capital
+  // Equity
   Supply,
   Redeem,
   Interest,

@@ -45,7 +45,7 @@ function Balances() {
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: totalCapital, mutate: mutateTotalSupply } = useSWR([VAULT_ENGINE, 'totalCapital'], {
+  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalCapital'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: collateralType, mutate: mutateCollateralType } = useSWR([VAULT_ENGINE, 'collateralTypes', utils.id(getNativeTokenSymbol(chainId!))], {
@@ -61,7 +61,7 @@ function Balances() {
         mutateTotalDebt(undefined, true);
         mutateStablecoinERC20Balance(undefined, true);
         mutatePbtERC20Balance(undefined, true);
-        mutateTotalSupply(undefined, true);
+        mutateTotalEquity(undefined, true);
         mutateInterestBalance(undefined, true);
         mutateCollateralType(undefined, true);
       });
@@ -76,15 +76,15 @@ function Balances() {
    * Update the current APR
    */
   React.useEffect(() => {
-    if (totalDebt && totalCapital) {
-      if (totalCapital.toString() === "0" || totalDebt.toString() === "0") return setEstimatedAPR("0%")
+    if (totalDebt && totalEquity) {
+      if (totalEquity.toString() === "0" || totalDebt.toString() === "0") return setEstimatedAPR("0%")
       const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
-      const supply = Number(utils.formatEther(totalCapital.div(RAY)));
+      const supply = Number(utils.formatEther(totalEquity.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
       setEstimatedAPR(`${(Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)}%`)
     }
-  }, [totalCapital, totalDebt])
+  }, [totalEquity, totalDebt])
 
   React.useEffect(() => {
     if (library) {
@@ -102,12 +102,12 @@ function Balances() {
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
   
-          // Get the vault's debt and capital
-          const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+          // Get the vault's debt and equity
+          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(capital)
   
           // Get the current collateral ratio
-          if (debtAndCapital.toString() !== "0") {
-            const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+          if (debtAndEquity.toString() !== "0") {
+            const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
             setCollateralRatio(_collateralRatio)
           } else {
             setCollateralRatio("0%")
@@ -117,7 +117,7 @@ function Balances() {
         }
       })()
     }
-  }, [account, library, chainId, totalDebt, totalCapital])
+  }, [account, library, chainId, totalDebt, totalEquity])
 
   if (!vault) return null;
   return (
@@ -174,7 +174,7 @@ function Balances() {
               <h5>Treasury & Loans</h5>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Capital Balance
+                  Equity Balance
                 </div>
                 <div className="col-6">
                 <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.capital.mul(collateralType.capitalAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
@@ -257,7 +257,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalCapital && collateralType ? numeral(utils.formatEther(totalCapital.div(RAY).mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && collateralType ? numeral(utils.formatEther(totalEquity.div(RAY).mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">

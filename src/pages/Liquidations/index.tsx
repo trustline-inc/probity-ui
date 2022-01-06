@@ -45,8 +45,8 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
             adjustedPrice
           } = await vaultEngine.collateralTypes(utils.id(getNativeTokenSymbol(chainId!)));
 
-          // Get the vault's debt and capital
-          const debtAndCapital = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+          // Get the vault's debt and equity
+          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(capital)
 
           // Get the current collateral ratio
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
@@ -54,14 +54,14 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
 
           let collateralRatio
           if (usedCollateral.gt(0)) {
-            collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndCapital).toString()}%`
+            collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
           } else {
             collateralRatio = `0%`
           }
           console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
-          const liquidationEligible = debtAndCapital.gt(usedCollateral.mul(adjustedPrice).div(RAY))
+          const liquidationEligible = debtAndEquity.gt(usedCollateral.mul(adjustedPrice).div(RAY))
 
           _vaults.push({
             address: address,

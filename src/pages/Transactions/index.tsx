@@ -55,7 +55,7 @@ export default function Transactions() {
               (name === "SupplyModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔCapital: {utils.formatEther(log.args.capitalAmount).toString()}</div>
+                    <div>ΔEquity: {utils.formatEther(log.args.capitalAmount).toString()}</div>
                     <div>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</div>
                   </div>
                 </Accordion.Collapse>
