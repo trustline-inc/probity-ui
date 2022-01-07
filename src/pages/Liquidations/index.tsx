@@ -103,29 +103,31 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
 
   const liquidationEligibleVaults = vaults.filter((vault: any) => vault.liquidationEligible).map((vault: any, index: number) => {
     return (
-      <div key={index} className="row">
-        <div className="col-8 border">
-          <pre className="mt-3">{JSON.stringify(vault, null, 2)}</pre>
-        </div>
-        <div className="col-4 d-flex justify-content-center align-items-center">
-          <div>
-            <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault, index)}>
-              {loading ? (<i className="fa fa-spinner fa-spin" />) : "Liquidate Vault"}
-            </button>
+      <div className="card my-3" key={index}>
+        <div className="card-body">
+          <div className="row">
+            <div className="col-8 border">
+              <pre className="mt-3">{JSON.stringify(vault, null, 2)}</pre>
+            </div>
+            <div className="col-4 d-flex justify-content-center align-items-center">
+              <div>
+                <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault, index)}>
+                  {loading ? (<i className="fa fa-spinner fa-spin" />) : "Liquidate Vault"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <hr className="my-3" />
       </div>
     )
   })
 
   const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible).map((vault: any, index: number) => {
     return (
-      <div key={index} className="row">
-        <div className="col-12 border">
+      <div className="card my-3" key={index}>
+        <div className="card-body">
           <pre className="mt-3">{JSON.stringify(vault, null, 2)}</pre>
         </div>
-        <hr className="my-3" />
       </div>
     )
   })
