@@ -11,6 +11,7 @@ import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
 import {
+  RAD,
   WAD,
   TELLER,
   TREASURY,
@@ -86,7 +87,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-collateralAmount),
-          WAD.mul(-amount)
+          RAD.mul(-amount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
