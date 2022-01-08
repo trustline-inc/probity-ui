@@ -126,7 +126,7 @@ function BorrowActivity({
           <button
             className="btn btn-primary btn-lg mt-4"
             onClick={borrow}
-            disabled={amount === 0 || loading}
+            disabled={amount === 0 || isNaN(collateralAmount) || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>
