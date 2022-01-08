@@ -96,7 +96,7 @@ function RedemptionActivity({
             type="button"
             className="btn btn-primary btn-lg"
             onClick={redeem}
-            disabled={equityAmount === 0 || underlyingAmount === 0 || loading}
+            disabled={underlyingAmount === 0 || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>

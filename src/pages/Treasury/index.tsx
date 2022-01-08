@@ -12,7 +12,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import WithdrawActivity from "./WithdrawActivity";
 import { Activity as ActivityType } from "../../types";
-import { WAD, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
+import { RAD, WAD, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
@@ -102,7 +102,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(underlyingAmount),
-          WAD.mul(equityAmount),
+          RAD.mul(equityAmount),
           { gasLimit: 300000 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
@@ -130,7 +130,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(-underlyingAmount),
-          WAD.mul(-equityAmount)
+          RAD.mul(-equityAmount)
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
