@@ -92,22 +92,22 @@ function Balances() {
         try {
           const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
           const {
-            capital,
+            equity,
             debt,
-            usedCollateral
+            activeAssetAmount
           } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), account);
           const {
             debtAccumulator
-          } = await vaultEngine.collateralTypes(utils.id(getNativeTokenSymbol(chainId!)));
+          } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
   
           // Get the vault's debt and equity
-          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(equity)
   
           // Get the current collateral ratio
           if (debtAndEquity.toString() !== "0") {
-            const _collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
+            const _collateralRatio = `${activeAssetAmount.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
             setCollateralRatio(_collateralRatio)
           } else {
             setCollateralRatio("0%")
@@ -148,18 +148,18 @@ function Balances() {
               <h5>Wallet</h5>
               <div className="row my-2">
                 <div className="col-6">
-                  Available
+                  Standby
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
                 <div className="col-6">
-                  Pledged
+                  Active
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.usedCollateral)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -167,7 +167,7 @@ function Balances() {
                   Total
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.freeCollateral.add(vault.usedCollateral))).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
+                  <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
                 </div>
               </div>
               <hr />
@@ -177,7 +177,7 @@ function Balances() {
                   Equity Balance
                 </div>
                 <div className="col-6">
-                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.capital.mul(collateralType.capitalAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.equity.mul(collateralType.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -257,7 +257,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalEquity && collateralType ? numeral(utils.formatEther(totalEquity.div(RAY).mul(collateralType.capitalAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && collateralType ? numeral(utils.formatEther(totalEquity.div(RAY).mul(collateralType.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">

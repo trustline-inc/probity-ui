@@ -56,10 +56,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Supply:
-          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
+          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
-          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) - Number(equityAmount)));
+          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) - Number(equityAmount)));
           break;
       }
     }
@@ -73,7 +73,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     const amount = Number(event.target.value)
     setEquityAmount(amount);
     if (equityAmount > 0) {
-      setUnderlyingRatio(totalUnderlying / (Number(utils.formatEther(vault.capital)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
+      setUnderlyingRatio(totalUnderlying / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
     }
   }
 

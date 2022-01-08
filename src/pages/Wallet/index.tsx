@@ -8,7 +8,7 @@ import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import {
   WAD,
-  NATIVE_COLLATERAL,
+  NATIVE_TOKEN,
   INTERFACES
 } from '../../constants';
 import Info from '../../components/Info';
@@ -33,7 +33,7 @@ function Wallet() {
 
   const deposit = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL, INTERFACES[NATIVE_COLLATERAL].abi, library.getSigner())
+      const nativeToken = new Contract(NATIVE_TOKEN, INTERFACES[NATIVE_TOKEN].abi, library.getSigner())
       setLoading(true)
 
       try {
@@ -42,8 +42,8 @@ function Wallet() {
           gasLimit: web3.utils.toWei('400000', 'wei'),
           value: WAD.mul(collateralAmount)
         }]
-        await nativeCollateral.callStatic.deposit(...args)
-        const result = await nativeCollateral.deposit(...args);
+        await nativeToken.callStatic.deposit(...args)
+        const result = await nativeToken.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -57,14 +57,14 @@ function Wallet() {
 
   const withdraw = async () => {
     if (library && account) {
-      const nativeCollateral = new Contract(NATIVE_COLLATERAL, INTERFACES[NATIVE_COLLATERAL].abi, library.getSigner())
+      const nativeToken = new Contract(NATIVE_TOKEN, INTERFACES[NATIVE_TOKEN].abi, library.getSigner())
       setLoading(true)
 
       try {
         // Withdraw collateral
         const args = [WAD.mul(collateralAmount)]
-        await nativeCollateral.callStatic.withdraw(...args)
-        const result = await nativeCollateral.withdraw(...args);
+        await nativeToken.callStatic.withdraw(...args)
+        const result = await nativeToken.withdraw(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {

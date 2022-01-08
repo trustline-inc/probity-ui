@@ -43,7 +43,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           const {
             debtAccumulator,
             adjustedPrice
-          } = await vaultEngine.collateralTypes(utils.id(getNativeTokenSymbol(chainId!)));
+          } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
 
           // Get the vault's debt and equity
           const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(capital)

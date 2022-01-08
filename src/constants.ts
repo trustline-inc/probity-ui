@@ -6,7 +6,7 @@ import BridgeABI from "@trustline-inc/bridge/artifacts/contracts/Bridge.sol/Brid
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
-import NativeCollateralABI from "@trustline-inc/probity/artifacts/contracts/probity/collateral/NativeCollateral.sol/NativeCollateral.json";
+import NativeTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeToken.sol/NativeToken.json";
 import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import ReservePoolABI from "@trustline-inc/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
 import StateConnectorABI from "@trustline-inc/bridge/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -25,7 +25,7 @@ export const BRIDGE            = process.env && process.env.REACT_APP_BRIDGE    
 export const FTSO              = process.env && process.env.REACT_APP_FTSO              ? process.env.REACT_APP_FTSO              : "";
 export const LIQUIDATOR        = process.env && process.env.REACT_APP_LIQUIDATOR        ? process.env.REACT_APP_LIQUIDATOR        : ""
 export const PRICE_FEED        = process.env && process.env.REACT_APP_PRICE_FEED        ? process.env.REACT_APP_PRICE_FEED        : "";
-export const NATIVE_COLLATERAL = process.env && process.env.REACT_APP_NATIVE_COLLATERAL ? process.env.REACT_APP_NATIVE_COLLATERAL : "";
+export const NATIVE_TOKEN = process.env && process.env.REACT_APP_NATIVE_TOKEN ? process.env.REACT_APP_NATIVE_TOKEN : "";
 export const REGISTRY          = process.env && process.env.REACT_APP_REGISTRY          ? process.env.REACT_APP_REGISTRY          : "";
 export const STATE_CONNECTOR   = process.env && process.env.REACT_APP_STATE_CONNECTOR   ? process.env.REACT_APP_STATE_CONNECTOR   : "";
 export const PBT_TOKEN         = process.env && process.env.REACT_APP_PBT_TOKEN         ? process.env.REACT_APP_PBT_TOKEN         : "";
@@ -46,7 +46,7 @@ export const INTERFACES = {
   [FTSO]: FtsoABI,
   [LIQUIDATOR]: LiquidatorABI,
   [PRICE_FEED]: PriceFeedABI,
-  [NATIVE_COLLATERAL]: NativeCollateralABI,
+  [NATIVE_TOKEN]: NativeTokenABI,
   [REGISTRY]: RegistryABI,
   [RESERVE_POOL]: ReservePoolABI,
   [STATE_CONNECTOR]: StateConnectorABI,

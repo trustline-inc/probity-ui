@@ -160,10 +160,10 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.capital)) + Number(amount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.equity)) + Number(amount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.capital)) - Number(amount)));
+          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.equity)) - Number(amount)));
           break;
       }
     }
