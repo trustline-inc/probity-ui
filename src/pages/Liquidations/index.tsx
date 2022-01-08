@@ -38,7 +38,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           const {
             capital,
             debt,
-            usedCollateral
+            activeAssetAmount
           } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), address);
           const {
             debtAccumulator,
@@ -53,15 +53,15 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           const { _price } = await ftsoContract.getCurrentPrice()
 
           let collateralRatio
-          if (usedCollateral.gt(0)) {
-            collateralRatio = `${usedCollateral.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
+          if (activeAssetAmount.gt(0)) {
+            collateralRatio = `${activeAssetAmount.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
           } else {
             collateralRatio = `0%`
           }
           console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
-          const liquidationEligible = debtAndEquity.gt(usedCollateral.mul(adjustedPrice).div(RAY))
+          const liquidationEligible = debtAndEquity.gt(activeAssetAmount.mul(adjustedPrice).div(RAY))
 
           _vaults.push({
             address: address,

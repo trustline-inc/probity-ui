@@ -149,8 +149,8 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.usedCollateral)) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault.usedCollateral)) + Number(delta);
+    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }

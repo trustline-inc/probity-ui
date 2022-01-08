@@ -43,8 +43,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const onUnderlyingAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.usedCollateral)) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault.usedCollateral)) + Number(delta);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) + Number(delta);
     setTotalUnderlying(totalAmount);
     setUnderlyingAmount(delta);
   }
