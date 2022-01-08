@@ -63,7 +63,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           WAD.mul(collateralAmount),
-          WAD.mul(amount)
+          RAD.mul(amount)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
