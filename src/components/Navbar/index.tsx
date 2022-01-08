@@ -74,8 +74,15 @@ function Navbar() {
         case "development":
           url = "http://localhost:3000/coston"
           break
+        case "production":
+          if (process.env.REACT_APP_NATIVE_TOKEN_SYMBOL_LOCAL === "CFLR")
+            return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
+          if (process.env.REACT_AOO_NATIVE_TOKEN_SYMBOL_LOCAL === "SGB")
+            url = "https://faucet.trustline.io/coston"
+          break
         default:
           url = "https://faucet.trustline.io/coston"
+          break
       }
       const response = await axios({
         url,
@@ -201,7 +208,7 @@ function Navbar() {
                         requestingTestCoins ? (
                           <i className="fas fa-circle-notch fa-spin"></i>
                         ) : (
-                          <span><i className="mr-2" /> Request {getNativeTokenSymbol(chainId!)}</span>
+                          <span><i className="mr-2" /> Use Faucet ({getNativeTokenSymbol(chainId!)})</span>
                         )
                       }
                     </Button>
