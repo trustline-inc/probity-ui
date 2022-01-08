@@ -52,11 +52,11 @@ export default function Transactions() {
               )
             }
             {
-              (name === "SupplyModified") && (
+              (name === "EquityModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔEquity: {utils.formatEther(log.args.capitalAmount).toString()}</div>
-                    <div>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</div>
+                    <div>ΔEquity: {utils.formatEther(log.args.equityAmount).toString()}</div>
+                    <div>ΔUnderlying: {utils.formatEther(log.args.collAmount).toString()}</div>
                   </div>
                 </Accordion.Collapse>
               )
