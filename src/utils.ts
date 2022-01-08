@@ -1,6 +1,6 @@
 import { AUREI, PHI, INTERFACES } from "./constants";
 
-export const getCollateralId = (hash: string) => {
+export const getAssetId = (hash: string) => {
   const id = {
     "0x34f0798059a90d875925407ee1d283ae0650aaa8085071fb70c8c42029adc150": "SGB"
   }[hash]
@@ -12,7 +12,7 @@ export const getNativeTokenSymbol = (chainId: number) => {
     case 14:
       return "FLR"
     case 16:
-      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL_LOCAL || "FLR"
+      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL_LOCAL || "CFLR"
     case 19:
       return "SGB"
     default:

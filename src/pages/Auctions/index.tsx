@@ -7,7 +7,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 // import EventContext from "../../contexts/TransactionContext"
-import { getCollateralId, getStablecoinSymbol } from "../../utils";
+import { getAssetId, getStablecoinSymbol } from "../../utils";
 
 function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -153,7 +153,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
               <code>{RESERVE_POOL}</code> is the Reserve Pool's address.
             </div>
             {auctions.map((auction: any, index: number) => {
-              const collId = getCollateralId(auction?.collId)
+              const collId = getAssetId(auction?.collId)
               return (
                 <div className="card my-3" key={index}>
                   <div className="card-body">
