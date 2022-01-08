@@ -45,10 +45,10 @@ function Balances() {
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalCapital'], {
+  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalEquity'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: collateralType, mutate: mutateCollateralType } = useSWR([VAULT_ENGINE, 'collateralTypes', utils.id(getNativeTokenSymbol(chainId!))], {
+  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(getNativeTokenSymbol(chainId!))], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -63,7 +63,7 @@ function Balances() {
         mutatePbtERC20Balance(undefined, true);
         mutateTotalEquity(undefined, true);
         mutateInterestBalance(undefined, true);
-        mutateCollateralType(undefined, true);
+        mutateAsset(undefined, true);
       });
 
       return () => {
@@ -177,7 +177,7 @@ function Balances() {
                   Equity Balance
                 </div>
                 <div className="col-6">
-                <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.equity.mul(collateralType.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -185,7 +185,7 @@ function Balances() {
                   Debt Balance
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{vault && collateralType ? numeral(utils.formatEther(vault.debt.mul(collateralType.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -257,7 +257,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalEquity && collateralType ? numeral(utils.formatEther(totalEquity.div(RAY).mul(collateralType.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).mul(asset.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -265,7 +265,7 @@ function Balances() {
                   <h6>Total Debt</h6>
                 </div>
                 <div className="col-6">
-                  <span className="text-truncate">{totalDebt && collateralType ? numeral(utils.formatEther(totalDebt.div(RAY).mul(collateralType.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalDebt && asset ? numeral(utils.formatEther(totalDebt.div(RAY).mul(asset.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
             </>
