@@ -36,7 +36,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         for (let address of users) {
           const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
           const {
-            capital,
+            equity,
             debt,
             activeAssetAmount
           } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), address);
@@ -46,14 +46,14 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
 
           // Get the vault's debt and equity
-          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(capital)
+          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(equity)
 
           // Get the current collateral ratio
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
 
           let collateralRatio
-          if (activeAssetAmount.gt(0)) {
+          if (activeAssetAmount.gt(0) && debtAndEquity.gt(0)) {
             collateralRatio = `${activeAssetAmount.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
           } else {
             collateralRatio = `0%`
@@ -66,7 +66,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           _vaults.push({
             address: address,
             debt: numeral(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format('$0,0.00'),
-            capital: numeral(utils.formatEther(capital).toString()).format('$0,0.00'),
+            equity: numeral(utils.formatEther(equity).toString()).format('$0,0.00'),
             collateralRatio,
             liquidationEligible,
           });
@@ -89,7 +89,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         _vaults[index] = {
           ...vault,
           debt: "$0.00",
-          capital: "$0.00",
+          equity: "$0.00",
           collateralRatio: "0%",
           liquidationEligible: false
         }
