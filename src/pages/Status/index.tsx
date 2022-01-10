@@ -17,7 +17,8 @@ import {
   TELLER,
   TREASURY,
   VAULT_ENGINE,
-  INTERFACES
+  INTERFACES,
+  VAULT_MANAGER
 } from '../../constants';
 
 function Status() {
@@ -37,7 +38,8 @@ function Status() {
     RESERVE_POOL: false,
     TELLER: false,
     TREASURY: false,
-    VAULT_ENGINE: false
+    VAULT_ENGINE: false,
+    VAULT_MANAGER: false,
   })
   const [fetched, setFetched] = React.useState(false)
   const contracts: { [key: string]: string } = {
@@ -54,7 +56,8 @@ function Status() {
     "RESERVE_POOL": RESERVE_POOL,
     "TELLER": TELLER,
     "TREASURY": TREASURY,
-    "VAULT_ENGINE": VAULT_ENGINE 
+    "VAULT_ENGINE": VAULT_ENGINE,
+    "VAULT_MANAGER": VAULT_MANAGER,
   }
 
   const objectZip = (keys: any, values: any) =>
