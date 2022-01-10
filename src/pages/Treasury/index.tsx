@@ -160,8 +160,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
         ]
-        await treasury.callStatic.withdraw(...args)
-        const result = await treasury.withdraw(...args);
+        await treasury.callStatic.withdrawStablecoin(...args)
+        const result = await treasury.withdrawStablecoin(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
