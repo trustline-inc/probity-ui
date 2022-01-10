@@ -12,7 +12,6 @@ import {
   PRICE_FEED,
   NATIVE_TOKEN,
   REGISTRY,
-  STATE_CONNECTOR,
   PBT_TOKEN,
   RESERVE_POOL,
   TELLER,
@@ -42,6 +41,7 @@ function Status() {
   })
   const [fetched, setFetched] = React.useState(false)
   const contracts: { [key: string]: string } = {
+    "AUREI": AUREI,
     "PHI": PHI,
     "AUCTIONEER": AUCTIONEER,
     "BRIDGE": BRIDGE,
@@ -75,9 +75,21 @@ function Status() {
         for (let contract in contracts) {
           try {
             const address = contracts[contract]
+            if (!address) {
+              console.log("no address for " + contract)
+              continue
+            }
             const _contract = new Contract(address, INTERFACES[address].abi, library.getSigner())
             // If there is no contract currently deployed, the result is 0x.
-            responses[contract] = (await _contract.provider.getCode(_contract.address) !== "0x")
+            responses[contract] = await (new Promise(async (resolve, reject) => {
+              if (_contract.address) {
+                const code = await _contract.provider.getCode(_contract.address)
+                const result = code !== "0x"
+                resolve(result)
+              } else {
+                reject(false)
+              }
+            }))
           } catch (error) {
             continue
           }
