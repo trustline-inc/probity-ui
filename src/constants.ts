@@ -14,6 +14,7 @@ import PbtTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/toke
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineSBABI from "@trustline-inc/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
+import VaultManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultManager.sol/VaultManager.json";
 
 /**
  * Contract addresses
@@ -33,6 +34,7 @@ export const RESERVE_POOL      = process.env && process.env.REACT_APP_RESERVE_PO
 export const TELLER            = process.env && process.env.REACT_APP_TELLER            ? process.env.REACT_APP_TELLER            : "";
 export const TREASURY          = process.env && process.env.REACT_APP_TREASURY          ? process.env.REACT_APP_TREASURY          : "";
 export const VAULT_ENGINE      = process.env && process.env.REACT_APP_VAULT_ENGINE      ? process.env.REACT_APP_VAULT_ENGINE      : "";
+export const VAULT_MANAGER     = process.env && process.env.REACT_APP_VAULT_MANAGER     ? process.env.REACT_APP_VAULT_MANAGER     : "";
 
 /**
  * Contract ABIs
@@ -53,7 +55,8 @@ export const INTERFACES = {
   [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
   [TREASURY]: TreasuryABI,
-  [VAULT_ENGINE]: VaultEngineSBABI
+  [VAULT_ENGINE]: VaultEngineSBABI,
+  [VAULT_MANAGER]: VaultManagerABI
 }
 
 // WalletConnect

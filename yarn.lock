@@ -2323,10 +2323,10 @@
     axios "^0.22.0"
     ripple-lib "^1.10.0"
 
-"@trustline-inc/probity@^1.0.0-alpha4":
-  version "1.0.0-alpha5"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha5/12ce9d06006ad819d813cef4e9f18ed221804235edf66e905638730abf76737e#4c204f772b272683913d2ffe168ef0a0a430ec80"
-  integrity sha512-9JfsQe68MaGgm76UeKHBeoGq3oWPntQzRbY9tdgdkFD1RUbSFP0HQThSDHnP6aCKkt6IrvXOLHGNbG0Sm/I4ag==
+"@trustline-inc/probity@^1.0.0-alpha6":
+  version "1.0.0-alpha6"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha6/0a304548e9a949802faec3a832b9c3e892e3a5704868ca9a87e8e530e295b20b#7ee83e98a829cf99e1549f6f50354c54e33ced7c"
+  integrity sha512-mWywr9LqGY1gKRBfWVLTLsIDQwYg3opTbYa+BeuefdrCOSmiZzpmYmuhM1NHwGQSq8zWn1iXQA4x4F0rvL1sJg==
 
 "@types/aria-query@^4.2.0":
   version "4.2.2"
@@ -13456,7 +13456,7 @@ react-dev-utils@^11.0.3:
     open "^7.0.2"
     pkg-up "3.1.0"
     prompts "2.4.0"
-    react-error-overlay "6.0.9"
+    react-error-overlay "^6.0.9"
     recursive-readdir "2.2.2"
     shell-quote "1.7.2"
     strip-ansi "6.0.0"
@@ -13471,7 +13471,7 @@ react-dom@^17.0.1:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
-react-error-overlay@6.0.9, react-error-overlay@6.0.9:
+react-error-overlay@6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
