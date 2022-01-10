@@ -39,7 +39,7 @@ function Balances() {
   const { data: pbtERC20Balance, mutate: mutatePbtERC20Balance } = useSWR([PBT_TOKEN, 'balanceOf', account], {
     fetcher: fetcher(library, INTERFACES[PBT_TOKEN].abi),
   })
-  const { data: totalStablecoinSupply, mutate: mutatetotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
+  const { data: totalStablecoinSupply, mutate: mutateTotalStablecoinSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
@@ -57,7 +57,7 @@ function Balances() {
       library.on("block", () => {
         mutateVault(undefined, true);
         mutateVaultStablecoinBalance(undefined, true);
-        mutatetotalStablecoinSupply(undefined, true);
+        mutateTotalStablecoinSupply(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateStablecoinERC20Balance(undefined, true);
         mutatePbtERC20Balance(undefined, true);
