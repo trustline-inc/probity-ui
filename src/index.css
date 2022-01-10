@@ -11,3 +11,8 @@ h1, h2, h3, h4, h5 {
     background: #fff !important;
     border-left-width: 8px;
 }
+
+.asset:hover {
+    background: #f3f3f3;
+    cursor: pointer;
+}

@@ -8,6 +8,7 @@ import fetcher from "../../fetcher";
 import { RAY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
   collateralRatio: number;
@@ -34,7 +35,7 @@ function BorrowActivity({
   onAmountChange,
   onCollateralAmountChange
 }: Props) {
-  const { library } = useWeb3React<Web3Provider>()
+  const { library, chainId } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
 
   const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
@@ -43,6 +44,14 @@ function BorrowActivity({
   const { data: totalEquity } = useSWR([VAULT_ENGINE, "totalEquity"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
+
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const onSelect = () => {
+    setShow(false)
+  }
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
 
   React.useEffect(() => {
     if (totalDebt && totalEquity) {
@@ -60,10 +69,9 @@ function BorrowActivity({
     }
   }, [rate, amount, totalDebt, totalEquity, setMaxSize])
 
-  const { chainId } = useWeb3React<Web3Provider>()
-
   return (
     <>
+      <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <label className="form-label">
         Amount<br/>
         <small className="form-text text-muted">
@@ -111,7 +119,13 @@ function BorrowActivity({
             onCollateralAmountChange(event)
           }}
         />
-        <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+        <button
+          onClick={handleShow}
+          className="btn btn-outline-secondary font-monospace"
+          type="button"
+        >
+          {nativeTokenSymbol}
+        </button>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">

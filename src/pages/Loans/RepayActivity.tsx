@@ -3,6 +3,7 @@ import PriceFeed from "../../components/PriceFeed"
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
+import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
   collateralRatio: number;
@@ -25,9 +26,16 @@ function RepayActivity({
   onCollateralAmountChange
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
-
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const onSelect = () => {
+    setShow(false)
+  }
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   return (
     <>
+      <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <label className="form-label">
         Amount<br/>
         <small className="form-text text-muted">
@@ -47,7 +55,13 @@ function RepayActivity({
       </label>
       <div className="input-group mb-3">
         <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
-        <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+        <button
+          onClick={handleShow}
+          className="btn btn-outline-secondary font-monospace"
+          type="button"
+        >
+          {nativeTokenSymbol}
+        </button>
       </div>
       <PriceFeed collateralAmount={collateralAmount} />
       <div className="row">

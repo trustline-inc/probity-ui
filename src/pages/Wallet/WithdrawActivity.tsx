@@ -1,7 +1,9 @@
+import React from "react"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol } from "../../utils";
+import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
   collateralAmount: number;
@@ -17,9 +19,16 @@ function WithdrawActivity({
   loading
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
-
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const onSelect = () => {
+    setShow(false)
+  }
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   return (
     <>
+      <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="collateralRedemptionAmount" className="form-label">
@@ -37,7 +46,13 @@ function WithdrawActivity({
               placeholder="0.000000000000000000"
               onChange={onCollateralAmountChange}
             />
-            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+            <button
+              onClick={handleShow}
+              className="btn btn-outline-secondary font-monospace"
+              type="button"
+            >
+              {nativeTokenSymbol}
+            </button>
           </div>
         </div>
       </div>

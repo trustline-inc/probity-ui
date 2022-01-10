@@ -3,6 +3,7 @@ import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed"
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
   underlyingAmount: number;
@@ -24,9 +25,16 @@ function RedemptionActivity({
   loading
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
-
+  const [show, setShow] = React.useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const onSelect = () => {
+    setShow(false)
+  }
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   return (
     <>
+      <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
         <div className="col-12">
           <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
@@ -47,7 +55,13 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onUnderlyingAmountChange}
             />
-            <span className="input-group-text font-monospace">{getNativeTokenSymbol(chainId!)}</span>
+            <button
+              onClick={handleShow}
+              className="btn btn-outline-secondary font-monospace"
+              type="button"
+            >
+              {nativeTokenSymbol}
+            </button>
           </div>
         </div>
       </div>
