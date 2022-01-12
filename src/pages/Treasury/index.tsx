@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import { Contract, utils } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
 import InvestActivity from "./InvestActivity";
@@ -145,23 +145,29 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   }
 
   /**
-   * @function withdraw
+   * @function collect
    */
-    const withdraw = async () => {
+    const collect = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
 
       try {
         const isPBT = interestType === "PBT";
         const args = [
-          utils.parseUnits(interestAmount.toString(), "ether").toString(),
-          isPBT,
+          utils.parseUnits(interestAmount.toString(), 18),
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
         ]
-        await treasury.callStatic.withdrawStablecoin(...args)
-        const result = await treasury.withdrawStablecoin(...args);
+        let result
+        if (isPBT) {
+          await treasury.callStatic.withdrawPbt(...args)
+          result = await treasury.withdrawPbt(...args);
+        } else {
+          // TODO: This does not work as expected.
+          // await treasury.callStatic.withdrawStablecoin(...args)
+          // result = await treasury.withdrawStablecoin(...args);
+        }
         const data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
@@ -228,7 +234,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                 <WithdrawActivity
                   interestAmount={interestAmount}
                   onInterestAmountChange={onInterestAmountChange}
-                  withdraw={withdraw}
+                  withdraw={collect}
                   loading={loading}
                   setInterestType={setInterestType}
                   interestType={interestType}
