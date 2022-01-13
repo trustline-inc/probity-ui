@@ -56,7 +56,7 @@ function Stablecoins() {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
       setLoading(true)
       try {
-        const result = await treasury.deposit(
+        const result = await treasury.depositStablecoin(
           BigNumber.from(amount).mul(WAD)
         );
         const data = await result.wait();
