@@ -158,6 +158,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         let args: any = [utils.id(getNativeTokenSymbol(chainId!))]
         await vaultEngine.callStatic.collectInterest(...args)
         let result = await vaultEngine.collectInterest(...args);
+        let data = await result.wait();
+        ctx.updateTransactions(data);
 
         const isPBT = interestType === "PBT";
         args = [
@@ -171,11 +173,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           await treasury.callStatic.withdrawPbt(...args)
           result = await treasury.withdrawPbt(...args);
         } else {
-          // TODO: This does not work as expected.
-          // await treasury.callStatic.withdrawStablecoin(...args)
-          // result = await treasury.withdrawStablecoin(...args);
+          await treasury.callStatic.withdrawStablecoin(...args)
+          result = await treasury.withdrawStablecoin(...args);
         }
-        const data = await result.wait();
+        data = await result.wait();
         ctx.updateTransactions(data);
       } catch (error) {
         console.log(error);
