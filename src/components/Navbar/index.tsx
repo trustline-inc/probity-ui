@@ -48,8 +48,6 @@ function Navbar() {
   const { chainId, active, activate, deactivate } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
-  const { account } = useWeb3React<Web3Provider>();
-  const [requestingTestCoins, setRequestingTestCoins] = useState(false)
 
   // Copy state temporarily to flip it. Seems to work better than just 
   // inverting the boolean in the onClick itself
@@ -60,50 +58,7 @@ function Navbar() {
 
   const handleFaucetRequest = async (event: React.MouseEvent) => {
     event.preventDefault()
-
-    const cooldownPeriodEnd = window.localStorage.getItem("probity-testnet-faucet")!
-    if (cooldownPeriodEnd && new Date(Number(cooldownPeriodEnd)) > new Date()) {
-      const expiresAt = new Date(Number(cooldownPeriodEnd)).toLocaleString()
-      return alert(`Testnet funds have already been requested in the past day. The cooldown period expires at ${expiresAt}.`)
-    }
-
-    setRequestingTestCoins(true)
-    try {
-      var url;
-      switch (process.env.NODE_ENV) {
-        case "development":
-          url = "http://localhost:3000/coston"
-          break
-        case "production":
-          if (process.env.REACT_APP_NATIVE_TOKEN_SYMBOL_LOCAL === "CFLR")
-            return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
-          if (process.env.REACT_AOO_NATIVE_TOKEN_SYMBOL_LOCAL === "SGB")
-            url = "https://faucet.trustline.io/coston"
-          break
-        default:
-          url = "https://faucet.trustline.io/coston"
-          break
-      }
-      const response = await axios({
-        url,
-        params: {
-          user: account
-        }
-      })
-      setRequestingTestCoins(false)
-
-      if (response.data.hash) {
-        const now = new Date()
-        const cooldown = now.setDate(now.getDate() + 1);
-        window.localStorage.setItem("probity-testnet-faucet", String(cooldown));
-        alert(
-          `Sent 1,000 ${getNativeTokenSymbol(chainId!)} to ${account}. Testnet fund requests are limited to once per day.`
-        )
-      }
-    } catch (error) {
-      setRequestingTestCoins(false)
-      alert("An error occurred. Please report to the Probity Telegram group.")
-    }
+    return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
   }
 
   const onClick = () => {
@@ -202,15 +157,8 @@ function Navbar() {
                     <Button
                       variant="light"
                       onClick={handleFaucetRequest}
-                      disabled={requestingTestCoins}
                     >
-                      {
-                        requestingTestCoins ? (
-                          <i className="fas fa-circle-notch fa-spin"></i>
-                        ) : (
-                          <span><i className="mr-2" /> Use Faucet ({getNativeTokenSymbol(chainId!)})</span>
-                        )
-                      }
+                      <span><i className="mr-2" /> Use Faucet ({getNativeTokenSymbol(chainId!)})</span>
                     </Button>
                     <div className="spacer spacer-1" />
                   </>
