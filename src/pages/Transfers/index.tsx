@@ -141,9 +141,13 @@ export default function Transfers() {
 
     (async () => {
       // Get verified issuers
-      const bridge = new Contract(BRIDGE, INTERFACES[BRIDGE].abi, library)
-      const _verifiedIssuers = await bridge.getVerifiedIssuers()
-      setVerifiedIssuers(_verifiedIssuers)
+      try {
+        const bridge = new Contract(BRIDGE, INTERFACES[BRIDGE].abi, library)
+        const _verifiedIssuers = await bridge.getVerifiedIssuers()
+        setVerifiedIssuers(_verifiedIssuers)
+      } catch (error) {
+        console.error(error)
+      }
     })()
   }, [library])
 
