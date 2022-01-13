@@ -153,11 +153,11 @@ function Navbar() {
               <i className="fas fa-hand-holding-usd"></i> Loans
             </NavLink>
           </li>
-          {/* <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/exchange">
-              <i className="fas fa-exchange-alt"></i> Exchange
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/stablecoins">
+              <i className="fas fa-coins"></i> Stablecoins
             </NavLink>
-          </li> */}
+          </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/transfers">
               <i className="fas fa-paper-plane" /> Transfers

@@ -4,9 +4,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
-import { BigNumber, Contract, utils } from "ethers";
+import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
@@ -18,9 +17,7 @@ import {
   VAULT_ENGINE,
 } from '../../constants';
 import BorrowActivity from './BorrowActivity';
-import DepositActivity from './DepositActivity';
 import RepayActivity from './RepayActivity';
-import WithdrawActivity from './WithdrawActivity';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
@@ -49,7 +46,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   React.useEffect(() => {
     if (location.pathname === "/loans/borrow") setActivity(ActivityType.Borrow);
     if (location.pathname === "/loans/repay") setActivity(ActivityType.Repay);
-    if (location.pathname === "/loans/withdraw") setActivity(ActivityType.Withdraw);
   }, [location])
 
   const borrow = async () => {
@@ -100,48 +96,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     }
   }
 
-  /**
-   * @function withdraw
-   */
-    const withdraw = async () => {
-    if (library && account) {
-      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
-      setLoading(true)
-      try {
-        const result = await treasury.withdrawStablecoin(
-          BigNumber.from(amount).mul(WAD)
-        );
-        const data = await result.wait();
-        ctx.updateTransactions(data);
-      } catch (error) {
-        console.log(error);
-        setError(error);
-      }
-      setLoading(false)
-    }
-  }
-
-  /**
-   * @function deposit
-   */
-  const deposit = async () => {
-    if (library && account) {
-      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
-      setLoading(true)
-      try {
-        const result = await treasury.deposit(
-          BigNumber.from(amount).mul(WAD)
-        );
-        const data = await result.wait();
-        ctx.updateTransactions(data);
-      } catch (error) {
-        console.log(error);
-        setError(error);
-      }
-      setLoading(false)
-    }
-  }
-
   const onAmountChange = (event: any) => {
     const amount = Number(event.target.value);
     setBorrowAmount(amount);
@@ -188,12 +142,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/loans/repay"} onClick={() => { setActivity(ActivityType.Repay); setCollateralAmount(0) }}>Repay</NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/loans/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw); setCollateralAmount(0) }}>Withdraw</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/loans/deposit"} onClick={() => { setActivity(ActivityType.Deposit); setCollateralAmount(0) }}>Deposit</NavLink>
-              </li>
             </ul>
           </div>
           <hr />
@@ -227,30 +175,6 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
                     collateralAmount={collateralAmount}
                     onAmountChange={onAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
-                  />
-                )
-              }
-              {
-                activity === ActivityType.Withdraw && (
-                  <WithdrawActivity
-                    maxSize={maxSize}
-                    setMaxSize={setMaxSize}
-                    amount={amount}
-                    onAmountChange={onAmountChange}
-                    withdraw={withdraw}
-                    loading={loading}
-                  />
-                )
-              }
-              {
-                activity === ActivityType.Deposit && (
-                  <DepositActivity
-                    maxSize={maxSize}
-                    setMaxSize={setMaxSize}
-                    amount={amount}
-                    onAmountChange={onAmountChange}
-                    deposit={deposit}
-                    loading={loading}
                   />
                 )
               }

@@ -27,6 +27,7 @@ import { VERSION } from '../../constants';
 import "./index.css";
 import SocialLinks from "../../components/Social";
 import EventContext from "../../contexts/TransactionContext"
+import Stablecoins from "../../pages/Stablecoins";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
@@ -189,6 +190,9 @@ function App() {
                         </Route>
                         <Route path="/loans">
                           <Loans collateralPrice={collateralPrice} />
+                        </Route>
+                        <Route path="/stablecoins">
+                          <Stablecoins />
                         </Route>
                         <Route path="/transfers">
                           <Transfers />
