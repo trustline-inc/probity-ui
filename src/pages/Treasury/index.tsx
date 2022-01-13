@@ -5,12 +5,13 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import { BigNumber, Contract, utils } from "ethers";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
 import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
-import WithdrawActivity from "./WithdrawActivity";
+import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
 import { RAD, WAD, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
 import Info from '../../components/Info';
@@ -150,16 +151,22 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     const collect = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
+      setLoading(true)
 
       try {
+        let args: any = [utils.id(getNativeTokenSymbol(chainId!))]
+        await vaultEngine.callStatic.collectInterest(...args)
+        let result = await vaultEngine.collectInterest(...args);
+
         const isPBT = interestType === "PBT";
-        const args = [
+        args = [
           utils.parseUnits(interestAmount.toString(), 18),
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
         ]
-        let result
+
         if (isPBT) {
           await treasury.callStatic.withdrawPbt(...args)
           result = await treasury.withdrawPbt(...args);
@@ -174,6 +181,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         console.log(error);
         setError(error);
       }
+      setLoading(false)
     }
   }
 
@@ -231,10 +239,10 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
             }
             {
               activity === ActivityType.Interest && (
-                <WithdrawActivity
+                <CollectActivity
                   interestAmount={interestAmount}
                   onInterestAmountChange={onInterestAmountChange}
-                  withdraw={collect}
+                  collect={collect}
                   loading={loading}
                   setInterestType={setInterestType}
                   interestType={interestType}

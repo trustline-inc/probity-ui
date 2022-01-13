@@ -5,16 +5,16 @@ import { getStablecoinSymbol } from "../../utils"
 interface Props {
   interestAmount: number;
   onInterestAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  withdraw: (amount: number) => void;
+  collect: (amount: number) => void;
   loading: boolean;
   setInterestType: (type: string) => void;
   interestType: string;
 }
 
-function WithdrawActivity({
+function CollectActivity({
   interestAmount,
   onInterestAmountChange,
-  withdraw,
+  collect,
   loading,
   setInterestType,
   interestType
@@ -45,7 +45,7 @@ function WithdrawActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Amount<br/>
             <small className="form-text text-muted">
-              The amount of interest to withdraw
+              The amount of interest to collect
             </small>
           </label>
           <div className="input-group">
@@ -66,10 +66,10 @@ function WithdrawActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={() => { withdraw(interestAmount) }}
+            onClick={() => { collect(interestAmount) }}
             disabled={interestAmount === 0 || loading}
           >
-            {loading ? <i className="fa fa-spin fa-spinner" /> : "Confirm" }
+            {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>
         </div>
       </div>
@@ -77,4 +77,4 @@ function WithdrawActivity({
   )
 }
 
-export default WithdrawActivity
+export default CollectActivity
