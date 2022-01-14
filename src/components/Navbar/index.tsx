@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Button } from "react-bootstrap"
+import { Button, Modal } from "react-bootstrap"
 import useSWR from "swr";
 import axios from "axios";
 import numeral from "numeral";
@@ -48,6 +48,8 @@ function Navbar() {
   const { chainId, active, activate, deactivate } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
+  const { account } = useWeb3React<Web3Provider>();
+  const [loading, setLoading] = useState(false)
 
   // Copy state temporarily to flip it. Seems to work better than just 
   // inverting the boolean in the onClick itself
@@ -61,10 +63,25 @@ function Navbar() {
     return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
   }
 
+  const whitelist = async (event: React.MouseEvent) => {
+    setLoading(true)
+    try {
+      await axios({
+        url: "https://faucet.trustline.io/coston",
+        params: {
+          user: account
+        }
+      })
+      alert("Success!")
+    } catch (error) {
+      alert("An error occurred. Please report to the Probity Telegram group.")
+    }
+    setLoading(false)
+  }
+
   const onClick = () => {
     activate(injected);
   };
-
 
   return (
     <nav className="d-flex flex-column align-items-end h-100">
@@ -169,6 +186,8 @@ function Navbar() {
                   </>
                 )
               }
+              <Button variant="light" onClick={whitelist}>Whitelist Address</Button>
+              <div className="spacer spacer-1" />
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (
