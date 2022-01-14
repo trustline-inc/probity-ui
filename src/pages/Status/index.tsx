@@ -109,7 +109,7 @@ function Status() {
       <li className="list-group-item d-flex justify-content-between align-items-center" key={contract}>
         <code>{contract}</code>
         {statuses[contract] ? (
-          <span className="badge bg-success rounded-pill">ONLINE</span>
+          <code>{contracts[contract]}</code>
         ) : (
           <span className="badge bg-danger rounded-pill">OFFLINE</span>
         )}
