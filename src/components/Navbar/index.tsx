@@ -61,6 +61,10 @@ function Navbar() {
     return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
   }
 
+  const whitelist = async (event: React.MouseEvent) => {
+    console.log("adding to whitelist")
+  }
+
   const onClick = () => {
     activate(injected);
   };
@@ -169,6 +173,8 @@ function Navbar() {
                   </>
                 )
               }
+              <Button variant="light" onClick={whitelist}>Whitelist Address</Button>
+              <div className="spacer spacer-1" />
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (
