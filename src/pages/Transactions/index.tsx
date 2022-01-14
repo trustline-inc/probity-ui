@@ -6,7 +6,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
-import { INTERFACES, WAD } from "../../constants";
+import { INTERFACES, RAY, WAD } from "../../constants";
 
 function RowToggle({ eventKey, name, tx }: any) {
   const decoratedOnClick = useAccordionButton(eventKey);
@@ -55,8 +55,8 @@ export default function Transactions() {
               (name === "EquityModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔEquity: {utils.formatEther(log.args.equityAmount).toString()}</div>
-                    <div>ΔUnderlying: {utils.formatEther(log.args.collAmount).toString()}</div>
+                    <div>ΔEquity: {utils.formatEther(log.args.equityAmount.div(RAY)).toString()}</div>
+                    <div>ΔUnderlying: {utils.formatEther(log.args.underlyingAmount).toString()}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -65,7 +65,7 @@ export default function Transactions() {
               (name === "DebtModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔDebt: {utils.formatEther(log.args.debtAmount).toString()}</div>
+                    <div>ΔDebt: {utils.formatEther(log.args.debtAmount.div(RAY)).toString()}</div>
                     <div>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</div>
                   </div>
                 </Accordion.Collapse>
