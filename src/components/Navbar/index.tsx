@@ -67,13 +67,14 @@ function Navbar() {
     setLoading(true)
     try {
       await axios({
-        url: "https://faucet.trustline.io/coston",
+        url: "https://faucet.trustline.io/whitelist",
         params: {
           user: account
         }
       })
       alert("Success!")
     } catch (error) {
+      console.error(error)
       alert("An error occurred. Please report to the Probity Telegram group.")
     }
     setLoading(false)
