@@ -113,11 +113,16 @@ function Navbar() {
               <i className="fas fa-coins"></i> Stablecoins
             </NavLink>
           </li>
-          <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/transfers">
-              <i className="fas fa-paper-plane" /> Transfers
-            </NavLink>
-          </li>
+          {
+            // Only show Transfers tab if the bridge contract is in the env.
+            process.env.BRIDGE && (
+              <li className="nav-item my-1">
+                <NavLink className="nav-link" activeClassName="active" to="/transfers">
+                  <i className="fas fa-paper-plane" /> Transfers
+                </NavLink>
+              </li>
+            )
+          }
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/liquidations">
               <i className="fas fa-hand-holding-water" /> Liquidations
