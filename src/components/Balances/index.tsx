@@ -82,7 +82,7 @@ function Balances() {
       const supply = Number(utils.formatEther(totalEquity.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-      setEstimatedAPR(`${(Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)}%`)
+      setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
     }
   }, [totalEquity, totalDebt])
 
