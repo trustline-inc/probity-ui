@@ -67,6 +67,8 @@ function Navbar() {
 
   const whitelist = async (event: React.MouseEvent) => {
     console.log("adding " + address + " to whitelist")
+    alert("Success!")
+    handleClose()
   }
 
   const onClick = () => {
