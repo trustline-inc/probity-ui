@@ -187,7 +187,9 @@ function Navbar() {
                   </>
                 )
               }
-              <Button variant="light" onClick={whitelist}>Whitelist Address</Button>
+              <Button variant="light" onClick={whitelist}>
+                {loading ? (<i className="fa fa-spinner fa-spin" />) : "Whitelist Address"}
+              </Button>
               <div className="spacer spacer-1" />
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
