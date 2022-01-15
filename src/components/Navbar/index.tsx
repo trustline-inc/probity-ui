@@ -66,12 +66,13 @@ function Navbar() {
   const whitelist = async (event: React.MouseEvent) => {
     setLoading(true)
     try {
-      await axios({
+      const result = await axios({
         url: "https://faucet.trustline.io/whitelist",
         params: {
           user: account
         }
       })
+      if (result?.data?.reason) throw Error(result.data.reason)
       alert("Success!")
     } catch (error) {
       console.error(error)
