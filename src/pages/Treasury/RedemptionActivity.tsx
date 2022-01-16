@@ -40,10 +40,10 @@ function RedemptionActivity({
           <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
         </div>
         <div className="col-12">
-          <label htmlFor="collateralRedemptionAmount" className="form-label">
-            Amount<br/>
+          <label htmlFor="redemptionAmount" className="form-label">
+            Underlying<br/>
             <small className="form-text text-muted">
-              The amount of asset to redeem
+              The amount of underlying asset to redeem
             </small>
           </label>
           <div className="input-group">
@@ -51,7 +51,7 @@ function RedemptionActivity({
               type="number"
               min={0}
               className="form-control"
-              id="collateralRedemptionAmount"
+              id="redemptionAmount"
               placeholder="0.000000000000000000"
               onChange={onUnderlyingAmountChange}
             />
@@ -68,9 +68,9 @@ function RedemptionActivity({
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityAmount" className="form-label">
-            Equity<br/>
+            Shares<br/>
             <small className="form-text text-muted">
-              The amount of equity to redeem
+              The amount of shares to destroy
             </small>
           </label>
           <div className="input-group">
@@ -91,7 +91,7 @@ function RedemptionActivity({
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2">
-              <span>Collateral Ratio:</span>
+              <span>Underlying Ratio:</span>
               <br />
               <small className="text-muted">
                 {underlyingAmount ? (

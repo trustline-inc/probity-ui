@@ -3,10 +3,10 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import { BigNumber, Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import { WAD, TREASURY } from '../../constants';
+import { TREASURY } from '../../constants';
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 import EventContext from "../../contexts/TransactionContext"
@@ -36,7 +36,7 @@ function Stablecoins() {
       setLoading(true)
       try {
         const result = await treasury.withdrawStablecoin(
-          BigNumber.from(amount).mul(WAD)
+          utils.parseUnits(String(amount), 18)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -57,7 +57,7 @@ function Stablecoins() {
       setLoading(true)
       try {
         const result = await treasury.depositStablecoin(
-          BigNumber.from(amount).mul(WAD)
+          utils.parseUnits(String(amount), 18)
         );
         const data = await result.wait();
         ctx.updateTransactions(data);

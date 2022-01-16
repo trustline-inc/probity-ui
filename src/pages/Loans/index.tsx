@@ -54,12 +54,11 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       setLoading(true)
 
       try {
-        // Modify debt
         const result = await vaultEngine.modifyDebt(
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(collateralAmount),
-          RAD.mul(amount)
+          utils.parseUnits(String(collateralAmount), 18),
+          utils.parseUnits(String(amount), 45),
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -78,12 +77,11 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
       setLoading(true)
 
       try {
-        // Modify debt
         const result = await vault.modifyDebt(
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(-collateralAmount),
-          RAD.mul(-amount)
+          utils.parseUnits(String(-collateralAmount), 18),
+          utils.parseUnits(String(-amount), 45),
         );
         const data = await result.wait();
         ctx.updateTransactions(data);

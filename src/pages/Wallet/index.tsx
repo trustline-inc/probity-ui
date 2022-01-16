@@ -85,7 +85,7 @@ function Wallet() {
     <>
       <header className="pt-2">
         <h1>Wallet Management</h1>
-        <p className="lead">Deposit or withdraw assets from your vault to be invested or collateralized for a loan.</p>
+        <p className="lead">Deposit or withdraw assets to be invested or collateralized for a loan.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

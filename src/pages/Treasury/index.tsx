@@ -97,13 +97,14 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (library && account) {
       const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
-
+      console.log(utils.parseUnits(String(underlyingAmount), 18).toString())
+      console.log(utils.parseUnits(String(equityAmount), 45).toString())
       try {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(underlyingAmount),
-          RAD.mul(equityAmount),
+          utils.parseUnits(String(underlyingAmount), 18),
+          utils.parseUnits(String(equityAmount), 45),
           { gasLimit: 300000 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
@@ -130,8 +131,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
-          WAD.mul(-underlyingAmount),
-          RAD.mul(-equityAmount)
+          utils.parseUnits(String(-underlyingAmount), 18),
+          utils.parseUnits(String(-equityAmount), 45),
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
@@ -163,7 +164,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
 
         const isPBT = interestType === "PBT";
         args = [
-          utils.parseUnits(interestAmount.toString(), 18),
+          utils.parseUnits(String(interestAmount), 18),
           {
             gasLimit: web3.utils.toWei('400000', 'wei')
           }
@@ -218,7 +219,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
                   underlyingAmount={underlyingAmount}
                   equityAmount={equityAmount}
                   underlyingRatio={underlyingRatio}
-                  supply={invest}
+                  invest={invest}
                   loading={loading}
                   onUnderlyingAmountChange={onUnderlyingAmountChange}
                   onEquityAmountChange={onEquityAmountChange}

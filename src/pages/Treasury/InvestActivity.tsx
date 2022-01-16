@@ -11,7 +11,7 @@ interface Props {
   underlyingRatio: number;
   onUnderlyingAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  supply: () => void;
+  invest: () => void;
   loading: boolean;
 }
 
@@ -21,7 +21,7 @@ function InvestingActivity({
   underlyingRatio,
   onUnderlyingAmountChange,
   onEquityAmountChange,
-  supply,
+  invest,
   loading
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
@@ -41,7 +41,7 @@ function InvestingActivity({
         </div>
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
-            Amount<br/>
+            Underlying<br/>
             <small className="form-text text-muted">
               The amount of asset to invest
             </small>
@@ -68,7 +68,7 @@ function InvestingActivity({
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityAmount" className="form-label">
-            Equity<br/>
+            Shares<br/>
             <small className="form-text text-muted">
               The amount of shares to create
             </small>
@@ -90,7 +90,7 @@ function InvestingActivity({
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2"><span>Collateral Ratio:</span><br />{underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
+            <div className="m-2"><span>Underlying Ratio:</span><br />{underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
           </div>
         </div>
       </div>
@@ -99,8 +99,8 @@ function InvestingActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={supply}
-            disabled={equityAmount === 0 || underlyingAmount === 0 || loading}
+            onClick={invest}
+            disabled={(underlyingAmount === 0 && equityAmount === 0) || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>
