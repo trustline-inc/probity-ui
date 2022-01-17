@@ -119,11 +119,15 @@ function Status() {
 
   return (
     <>
-      {!loading && (
+      {!loading ? (
         <>
           <h1>Contracts</h1>
           <ul className="list-group">{rows}</ul>
         </>
+      ) : (
+        <div className="d-flex justify-content-center align-items-center h-100">
+          <i className="fa fa-spin fa-spinner fa-2x"></i>
+        </div>
       )}
     </>
   );
