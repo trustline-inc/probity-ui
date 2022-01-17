@@ -82,7 +82,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
       const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
 
       try {
-        const result = await liquidator.liquidateVault(utils.id("SGB"), vault.address);
+        const result = await liquidator.liquidateVault(utils.id("CFLR"), vault.address);
         const data = await result.wait();
         ctx.updateTransactions(data);
         const _vaults = vaults
