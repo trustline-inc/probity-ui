@@ -102,8 +102,8 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
       const tx = await auctioneer.buyItNow(
         auctionId,
+        utils.parseUnits(String(maxPrice), 27),
         utils.parseEther(String(lot)),
-        utils.parseUnits(String(maxPrice), 27)
       )
       setMetamaskLoading(true)
       await tx.wait()
