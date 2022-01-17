@@ -2,7 +2,8 @@ import { AUREI, PHI, INTERFACES } from "./constants";
 
 export const getAssetId = (hash: string) => {
   const id = {
-    "0x34f0798059a90d875925407ee1d283ae0650aaa8085071fb70c8c42029adc150": "SGB"
+    "0x34f0798059a90d875925407ee1d283ae0650aaa8085071fb70c8c42029adc150": "SGB",
+    "0x3394a96ae3d76664d9a21dad8ede426bf36b6faee767e047d6aaf44653934fa9": "CFLR"
   }[hash]
   return id || "UNRECOGNIZED_COLL_ID"
 }
