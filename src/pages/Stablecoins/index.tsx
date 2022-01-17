@@ -78,7 +78,7 @@ function Stablecoins() {
     <>
       <header className="pt-2">
         <h1>Stablecoins</h1>
-        <p className="lead">Withdraw or deposit stablecoins into your vault.</p>
+        <p className="lead">Withdraw or deposit stablecoins in your vault.</p>
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="col-md-6 offset-md-3">
