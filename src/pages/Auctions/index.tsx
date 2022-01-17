@@ -158,12 +158,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                             JSON.stringify({
                               beneficiary: auction?.beneficiary,
                               collId,
-                              debt: utils.formatEther(auction?.debt?.div(RAY)).toString(),
+                              debt: utils.formatUnits(auction?.debt, 45).toString(),
                               isOver: auction?.isOver,
                               lot: utils.formatEther(auction?.lot)?.toString(),
                               owner: auction?.owner,
-                              startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
-                              currentPrice: utils.formatEther(auction?.currentPrice.div("1000000000"))?.toString(),
+                              startPrice: utils.formatUnits(auction?.startPrice, 27)?.toString(),
+                              currentPrice: utils.formatUnits(auction?.currentPrice, 27)?.toString(),
                               startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
                             }, null, 2)
                           }
