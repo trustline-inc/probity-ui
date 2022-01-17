@@ -52,7 +52,8 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
             highestBid = await auctioneer.bids(id, _nextHighestBidder)
           }
           console.log("highestBid", highestBid)
-          _auctions.push({ ...auction, id, highestBid })
+          const currentPrice = await auctioneer.callStatic.calculatePrice(id)
+          _auctions.push({ ...auction, id, highestBid, currentPrice })
         }
         console.log(_auctions)
         setAuctions(_auctions);
@@ -97,20 +98,12 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   }
 
   const buyNow = async (auctionId: number, lot: number|string, maxPrice: number|string) => {
-    // Converts decimal with precision 18 to BigNumber
-    const lotLeft = lot.toString().split(".")[0]
-    const lotRight = lot.toString().split(".")[1].padEnd(18, "0")
-    lot = lotLeft + lotRight
-    // Converts decimal with precision 27 to BigNumber
-    const maxPriceLeft = maxPrice.toString().split(".")[0]
-    const maxPriceRight = maxPrice.toString().split(".")[1].padEnd(27, "0")
-    maxPrice = maxPriceLeft + maxPriceRight
     try {
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
       const tx = await auctioneer.buyItNow(
         auctionId,
-        BigNumber.from(lot),
-        BigNumber.from(maxPrice)
+        utils.parseEther(String(lot)),
+        utils.parseUnits(String(maxPrice), 27)
       )
       setMetamaskLoading(true)
       await tx.wait()
@@ -170,6 +163,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                               lot: utils.formatEther(auction?.lot)?.toString(),
                               owner: auction?.owner,
                               startPrice: utils.formatEther(auction?.startPrice.div("1000000000"))?.toString(),
+                              currentPrice: utils.formatEther(auction?.currentPrice.div("1000000000"))?.toString(),
                               startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
                             }, null, 2)
                           }
