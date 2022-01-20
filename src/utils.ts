@@ -1,4 +1,41 @@
 import { AUREI, PHI, INTERFACES } from "./constants";
+import { useEffect, useState } from "react";
+
+/* Scroll */
+
+export const scrollToTop = () =>
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+const throttle = (callback: any, sleepTime: any) => {
+  let time = Date.now();
+
+  return (...args: any) => {
+    if (time + sleepTime - Date.now() < 0) {
+      callback(...args);
+      time = Date.now();
+    }
+  };
+};
+
+export const useScroll = () => {
+  const [scrollPosition, setScrollPosition] = useState(window.scrollY);
+
+  const updateScrollPosition = throttle(() => {
+    setScrollPosition(window.scrollY);
+  }, 100);
+
+  useEffect(() => {
+    window.addEventListener("scroll", updateScrollPosition);
+    return () => window.removeEventListener("scroll", updateScrollPosition);
+  }, [updateScrollPosition]);
+
+  return scrollPosition;
+};
+
+/* Assets */
 
 export const getAssetId = (hash: string) => {
   const id = {

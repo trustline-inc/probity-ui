@@ -1,5 +1,7 @@
 import { useEffect, useState, useContext } from "react";
+import { useScroll } from "../../utils"
 import { BigNumber, utils } from "ethers";
+import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
 import { AUCTIONEER, INTERFACES, RESERVE_POOL, RAY, WAD } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
@@ -21,46 +23,57 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   // const ctx = useContext(EventContext)
+  const [currentPrices, setCurrentPrices] = useState<number[]>([])
+  const [auctionsPerPage, setAuctionsPerPage] = useState<number>(10)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const scrollPosition = useScroll()
+  const lastAuctionId = currentPage * auctionsPerPage
+  const firstAuctionId = lastAuctionId - auctionsPerPage
 
+  /**
+   * Sets auction count
+   */
   useEffect(() => {
     if (library) {
       (async () => {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctionCount = await auctioneer.auctionCount()
-        console.log("_auctionCount", _auctionCount.toString())
-        setAuctionCount(_auctionCount);
+        setAuctionCount(_auctionCount.toNumber());
+        setCurrentPage(1)
         setLoading(false)
       })()
     }
   }, [library])
 
+  /**
+   * Fetches the auctions
+   */
   useEffect(() => {
     if (library && auctionCount) {
       (async () => {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctions = []
-        for (let id = 0; id < auctionCount; id++) {
+        for (let id = firstAuctionId; id < lastAuctionId; id++) {
           let auction: any = await auctioneer.auctions(id)
-          const HEAD = "0x0000000000000000000000000000000000000001"
-          let _nextHighestBidder = await auctioneer.nextHighestBidder(id, HEAD)
-          let highestBid
-          if (_nextHighestBidder === "0x0000000000000000000000000000000000000000") {
-            highestBid = null
-          } else {
-            highestBid = await auctioneer.bids(id, _nextHighestBidder)
-          }
-          console.log("highestBid", highestBid)
+          // const HEAD = "0x0000000000000000000000000000000000000001"
+          // let _nextHighestBidder = await auctioneer.nextHighestBidder(id, HEAD)
+          // let highestBid
+          // if (_nextHighestBidder === "0x0000000000000000000000000000000000000000") {
+          //   highestBid = null
+          // } else {
+          //   highestBid = await auctioneer.bids(id, _nextHighestBidder)
+          // }
+          // console.log("highestBid", highestBid)
           const currentPrice = await auctioneer.callStatic.calculatePrice(id)
-          _auctions.push({ ...auction, id, highestBid, currentPrice })
+          _auctions.push({ ...auction, id, highestBid: null, currentPrice })
         }
-        console.log(_auctions)
         setAuctions(_auctions);
         setLoading(false)
       })()
     }
-  }, [library, auctionCount])
+  }, [library, auctionCount, currentPage, firstAuctionId, lastAuctionId])
 
   const onChangeBidPrice = (event: any) => {
     const { value } = event.target
@@ -156,6 +169,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                         <pre className="mt-3">
                           {
                             JSON.stringify({
+                              id: auction.id,
                               beneficiary: auction?.beneficiary,
                               collId,
                               debt: utils.formatUnits(auction?.debt, 45).toString(),
@@ -225,6 +239,15 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
             })}
         </>
       }
+      <div className="d-flex justify-content-center">
+        <Pagination
+          itemsCount={auctionCount}
+          itemsPerPage={auctionsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          alwaysShown={false}
+        />
+      </div>
     </Activity>
   )
 }
