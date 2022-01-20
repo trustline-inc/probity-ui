@@ -28,7 +28,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const scrollPosition = useScroll()
   const lastAuctionId = currentPage * auctionsPerPage
-  const firstAuctionId = lastAuctionId - auctionsPerPage
+  const firstAuctionId = Math.max(0, lastAuctionId - auctionsPerPage)
 
   /**
    * Sets auction count
