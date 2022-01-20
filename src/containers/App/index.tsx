@@ -158,6 +158,8 @@ function App() {
                                 case undefined:
                                   return <span className="text-danger">{error?.message}</span>
                                 default:
+                                  if (error?.message)
+                                    return <span className="text-danger">{error?.message}</span>
                                   return JSON.stringify(error)
                               }
                             })()
