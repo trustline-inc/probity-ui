@@ -113,11 +113,13 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
   const buyNow = async (auctionId: number, lot: number|string, maxPrice: number|string) => {
     try {
       const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
-      const tx = await auctioneer.buyItNow(
+      const args = [
         auctionId,
         utils.parseUnits(String(maxPrice), 27),
         utils.parseEther(String(lot)),
-      )
+      ]
+      await auctioneer.callStatic.buyItNow(...args)
+      const tx = await auctioneer.buyItNow(...args)
       setMetamaskLoading(true)
       await tx.wait()
       setMetamaskLoading(false)
