@@ -55,7 +55,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
         const _auctions = []
-        for (let id = firstAuctionId; id < lastAuctionId; id++) {
+        for (let id = firstAuctionId; id < Math.min(lastAuctionId, auctionCount); id++) {
           let auction: any = await auctioneer.auctions(id)
           // const HEAD = "0x0000000000000000000000000000000000000001"
           // let _nextHighestBidder = await auctioneer.nextHighestBidder(id, HEAD)
