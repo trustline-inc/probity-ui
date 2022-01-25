@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Button, Modal } from "react-bootstrap"
+import { Button } from "react-bootstrap"
 import useSWR from "swr";
 import axios from "axios";
 import numeral from "numeral";
@@ -14,6 +14,7 @@ import "./index.css";
 import SocialLinks from "../Social";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
+import { BRIDGE } from "../../constants"
 
 function Balance() {
   const { account, library, chainId } = useWeb3React<Web3Provider>();
@@ -134,7 +135,7 @@ function Navbar() {
           </li>
           {
             // Only show Transfers tab if the bridge contract is in the env.
-            process.env.BRIDGE && (
+            BRIDGE && (
               <li className="nav-item my-1">
                 <NavLink className="nav-link" activeClassName="active" to="/transfers">
                   <i className="fas fa-paper-plane" /> Transfers
