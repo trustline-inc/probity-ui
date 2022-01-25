@@ -125,8 +125,26 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
   const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible).map((vault: any, index: number) => {
     return (
       <div className="card my-3" key={index}>
-        <div className="card-body">
-          <pre className="mt-3">{JSON.stringify(vault, null, 2)}</pre>
+        <div className="card-body text-center">
+          <div className="row mb-3">
+            <div className="col-12">
+              <code>{vault.address}</code>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-4">
+              <h5>Debt</h5>
+              {vault.debt}
+            </div>
+            <div className="col-4">
+              <h5>Equity</h5>
+              {vault.equity}
+            </div>
+            <div className="col-4">
+              <h5>Collateral Ratio</h5>
+              {vault.collateralRatio}
+            </div>
+          </div>
         </div>
       </div>
     )

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useScroll } from "../../utils"
+import { scrollToTop, useScroll } from "../../utils"
 import { BigNumber, utils } from "ethers";
 import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
@@ -126,6 +126,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
     } catch (error) {
       console.log(error)
       setError(error)
+      scrollToTop()
     }
   }
 
@@ -168,22 +169,70 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                     <h6>Details</h6>
                     <div className="row">
                       <div className="col-8">
-                        <pre className="mt-3">
-                          {
-                            JSON.stringify({
-                              id: auction.id,
-                              beneficiary: auction?.beneficiary,
-                              collId,
-                              debt: utils.formatUnits(auction?.debt, 45).toString(),
-                              isOver: auction?.isOver,
-                              lot: utils.formatEther(auction?.lot)?.toString(),
-                              owner: auction?.owner,
-                              startPrice: utils.formatUnits(auction?.startPrice, 27)?.toString(),
-                              currentPrice: utils.formatUnits(auction?.currentPrice, 27)?.toString(),
-                              startTime: ((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()
-                            }, null, 2)
-                          }
-                        </pre>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            ID
+                          </div>
+                          <div className="col-9">
+                            {auction.id}
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Start Time
+                          </div>
+                          <div className="col-9">
+                            {((new Date(auction?.startTime?.toNumber() * 1000))).toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Debt
+                          </div>
+                          <div className="col-9">
+                            {utils.formatUnits(auction?.debt, 45).toString()} AUR
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Lot
+                          </div>
+                          <div className="col-9">
+                            {utils.formatEther(auction?.lot)?.toString()} {collId}
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Start Price
+                          </div>
+                          <div className="col-9">
+                            {utils.formatUnits(auction?.startPrice, 27)?.toString()} AUR
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Current Price
+                          </div>
+                          <div className="col-9">
+                            {utils.formatUnits(auction?.currentPrice, 27)?.toString()} AUR
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Owner
+                          </div>
+                          <div className="col-9">
+                            <span className="font-monospace">{auction?.owner}</span>
+                          </div>
+                        </div>
+                        <div className="row mb-1">
+                          <div className="col-3">
+                            Beneficiary
+                          </div>
+                          <div className="col-9">
+                            <span className="font-monospace">{auction?.beneficiary}</span>
+                          </div>
+                        </div>
                       </div>
                       <div className="col-4 d-flex justify-content-center align-items-center">
                         <div>
@@ -195,7 +244,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                             <label>Max Price ({getStablecoinSymbol(chainId!)})</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeMaxPrice} />
                           </div>
-                          <button className="btn btn-outline-primary my-3 w-100" onClick={() => buyNow(auction.id, lot, maxPrice)}>
+                          <button disabled={auction?.isOver} className="btn btn-outline-primary my-3 w-100" onClick={() => buyNow(auction.id, lot, maxPrice)}>
                             Buy Now
                           </button>
                         </div>
@@ -236,6 +285,13 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                       </div>
                     </div> */}
                   </div>
+                  {
+                    auction?.isOver && (
+                      <div className="card-footer border-warning">
+                        This auction has ended.
+                      </div>   
+                    )
+                  }
                 </div>
               )
             })}
