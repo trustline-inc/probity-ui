@@ -3,7 +3,7 @@ import { scrollToTop, useScroll } from "../../utils"
 import { BigNumber, utils } from "ethers";
 import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
-import { AUCTIONEER, INTERFACES, RESERVE_POOL, RAY, WAD } from '../../constants';
+import { AUCTIONEER, INTERFACES, RESERVE_POOL } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";

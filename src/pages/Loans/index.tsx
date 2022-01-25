@@ -9,13 +9,7 @@ import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import {
-  RAD,
-  WAD,
-  TELLER,
-  TREASURY,
-  VAULT_ENGINE,
-} from '../../constants';
+import { TELLER, TREASURY, VAULT_ENGINE } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
