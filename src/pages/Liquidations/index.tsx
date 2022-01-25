@@ -160,7 +160,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
           </div>
         ) : liquidationEligibleVaults.length === 0 ? (
           <div className="d-flex justify-content-center align-items-center py-5">
-            No vault collateral is currently eligible for auction
+            No vault collateral is currently eligible for liquidation
           </div>
         ) : liquidationEligibleVaults
       }

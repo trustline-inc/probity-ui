@@ -13,7 +13,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { RAD, WAD, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
