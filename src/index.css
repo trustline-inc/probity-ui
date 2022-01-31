@@ -1,10 +1,23 @@
 #root, .App {
     height: 100vh;
+    font-family: XCharter-Roman;
 }
 
 h1, h2, h3, h4, h5 {
     color: #136eb7;
     font-family: XCharter-Bold;
+}
+
+p {
+    font-family: XCharter-Roman;
+}
+
+span, div {
+    font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
+li {
+    font-family: Verdana, Geneva, Tahoma, sans-serif
 }
 
 .alert {
