@@ -11,7 +11,7 @@ import { formatEther } from "@ethersproject/units";
 import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
 import "./index.css";
-import SocialLinks from "../Social";
+import ExternalSites from "../ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 import { BRIDGE } from "../../constants"
@@ -209,7 +209,7 @@ function Navbar() {
         </form>
       </div>
       <div className="mt-auto container-fluid text-center">
-        <SocialLinks />
+        <ExternalSites />
         <small>{process.env.REACT_APP_VERSION}</small>
       </div>
     </nav>

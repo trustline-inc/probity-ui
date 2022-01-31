@@ -25,7 +25,7 @@ import Liquidations from "../../pages/Liquidations";
 import Status from "../../pages/Status";
 import { VERSION } from '../../constants';
 import "./index.css";
-import SocialLinks from "../../components/Social";
+import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import Stablecoins from "../../pages/Stablecoins";
 
@@ -226,7 +226,7 @@ function App() {
               <div className="row">
                 <div className="col-md-12 mt-5">
                   <div className="text-center">
-                    <SocialLinks />
+                    <ExternalSites />
                     <div className="spacer spacer-1" />
                     <small className="container-fluid text-muted" id="version">
                       v{VERSION}

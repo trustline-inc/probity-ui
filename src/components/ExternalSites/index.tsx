@@ -1,11 +1,11 @@
 import React from "react";
 import "./index.css";
 
-function SocialLinks() {
+function ExternalSites() {
   return (
     <div className="social-links container-fluid text-center mt-5">
-      <a target="blank" href="https://twitter.com/ProbityDAO" className="mx-2">
-        <i className="fab fa-twitter"></i>
+      <a target="blank" href="https://docs.trustline.co/probity/" className="mx-2">
+        <i className="fa fa-book"></i>
       </a>
       <a target="blank" href="https://discord.gg/pfz6h2TwMk" className="mx-2">
         <i className="fab fa-discord"></i>
@@ -13,13 +13,10 @@ function SocialLinks() {
       <a target="blank" href="https://t.me/joinchat/ldcoqlTUyLIyNDIx" className="mx-2">
         <i className="fab fa-telegram"></i>
       </a>
-      <a target="blank" href="https://github.com/probitydao" className="mx-2">
-        <i className="fab fa-github"></i>
-      </a>
-      <a target="blank" href="https://docs.trustline.co/probity/" className="mx-2">
-        <i className="fa fa-book"></i>
+      <a target="blank" href="https://trustline.zendesk.com/hc/" className="mx-2">
+        <i className="fas fa-question-circle" />
       </a>
     </div>
   );
 }
-export default SocialLinks;
+export default ExternalSites;
