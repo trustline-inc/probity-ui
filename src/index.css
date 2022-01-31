@@ -4,7 +4,7 @@
 
 h1, h2, h3, h4, h5 {
     color: #136eb7;
-
+    font-family: XCharter-Bold;
 }
 
 .alert {
@@ -15,4 +15,15 @@ h1, h2, h3, h4, h5 {
 .asset:hover {
     background: #f3f3f3;
     cursor: pointer;
+}
+
+@font-face {
+    font-family: XCharter-Roman;
+    src: url("./assets/fonts/XCharter-Roman.otf") format("opentype");
+}
+
+@font-face {
+    font-family: XCharter-Bold;
+    font-weight: bold;
+    src: url("./assets/fonts/XCharter-Bold.otf") format("opentype");
 }
