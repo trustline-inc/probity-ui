@@ -120,6 +120,7 @@ function Balances() {
   }, [account, library, chainId, totalDebt, totalEquity])
 
   if (!vault) return null;
+
   return (
     <>
       <header className="pt-2">
@@ -258,6 +259,14 @@ function Balances() {
                 </div>
                 <div className="col-6">
                   <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).mul(asset.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  <h6>Utilization Ratio</h6>
+                </div>
+                <div className="col-6">
+                  <span className="text-truncate">{totalStablecoinSupply && totalEquity && asset ? numeral(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27))).format('0,0.0[000]') : null}%</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
