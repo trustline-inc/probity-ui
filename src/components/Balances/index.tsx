@@ -182,20 +182,20 @@ function Balances() {
                           </button>
                           {/* Dropdown selection menu of other assets */}
                           <ul className="dropdown-menu w-100 p-0">
-                            <li className="border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
-                              <div className="asset p-3 d-flex justify-content-between">
+                            <li className="dropdown-item border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
+                              <div className="asset py-2 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">{nativeTokenSymbol}</h4>
                                 <img src={FLR} className="rounded-circle border" alt={nativeTokenSymbol} height="50" />
                               </div>
                             </li>
-                            <li className="border" onClick={() => ctx.updateAsset("FXRP")}>
-                              <div className="asset p-3 d-flex justify-content-between">
+                            <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("FXRP")}>
+                              <div className="asset py-2 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">FXRP</h4>
                                 <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
                               </div>
                             </li>
-                            <li className="border" onClick={() => ctx.updateAsset("TUSD")}>
-                              <div className="asset p-3 d-flex justify-content-between">
+                            <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("TUSD")}>
+                              <div className="asset py-2 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">TUSD</h4>
                                 <img src={TUSD} className="rounded-circle border" alt="TUSD" height="50" />
                               </div>

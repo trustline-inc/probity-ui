@@ -25,9 +25,22 @@ li {
     border-left-width: 8px;
 }
 
+.dropdown-item:active {
+    background: #e9ecef;
+}
+
+.dropdown-item.active {
+    background: #e9ecef;
+}
+
 .asset:hover {
-    background: #f3f3f3;
+    background: #e9ecef;
     cursor: pointer;
+}
+
+.asset.disabled:hover {
+    cursor: initial;
+    background: initial;
 }
 
 @font-face {
