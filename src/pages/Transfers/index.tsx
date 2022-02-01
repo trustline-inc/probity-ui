@@ -773,7 +773,7 @@ export default function Transfers() {
           </Modal.Body>
         </Modal>
       }
-      <header className="pt-2">
+      <header>
         <h1>Network Transfers</h1>
         {active && <Info />}
       </header>
