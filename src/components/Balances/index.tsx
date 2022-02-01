@@ -161,15 +161,15 @@ function Balances() {
           selected === BalanceType.Individual ? (
             <>
               
-                <div className="accordion accordion-flush" id="accordionExample">
+                <div className="accordion">
                   <div className="accordion-item">
                     <h2 className="accordion-header" id="headingOne">
                       <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         <h5>Assets</h5>
                       </button>
                     </h2>
-                    <div id="collapseOne" className="accordion-collapse collapse show m-0 p-0">
-                      <div className="accordion-body mt-2 p-0">
+                    <div id="collapseOne" className="accordion-collapse collapse show m-0">
+                      <div className="accordion-body">
                         <div className="dropdown w-100">
                           <button className="text-dark btn btn-outline-light border dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {/* The button displays the currently selected asset */}
@@ -179,7 +179,7 @@ function Balances() {
                             </div>
                           </button>
                           {/* Dropdown selection menu of other assets */}
-                          <ul className="dropdown-menu w-100 p-0">
+                          <ul className="dropdown-menu w-100">
                             <li className="border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
                               <div className="asset p-3 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">{nativeTokenSymbol}</h4>
