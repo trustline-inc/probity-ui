@@ -162,9 +162,8 @@ export default function Transactions() {
 
   return (
     <>
-      <header className="pt-2">
+      <header>
         <h1>Transaction History</h1>
-        <p className="lead">View your transaction history.</p>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
