@@ -16,12 +16,14 @@ import {
 } from "../../constants";
 import './index.css';
 import FLR from "../../assets/flare.jpg"
+import SGB from "../../assets/sgb.png"
 import TUSD from "../../assets/TUSD.png"
 import XRP from "../../assets/xrp.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const assetIcons: { [key: string]: string } = {
   CFLR: FLR,
+  SGB,
   FLR,
   TUSD,
   FXRP: XRP
