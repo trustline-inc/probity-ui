@@ -4,6 +4,7 @@ import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed"
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
+import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
   underlyingAmount: number;
@@ -24,6 +25,7 @@ function RedemptionActivity({
   redeem,
   loading
 }: Props) {
+  const ctx = React.useContext(AssetContext)
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
@@ -32,6 +34,7 @@ function RedemptionActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
@@ -86,7 +89,7 @@ function RedemptionActivity({
           </div>
         </div>
       </div>
-      <PriceFeed collateralAmount={underlyingAmount} />
+      <PriceFeed asset={currentAsset} collateralAmount={underlyingAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">

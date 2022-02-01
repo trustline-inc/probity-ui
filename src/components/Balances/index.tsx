@@ -15,16 +15,30 @@ import {
   INTERFACES
 } from "../../constants";
 import './index.css';
+import FLR from "../../assets/flare.jpg"
+import TUSD from "../../assets/TUSD.png"
+import XRP from "../../assets/xrp.png"
+import AssetContext from "../../contexts/AssetContext"
+
+const assetIcons: { [key: string]: string } = {
+  CFLR: FLR,
+  FLR,
+  TUSD,
+  FXRP: XRP
+}
 
 function Balances() {
+  const ctx = React.useContext(AssetContext)
   enum BalanceType { Individual, Aggregate }
   const [selected, setSelected] = React.useState(BalanceType.Individual)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
   const [collateralRatio, setCollateralRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = ctx.asset || nativeTokenSymbol
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", utils.id(currentAsset), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: vaultStablecoinBalance, mutate: mutateVaultStablecoinBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
@@ -48,7 +62,7 @@ function Balances() {
   const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalEquity'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(getNativeTokenSymbol(chainId!))], {
+  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -70,7 +84,7 @@ function Balances() {
         library.removeAllListeners("block");
       };
     }
-  });
+  }, []);
 
   /**
    * Update the current APR
@@ -95,10 +109,10 @@ function Balances() {
             equity,
             debt,
             activeAssetAmount
-          } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), account);
+          } = await vaultEngine.vaults(utils.id(currentAsset), account);
           const {
             debtAccumulator
-          } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
+          } = await vaultEngine.assets(utils.id(currentAsset));
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
   
@@ -146,99 +160,198 @@ function Balances() {
         {
           selected === BalanceType.Individual ? (
             <>
-              <h5>Wallet</h5>
-              <div className="row my-2">
-                <div className="col-6">
-                  Standby
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Active
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Total
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {getNativeTokenSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <hr />
-              <h5>Treasury & Loans</h5>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Equity Balance
-                </div>
-                <div className="col-6">
-                <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Debt Balance
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Collateral Ratio
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{collateralRatio}</span>
-                </div>
-              </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  Current APR
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{estimatedAPR}</span>
-                </div>
-              </div>
-              <hr/>
-              <h5>Stablecoins</h5>
-              <div className="row text-truncate my-2">
-                <div className="col-6">
-                  Vault {getStablecoinSymbol(chainId!)}
-                </div>
-                <div className="col-6">
-                  {/* TODO: Fix display of balances < 1 which appear as NaN */}
-                  <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row text-truncate my-2">
-                <div className="col-6">
-                  ERC20 {getStablecoinSymbol(chainId!)}
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
-                </div>
-              </div>
-              <div className="row text-truncate my-2 mt-4">
-                <h5>Voting Power</h5>
-                <div className="col-6">
-                  Vault PBT
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} PBT</span>
-                </div>
-              </div>
-              <div className="row text-truncate my-2">
-                <div className="col-6">
-                  ERC20 PBT                 
-                </div>
-                <div className="col-6">
-                  <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[00000000000000000]') : "0"} PBT</span>
+              <div className="row">
+                <div className="accordion accordion-flush" id="accordionExample">
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="headingOne">
+                      <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h5>Assets</h5>
+                      </button>
+                    </h2>
+                    <div id="collapseOne" className="accordion-collapse collapse show">
+                      <div className="accordion-body">
+                        <div className="dropdown w-100">
+                          <button className="text-dark btn btn-outline-light border dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {/* The button displays the currently selected asset */}
+                            <div className="w-100 p-1 d-flex justify-content-between">
+                              <h4 className="d-flex align-items-center mb-0">{ctx.asset}</h4>
+                              <img src={assetIcons[ctx.asset || "FLR"]} className="rounded-circle border" alt={ctx.asset} height="50" />
+                            </div>
+                          </button>
+                          {/* Dropdown selection menu of other assets */}
+                          <ul className="dropdown-menu w-100 p-0">
+                            <li className="border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
+                              <div className="asset p-3 d-flex justify-content-between">
+                                <h4 className="d-flex align-items-center mb-0">{nativeTokenSymbol}</h4>
+                                <img src={FLR} className="rounded-circle border" alt={nativeTokenSymbol} height="50" />
+                              </div>
+                            </li>
+                            <li className="border" onClick={() => ctx.updateAsset("FXRP")}>
+                              <div className="asset p-3 d-flex justify-content-between">
+                                <h4 className="d-flex align-items-center mb-0">FXRP</h4>
+                                <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
+                              </div>
+                            </li>
+                            <li className="border" onClick={() => ctx.updateAsset("TUSD")}>
+                              <div className="asset p-3 d-flex justify-content-between">
+                                <h4 className="d-flex align-items-center mb-0">TUSD</h4>
+                                <img src={TUSD} className="rounded-circle border" alt="TUSD" height="50" />
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="row my-2">
+                          <div className="col-6">
+                            Standby
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Active
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Total
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="headingTwo">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <h5>Equity Position</h5>
+                      </button>
+                    </h2>
+                    <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo">
+                      <div className="accordion-body">
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Equity Balance
+                          </div>
+                          <div className="col-6 text-end">
+                          <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Current APY
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate"></span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Underlying Ratio
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="headingThree">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        <h5>Debt Position</h5>
+                      </button>
+                    </h2>
+                    <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree">
+                      <div className="accordion-body">
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Debt Balance
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Current APR
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{estimatedAPR}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Collateral Ratio
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{collateralRatio}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="headingFour">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        <h5>Stablecoins</h5>
+                      </button>
+                    </h2>
+                    <div id="collapseFour" className="accordion-collapse collapse" aria-labelledby="headingFour">
+                      <div className="accordion-body">
+                        <div className="row text-truncate my-2">
+                          <div className="col-6">
+                            Vault {getStablecoinSymbol(chainId!)}
+                          </div>
+                          <div className="col-6 text-end">
+                            {/* TODO: Fix display of balances < 1 which appear as NaN */}
+                            <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                          </div>
+                        </div>
+                        <div className="row text-truncate my-2">
+                          <div className="col-6">
+                            ERC20 {getStablecoinSymbol(chainId!)}
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="accordion-item">
+                      <h2 className="accordion-header" id="headingFive">
+                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                          <h5>Voting Power</h5>
+                        </button>
+                      </h2>
+                      <div id="collapseFive" className="accordion-collapse collapse" aria-labelledby="headingFive">
+                        <div className="accordion-body">
+                          <div className="row text-truncate my-2">
+                            <div className="col-6">
+                              Vault PBT
+                            </div>
+                            <div className="col-6 text-end">
+                              <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} PBT</span>
+                            </div>
+                          </div>
+                          <div className="row text-truncate my-2">
+                            <div className="col-6">
+                              ERC20 PBT                 
+                            </div>
+                            <div className="col-6 text-end">
+                              <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[00000000000000000]') : "0"} PBT</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
@@ -249,7 +362,7 @@ function Balances() {
                 <div className="col-6">
                   <h6>Circulating Supply</h6>
                 </div>
-                  <div className="col-6">
+                  <div className="col-6 text-end">
                   <span className="text-truncate">{totalStablecoinSupply ? numeral(utils.formatEther(totalStablecoinSupply)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
@@ -257,7 +370,7 @@ function Balances() {
                 <div className="col-6">
                   <h6>Total Supply</h6>
                 </div>
-                <div className="col-6">
+                <div className="col-6 text-end">
                   <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).mul(asset.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
@@ -265,7 +378,7 @@ function Balances() {
                 <div className="col-6">
                   <h6>Utilization Ratio</h6>
                 </div>
-                <div className="col-6">
+                <div className="col-6 text-end">
                   <span className="text-truncate">{totalStablecoinSupply && totalEquity && asset ? numeral(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27))).format('0,0.0[000]') : null}%</span>
                 </div>
               </div>
@@ -273,7 +386,7 @@ function Balances() {
                 <div className="col-6">
                   <h6>Total Debt</h6>
                 </div>
-                <div className="col-6">
+                <div className="col-6 text-end">
                   <span className="text-truncate">{totalDebt && asset ? numeral(utils.formatEther(totalDebt.div(RAY).mul(asset.debtAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>

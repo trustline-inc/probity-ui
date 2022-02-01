@@ -16,7 +16,7 @@ import EventContext from "../../contexts/TransactionContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 
-function Wallet() {
+function Assets() {
   const location = useLocation();
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -83,13 +83,12 @@ function Wallet() {
 
   return (
     <>
-      <header className="pt-2">
-        <h1>Wallet Management</h1>
-        <p className="lead">Deposit or withdraw assets to be invested or collateralized for a loan.</p>
+      <header>
+        <h1>Asset Management</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <div className="col-md-6 offset-md-3">
+        <div className="col-md-8 offset-md-2">
           {/* Activity Navigation */}
           <div>
             <ul className="nav nav-pills nav-justified">
@@ -133,4 +132,4 @@ function Wallet() {
   );
 }
 
-export default Wallet;
+export default Assets;

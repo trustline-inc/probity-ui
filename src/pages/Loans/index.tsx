@@ -118,13 +118,12 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
 
   return (
     <>
-      <header className="pt-2">
-        <h1>Loan Management</h1>
-        <p className="lead">Take out a secured stablecoin loan.</p>
+      <header>
+        <h1>Debt Management</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <div className="col-md-6 offset-md-3">
+        <div className="col-md-8 offset-md-2">
           {/* Activity Navigation */}
           <div>
             <ul className="nav nav-pills nav-justified">

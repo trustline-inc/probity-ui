@@ -17,7 +17,7 @@ import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
-import Wallet from "../../pages/Wallet";
+import Assets from "../../pages/Assets";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -27,7 +27,9 @@ import { VERSION } from '../../constants';
 import "./index.css";
 import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
+import AssetContext from "../../contexts/AssetContext"
 import Stablecoins from "../../pages/Stablecoins";
+import { getNativeTokenSymbol } from "../../utils";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
@@ -35,17 +37,21 @@ function App() {
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
   const [collateralPrice, setCollateralPrice] = useState(0.00);
-  const { active, library, error } = useWeb3React<Web3Provider>()
+  const { active, chainId, library, error } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
     "displayInfoAlert",
     true
   );
   const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
+  const [asset, setAsset] = useState<string>(getNativeTokenSymbol(chainId!))
   const updateTransactions = (transaction: any) => {
     const newTxs = [...transactions, transaction]
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
     setTransactions(newTxs);
   };
+  const updateAsset = (asset: string) => {
+    setAsset(asset)
+  }
   const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
@@ -95,6 +101,7 @@ function App() {
     <Router>
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
+        {/* Navbar */}
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
             <EventContext.Provider value={{ transactions, updateTransactions }}>
@@ -181,46 +188,68 @@ function App() {
               </div>
               <div className="row">
                 {active ? (
-                  <div className="col-md-8 col-sm-12">
-                    <EventContext.Provider value={{ transactions, updateTransactions }}>
+                  <EventContext.Provider value={{ transactions, updateTransactions }}>
+                    <AssetContext.Provider value={{ asset, updateAsset }}>
                       <Switch>
                         <Route path="/wallet">
-                          <Wallet />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Assets />
+                          </div>
                         </Route>
                         <Route path="/treasury">
-                          <Treasury collateralPrice={collateralPrice} />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Treasury collateralPrice={collateralPrice} />
+                          </div>
                         </Route>
                         <Route path="/loans">
-                          <Loans collateralPrice={collateralPrice} />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Loans collateralPrice={collateralPrice} />
+                          </div>
                         </Route>
                         <Route path="/stablecoins">
-                          <Stablecoins />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Stablecoins />
+                          </div>
                         </Route>
                         <Route path="/transfers">
-                          <Transfers />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Transfers />
+                          </div>
                         </Route>
                         <Route path="/liquidations">
-                          <Liquidations collateralPrice={collateralPrice} />
+                          <div className="offset-md-2 col-md-5 col-sm-12">
+                            <Liquidations collateralPrice={collateralPrice} />
+                          </div>
                         </Route>
                         <Route path="/auctions">
-                          <Auctions collateralPrice={collateralPrice} />
+                          <div className="col-md-9 col-sm-12">
+                            <Auctions collateralPrice={collateralPrice} />
+                          </div>
                         </Route>
                         <Route path="/transactions">
-                          <Transactions />
+                          <div className="col-md-9 col-sm-12">
+                            <Transactions />
+                          </div>
                         </Route>
                         <Route path="/status">
-                          <Status />
+                          <div className="offset-md-1 col-md-7 col-sm-12">
+                            <Status />
+                          </div>
                         </Route>
                       </Switch>
-                    </EventContext.Provider>
-                  </div>
+                    </AssetContext.Provider>
+                  </EventContext.Provider>
                 ) : null}
                 <div
                   className={
-                    active ? "col-md-4 col-sm-12" : `col-md-4 col-sm-12`
+                    active ? "col-md-3 col-sm-12" : `col-md-3 col-sm-12`
                   }
                 >
-                  {active && <Balances />}
+                  {active && (
+                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                      <Balances />
+                    </AssetContext.Provider>
+                  )}
                 </div>
               </div>
               <div className="row">

@@ -106,14 +106,16 @@ function Status() {
 
   const rows = Object.keys(statuses).map(contract => {
     return (
-      <li className="list-group-item d-flex justify-content-between align-items-center" key={contract}>
-        <code>{contract}</code>
-        {statuses[contract] ? (
-          <code>{contracts[contract]}</code>
-        ) : (
-          <span className="badge bg-danger rounded-pill">OFFLINE</span>
-        )}
-      </li>
+      <tr key={contract}>
+        <td><code>{contract}</code></td>
+        <td>
+          {statuses[contract] ? (
+            <code className="text-truncate">{contracts[contract]}</code>
+          ) : (
+            <span className="badge bg-danger rounded-pill">OFFLINE</span>
+          )}
+        </td>
+      </tr>
     )
   })
 
@@ -122,7 +124,13 @@ function Status() {
       {!loading ? (
         <>
           <h1>Contracts</h1>
-          <ul className="list-group">{rows}</ul>
+          <div className="table-responsive">
+            <table className="table table-bordered">
+              <tbody>
+                {rows}
+              </tbody>
+            </table>
+          </div>
         </>
       ) : (
         <div className="d-flex justify-content-center align-items-center h-100">

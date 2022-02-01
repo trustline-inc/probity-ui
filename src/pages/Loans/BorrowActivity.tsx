@@ -9,6 +9,7 @@ import { RAY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
+import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
   collateralRatio: number;
@@ -35,6 +36,7 @@ function BorrowActivity({
   onAmountChange,
   onCollateralAmountChange
 }: Props) {
+  const ctx = React.useContext(AssetContext)
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
 
@@ -52,6 +54,7 @@ function BorrowActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = ctx.asset || nativeTokenSymbol
 
   React.useEffect(() => {
     if (totalDebt && totalEquity) {
@@ -127,7 +130,7 @@ function BorrowActivity({
           {nativeTokenSymbol}
         </button>
       </div>
-      <PriceFeed collateralAmount={collateralAmount} />
+      <PriceFeed asset={currentAsset} collateralAmount={collateralAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">

@@ -4,6 +4,7 @@ import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import AssetSelector from "../../components/AssetSelector";
+import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
   collateralRatio: number;
@@ -25,6 +26,7 @@ function RepayActivity({
   onAmountChange,
   onCollateralAmountChange
 }: Props) {
+  const ctx = React.useContext(AssetContext)
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
@@ -33,6 +35,7 @@ function RepayActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
@@ -63,7 +66,7 @@ function RepayActivity({
           {nativeTokenSymbol}
         </button>
       </div>
-      <PriceFeed collateralAmount={collateralAmount} />
+      <PriceFeed asset={currentAsset} collateralAmount={collateralAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
