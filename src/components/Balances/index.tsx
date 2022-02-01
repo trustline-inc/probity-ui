@@ -179,7 +179,7 @@ function Balances() {
                             </div>
                           </button>
                           {/* Dropdown selection menu of other assets */}
-                          <ul className="dropdown-menu w-100">
+                          <ul className="dropdown-menu w-100 p-0">
                             <li className="border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
                               <div className="asset p-3 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">{nativeTokenSymbol}</h4>
