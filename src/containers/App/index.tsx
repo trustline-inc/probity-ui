@@ -278,10 +278,10 @@ function App() {
                           </div>
                         </Route>
                         <Route path="/transactions">
-                          <div className="col-xl-9 col-lg-12 col-md-12">
+                          <div className="col-xl-8 col-lg-12 col-md-12">
                             <Transactions />
                           </div>
-                          <div className="col-xl-3 col-lg-4 col-md-12">
+                          <div className="col-xl-4 col-lg-4 col-md-12">
                             {active && (
                               <AssetContext.Provider value={{ asset, updateAsset }}>
                                 <Balances />
@@ -290,10 +290,10 @@ function App() {
                           </div>
                         </Route>
                         <Route path="/status">
-                          <div className="offset-xl-2 col-xl-5 col-lg-8 col-md-12">
+                          <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                             <Status />
                           </div>
-                          <div className="col-xl-3 col-lg-4 col-md-12">
+                          <div className="col-xl-4 col-lg-4 col-md-12">
                             {active && (
                               <AssetContext.Provider value={{ asset, updateAsset }}>
                                 <Balances />
