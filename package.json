@@ -1,6 +1,6 @@
 {
   "name": "probity-ui",
-  "version": "1.0.0-alpha5",
+  "version": "1.0.0-alpha6",
   "private": true,
   "homepage": ".",
   "resolutions": { "react-error-overlay": "6.0.9" },
