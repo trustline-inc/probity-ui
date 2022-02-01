@@ -192,65 +192,117 @@ function App() {
                     <AssetContext.Provider value={{ asset, updateAsset }}>
                       <Switch>
                         <Route path="/wallet">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-6 col-md-12">
                             <Assets />
+                          </div>
+                          <div className="col-xl-3 col-lg-6 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/treasury">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-8 col-md-12">
                             <Treasury collateralPrice={collateralPrice} />
+                          </div>
+                          <div className="col-xl-3 col-lg-4 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/loans">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-6 col-md-12">
                             <Loans collateralPrice={collateralPrice} />
+                          </div>
+                          <div className="col-xl-3 col-lg-6 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/stablecoins">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-6 col-md-12">
                             <Stablecoins />
+                          </div>
+                          <div className="col-xl-3 col-lg-6 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/transfers">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-6 col-md-12">
                             <Transfers />
+                          </div>
+                          <div className="col-xl-3 col-lg-6 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/liquidations">
-                          <div className="offset-md-2 col-md-5 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-8 col-md-12">
                             <Liquidations collateralPrice={collateralPrice} />
+                          </div>
+                          <div className="col-xl-3 col-lg-4 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/auctions">
-                          <div className="col-md-9 col-sm-12">
+                          <div className="col-xl-9 col-lg-12 col-md-12">
                             <Auctions collateralPrice={collateralPrice} />
+                          </div>
+                          <div className="col-xl-3 col-lg-4 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/transactions">
-                          <div className="col-md-9 col-sm-12">
+                          <div className="col-xl-9 col-lg-12 col-md-12">
                             <Transactions />
+                          </div>
+                          <div className="col-xl-3 col-lg-4 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                         <Route path="/status">
-                          <div className="offset-md-1 col-md-7 col-sm-12">
+                          <div className="offset-xl-2 col-xl-5 col-lg-8 col-md-12">
                             <Status />
+                          </div>
+                          <div className="col-xl-3 col-lg-4 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
                           </div>
                         </Route>
                       </Switch>
                     </AssetContext.Provider>
                   </EventContext.Provider>
                 ) : null}
-                <div
-                  className={
-                    active ? "col-md-3 col-sm-12" : `col-md-3 col-sm-12`
-                  }
-                >
-                  {active && (
-                    <AssetContext.Provider value={{ asset, updateAsset }}>
-                      <Balances />
-                    </AssetContext.Provider>
-                  )}
-                </div>
               </div>
               <div className="row">
                 <div className="col-md-12 mt-5">

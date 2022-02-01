@@ -146,7 +146,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
   return (
     <Activity active={active} activity={ActivityType.Auction} error={error}>
-      <h4>Auctions</h4>
+      <h2>Auctions</h2>
       {
         loading ? (
           <div className="d-flex justify-content-center align-items-center py-5">
@@ -168,7 +168,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                   <div className="card-body">
                     <h6>Details</h6>
                     <div className="row">
-                      <div className="col-8">
+                      <div className="col-lg-8 col-md-8">
                         <div className="row mb-1">
                           <div className="col-3">
                             ID
@@ -234,7 +234,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
                           </div>
                         </div>
                       </div>
-                      <div className="col-4 d-flex justify-content-center align-items-center">
+                      <div className="col-lg-4 col-md-4 d-flex justify-content-center align-items-center">
                         <div>
                           <div className="my-3">
                             <label>Lot ({collId})</label>
