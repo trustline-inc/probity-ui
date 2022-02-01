@@ -54,7 +54,7 @@ export const getNativeTokenSymbol = (chainId: number) => {
     case 19:
       return "SGB"
     default:
-      return "FLR"
+      return "CFLR"
   }
 }
 
