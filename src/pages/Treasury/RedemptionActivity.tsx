@@ -63,7 +63,7 @@ function RedemptionActivity({
               className="btn btn-outline-secondary font-monospace"
               type="button"
             >
-              {nativeTokenSymbol}
+              {currentAsset}
             </button>
           </div>
         </div>

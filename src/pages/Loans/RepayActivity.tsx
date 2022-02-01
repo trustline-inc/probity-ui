@@ -63,7 +63,7 @@ function RepayActivity({
           className="btn btn-outline-secondary font-monospace"
           type="button"
         >
-          {nativeTokenSymbol}
+          {currentAsset}
         </button>
       </div>
       <PriceFeed asset={currentAsset} collateralAmount={collateralAmount} />
