@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import axios from "axios"
+import { NavLink, useLocation } from "react-router-dom";
 import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -27,11 +28,13 @@ import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
+  const location = useLocation();
   const storage = localStorage.getItem('probity-transfer')
   const [transfer, setTransfer] = React.useState<any>()
   const [transferData, setTransferData] = React.useState<any>(
     storage ? JSON.parse(storage) : null
   );
+  const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>()
   const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
@@ -56,6 +59,12 @@ export default function Transfers() {
 
   // Transfer modal
   const handleCloseTransferModal = () => { setShowTransferModal(false); setTransferInProgress(false) };
+
+  // Set activity by the path
+  React.useEffect(() => {
+    if (location.pathname === "/transfer/outbound") setActivity(ActivityType.OutboundTransfer);
+    if (location.pathname === "/transfer/inbound") setActivity(ActivityType.InboundTransfer);
+  }, [location])
 
   /**
    * Initializes the WalletConnect client and subscribe to events
@@ -775,74 +784,94 @@ export default function Transfers() {
         <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer {getStablecoinName(chainId!)} between Songbird and the XRP Ledger networks via Trustline's <a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <h4 className="text-center">Send {getStablecoinName(chainId!)}</h4>
-        <Activity active={active} activity={ActivityType.Transfer} error={error}>
-          <div className="row">
-            <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-              <label className="form-label">Amount</label>
-              <div className="input-group">
-                <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={transferAmount ? transferAmount : ""} onChange={onTransferAmountChange} />
-                <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
-              </div>
-            </div>
-          </div>
-          <div className="row mt-3">
-            <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-              <div className="form-check">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
-                <label className="form-check-label" htmlFor="flexCheckDefault">
-                  Use PayString Protocol
-                </label>
-              </div>
-            </div>
-          </div>
+        {/* Activity Navigation */}
+        <div>
+          <ul className="nav nav-pills nav-justified">
+            <li className="nav-item">
+              <NavLink className="nav-link" activeClassName="active" to={"/transfers/outbound"} onClick={() => setActivity(ActivityType.OutboundTransfer)}>Outbound</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" activeClassName="active" to={"/transfers/inbound"} onClick={() => setActivity(ActivityType.InboundTransfer)}>Inbound</NavLink>
+            </li>
+          </ul>
+        </div>
+        <hr className="mb-4" />
+        <Activity active={active} activity={activity} error={error}>
           {
-            usePayStringProtocol ? (
-            <div className="row mt-3">
-              <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                <label className="form-label">PayString Address</label>
-                <div className="input-group mb-3">
-                  <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
-                  <span className="input-group-text">$</span>
-                  <input type="text" className="form-control" value={domain} onChange={onDomainChange} placeholder="trustline.app" aria-label="domain" />
-                </div>
-              </div>
-            </div>
-            ) : (
-              <div className="row mt-3">
-                <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                  <label className="form-label">XRP Address</label>
-                  <div className="input-group mb-3">
-                    <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
+            activity === ActivityType.OutboundTransfer && (
+              <>
+                <h4 className="text-center">Send {getStablecoinName(chainId!)}</h4>
+                <div className="row">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <label className="form-label">Amount</label>
+                    <div className="input-group">
+                      <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={transferAmount ? transferAmount : ""} onChange={onTransferAmountChange} />
+                      <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+                <div className="row mt-3">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
+                        Use PayString Protocol
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                {
+                  usePayStringProtocol ? (
+                  <div className="row mt-3">
+                    <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                      <label className="form-label">PayString Address</label>
+                      <div className="input-group mb-3">
+                        <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
+                        <span className="input-group-text">$</span>
+                        <input type="text" className="form-control" value={domain} onChange={onDomainChange} placeholder="trustline.app" aria-label="domain" />
+                      </div>
+                    </div>
+                  </div>
+                  ) : (
+                    <div className="row mt-3">
+                      <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                        <label className="form-label">XRP Address</label>
+                        <div className="input-group mb-3">
+                          <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                }
+                <div className="row">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-4 d-grid">
+                    <button
+                      className="btn btn-primary btn-lg mt-4"
+                      onClick={openOutboundTransferModal}
+                      disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || transferInProgress}
+                    >
+                      {transferInProgress ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
+                    </button>
+                  </div>
+                </div>
+              </>
             )
           }
-          <div className="row">
-            <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-4 d-grid">
-              <button
-                className="btn btn-primary btn-lg mt-4"
-                onClick={openOutboundTransferModal}
-                disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || transferInProgress}
-              >
-                {transferInProgress ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
-              </button>
-            </div>
-          </div>
-        </Activity>
-      </section>
-      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <h4 className="text-center">Receive {getStablecoinName(chainId!)}</h4>
-        <Activity active={active} activity={ActivityType.Transfer} error={null}>
-          <div className="row">
-            <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={openInboundTransferModal}
-              ><i className="fa fa-qrcode"/> Press for QR Code</button>
-            </div>
-          </div>
+          {
+            activity === ActivityType.InboundTransfer && (
+              <>
+                <h4 className="text-center">Receive {getStablecoinName(chainId!)}</h4>
+                <div className="row">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
+                    <button
+                      className="btn btn-primary btn-lg"
+                      onClick={openInboundTransferModal}
+                    ><i className="fa fa-qrcode"/> Press for QR Code</button>
+                  </div>
+                </div>
+              </>
+            )
+          }
         </Activity>
       </section>
     </>

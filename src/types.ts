@@ -15,7 +15,8 @@ export enum Activity {
   Withdraw,
 
   // Transfer
-  Transfer,
+  InboundTransfer,
+  OutboundTransfer,
 
   // Liquidations
   Liquidate
