@@ -20,7 +20,11 @@ function RowToggle({ eventKey, name, tx }: any) {
       >
         <div className="col-3"><span className="badge rounded-pill bg-primary">{name}</span></div>
         <div className="col-1">{tx.blockNumber}</div>
-        <div className="col-8 text-truncate"><code>{tx.transactionHash}</code></div>
+        <div className="col-8 text-truncate">
+          <a href={`https://coston-explorer.flare.network/tx/${tx.transactionHash}`} target="blank">
+            <code>{tx.transactionHash}</code>
+          </a>
+        </div>
       </div>
     </div>
   );
