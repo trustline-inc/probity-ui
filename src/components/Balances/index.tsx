@@ -160,7 +160,7 @@ function Balances() {
         {
           selected === BalanceType.Individual ? (
             <>
-              <div className="row">
+              
                 <div className="accordion accordion-flush" id="accordionExample">
                   <div className="accordion-item">
                     <h2 className="accordion-header" id="headingOne">
@@ -168,8 +168,8 @@ function Balances() {
                         <h5>Assets</h5>
                       </button>
                     </h2>
-                    <div id="collapseOne" className="accordion-collapse collapse show">
-                      <div className="accordion-body">
+                    <div id="collapseOne" className="accordion-collapse collapse show m-0 p-0">
+                      <div className="accordion-body mt-2 p-0">
                         <div className="dropdown w-100">
                           <button className="text-dark btn btn-outline-light border dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {/* The button displays the currently selected asset */}
@@ -200,28 +200,30 @@ function Balances() {
                             </li>
                           </ul>
                         </div>
-                        <div className="row my-2">
-                          <div className="col-6">
-                            Standby
+                        <div className="px-3 py-2">
+                          <div className="row my-2">
+                            <div className="col-6">
+                              Standby
+                            </div>
+                            <div className="col-6 text-end">
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                            </div>
                           </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                          <div className="row my-2 text-truncate">
+                            <div className="col-6">
+                              Active
+                            </div>
+                            <div className="col-6 text-end">
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Active
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
-                          </div>
-                        </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Total
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                          <div className="row my-2 text-truncate">
+                            <div className="col-6">
+                              Total
+                            </div>
+                            <div className="col-6 text-end">
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -353,7 +355,7 @@ function Balances() {
                     </div>
                   </div>
                 </div>
-              </div>
+              
             </>
           ) : (
             <>
