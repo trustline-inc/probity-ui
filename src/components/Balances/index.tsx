@@ -373,7 +373,15 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).mul(asset.equityAccumulator).div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                </div>
+              </div>
+              <div className="row my-2 text-truncate">
+                <div className="col-6">
+                  <h6>Working Capital</h6>
+                </div>
+                <div className="col-6 text-end">
+                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numeral(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
