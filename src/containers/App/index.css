@@ -45,7 +45,7 @@ a {
   color: rgb(19, 110, 183);
 }
 
-@media only screen and (max-width: 1280px) {
+@media only screen and (max-width: 1400px) {
   .main-container {
     flex-direction: column;
   }
