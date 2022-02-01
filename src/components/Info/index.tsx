@@ -6,7 +6,7 @@ function Info() {
   return (
     <>
       <header>
-        <div className="my-3">
+        <div>
           {(location.pathname === "/" || location.pathname === "/!") && (
             <>
               <p>

@@ -146,7 +146,7 @@ function Auctions({ collateralPrice }: { collateralPrice: number }) {
 
   return (
     <Activity active={active} activity={ActivityType.Auction} error={error}>
-      <h2>Auctions</h2>
+      <h1>Auctions</h1>
       {
         loading ? (
           <div className="d-flex justify-content-center align-items-center py-5">

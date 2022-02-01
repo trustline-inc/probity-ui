@@ -139,7 +139,7 @@ function Balances() {
 
   return (
     <>
-      <header className="pt-2">
+      <header>
         <h1>Balances</h1>
       </header>
       <div className="border rounded p-4 shadow-sm bg-white">

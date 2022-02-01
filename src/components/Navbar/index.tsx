@@ -145,7 +145,7 @@ function Navbar() {
           }
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/liquidations">
-              <i className="fas fa-hand-holding-water" /> Liquidations
+              <i className="fas fa-vault" /> Vaults
             </NavLink>
           </li>
           <li className="nav-item my-1">

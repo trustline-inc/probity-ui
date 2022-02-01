@@ -76,7 +76,7 @@ function Stablecoins() {
 
   return (
     <>
-      <header className="pt-2">
+      <header>
         <h1>Stablecoins</h1>
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
