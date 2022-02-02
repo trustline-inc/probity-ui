@@ -105,7 +105,9 @@ function App() {
         <div className="d-flex main-container min-vh-100">
           <div className="min-vh-100 left-nav">
             <EventContext.Provider value={{ transactions, updateTransactions }}>
-              <Navbar />
+              <AssetContext.Provider value={{ asset, updateAsset }}>
+                <Navbar />
+              </AssetContext.Provider>
             </EventContext.Provider>
           </div>
           <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">

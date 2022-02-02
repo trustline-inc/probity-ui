@@ -15,9 +15,15 @@ import ExternalSites from "../ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 import { BRIDGE } from "../../constants"
+import AssetContext from "../../contexts/AssetContext"
 
 function Balance() {
+  const ctx = React.useContext(AssetContext)
   const { account, library, chainId } = useWeb3React<Web3Provider>();
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = ctx.asset || nativeTokenSymbol
+
+  // TODO: Fetch balance based on currentAsset
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library),
   });
@@ -39,7 +45,8 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} {getNativeTokenSymbol(chainId!)}
+        {/* TODO: Fetch balance of ERC20 tokens */}
+        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} {currentAsset}
       </span>
     </div>
   );

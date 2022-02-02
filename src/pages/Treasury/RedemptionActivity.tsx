@@ -85,7 +85,6 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onEquityAmountChange}
             />
-            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>

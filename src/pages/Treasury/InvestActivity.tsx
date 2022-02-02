@@ -2,7 +2,7 @@ import React from "react"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 
@@ -85,7 +85,6 @@ function InvestingActivity({
               placeholder="0.000000000000000000"
               onChange={onEquityAmountChange}
             />
-            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
