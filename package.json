@@ -15,7 +15,6 @@
     "@trustline-inc/probity": "1.0.0-alpha11",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
-    "@types/numeral": "^2.0.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@walletconnect/client": "^2.0.0-beta.21",
