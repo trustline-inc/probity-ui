@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
-import numeral from "numeral";
+import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 
@@ -38,35 +38,32 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           const {
             equity,
             debt,
-            activeAssetAmount
+            collateral
           } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), address);
           const {
             debtAccumulator,
             adjustedPrice
           } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
+  
+          const _debt = debt.mul(debtAccumulator)
 
-          // Get the vault's debt and equity
-          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(equity)
-
-          // Get the current collateral ratio
-          const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
-          const { _price } = await ftsoContract.getCurrentPrice()
-
+          // Get collateral ratio
           let collateralRatio
-          if (activeAssetAmount.gt(0) && debtAndEquity.gt(0)) {
-            collateralRatio = `${activeAssetAmount.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
+          if (_debt.toString() !== "0") {
+            const numerator = Number(utils.formatEther(String(collateral))) * assetPrice
+            const denominator = Number(utils.formatUnits(String(_debt), 45))
+            collateralRatio = `${((numerator / denominator) * 100).toFixed(4)}%`
           } else {
-            collateralRatio = `0%`
+            collateralRatio = "0%"
           }
-          console.log("collateralRatio", collateralRatio)
 
           // Check if it's liquidation eligible
-          const liquidationEligible = debtAndEquity.gt(activeAssetAmount.mul(adjustedPrice).div(RAY))
+          const liquidationEligible = _debt.gt(collateral.mul(adjustedPrice))
 
           _vaults.push({
             address: address,
-            debt: numeral(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format('$0,0.00'),
-            equity: numeral(utils.formatEther(equity).toString()).format('$0,0.00'),
+            debt: numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).formatCurrency({ spaceSeparated: false, mantissa: 6 }),
+            equity: numbro(utils.formatEther(equity).toString()).formatCurrency({ spaceSeparated: false }),
             collateralRatio,
             liquidationEligible,
           });

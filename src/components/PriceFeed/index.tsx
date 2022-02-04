@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import { utils } from "ethers";
-import numeral from "numeral";
+import numbro from "numbro";
 import { FTSO } from '../../constants';
 import fetcher from "../../fetcher";
 
@@ -50,7 +50,7 @@ function PriceFeed({ asset, collateralAmount }: { asset: string, collateralAmoun
       <div className="col-12">
         <div className="py-2 h-100 d-flex flex-row align-items-center justify-content-center text-center">
           <div className="mx-4"><span className="text-muted">{asset}/USD</span><br />${collateralPrice}</div>
-          <div className="mx-4"><span className="text-muted">Value</span><br />${numeral(Math.abs(collateralValue).toFixed(2)).format('0,0')}</div>
+          <div className="mx-4"><span className="text-muted">Value</span><br />${numbro(Math.abs(collateralValue).toFixed(2)).format({ thousandSeparated: true })}</div>
         </div>
       </div>
     </div>

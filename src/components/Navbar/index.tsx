@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Button } from "react-bootstrap"
 import useSWR from "swr";
 import axios from "axios";
-import numeral from "numeral";
+import numbro from "numbro";
 import { NavLink } from "react-router-dom";
 import { injected } from "../../connectors";
 import { useWeb3React } from "@web3-react/core";
@@ -46,7 +46,7 @@ function Balance() {
       <h3>Your balance</h3>
       <span className="tokens">
         {/* TODO: Fetch balance of ERC20 tokens */}
-        {numeral(parseFloat(formatEther(balance)).toFixed(4)).format('0,0.0000')} {currentAsset}
+        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {currentAsset}
       </span>
     </div>
   );

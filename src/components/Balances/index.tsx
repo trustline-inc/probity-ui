@@ -1,12 +1,12 @@
 import React from 'react';
 import useSWR from 'swr';
+import numbro from "numbro"
 import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
 import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
 import fetcher from "../../fetcher";
-import numeral from "numeral";
 import {
   RAY,
   FTSO,
@@ -27,6 +27,13 @@ const assetIcons: { [key: string]: string } = {
   FLR,
   TUSD,
   FXRP: XRP
+}
+
+const formatOptions = {
+  thousandSeparated: true,
+  optionalMantissa: true,
+  trimMantissa: true,
+  mantissa: 4
 }
 
 function Balances() {
@@ -229,7 +236,7 @@ function Balances() {
                               Standby
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.standby)).format('0,0.0[0000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}</span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -237,7 +244,7 @@ function Balances() {
                               Active
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.underlying.add(vault.collateral))).format('0,0.0[0000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -245,7 +252,7 @@ function Balances() {
                               Total
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format('0,0.0[0000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numbro(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                             </div>
                           </div>
                         </div>
@@ -266,7 +273,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[0000]') : null} {currentAsset}
+                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format(formatOptions) : null} {currentAsset}
                             </span>
                           </div>
                         </div>
@@ -276,7 +283,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {numeral(utils.formatEther(vault.underlying)).format('0,0.0[0000]')} {ctx.asset}
+                              {numbro(utils.formatEther(vault.underlying)).format(formatOptions)} {ctx.asset}
                             </span>
                           </div>
                         </div>
@@ -302,7 +309,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {vault && asset ? numeral(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format('0,0.0[0000]') : null} {currentAsset}
+                              {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format(formatOptions) : null} {currentAsset}
                             </span>
                           </div>
                         </div>
@@ -322,7 +329,7 @@ function Balances() {
                             Debt Balance
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[0000]') : null} {currentAsset}</span>
+                            <span className="text-truncate">{vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format(formatOptions) : null} {currentAsset}</span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
@@ -331,7 +338,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {numeral(utils.formatEther(vault.collateral)).format('0,0.0[0000]')} {ctx.asset}
+                              {numbro(utils.formatEther(vault.collateral)).format(formatOptions)} {ctx.asset}
                             </span>
                           </div>
                         </div>
@@ -368,7 +375,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             {/* TODO: Fix display of balances < 1 which appear as NaN */}
-                            <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[0000]') : "0"} T{currentAsset}</span>
+                            <span className="text-truncate">{vaultStablecoinBalance ? numbro(utils.formatEther(vaultStablecoinBalance.div(RAY))).format(formatOptions) : "0"} T{currentAsset}</span>
                           </div>
                         </div>
                         <div className="row text-truncate my-2">
@@ -376,7 +383,7 @@ function Balances() {
                             ERC20 {currentAsset}
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[0000]') : "0"} {currentAsset}</span>
+                            <span className="text-truncate">{stablecoinERC20Balance ? numbro(utils.formatEther(stablecoinERC20Balance)).format(formatOptions) : "0"} {currentAsset}</span>
                           </div>
                         </div>
                       </div>
@@ -394,7 +401,7 @@ function Balances() {
                               Vault PBT
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[0000]') : "0"} PBT</span>
+                              <span className="text-truncate">{pbtBalance ? numbro(utils.formatEther(pbtBalance.div(RAY))).format(formatOptions) : "0"} PBT</span>
                             </div>
                           </div>
                           <div className="row text-truncate my-2">
@@ -402,7 +409,7 @@ function Balances() {
                               ERC20 PBT                 
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[0000]') : "0"} PBT</span>
+                              <span className="text-truncate">{pbtERC20Balance ? numbro(utils.formatEther(pbtERC20Balance)).format(formatOptions) : "0"} PBT</span>
                             </div>
                           </div>
                         </div>
@@ -420,7 +427,7 @@ function Balances() {
                   <h6>Circulating Supply</h6>
                 </div>
                   <div className="col-6 text-end">
-                  <span className="text-truncate">{totalStablecoinSupply ? numeral(utils.formatEther(totalStablecoinSupply)).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalStablecoinSupply ? numbro(utils.formatEther(totalStablecoinSupply)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -428,7 +435,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -436,7 +443,7 @@ function Balances() {
                   <h6>Working Capital</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numeral(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numbro(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -444,7 +451,7 @@ function Balances() {
                   <h6>Utilization Ratio</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalStablecoinSupply && totalEquity && asset ? numeral(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27))).format('0,0.0[000]') : null}%</span>
+                  <span className="text-truncate">{totalStablecoinSupply && totalEquity && asset ? numbro(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27))).format('0,0.0[000]') : null}%</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -452,7 +459,7 @@ function Balances() {
                   <h6>Total Debt</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalDebt && asset ? numeral(utils.formatEther(totalDebt.div(RAY).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
             </>
