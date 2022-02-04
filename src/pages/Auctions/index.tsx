@@ -11,7 +11,7 @@ import { Activity as ActivityType } from "../../types";
 // import EventContext from "../../contexts/TransactionContext"
 import { getAssetId, getStablecoinSymbol } from "../../utils";
 
-function Auctions({ collateralPrice }: { collateralPrice: number }) {
+function Auctions({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
   const [metamaskLoading, setMetamaskLoading] = useState(false)
   const [bidPrice, setBidPrice] = useState<number>(0.00)

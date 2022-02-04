@@ -36,7 +36,7 @@ function App() {
   const handleClose = () => setShowConnectorModal(false);
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
-  const [collateralPrice, setCollateralPrice] = useState(0.00);
+  const [assetPrice, setCollateralPrice] = useState(0.00);
   const { active, chainId, library, error } = useWeb3React<Web3Provider>()
   const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
     "displayInfoAlert",
@@ -60,13 +60,13 @@ function App() {
     ;(async () => {
       try {
         if (data !== undefined) {
-          setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
+          setCollateralPrice((Number(utils.formatUnits(String(data._price), 5).toString())));
         } else {
           if (library) {
             try {
               const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
               const result = await ftso.getCurrentPrice();
-              setCollateralPrice((Number(utils.formatEther(result._price.toString()).toString()) / 1e9));
+              setCollateralPrice((Number(utils.formatUnits(String(result._price), 5).toString())));
             } catch (error) {
               console.error(error)
             }
@@ -207,7 +207,7 @@ function App() {
                         </Route>
                         <Route path="/treasury">
                           <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                            <Treasury collateralPrice={collateralPrice} />
+                            <Treasury assetPrice={assetPrice} />
                           </div>
                           <div className="col-xl-4 col-lg-4 col-md-12">
                             {active && (
@@ -219,7 +219,7 @@ function App() {
                         </Route>
                         <Route path="/loans">
                           <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                            <Loans collateralPrice={collateralPrice} />
+                            <Loans assetPrice={assetPrice} />
                           </div>
                           <div className="col-xl-4 col-lg-6 col-md-12">
                             {active && (
@@ -256,7 +256,7 @@ function App() {
                         {/* Liquidations */}
                         <Route path="/liquidations">
                           <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                            <Liquidations collateralPrice={collateralPrice} />
+                            <Liquidations assetPrice={assetPrice} />
                           </div>
                           <div className="col-xl-4 col-lg-4 col-md-12">
                             {active && (
@@ -269,7 +269,7 @@ function App() {
                         {/* Auctions */}
                         <Route path="/auctions">
                           <div className="col-xl-9 col-lg-12 col-md-12">
-                            <Auctions collateralPrice={collateralPrice} />
+                            <Auctions assetPrice={assetPrice} />
                           </div>
                           <div className="col-xl-3 col-lg-6 col-md-12">
                             {active && (

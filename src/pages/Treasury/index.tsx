@@ -18,7 +18,7 @@ import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
 
-function Treasury({ collateralPrice }: { collateralPrice: number }) {
+function Treasury({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
@@ -44,8 +44,8 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
   const onUnderlyingAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) + Number(delta);
+    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.underlying)) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.underlying)) + Number(delta);
     setTotalUnderlying(totalAmount);
     setUnderlyingAmount(delta);
   }
@@ -57,14 +57,14 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Supply:
-          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
+          setUnderlyingRatio((totalUnderlying * assetPrice) / (Number(utils.formatUnits(vault.initialEquity, 45)) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
-          setUnderlyingRatio((totalUnderlying * collateralPrice) / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) - Number(equityAmount)));
+          setUnderlyingRatio((totalUnderlying * assetPrice) / (Number(utils.formatUnits(vault.initialEquity, 45)) - Number(equityAmount)));
           break;
       }
     }
-  }, [totalUnderlying, collateralPrice, equityAmount, vault, activity]);
+  }, [totalUnderlying, assetPrice, equityAmount, vault, activity]);
 
   /**
    * @function onEquityAmountChange
@@ -74,7 +74,9 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     const amount = Number(event.target.value)
     setEquityAmount(amount);
     if (equityAmount > 0) {
-      setUnderlyingRatio(totalUnderlying / (Number(utils.formatEther(vault.equity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount)));
+      setUnderlyingRatio(
+        totalUnderlying / (Number(utils.formatEther(vault.initialEquity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount))
+      );
     }
   }
 
@@ -97,14 +99,12 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
     if (library && account) {
       const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
-      console.log(utils.parseUnits(String(underlyingAmount), 18).toString())
-      console.log(utils.parseUnits(String(equityAmount), 45).toString())
       try {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(underlyingAmount), 18),
-          utils.parseUnits(String(equityAmount), 45),
+          utils.parseUnits(String(equityAmount), 18),
           { gasLimit: 300000 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
@@ -132,7 +132,7 @@ function Treasury({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-underlyingAmount), 18),
-          utils.parseUnits(String(-equityAmount), 45),
+          utils.parseUnits(String(-equityAmount), 18),
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);

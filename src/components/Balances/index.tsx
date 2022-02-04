@@ -35,7 +35,9 @@ function Balances() {
   const [selected, setSelected] = React.useState(BalanceType.Individual)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
   const [collateralRatio, setCollateralRatio] = React.useState("")
+  const [underlyingRatio, setUnderlyingRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
+  const [estimatedAPY, setEstimatedAPY] = React.useState("")
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
@@ -93,24 +95,34 @@ function Balances() {
    */
   React.useEffect(() => {
     if (totalDebt && totalEquity) {
-      if (totalEquity.toString() === "0" || totalDebt.toString() === "0") return setEstimatedAPR("0%")
+      if (totalEquity.toString() === "0" || totalDebt.toString() === "0") {
+        setEstimatedAPR("0%")
+        setEstimatedAPY("0%")
+        return
+      }
       const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
       const supply = Number(utils.formatEther(totalEquity.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+      const newAPY = newAPR * newUtilization
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
+      setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
   }, [totalEquity, totalDebt])
 
+  /**
+   * Updates the collateral and underlying ratios
+   */
   React.useEffect(() => {
     if (library) {
       (async () => {
         try {
           const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
           const {
-            equity,
             debt,
-            activeAssetAmount
+            collateral,
+            underlying,
+            initialEquity
           } = await vaultEngine.vaults(utils.id(currentAsset), account);
           const {
             debtAccumulator
@@ -118,22 +130,31 @@ function Balances() {
           const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
           const { _price } = await ftsoContract.getCurrentPrice()
   
-          // Get the vault's debt and equity
-          const debtAndEquity = (debt.mul(debtAccumulator).div(RAY)).add(equity)
-  
-          // Get the current collateral ratio
-          if (debtAndEquity.toString() !== "0") {
-            const _collateralRatio = `${activeAssetAmount.mul(_price).div(RAY).mul(100).div(debtAndEquity).toString()}%`
+          const _debt = debt.mul(debtAccumulator)
+
+          // Get collateral ratio
+          if (_debt.toString() !== "0") {
+            const numerator = Number(utils.formatEther(String(collateral))) * Number(utils.formatUnits(String(_price), 5))
+            const denominator = Number(utils.formatUnits(String(_debt), 45))
+            const _collateralRatio = `${((numerator / denominator) * 100).toFixed(4)}%`
             setCollateralRatio(_collateralRatio)
           } else {
             setCollateralRatio("0%")
+          }
+
+          // Get underlying ratio
+          if (initialEquity.toString() !== "0") {
+            const _underlyingRatio = `${underlying.mul(_price).div("100000").mul(100).mul(RAY).div(initialEquity).toString()}%`
+            setUnderlyingRatio(_underlyingRatio)
+          } else {
+            setUnderlyingRatio("0%")
           }
         } catch (error) {
           console.error(error)
         }
       })()
     }
-  }, [account, library, chainId, totalDebt, totalEquity])
+  }, [account, library, chainId, totalDebt, totalEquity, currentAsset])
 
   if (!vault) return null;
 
@@ -196,8 +217,8 @@ function Balances() {
                             </li>
                             <li className="dropdown-item border" onClick={() => ctx.updateAsset("TUSD")}>
                               <div className="asset py-2 d-flex justify-content-between">
-                                <h4 className="d-flex align-items-center mb-0">TUSD</h4>
-                                <img src={TUSD} className="rounded-circle border" alt="TUSD" height="50" />
+                                <h4 className="d-flex align-items-center mb-0">USD</h4>
+                                <img src={TUSD} className="rounded-circle border" alt="USD" height="50" />
                               </div>
                             </li>
                           </ul>
@@ -208,7 +229,7 @@ function Balances() {
                               Standby
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.standby)).format('0,0.0[0000]')} {ctx.asset}</span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -216,7 +237,7 @@ function Balances() {
                               Active
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.activeAssetAmount)).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.underlying.add(vault.collateral))).format('0,0.0[0000]')} {ctx.asset}</span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -224,7 +245,7 @@ function Balances() {
                               Total
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numeral(utils.formatEther(vault.standbyAssetAmount.add(vault.activeAssetAmount))).format('0,0.0[00000000000000000]')} {ctx.asset}</span>
+                              <span className="text-truncate">{numeral(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format('0,0.0[0000]')} {ctx.asset}</span>
                             </div>
                           </div>
                         </div>
@@ -244,15 +265,19 @@ function Balances() {
                             Equity Balance
                           </div>
                           <div className="col-6 text-end">
-                          <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                            <span className="text-truncate">
+                              {vault && asset ? numeral(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format('0,0.0[0000]') : null} {currentAsset}
+                            </span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
                           <div className="col-6">
-                            Current APY
+                            Underlying
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate"></span>
+                            <span className="text-truncate">
+                              {numeral(utils.formatEther(vault.underlying)).format('0,0.0[0000]')} {ctx.asset}
+                            </span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
@@ -260,7 +285,25 @@ function Balances() {
                             Underlying Ratio
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate"></span>
+                            <span className="text-truncate">{underlyingRatio}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Current APY
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{estimatedAPY}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Interest Earned
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">
+                              {vault && asset ? numeral(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format('0,0.0[0000]') : null} {currentAsset}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -279,15 +322,17 @@ function Balances() {
                             Debt Balance
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                            <span className="text-truncate">{vault && asset ? numeral(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format('0,0.0[0000]') : null} {currentAsset}</span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
                           <div className="col-6">
-                            Current APR
+                            Collateral
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{estimatedAPR}</span>
+                            <span className="text-truncate">
+                              {numeral(utils.formatEther(vault.collateral)).format('0,0.0[0000]')} {ctx.asset}
+                            </span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
@@ -296,6 +341,14 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">{collateralRatio}</span>
+                          </div>
+                        </div>
+                        <div className="row my-2 text-truncate">
+                          <div className="col-6">
+                            Current APR
+                          </div>
+                          <div className="col-6 text-end">
+                            <span className="text-truncate">{estimatedAPR}</span>
                           </div>
                         </div>
                       </div>
@@ -311,19 +364,19 @@ function Balances() {
                       <div className="accordion-body">
                         <div className="row text-truncate my-2">
                           <div className="col-6">
-                            Vault {getStablecoinSymbol(chainId!)}
+                            Vault {currentAsset}
                           </div>
                           <div className="col-6 text-end">
                             {/* TODO: Fix display of balances < 1 which appear as NaN */}
-                            <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                            <span className="text-truncate">{vaultStablecoinBalance ? numeral(utils.formatEther(vaultStablecoinBalance.div(RAY))).format('0,0.0[0000]') : "0"} T{currentAsset}</span>
                           </div>
                         </div>
                         <div className="row text-truncate my-2">
                           <div className="col-6">
-                            ERC20 {getStablecoinSymbol(chainId!)}
+                            ERC20 {currentAsset}
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[00000000000000000]') : "0"} {getStablecoinSymbol(chainId!)}</span>
+                            <span className="text-truncate">{stablecoinERC20Balance ? numeral(utils.formatEther(stablecoinERC20Balance)).format('0,0.0[0000]') : "0"} {currentAsset}</span>
                           </div>
                         </div>
                       </div>
@@ -341,7 +394,7 @@ function Balances() {
                               Vault PBT
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[00000000000000000]') : "0"} PBT</span>
+                              <span className="text-truncate">{pbtBalance ? numeral(utils.formatEther(pbtBalance.div(RAY))).format('0,0.0[0000]') : "0"} PBT</span>
                             </div>
                           </div>
                           <div className="row text-truncate my-2">
@@ -349,7 +402,7 @@ function Balances() {
                               ERC20 PBT                 
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[00000000000000000]') : "0"} PBT</span>
+                              <span className="text-truncate">{pbtERC20Balance ? numeral(utils.formatEther(pbtERC20Balance)).format('0,0.0[0000]') : "0"} PBT</span>
                             </div>
                           </div>
                         </div>
@@ -367,7 +420,7 @@ function Balances() {
                   <h6>Circulating Supply</h6>
                 </div>
                   <div className="col-6 text-end">
-                  <span className="text-truncate">{totalStablecoinSupply ? numeral(utils.formatEther(totalStablecoinSupply)).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalStablecoinSupply ? numeral(utils.formatEther(totalStablecoinSupply)).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -375,7 +428,7 @@ function Balances() {
                   <h6>Total Supply</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && asset ? numeral(utils.formatEther(totalEquity.div(RAY).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -383,7 +436,7 @@ function Balances() {
                   <h6>Working Capital</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numeral(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numeral(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -399,7 +452,7 @@ function Balances() {
                   <h6>Total Debt</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalDebt && asset ? numeral(utils.formatEther(totalDebt.div(RAY).toString())).format('0,0.0[00000000000000000]') : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalDebt && asset ? numeral(utils.formatEther(totalDebt.div(RAY).toString())).format('0,0.0[0000]') : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
             </>

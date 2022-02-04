@@ -10,7 +10,7 @@ import numeral from "numeral";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 
-function Liquidations({ collateralPrice }: { collateralPrice: number }) {
+function Liquidations({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [vaults, setVaults] = useState<any>([]);
@@ -75,7 +75,7 @@ function Liquidations({ collateralPrice }: { collateralPrice: number }) {
         setLoading(false)
       })()
     }
-  }, [library, users, collateralPrice, chainId])
+  }, [library, users, assetPrice, chainId])
 
   const liquidate = async (vault: any, index: number) => {
     if (library) {

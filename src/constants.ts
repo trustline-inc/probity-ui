@@ -14,7 +14,6 @@ import PbtTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/toke
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineSBABI from "@trustline-inc/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
-import VaultManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultManager.sol/VaultManager.json";
 
 /**
  * Contract addresses
@@ -55,8 +54,7 @@ export const INTERFACES = {
   [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
   [TREASURY]: TreasuryABI,
-  [VAULT_ENGINE]: VaultEngineSBABI,
-  [VAULT_MANAGER]: VaultManagerABI
+  [VAULT_ENGINE]: VaultEngineSBABI
 }
 
 // WalletConnect

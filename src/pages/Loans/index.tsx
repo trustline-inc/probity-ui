@@ -16,7 +16,7 @@ import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
 
-function Loans({ collateralPrice }: { collateralPrice: number }) {
+function Loans({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -52,7 +52,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(collateralAmount), 18),
-          utils.parseUnits(String(amount), 45),
+          utils.parseUnits(String(amount), 18),
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -75,7 +75,7 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-collateralAmount), 18),
-          utils.parseUnits(String(-amount), 45),
+          utils.parseUnits(String(-amount), 18),
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -96,8 +96,8 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
   const onCollateralAmountChange = (event: any) => {
     var totalAmount;
     const delta = Number(event.target.value);
-    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) - Number(delta);
-    else totalAmount = Number(utils.formatEther(vault.activeAssetAmount)) + Number(delta);
+    if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.collateral)) - Number(delta);
+    else totalAmount = Number(utils.formatEther(vault.collateral)) + Number(delta);
     setTotalCollateral(totalAmount);
     setCollateralAmount(delta);
   }
@@ -107,14 +107,14 @@ function Loans({ collateralPrice }: { collateralPrice: number }) {
     if (vault) {
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.equity)) + Number(amount)));
+          setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatEther(vault.debt)) + Number(amount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * collateralPrice) / (Number(utils.formatEther(vault.debt)) + Number(utils.formatEther(vault.equity)) - Number(amount)));
+          setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatEther(vault.debt)) - Number(amount)));
           break;
       }
     }
-  }, [totalCollateral, collateralPrice, amount, vault, activity]);
+  }, [totalCollateral, assetPrice, amount, vault, activity]);
 
   return (
     <>

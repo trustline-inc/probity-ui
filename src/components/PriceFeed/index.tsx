@@ -21,7 +21,7 @@ function PriceFeed({ asset, collateralAmount }: { asset: string, collateralAmoun
   React.useEffect(() => {
     const runEffect = async () => {
       if (data !== undefined) {
-        setCollateralPrice((Number(utils.formatEther(data._price.toString()).toString()) / 1e9));
+        setCollateralPrice((Number(utils.formatUnits(String(data._price), 5))));
       }
     }
     runEffect();
