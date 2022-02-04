@@ -1,14 +1,22 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { FTSO, LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
+import { LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
+import AssetContext from "../../contexts/AssetContext"
 import { getNativeTokenSymbol } from "../../utils";
+
+const formatOptions = {
+  thousandSeparated: true,
+  optionalMantissa: true,
+  trimMantissa: true,
+  mantissa: 4
+}
 
 function Liquidations({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -16,7 +24,8 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
   const [vaults, setVaults] = useState<any>([]);
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
-  const ctx = useContext(EventContext)
+  const eventCtx = useContext(EventContext)
+  const assetCtx = useContext(AssetContext)
 
   useEffect(() => {
     if (library) {
@@ -62,8 +71,8 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
           _vaults.push({
             address: address,
-            debt: numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).formatCurrency({ spaceSeparated: false, mantissa: 6 }),
-            equity: numbro(utils.formatEther(equity).toString()).formatCurrency({ spaceSeparated: false }),
+            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} ${assetCtx.asset}`,
+            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} ${assetCtx.asset}`,
             collateralRatio,
             liquidationEligible,
           });
@@ -81,7 +90,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
       try {
         const result = await liquidator.liquidateVault(utils.id("CFLR"), vault.address);
         const data = await result.wait();
-        ctx.updateTransactions(data);
+        eventCtx.updateTransactions(data);
         const _vaults = vaults
         _vaults[index] = {
           ...vault,
