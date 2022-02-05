@@ -40,7 +40,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
-  const { data: { _price } } = useSWR([FTSO, 'getCurrentPrice'], {
+  const { data: price } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, INTERFACES[FTSO].abi),
   })
 
@@ -49,8 +49,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   })
 
   let liquidationRatio = "";
-  if (_price) {
-    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(1e5).div(_price).toString(), 27).toString())).toString()
+  if (price?._price) {
+    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(1e5).div(price._price).toString(), 27).toString())).toString()
   } else {
     liquidationRatio = `<Loading...>`
   }
