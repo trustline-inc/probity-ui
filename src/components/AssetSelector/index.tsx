@@ -32,7 +32,7 @@ export default function AssetSelector({
           <h4 className="d-flex align-items-center mb-0">FXRP</h4>
           <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
         </div>
-        <div className="asset border rounded p-4 my-3 d-flex justify-content-between" onClick={() => { ctx.updateAsset("TUSD"); handleClose()} }>
+        <div className="asset border rounded p-4 my-3 d-flex justify-content-between disabled" onClick={() => { ctx.updateAsset("TUSD"); handleClose()} }>
           <h4 className="d-flex align-items-center mb-0">TUSD</h4>
           <img src={TUSD} className="rounded-circle border" alt="TUSD" height="50" />
         </div>

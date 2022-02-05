@@ -162,7 +162,8 @@ function Balances() {
       })()
     }
   }, [account, library, chainId, totalDebt, totalEquity, currentAsset])
-
+  console.log(totalStablecoinSupply.toString())
+  console.log(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27)))
   if (!vault) return null;
 
   return (
@@ -222,7 +223,7 @@ function Balances() {
                                 <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
                               </div>
                             </li>
-                            <li className="dropdown-item border" onClick={() => ctx.updateAsset("TUSD")}>
+                            <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("TUSD")}>
                               <div className="asset py-2 d-flex justify-content-between">
                                 <h4 className="d-flex align-items-center mb-0">USD</h4>
                                 <img src={TUSD} className="rounded-circle border" alt="USD" height="50" />
