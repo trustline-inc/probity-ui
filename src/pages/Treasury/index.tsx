@@ -13,7 +13,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO, RAY } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -40,9 +40,20 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
+  const { data: { _price } } = useSWR([FTSO, 'getCurrentPrice'], {
+    fetcher: fetcher(library, INTERFACES[FTSO].abi),
+  })
+
   const { data: asset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
+
+  let liquidationRatio = "";
+  if (_price) {
+    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(1e5).div(_price).toString(), 27).toString())).toString()
+  } else {
+    liquidationRatio = `<Loading...>`
+  }
 
   /**
    * @function onUnderlyingAmountChange
@@ -231,6 +242,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
                   onUnderlyingAmountChange={onUnderlyingAmountChange}
                   onEquityAmountChange={onEquityAmountChange}
                   currentAsset={currentAsset}
+                  liquidationRatio={liquidationRatio}
                 />
               )
             }
@@ -245,6 +257,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
                   currentAsset={currentAsset}
                   redeem={redeem}
                   loading={loading}
+                  liquidationRatio={liquidationRatio}
                 />
               )
             }

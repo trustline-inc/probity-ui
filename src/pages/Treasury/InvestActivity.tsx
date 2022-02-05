@@ -14,6 +14,7 @@ interface Props {
   invest: () => void;
   loading: boolean;
   currentAsset: string;
+  liquidationRatio: string;
 }
 
 function InvestingActivity({
@@ -24,7 +25,8 @@ function InvestingActivity({
   onEquityAmountChange,
   invest,
   loading,
-  currentAsset
+  currentAsset,
+  liquidationRatio
 }: Props) {
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
@@ -37,7 +39,7 @@ function InvestingActivity({
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
         <div className="col-12">
-          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to equity to avoid penalties.</p>
+          <p className="text-muted">Your investment must actively maintain a mimumum {liquidationRatio} ratio to equity to avoid penalties.</p>
         </div>
         <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
