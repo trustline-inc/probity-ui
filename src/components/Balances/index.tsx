@@ -273,7 +273,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format(formatOptions) : null} {currentAsset}
+                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}
                             </span>
                           </div>
                         </div>
@@ -309,7 +309,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format(formatOptions) : null} {currentAsset}
+                              {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
                             </span>
                           </div>
                         </div>
@@ -329,7 +329,7 @@ function Balances() {
                             Debt Balance
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format(formatOptions) : null} {currentAsset}</span>
+                            <span className="text-truncate">{vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                           </div>
                         </div>
                         <div className="row my-2 text-truncate">
@@ -371,19 +371,18 @@ function Balances() {
                       <div className="accordion-body">
                         <div className="row text-truncate my-2">
                           <div className="col-6">
-                            Vault {currentAsset}
+                            Vault {getStablecoinSymbol(chainId!)}
                           </div>
                           <div className="col-6 text-end">
-                            {/* TODO: Fix display of balances < 1 which appear as NaN */}
-                            <span className="text-truncate">{vaultStablecoinBalance ? numbro(utils.formatEther(vaultStablecoinBalance.div(RAY))).format(formatOptions) : "0"} T{currentAsset}</span>
+                            <span className="text-truncate">{vaultStablecoinBalance ? numbro(utils.formatEther(vaultStablecoinBalance.div(RAY))).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
                           </div>
                         </div>
                         <div className="row text-truncate my-2">
                           <div className="col-6">
-                            ERC20 {currentAsset}
+                            ERC20 {getStablecoinSymbol(chainId!)}
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{stablecoinERC20Balance ? numbro(utils.formatEther(stablecoinERC20Balance)).format(formatOptions) : "0"} {currentAsset}</span>
+                            <span className="text-truncate">{stablecoinERC20Balance ? numbro(utils.formatEther(stablecoinERC20Balance)).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
                           </div>
                         </div>
                       </div>
