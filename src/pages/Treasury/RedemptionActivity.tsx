@@ -40,7 +40,7 @@ function RedemptionActivity({
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
         <div className="col-12">
-          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to loan capital to avoid penalties.</p>
+          <p className="text-muted">Your investment must actively maintain a mimumum 1.5 ratio to equity to avoid penalties.</p>
         </div>
         <div className="col-12">
           <label htmlFor="redemptionAmount" className="form-label">
@@ -85,6 +85,7 @@ function RedemptionActivity({
               placeholder="0.000000000000000000"
               onChange={onEquityAmountChange}
             />
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>

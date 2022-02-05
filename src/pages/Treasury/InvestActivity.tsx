@@ -2,7 +2,7 @@ import React from "react"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
-import { getNativeTokenSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 
@@ -46,7 +46,7 @@ function InvestingActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Underlying<br/>
             <small className="form-text text-muted">
-              The amount of asset to invest
+              The amount of underlying asset to invest
             </small>
           </label>
           <div className="input-group">
@@ -85,6 +85,7 @@ function InvestingActivity({
               placeholder="0.000000000000000000"
               onChange={onEquityAmountChange}
             />
+            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
         </div>
       </div>
