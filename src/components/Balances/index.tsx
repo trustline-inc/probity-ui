@@ -32,7 +32,7 @@ const assetIcons: { [key: string]: string } = {
 const formatOptions = {
   thousandSeparated: true,
   optionalMantissa: true,
-  trimMantissa: true,
+  trimMantissa: false,
   mantissa: 4
 }
 
@@ -273,7 +273,7 @@ function Balances() {
                           </div>
                           <div className="col-6 text-end">
                             <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}
+                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
                             </span>
                           </div>
                         </div>
@@ -324,15 +324,17 @@ function Balances() {
                     </h2>
                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree">
                       <div className="accordion-body">
-                        <div className="row my-2 text-truncate">
+                        <div className="row my-2">
                           <div className="col-6">
                             Debt Balance
                           </div>
                           <div className="col-6 text-end">
-                            <span className="text-truncate">{vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                            <span className="text-truncate">
+                              {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                            </span>
                           </div>
                         </div>
-                        <div className="row my-2 text-truncate">
+                        <div className="row my-2">
                           <div className="col-6">
                             Collateral
                           </div>
