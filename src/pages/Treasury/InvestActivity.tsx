@@ -4,7 +4,6 @@ import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
-import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
   underlyingAmount: number;
@@ -14,6 +13,7 @@ interface Props {
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   invest: () => void;
   loading: boolean;
+  currentAsset: string;
 }
 
 function InvestingActivity({
@@ -23,18 +23,15 @@ function InvestingActivity({
   onUnderlyingAmountChange,
   onEquityAmountChange,
   invest,
-  loading
+  loading,
+  currentAsset
 }: Props) {
-  const ctx = React.useContext(AssetContext)
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const onSelect = () => {
-    setShow(false)
-  }
+  const onSelect = () => setShow(false);
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import web3 from "web3";
 import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
@@ -15,11 +15,13 @@ import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
 import { TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
 import Info from '../../components/Info';
+import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
 
 function Treasury({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
+  const assetContext = React.useContext(AssetContext)
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = React.useState<any|null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -29,10 +31,16 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   const [underlyingAmount, setUnderlyingAmount] = React.useState(0);
   const [totalUnderlying, setTotalUnderlying] = React.useState(0);
   const [underlyingRatio, setUnderlyingRatio] = React.useState(0);
-  const ctx = useContext(EventContext)
+  const eventContext = React.useContext(EventContext)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
   const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
+
+  const { data: asset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -104,13 +112,13 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(underlyingAmount), 18),
-          utils.parseUnits(String(equityAmount), 18),
+          utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
           { gasLimit: 300000 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
-        ctx.updateTransactions(data);
+        eventContext.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -132,12 +140,12 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-underlyingAmount), 18),
-          utils.parseUnits(String(-equityAmount), 18),
+          utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
         const data = await result.wait();
-        ctx.updateTransactions(data);
+        eventContext.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -160,7 +168,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         await vaultEngine.callStatic.collectInterest(...args)
         let result = await vaultEngine.collectInterest(...args);
         let data = await result.wait();
-        ctx.updateTransactions(data);
+        eventContext.updateTransactions(data);
 
         const isPBT = interestType === "PBT";
         args = [
@@ -178,7 +186,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           result = await treasury.withdrawStablecoin(...args);
         }
         data = await result.wait();
-        ctx.updateTransactions(data);
+        eventContext.updateTransactions(data);
       } catch (error) {
         console.log(error);
         setError(error);
@@ -222,6 +230,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
                   loading={loading}
                   onUnderlyingAmountChange={onUnderlyingAmountChange}
                   onEquityAmountChange={onEquityAmountChange}
+                  currentAsset={currentAsset}
                 />
               )
             }
@@ -233,6 +242,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
                   equityAmount={equityAmount}
                   underlyingRatio={underlyingRatio}
                   onEquityAmountChange={onEquityAmountChange}
+                  currentAsset={currentAsset}
                   redeem={redeem}
                   loading={loading}
                 />
