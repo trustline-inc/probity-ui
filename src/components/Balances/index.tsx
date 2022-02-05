@@ -162,8 +162,7 @@ function Balances() {
       })()
     }
   }, [account, library, chainId, totalDebt, totalEquity, currentAsset])
-  console.log(totalStablecoinSupply.toString())
-  console.log(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27)))
+
   if (!vault) return null;
 
   return (

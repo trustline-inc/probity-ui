@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import { getNativeTokenSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 const formatOptions = {
   thousandSeparated: true,
@@ -24,8 +24,10 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
   const [vaults, setVaults] = useState<any>([]);
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
-  const eventCtx = useContext(EventContext)
-  const assetCtx = useContext(AssetContext)
+  const eventContext = useContext(EventContext)
+  const assetContext = useContext(AssetContext)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const currentAsset = assetContext.asset || nativeTokenSymbol
 
   useEffect(() => {
     if (library) {
@@ -45,15 +47,17 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         for (let address of users) {
           const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
           const {
+            underlying,
             equity,
             debt,
-            collateral
-          } = await vaultEngine.vaults(utils.id(getNativeTokenSymbol(chainId!)), address);
+            collateral,
+            initialEquity
+          } = await vaultEngine.vaults(utils.id(currentAsset), address);
           const {
             debtAccumulator,
             adjustedPrice
-          } = await vaultEngine.assets(utils.id(getNativeTokenSymbol(chainId!)));
-  
+          } = await vaultEngine.assets(utils.id(currentAsset));
+
           const _debt = debt.mul(debtAccumulator)
 
           // Get collateral ratio
@@ -66,15 +70,28 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
             collateralRatio = "0%"
           }
 
+          // Get underlying ratio
+          let underlyingRatio
+          if (initialEquity.toString() !== "0") {
+            const numerator = Number(utils.formatEther(String(underlying))) * assetPrice
+            const denominator = Number(utils.formatUnits(String(initialEquity), 45))
+            underlyingRatio = `${((numerator / denominator) * 100).toFixed(4)}%`
+          } else {
+            underlyingRatio = "0%"
+          }
+
           // Check if it's liquidation eligible
           const liquidationEligible = _debt.gt(collateral.mul(adjustedPrice))
 
           _vaults.push({
             address: address,
-            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} ${assetCtx.asset}`,
-            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} ${assetCtx.asset}`,
+            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} ${getStablecoinSymbol(chainId!)}`,
+            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} ${getStablecoinSymbol(chainId!)}`,
             collateralRatio,
+            underlyingRatio,
             liquidationEligible,
+            underlying: `${numbro(utils.formatEther(underlying).toString()).format(formatOptions)} ${currentAsset}`,
+            collateral: `${numbro(utils.formatEther(collateral).toString()).format(formatOptions)} ${currentAsset}`
           });
         }
         setVaults(_vaults);
@@ -90,14 +107,14 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
       try {
         const result = await liquidator.liquidateVault(utils.id("CFLR"), vault.address);
         const data = await result.wait();
-        eventCtx.updateTransactions(data);
+        eventContext.updateTransactions(data);
         const _vaults = vaults
         _vaults[index] = {
           ...vault,
           debt: "$0.00",
           equity: "$0.00",
           collateralRatio: "0%",
-          liquidationEligible: false
+          liquidationEligible: false,
         }
         setVaults(_vaults)
       } catch (error) {
@@ -143,12 +160,26 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
               {vault.debt}
             </div>
             <div className="col-4">
-              <h5>Equity</h5>
-              {vault.equity}
+              <h5>Collateral</h5>
+              {vault.collateral}
             </div>
             <div className="col-4">
               <h5>Collateral Ratio</h5>
               {vault.collateralRatio}
+            </div>
+          </div>
+          <div className="row mt-4">
+            <div className="col-4">
+              <h5>Equity</h5>
+              {vault.equity}
+            </div>
+            <div className="col-4">
+              <h5>Underlying</h5>
+              {vault.underlying}
+            </div>
+            <div className="col-4">
+              <h5>Underlying Ratio</h5>
+              {vault.underlyingRatio}
             </div>
           </div>
         </div>
