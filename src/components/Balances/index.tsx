@@ -444,7 +444,7 @@ function Balances() {
                   <h6>Working Capital</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalStablecoinSupply && asset ? numbro(utils.formatEther(totalEquity.div(RAY).sub(totalStablecoinSupply).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                  <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
@@ -452,7 +452,7 @@ function Balances() {
                   <h6>Utilization Ratio</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalStablecoinSupply && totalEquity && asset ? numbro(String(utils.formatUnits(totalStablecoinSupply.mul(RAY).mul(100).div(totalEquity.div(RAY)), 27))).format('0,0.0[000]') : null}%</span>
+                  <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.mul(RAY).div(totalDebt), 27)).format('0,0.0[000]') : null}%</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
