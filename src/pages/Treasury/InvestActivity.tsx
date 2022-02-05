@@ -90,7 +90,13 @@ function InvestingActivity({
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2"><span>Underlying Ratio:</span><br />{underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}</div>
+            <div className="m-2">
+              <span>Underlying Ratio:</span>
+              <br />
+              <small className="text-muted">(Value to Shares)</small>
+              <br />
+              {underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>}
+            </div>
           </div>
         </div>
       </div>

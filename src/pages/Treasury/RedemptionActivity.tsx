@@ -93,6 +93,8 @@ function RedemptionActivity({
             <div className="m-2">
               <span>Underlying Ratio:</span>
               <br />
+              <small className="text-muted">(Value to Shares)</small>
+              <br />
               <small className="text-muted">
                 {underlyingAmount ? (
                   underlyingRatio ? `${(underlyingRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>
