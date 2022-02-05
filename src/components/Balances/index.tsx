@@ -230,13 +230,15 @@ function Balances() {
                             </li>
                           </ul>
                         </div>
-                        <div className="px-3 py-2">
+                        <div className="px-3 py-2 text-truncate">
                           <div className="row my-2">
                             <div className="col-6">
                               Standby
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}</span>
+                              <span className="text-truncate">
+                                {numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}
+                              </span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -244,7 +246,9 @@ function Balances() {
                               Active
                             </div>
                             <div className="col-6 text-end">
-                              <span className="text-truncate">{numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
+                              <span className="text-truncate">
+                                {numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}
+                              </span>
                             </div>
                           </div>
                           <div className="row my-2 text-truncate">
@@ -324,7 +328,7 @@ function Balances() {
                     </h2>
                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree">
                       <div className="accordion-body">
-                        <div className="row my-2">
+                        <div className="row my-2 text-truncate">
                           <div className="col-6">
                             Debt Balance
                           </div>
