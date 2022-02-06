@@ -1,5 +1,6 @@
 import React from "react"
 import useSWR from 'swr';
+import numbro from "numbro";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
@@ -10,6 +11,7 @@ import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/V
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
+import NumberFormat from "react-number-format";
 
 interface Props {
   collateralRatio: number;
@@ -82,13 +84,15 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group">
-        <input
-          type="number"
+        <NumberFormat
           min="0.000000000000000000"
-          max={maxSize}
-          placeholder="0.000000000000000000"
           className="form-control"
-          onChange={onAmountChange} />
+          placeholder="0.000000000000000000"
+          thousandSeparator={true}
+          max={maxSize}
+          onChange={onAmountChange}
+          value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
+        />
         <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
       </div>
       <div className="row pt-3 pb-1">
@@ -113,14 +117,13 @@ function BorrowActivity({
         </small>
       </label>
       <div className="input-group mb-3">
-        <input
-          type="number"
+        <NumberFormat
           min="0.000000000000000000"
-          placeholder="0.000000000000000000"
           className="form-control"
-          onChange={(event) => {
-            onCollateralAmountChange(event)
-          }}
+          placeholder="0.000000000000000000"
+          thousandSeparator={true}
+          onChange={onCollateralAmountChange}
+          value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
         />
         <button
           onClick={handleShow}

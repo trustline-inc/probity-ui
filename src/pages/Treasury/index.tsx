@@ -1,6 +1,7 @@
 import React from 'react';
 import web3 from "web3";
 import useSWR from 'swr';
+import numbro from "numbro"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
@@ -61,8 +62,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    * Updates state collateral and total collateral amounts
    */
   const onUnderlyingAmountChange = (event: any) => {
-    var totalAmount;
-    const delta = Number(event.target.value);
+    let totalAmount, delta;
+    if (!event.target.value) delta = 0
+    else delta = Number(numbro.unformat(event.target.value));
     if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.underlying)) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.underlying)) + Number(delta);
     setTotalUnderlying(totalAmount);
@@ -90,7 +92,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    * @param event 
    */
   const onEquityAmountChange = (event: any) => {
-    const amount = Number(event.target.value)
+    let amount
+    if (!event.target.value) amount = 0
+    else amount = Number(numbro.unformat(event.target.value))
     setEquityAmount(amount);
     if (equityAmount > 0) {
       setUnderlyingRatio(
@@ -99,6 +103,10 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     }
   }
 
+  /**
+   * @function onInterestAmountChange
+   * @param event 
+   */
   const onInterestAmountChange = (event: any) => {
     const amount = Number(event.target.value)
     setInterestAmount(amount);

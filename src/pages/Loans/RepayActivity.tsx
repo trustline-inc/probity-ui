@@ -1,4 +1,6 @@
 import React from "react"
+import numbro from "numbro"
+import NumberFormat from 'react-number-format';
 import PriceFeed from "../../components/PriceFeed"
 import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
@@ -46,7 +48,14 @@ function RepayActivity({
         </small>
       </label>
       <div className="input-group">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onAmountChange} />
+        <NumberFormat
+          min="0.000000000000000000"
+          className="form-control"
+          placeholder="0.000000000000000000"
+          thousandSeparator={true}
+          onChange={onAmountChange}
+          value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
+        />
         <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
       </div>
       <br/>
@@ -57,7 +66,14 @@ function RepayActivity({
         </small>
       </label>
       <div className="input-group mb-3">
-        <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" onChange={onCollateralAmountChange} />
+        <NumberFormat
+          min="0.000000000000000000"
+          className="form-control"
+          placeholder="0.000000000000000000"
+          thousandSeparator={true}
+          onChange={onCollateralAmountChange}
+          value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
+        />
         <button
           onClick={handleShow}
           className="btn btn-outline-secondary font-monospace"

@@ -1,4 +1,6 @@
 import React from "react"
+import numbro from "numbro"
+import NumberFormat from "react-number-format"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
@@ -49,13 +51,14 @@ function InvestingActivity({
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
-              min={0}
+            <NumberFormat
+              min="0.000000000000000000"
               className="form-control"
               id="collateralConversionInput"
               placeholder="0.000000000000000000"
+              thousandSeparator={true}
               onChange={onUnderlyingAmountChange}
+              value={underlyingAmount === 0 ? "" : numbro(underlyingAmount).format({ thousandSeparated: true })}
             />
             <button
               onClick={handleShow}
@@ -76,13 +79,14 @@ function InvestingActivity({
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
-              min={0}
+            <NumberFormat
+              min="0.000000000000000000"
               className="form-control"
               id="equityAmount"
               placeholder="0.000000000000000000"
+              thousandSeparator={true}
               onChange={onEquityAmountChange}
+              value={equityAmount === 0 ? "" : numbro(equityAmount).format({ thousandSeparated: true })}
             />
             <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>
