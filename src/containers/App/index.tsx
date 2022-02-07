@@ -29,6 +29,7 @@ import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
 import Stablecoins from "../../pages/Stablecoins";
+import Reserves from "../../pages/Reserves";
 import { getNativeTokenSymbol } from "../../utils";
 
 function App() {
@@ -232,6 +233,18 @@ function App() {
                         <Route path="/stablecoins">
                           <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                             <Stablecoins />
+                          </div>
+                          <div className="col-xl-4 col-lg-6 col-md-12">
+                            {active && (
+                              <AssetContext.Provider value={{ asset, updateAsset }}>
+                                <Balances />
+                              </AssetContext.Provider>
+                            )}
+                          </div>
+                        </Route>
+                        <Route path="/reserves">
+                          <div className="col-xl-8 col-lg-6 col-md-12">
+                            <Reserves />
                           </div>
                           <div className="col-xl-4 col-lg-6 col-md-12">
                             {active && (

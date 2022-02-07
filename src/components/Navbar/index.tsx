@@ -140,6 +140,11 @@ function Navbar() {
               <i className="fas fa-coins"></i> Stablecoins
             </NavLink>
           </li>
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/reserves">
+              <i className="fas fa-chart-line"></i> Reserves
+            </NavLink>
+          </li>
           {
             // Only show Transfers tab if the bridge contract is in the env.
             BRIDGE && (
