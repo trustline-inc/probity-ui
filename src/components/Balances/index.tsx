@@ -347,7 +347,7 @@ function Balances() {
                         <div className="accordion-body">
                           <div className="my-2 d-flex justify-content-between">
                             <h6>Vault PBT</h6>
-                            <span className="text-truncate">{pbtBalance ? numbro(utils.formatEther(pbtBalance.div(RAY))).format(formatOptions) : "0"} PBT</span>
+                            <span className="text-truncate">{pbtBalance && vault && asset ? numbro(utils.formatUnits(pbtBalance.div(RAY).add(vault.equity).mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
                           </div>
                           <div className="my-2 d-flex justify-content-between">
                             <h6>ERC20 PBT</h6>
