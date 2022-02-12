@@ -128,7 +128,7 @@ function App() {
                 </div>
                 <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">
                   <div className="container-fluid h-100">
-                    <div className="row mt-3">
+                    <div className="row">
                       <div className="col-12">
                         {displayInfoAlert ? (
                           <div
@@ -324,8 +324,8 @@ function App() {
                         </EventContext.Provider>
                       </div>
                     ) : (
-                      <div className="row">
-                        <div className="col-md-12 d-lg-none mt-5">
+                      <div className="row d-lg-none">
+                        <div className="col-md-12 mt-5">
                           <div className="text-center">
                             <ExternalSites />
                             <div className="spacer spacer-1" />
