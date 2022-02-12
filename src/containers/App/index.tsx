@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useLocation
+  useLocation,
+  useHistory
 } from "react-router-dom";
 import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
@@ -341,7 +342,7 @@ function App() {
               <div className="row min-vh-100">
                 <Switch>
                   <Route path="/login/callback">
-                    <LoginCallback />
+                    <LoginCallback setAuthToken={setAuthToken} />
                   </Route>
                   <Route path="*">
                     <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
@@ -358,8 +359,9 @@ function App() {
   );
 }
 
-const LoginCallback = () => {
+const LoginCallback = ({ setAuthToken }: any) => {
   const location = useLocation()
+  const history = useHistory()
 
   /**
    * Detect auth code for login
@@ -367,23 +369,32 @@ const LoginCallback = () => {
   useEffect(() => {
     (async () => {
       try {
-        const params = new URLSearchParams(location.search);
-        const code = params.get("code")
-        if (code) {
-          const response = await axios({
-            method: "POST",
-            url: "http://localhost:8080/v1/auth",
-            data: {
-              code
+        const params = new URLSearchParams(location.hash.replace("#", "?"));
+        const token = params.get("token")
+
+        if (token) {
+          setAuthToken(token)
+          let response = await axios({
+            method: "GET",
+            url: "https://api.global.id/v1/identities/me",
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`
             }
           })
-          console.log(response)
+          if (response.status === 200) {
+            // TODO: address whitelisting
+            history.push("/assets")
+          }
+        } else {
+          // TODO: display error alert on login callback error
+          history.push("/login")
         }
       } catch (error) {
         console.error(error)
       }
     })()
-  }, [location])
+  }, [location, history, setAuthToken])
 
   return (
     <div className="d-flex justify-content-center align-items-center">
