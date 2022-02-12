@@ -152,56 +152,58 @@ function App() {
                         ) : null}
                       </div>
                     </div>
-                    <div className="row h-100">
-                      {!active && (
-                          <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
-                            {mobileDevice ? (
-                              <div
-                                className="alert alert-primary alert-dismissible fade show"
-                                role="alert"
-                              >
-                                {" "}
-                                <strong>
-                                  <i className="fas fa-mobile"></i>
-                                </strong>
-                                &nbsp;Mobile device detected. Please use the Metamask
-                                app to connect your wallet.
-                              </div>
-                            ) : (
-                                <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
-                                <h3>Connect a wallet to enter</h3>
-                                {
-                                  (() => {
-                                    switch (error?.name) {
-                                      case "UnsupportedChainIdError":
-                                        return <span className="text-danger">{error.message}</span>
-                                      case "TransportError":
-                                        return <span className="text-danger">{error.message}</span>
-                                      case "NoEthereumProviderError":
-                                        return <span className="text-danger">{error.message}</span>
-                                      case undefined:
+
+                    {!active && (
+                      <div className="row h-100">
+                        <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
+                          {mobileDevice ? (
+                            <div
+                              className="alert alert-primary alert-dismissible fade show"
+                              role="alert"
+                            >
+                              {" "}
+                              <strong>
+                                <i className="fas fa-mobile"></i>
+                              </strong>
+                              &nbsp;Mobile device detected. Please use the Metamask
+                              app to connect your wallet.
+                            </div>
+                          ) : (
+                              <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
+                              <h3>Connect a wallet to enter</h3>
+                              {
+                                (() => {
+                                  switch (error?.name) {
+                                    case "UnsupportedChainIdError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case "TransportError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case "NoEthereumProviderError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case undefined:
+                                      return <span className="text-danger">{error?.message}</span>
+                                    default:
+                                      if (error?.message)
                                         return <span className="text-danger">{error?.message}</span>
-                                      default:
-                                        if (error?.message)
-                                          return <span className="text-danger">{error?.message}</span>
-                                        return JSON.stringify(error)
-                                    }
-                                  })()
-                                }
-                                <br />
-                                <br />
-                                <button
-                                  className="btn btn-outline-success"
-                                  type="button"
-                                  onClick={handleShow}
-                                >
-                                  <i className="fas fa-wallet mr-2" /> Connect wallet
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                    </div>
+                                      return JSON.stringify(error)
+                                  }
+                                })()
+                              }
+                              <br />
+                              <br />
+                              <button
+                                className="btn btn-outline-success"
+                                type="button"
+                                onClick={handleShow}
+                              >
+                                <i className="fas fa-wallet mr-2" /> Connect wallet
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="row">
                       {active ? (
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
