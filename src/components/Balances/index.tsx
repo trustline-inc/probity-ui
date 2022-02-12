@@ -456,7 +456,7 @@ function Balances() {
                   <h6>Utilization Ratio</h6>
                 </div>
                 <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.mul(RAY).div(totalDebt), 27)).format('0,0.0[000]') : null}%</span>
+                  <span className="text-truncate">{totalEquity && totalDebt.toNumber() !== 0 && asset ? numbro(utils.formatUnits(totalEquity.mul(RAY).div(totalDebt).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
                 </div>
               </div>
               <div className="row my-2 text-truncate">
