@@ -204,8 +204,8 @@ function App() {
                       </div>
                     )}
 
-                    <div className="row">
-                      {active ? (
+                    {active ? (
+                      <div className="row h-100">
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
@@ -322,19 +322,20 @@ function App() {
                             </Switch>
                           </AssetContext.Provider>
                         </EventContext.Provider>
-                      ) : null}
-                    </div>
-                    <div className="row">
-                      <div className="col-md-12 mt-5">
-                        <div className="text-center">
-                          <ExternalSites />
-                          <div className="spacer spacer-1" />
-                          <small className="container-fluid text-muted" id="version">
-                            v{VERSION}
-                          </small>
+                      </div>
+                    ) : (
+                      <div className="row">
+                        <div className="col-md-12 d-lg-none mt-5">
+                          <div className="text-center">
+                            <ExternalSites />
+                            <div className="spacer spacer-1" />
+                            <small className="container-fluid text-muted" id="version">
+                              v{VERSION}
+                            </small>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
