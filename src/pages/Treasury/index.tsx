@@ -108,7 +108,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    * @param event 
    */
   const onInterestAmountChange = (event: any) => {
-    const amount = Number(event.target.value)
+    let amount
+    if (!event.target.value) amount = 0
+    else amount = Number(numbro.unformat(event.target.value))
     setInterestAmount(amount);
   }
 
