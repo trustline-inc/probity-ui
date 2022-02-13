@@ -65,6 +65,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        setBorrowAmount(0)
+        setCollateralAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -91,6 +93,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        setBorrowAmount(0)
+        setCollateralAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);

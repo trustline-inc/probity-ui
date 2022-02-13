@@ -17,7 +17,7 @@ function Stablecoins() {
   const { account, active, library } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
-  const [amount, setBorrowAmount] = React.useState(0);
+  const [amount, setAmount] = React.useState(0);
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
@@ -41,6 +41,7 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
+        setAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -62,6 +63,7 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
+        setAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -74,7 +76,7 @@ function Stablecoins() {
     let amount
     if (!event.target.value) amount = 0
     else amount = Number(numbro.unformat(event.target.value));
-    setBorrowAmount(amount);
+    setAmount(amount);
   }
 
   return (

@@ -140,6 +140,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        setEquityAmount(0)
+        setUnderlyingAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -167,6 +169,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        setEquityAmount(0)
+        setUnderlyingAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -208,6 +212,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         }
         data = await result.wait();
         eventContext.updateTransactions(data);
+        setInterestAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
