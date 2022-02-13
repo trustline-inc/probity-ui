@@ -37,7 +37,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -140,6 +140,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
         setEquityAmount(0)
         setUnderlyingAmount(0)
       } catch (error) {
@@ -169,6 +170,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
         setEquityAmount(0)
         setUnderlyingAmount(0)
       } catch (error) {
@@ -212,6 +214,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         }
         data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
         setInterestAmount(0)
       } catch (error) {
         console.log(error);
