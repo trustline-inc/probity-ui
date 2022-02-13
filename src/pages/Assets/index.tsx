@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import numbro from "numbro"
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -77,7 +78,9 @@ function Assets() {
   }
 
   const onCollateralAmountChange = (event: any) => {
-    const delta = Number(event.target.value);
+    let delta
+    if (!event.target.value) delta = 0
+    else delta = Number(numbro.unformat(event.target.value));
     setCollateralAmount(delta);
   }
 

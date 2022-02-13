@@ -1,6 +1,8 @@
 import React from "react"
+import numbro from "numbro"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
+import NumberFormat from "react-number-format"
 import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
@@ -41,14 +43,15 @@ function WithdrawActivity({
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="collateralRedemptionAmount"
-              placeholder="0.000000000000000000"
-              onChange={onCollateralAmountChange}
-            />
+            <NumberFormat
+                min={0}
+                className="form-control"
+                id="collateralConversionInput"
+                placeholder="0.000000000000000000"
+                thousandSeparator={true}
+                onChange={onCollateralAmountChange}
+                value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
+              />
             <button
               onClick={handleShow}
               className="btn btn-outline-secondary font-monospace"
