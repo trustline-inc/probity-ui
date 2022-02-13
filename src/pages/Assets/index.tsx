@@ -1,30 +1,38 @@
 import React, { useContext } from 'react';
 import numbro from "numbro"
+import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import web3 from "web3";
+import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import {
   WAD,
   NATIVE_TOKEN,
+  VAULT_ENGINE,
   INTERFACES
 } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
+import { getNativeTokenSymbol } from '../../utils';
 
 function Assets() {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
+
+  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
 
   // Set activity by the path
   React.useEffect(() => {
@@ -47,6 +55,7 @@ function Assets() {
         const result = await nativeToken.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
+        mutateVault(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
@@ -69,6 +78,7 @@ function Assets() {
         const result = await nativeToken.withdraw(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
+        mutateVault(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
