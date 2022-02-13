@@ -1,21 +1,23 @@
 import React from "react"
+import numbro from "numbro"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
+import NumberFormat from "react-number-format"
 import PriceFeed from "../../components/PriceFeed";
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
-  collateralAmount: number;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  amount: number;
+  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   withdraw: () => void;
   loading: boolean;
 }
 
 function WithdrawActivity({
-  collateralAmount,
-  onCollateralAmountChange,
+  amount,
+  onAmountChange,
   withdraw,
   loading
 }: Props) {
@@ -34,21 +36,22 @@ function WithdrawActivity({
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
         <div className="col-12">
-          <label htmlFor="collateralRedemptionAmount" className="form-label">
+          <label htmlFor="amount" className="form-label">
             Amount<br/>
             <small className="form-text text-muted">
               The amount of {currentAsset} to withdraw
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              id="collateralRedemptionAmount"
-              placeholder="0.000000000000000000"
-              onChange={onCollateralAmountChange}
-            />
+            <NumberFormat
+                min={0}
+                className="form-control"
+                id="amount"
+                placeholder="0.000000000000000000"
+                thousandSeparator={true}
+                onChange={onAmountChange}
+                value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
+              />
             <button
               onClick={handleShow}
               className="btn btn-outline-secondary font-monospace"
@@ -59,14 +62,14 @@ function WithdrawActivity({
           </div>
         </div>
       </div>
-      <PriceFeed asset={currentAsset} collateralAmount={collateralAmount} />
+      <PriceFeed asset={currentAsset} amount={amount} />
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button
             type="button"
             className="btn btn-primary btn-lg"
             onClick={withdraw}
-            disabled={collateralAmount === 0 || loading}
+            disabled={amount === 0 || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>

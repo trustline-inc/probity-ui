@@ -8,10 +8,10 @@ import numbro from "numbro";
 import { FTSO } from '../../constants';
 import fetcher from "../../fetcher";
 
-function PriceFeed({ asset, collateralAmount }: { asset: string, collateralAmount: number; }) {
+function PriceFeed({ asset, amount }: { asset: string, amount: number; }) {
   const { library } = useWeb3React<Web3Provider>()
-  const [collateralPrice, setCollateralPrice] = React.useState(0.00);
-  const [collateralValue, setCollateralValue] = React.useState(0.00);
+  const [price, setPrice] = React.useState(0.00);
+  const [value, setValue] = React.useState(0.00);
 
   const { data, mutate: mutatePrice } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
@@ -21,7 +21,7 @@ function PriceFeed({ asset, collateralAmount }: { asset: string, collateralAmoun
   React.useEffect(() => {
     const runEffect = async () => {
       if (data !== undefined) {
-        setCollateralPrice((Number(utils.formatUnits(String(data._price), 5))));
+        setPrice((Number(utils.formatUnits(String(data._price), 5))));
       }
     }
     runEffect();
@@ -41,16 +41,16 @@ function PriceFeed({ asset, collateralAmount }: { asset: string, collateralAmoun
 
   // Set collateral value when collateral price changes
   React.useEffect(() => {
-    setCollateralValue((collateralPrice * collateralAmount));
-  }, [collateralPrice, collateralAmount]);
+    setValue((price * amount));
+  }, [price, amount]);
 
 
   return (
     <div className="row">
       <div className="col-12">
         <div className="py-2 h-100 d-flex flex-row align-items-center justify-content-center text-center">
-          <div className="mx-4"><span className="text-muted">{asset}/USD</span><br />${collateralPrice}</div>
-          <div className="mx-4"><span className="text-muted">Value</span><br />${numbro(Math.abs(collateralValue).toFixed(2)).format({ thousandSeparated: true })}</div>
+          <div className="mx-4"><span className="text-muted">{asset}/USD</span><br />${price}</div>
+          <div className="mx-4"><span className="text-muted">Value</span><br />${numbro(Math.abs(value).toFixed(2)).format({ thousandSeparated: true })}</div>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO, RAY } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -37,7 +37,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -108,7 +108,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    * @param event 
    */
   const onInterestAmountChange = (event: any) => {
-    const amount = Number(event.target.value)
+    let amount
+    if (!event.target.value) amount = 0
+    else amount = Number(numbro.unformat(event.target.value))
     setInterestAmount(amount);
   }
 
@@ -138,6 +140,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
+        setEquityAmount(0)
+        setUnderlyingAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -165,6 +170,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
+        setEquityAmount(0)
+        setUnderlyingAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -206,6 +214,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         }
         data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
+        setInterestAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);

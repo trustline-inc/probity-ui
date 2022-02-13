@@ -1,5 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
+import numbro from "numbro"
+import NumberFormat from "react-number-format"
 import { getStablecoinSymbol } from "../../utils"
 
 interface Props {
@@ -49,13 +51,14 @@ function CollectActivity({
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
+            <NumberFormat
               min={0}
               className="form-control"
               id="interestAmountInput"
               placeholder="0.000000000000000000"
+              thousandSeparator={true}
               onChange={onInterestAmountChange}
+              value={interestAmount === 0 ? "" : numbro(interestAmount).format({ thousandSeparated: true })}
             />
             <span className="input-group-text font-monospace">{interestType}</span>
           </div>
