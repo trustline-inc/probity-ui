@@ -377,7 +377,7 @@ function Balances() {
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
-                <span className="text-truncate">{totalEquity && totalDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(totalEquity.mul(RAY).div(totalDebt).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
+                <span className="text-truncate">{totalEquity && totalDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(totalDebt.mul(RAY).div(totalEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
