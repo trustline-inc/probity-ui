@@ -14,7 +14,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO, RAY } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"

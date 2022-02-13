@@ -1,5 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
+import numbro from "numbro"
+import NumberFormat from "react-number-format"
 import { getStablecoinName, getStablecoinSymbol } from "../../utils"
 
 interface Props {
@@ -31,14 +33,14 @@ function WithdrawActivity({
             </small>
           </label>
           <div className="input-group">
-            <input
-              type="number"
+            <NumberFormat
               min={0}
               className="form-control"
               id="amountInput"
-              max={maxSize}
               placeholder="0.000000000000000000"
+              thousandSeparator={true}
               onChange={onAmountChange}
+              value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
             <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
           </div>

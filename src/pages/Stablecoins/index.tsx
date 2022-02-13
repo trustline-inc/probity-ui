@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import numbro from "numbro"
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
@@ -70,7 +71,9 @@ function Stablecoins() {
   }
 
   const onAmountChange = (event: any) => {
-    const amount = Number(event.target.value);
+    let amount
+    if (!event.target.value) amount = 0
+    else amount = Number(numbro.unformat(event.target.value));
     setBorrowAmount(amount);
   }
 
