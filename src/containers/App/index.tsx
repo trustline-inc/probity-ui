@@ -37,7 +37,12 @@ import axios from "axios";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
-  const [authToken, setAuthToken] = useState(null)
+  const [authToken, setAuthToken] = useState(() => {
+    // Local storage variables are prefixed with probity__ and are snake case
+    const value = localStorage.getItem("probity__auth_token");
+    const initialValue = JSON.parse(value!);
+    return initialValue || "";
+  });
   const handleClose = () => setShowConnectorModal(false);
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -60,6 +65,13 @@ function App() {
   const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
     fetcher: fetcher(library, FtsoABI.abi),
   })
+
+  /**
+   * Save auth token to local storage
+   */
+  useEffect(() => {
+    localStorage.setItem("probity__auth_token", JSON.stringify(authToken));
+  }, [authToken]);
 
   /**
    * Update asset price
@@ -116,7 +128,7 @@ function App() {
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
-          authToken ? (
+          (authToken && authToken?.expiresAt > new Date()) ? (
             <>
               <div className="d-flex main-container min-vh-100">
                 <div className="min-vh-100 left-nav">
@@ -374,9 +386,12 @@ const LoginCallback = ({ setAuthToken }: any) => {
       try {
         const params = new URLSearchParams(location.hash.replace("#", "?"));
         const token = params.get("token")
+        const expiresIn = params.get("expires_in")
+        const expiresAt = new Date()
+        expiresAt.setSeconds(expiresAt.getSeconds() + Number(expiresIn))
 
         if (token) {
-          setAuthToken(token)
+          setAuthToken({ token, expiresAt })
           let response = await axios({
             method: "GET",
             url: "https://api.global.id/v1/identities/me",
