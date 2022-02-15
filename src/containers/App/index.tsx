@@ -38,9 +38,9 @@ import axios from "axios";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
-  const [authToken, setAuthToken] = useState(() => {
+  const [auth, setAuth] = useState(() => {
     // Local storage variables are prefixed with probity__ and are snake case
-    const value = localStorage.getItem("probity__auth_token");
+    const value = localStorage.getItem("probity__auth");
     const initialValue = JSON.parse(value!);
     return initialValue || "";
   });
@@ -71,8 +71,20 @@ function App() {
    * Save auth token to local storage
    */
   useEffect(() => {
-    localStorage.setItem("probity__auth_token", JSON.stringify(authToken));
-  }, [authToken]);
+    (async () => {
+      const response = await axios({
+        method: "GET",
+        url: "https://api.global.id/v1/identities/me",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${auth?.token}`
+        }
+      })
+      if (response.status === 200) {
+        localStorage.setItem("probity__auth", JSON.stringify(auth));
+      }
+    })()
+  }, [auth]);
 
   /**
    * Update asset price
@@ -129,7 +141,7 @@ function App() {
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
-          (authToken && authToken?.expiresAt > new Date()) ? (
+          (auth && auth?.expiresAt > new Date()) ? (
             <>
               <div className="d-flex main-container min-vh-100">
                 <div className="min-vh-100 left-nav">
@@ -375,7 +387,7 @@ function App() {
               <div className="row min-vh-100">
                 <Switch>
                   <Route path="/login/callback">
-                    <LoginCallback setAuthToken={setAuthToken} />
+                    <LoginCallback setAuth={setAuth} />
                   </Route>
                   <Route path="*">
                     <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
@@ -392,7 +404,7 @@ function App() {
   );
 }
 
-const LoginCallback = ({ setAuthToken }: any) => {
+const LoginCallback = ({ setAuth }: any) => {
   const location = useLocation()
   const history = useHistory()
 
@@ -409,7 +421,6 @@ const LoginCallback = ({ setAuthToken }: any) => {
         expiresAt.setSeconds(expiresAt.getSeconds() + Number(expiresIn))
 
         if (token) {
-          setAuthToken({ token, expiresAt })
           let response = await axios({
             method: "GET",
             url: "https://api.global.id/v1/identities/me",
@@ -419,6 +430,7 @@ const LoginCallback = ({ setAuthToken }: any) => {
             }
           })
           if (response.status === 200) {
+            setAuth({ token, expiresAt })
             // TODO: address whitelisting
             history.push("/assets")
           }
@@ -430,7 +442,7 @@ const LoginCallback = ({ setAuthToken }: any) => {
         console.error(error)
       }
     })()
-  }, [location, history, setAuthToken])
+  }, [location, history, setAuth])
 
   return (
     <div className="d-flex justify-content-center align-items-center">
