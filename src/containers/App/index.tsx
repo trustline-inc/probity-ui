@@ -246,6 +246,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Stablecoins */}
                               <Route path="/stablecoins">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Stablecoins />
@@ -258,6 +259,20 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Reserves */}
+                              <Route path="/reserves">
+                                <div className="col-xl-8 col-lg-8 col-md-12">
+                                  <Reserves />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              {/* Transfers */}
                               <Route path="/transfers">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Transfers />
@@ -296,6 +311,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Transactions */}
                               <Route path="/transactions">
                                 <div className="col-xl-8 col-lg-12 col-md-12">
                                   <Transactions />
@@ -308,6 +324,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Status */}
                               <Route path="/status">
                                 <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                                   <Status />

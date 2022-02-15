@@ -2,12 +2,15 @@ import React from "react"
 import { Card, Nav } from "react-bootstrap"
 import Highcharts, { PlotSplineOptions } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { getStablecoinSymbol } from "../../utils";
+import { useWeb3React } from "@web3-react/core";
 
 const positions = [
 
 ]
 
 function ChartContainer() {
+  const { chainId } = useWeb3React()
   const [window, setWindow] = React.useState<string|null>("7D")
   const options = {
     chart: {
@@ -75,27 +78,27 @@ function ChartContainer() {
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                10,00,00&nbsp;
+                10,00,00&nbsp;{getStablecoinSymbol(chainId!)}
               </h3>
-              v10%<br/>
+              <span className="text-danger"><span className="fa fa-caret-down"/>10%</span><br/>
               <span className="statcard-desc">Circulating Supply</span>
             </div>
           </div>
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                100,00,000&nbsp;
+                100,00,000&nbsp;{getStablecoinSymbol(chainId!)}
               </h3>
-              v10%<br/>
+              <span className="text-danger"><span className="fa fa-caret-down"/>10%</span><br/>
               <span className="statcard-desc">Total Supply</span>
             </div>
           </div>
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                100&nbsp;
+                100%&nbsp;
               </h3>
-              ^10%<br/>
+              <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
               <span className="statcard-desc">Reserve Ratio</span>
             </div>
           </div>
