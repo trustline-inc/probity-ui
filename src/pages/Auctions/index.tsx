@@ -1,6 +1,7 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
+import numbro from "numbro"
 import { scrollToTop, useScroll } from "../../utils"
-import { BigNumber, utils } from "ethers";
+import { utils } from "ethers";
 import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
 import { AUCTIONEER, INTERFACES, RESERVE_POOL } from '../../constants';
@@ -10,6 +11,13 @@ import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 // import EventContext from "../../contexts/TransactionContext"
 import { getAssetId, getStablecoinSymbol } from "../../utils";
+
+const formatOptions = {
+  thousandSeparated: true,
+  optionalMantissa: true,
+  trimMantissa: true,
+  mantissa: 4
+}
 
 function Auctions({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
@@ -190,7 +198,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Debt
                           </div>
                           <div className="col-9">
-                            {utils.formatUnits(auction?.debt, 45).toString()} AUR
+                            {numbro(utils.formatUnits(auction?.debt, 45)).format({ ...formatOptions, mantissa: 18 })} AUR
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -198,7 +206,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Lot
                           </div>
                           <div className="col-9">
-                            {utils.formatEther(auction?.lot)?.toString()} {collId}
+                            {numbro(utils.formatEther(auction?.lot)).format(formatOptions)} {collId}
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -206,7 +214,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Start Price
                           </div>
                           <div className="col-9">
-                            {utils.formatUnits(auction?.startPrice, 27)?.toString()} AUR
+                            {numbro(utils.formatUnits(auction?.startPrice, 27)).format({ ...formatOptions, mantissa: 27 })} AUR
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -214,7 +222,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Current Price
                           </div>
                           <div className="col-9">
-                            {utils.formatUnits(auction?.currentPrice, 27)?.toString()} AUR
+                            {numbro(utils.formatUnits(auction?.currentPrice, 27)).format({ ...formatOptions, mantissa: 27 })} AUR
                           </div>
                         </div>
                         <div className="row mb-1">

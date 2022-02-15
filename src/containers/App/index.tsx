@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  useLocation,
+  useHistory
 } from "react-router-dom";
 import useSWR from 'swr';
 import { useWeb3React } from "@web3-react/core";
@@ -31,9 +33,12 @@ import AssetContext from "../../contexts/AssetContext"
 import Stablecoins from "../../pages/Stablecoins";
 import Reserves from "../../pages/Reserves";
 import { getNativeTokenSymbol } from "../../utils";
+import Login from "../../pages/Login";
+import axios from "axios";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
+  const [authToken, setAuthToken] = useState(null)
   const handleClose = () => setShowConnectorModal(false);
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -57,6 +62,9 @@ function App() {
     fetcher: fetcher(library, FtsoABI.abi),
   })
 
+  /**
+   * Update asset price
+   */
   useEffect(() => {
     ;(async () => {
       try {
@@ -79,6 +87,9 @@ function App() {
     })()
   }, [library, data]);
 
+  /**
+   * Set block listener
+   */
   useEffect(() => {
     if (library) {
       library.on("block", () => {
@@ -91,6 +102,9 @@ function App() {
     }
   }, [library, mutate]);
 
+  /**
+   * Detect mobile device
+   */
   useEffect(() => {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
     if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -102,242 +116,295 @@ function App() {
     <Router>
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
-        {/* Navbar */}
-        <div className="d-flex main-container min-vh-100">
-          <div className="min-vh-100 left-nav">
-            <EventContext.Provider value={{ transactions, updateTransactions }}>
-              <AssetContext.Provider value={{ asset, updateAsset }}>
-                <Navbar />
-              </AssetContext.Provider>
-            </EventContext.Provider>
-          </div>
-          <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">
-            <div className="container-fluid">
-              <div className="row mt-3">
-                <div className="col-12">
-                  {displayInfoAlert ? (
-                    <div
-                      className="alert alert-info alert-dismissible fade show"
-                      role="alert"
-                    >
-                      <strong>
-                        <i className="fas fa-exclamation-circle"></i> Notice
-                      </strong>{" "}
-                      Probity is currently running on a test network only. The Songbird release is scheduled to be available for limited testing in Q1 2022.
-                      <button
-                        type="button"
-                        className="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close"
-                        onClick={() => {
-                          setDisplayInfoAlert(false);
-                        }}
-                      ></button>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-              <div className="row">
-                <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
-                  {!active && (
-                    <>
-                      {mobileDevice ? (
-                        <div
-                          className="alert alert-primary alert-dismissible fade show"
-                          role="alert"
-                        >
-                          {" "}
-                          <strong>
-                            <i className="fas fa-mobile"></i>
-                          </strong>
-                          &nbsp;Mobile device detected. Please use the Metamask
-                          app to connect your wallet.
-                        </div>
-                      ) : (
-                          <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
-                          <h3>Connect a wallet to enter</h3>
-                          {
-                            (() => {
-                              switch (error?.name) {
-                                case "UnsupportedChainIdError":
-                                  return <span className="text-danger">{error.message}</span>
-                                case "TransportError":
-                                  return <span className="text-danger">{error.message}</span>
-                                case "NoEthereumProviderError":
-                                  return <span className="text-danger">{error.message}</span>
-                                case undefined:
-                                  return <span className="text-danger">{error?.message}</span>
-                                default:
-                                  if (error?.message)
-                                    return <span className="text-danger">{error?.message}</span>
-                                  return JSON.stringify(error)
-                              }
-                            })()
-                          }
-                          <br />
-                          <br />
-                          <button
-                            className="btn btn-outline-success"
-                            type="button"
-                            onClick={handleShow}
-                          >
-                            <i className="fas fa-wallet mr-2" /> Connect wallet
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="row">
-                {active ? (
+        {
+          authToken ? (
+            <>
+              <div className="d-flex main-container min-vh-100">
+                <div className="min-vh-100 left-nav">
                   <EventContext.Provider value={{ transactions, updateTransactions }}>
                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                      <Switch>
-                        <Route path="/wallet">
-                          <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                            <Assets />
-                          </div>
-                          <div className="col-xl-4 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/treasury">
-                          <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                            <Treasury assetPrice={assetPrice} />
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/loans">
-                          <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                            <Loans assetPrice={assetPrice} />
-                          </div>
-                          <div className="col-xl-4 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/stablecoins">
-                          <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                            <Stablecoins />
-                          </div>
-                          <div className="col-xl-4 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/reserves">
-                          <div className="col-xl-8 col-lg-6 col-md-12">
-                            <Reserves />
-                          </div>
-                          <div className="col-xl-4 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/transfers">
-                          <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                            <Transfers />
-                          </div>
-                          <div className="col-xl-4 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        {/* Liquidations */}
-                        <Route path="/liquidations">
-                          <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                            <Liquidations assetPrice={assetPrice} />
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        {/* Auctions */}
-                        <Route path="/auctions">
-                          <div className="col-xl-9 col-lg-12 col-md-12">
-                            <Auctions assetPrice={assetPrice} />
-                          </div>
-                          <div className="col-xl-3 col-lg-6 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/transactions">
-                          <div className="col-xl-8 col-lg-12 col-md-12">
-                            <Transactions />
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                        <Route path="/status">
-                          <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                            <Status />
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-12">
-                            {active && (
-                              <AssetContext.Provider value={{ asset, updateAsset }}>
-                                <Balances />
-                              </AssetContext.Provider>
-                            )}
-                          </div>
-                        </Route>
-                      </Switch>
+                      <Navbar />
                     </AssetContext.Provider>
                   </EventContext.Provider>
-                ) : null}
-              </div>
-              <div className="row">
-                <div className="col-md-12 mt-5">
-                  <div className="text-center">
-                    <ExternalSites />
-                    <div className="spacer spacer-1" />
-                    <small className="container-fluid text-muted" id="version">
-                      v{VERSION}
-                    </small>
+                </div>
+                <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">
+                  <div className="container-fluid h-100">
+                    <div className="row">
+                      <div className="col-12">
+                        {displayInfoAlert ? (
+                          <div
+                            className="alert alert-info alert-dismissible fade show"
+                            role="alert"
+                          >
+                            <strong>
+                              <i className="fas fa-exclamation-circle"></i> Notice
+                            </strong>{" "}
+                            Probity is currently running on a test network only. The Songbird release is scheduled to be available for limited testing in Q1 2022.
+                            <button
+                              type="button"
+                              className="btn-close"
+                              data-bs-dismiss="alert"
+                              aria-label="Close"
+                              onClick={() => {
+                                setDisplayInfoAlert(false);
+                              }}
+                            ></button>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    {!active && (
+                      <div className="row h-100">
+                        <div className="offset-md-3 offset-lg-3 col-lg-6 col-md-6  col-sm-12">
+                          {mobileDevice ? (
+                            <div
+                              className="alert alert-primary alert-dismissible fade show"
+                              role="alert"
+                            >
+                              {" "}
+                              <strong>
+                                <i className="fas fa-mobile"></i>
+                              </strong>
+                              &nbsp;Mobile device detected. Please use the Metamask
+                              app to connect your wallet.
+                            </div>
+                          ) : (
+                              <div className="shadow-sm border p-5 mt-5 bg-white rounded text-center">
+                              <h3>Connect a wallet to enter</h3>
+                              {
+                                (() => {
+                                  switch (error?.name) {
+                                    case "UnsupportedChainIdError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case "TransportError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case "NoEthereumProviderError":
+                                      return <span className="text-danger">{error.message}</span>
+                                    case undefined:
+                                      return <span className="text-danger">{error?.message}</span>
+                                    default:
+                                      if (error?.message)
+                                        return <span className="text-danger">{error?.message}</span>
+                                      return JSON.stringify(error)
+                                  }
+                                })()
+                              }
+                              <br />
+                              <br />
+                              <button
+                                className="btn btn-outline-success"
+                                type="button"
+                                onClick={handleShow}
+                              >
+                                <i className="fas fa-wallet mr-2" /> Connect wallet
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {active ? (
+                      <div className="row h-100 pt-3">
+                        <EventContext.Provider value={{ transactions, updateTransactions }}>
+                          <AssetContext.Provider value={{ asset, updateAsset }}>
+                            <Switch>
+                              <Route path="/wallet">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Assets />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/treasury">
+                                <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
+                                  <Treasury assetPrice={assetPrice} />
+                                </div>
+                                <div className="col-xl-4 col-lg-4 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/loans">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Loans assetPrice={assetPrice} />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/stablecoins">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Stablecoins />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/transfers">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Transfers />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              {/* Liquidations */}
+                              <Route path="/liquidations">
+                                <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
+                                  <Liquidations assetPrice={assetPrice} />
+                                </div>
+                                <div className="col-xl-4 col-lg-4 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              {/* Auctions */}
+                              <Route path="/auctions">
+                                <div className="col-xl-9 col-lg-12 col-md-12">
+                                  <Auctions assetPrice={assetPrice} />
+                                </div>
+                                <div className="col-xl-3 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/transactions">
+                                <div className="col-xl-8 col-lg-12 col-md-12">
+                                  <Transactions />
+                                </div>
+                                <div className="col-xl-4 col-lg-4 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/status">
+                                <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
+                                  <Status />
+                                </div>
+                                <div className="col-xl-4 col-lg-4 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                            </Switch>
+                          </AssetContext.Provider>
+                        </EventContext.Provider>
+                      </div>
+                    ) : (
+                      <div className="row d-lg-none">
+                        <div className="col-md-12 mt-5">
+                          <div className="text-center">
+                            <ExternalSites />
+                            <div className="spacer spacer-1" />
+                            <small className="container-fluid text-muted" id="version">
+                              v{VERSION}
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
+            </>
+          ) : (
+            <div className="main-container min-vh-100">
+              <div className="row min-vh-100">
+                <Switch>
+                  <Route path="/login/callback">
+                    <LoginCallback setAuthToken={setAuthToken} />
+                  </Route>
+                  <Route path="*">
+                    <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
+                      <Login />
+                    </div>
+                  </Route>
+                </Switch>
+              </div>
             </div>
-          </div>
-        </div>
+          )
+        }
       </div>
     </Router>
   );
+}
+
+const LoginCallback = ({ setAuthToken }: any) => {
+  const location = useLocation()
+  const history = useHistory()
+
+  /**
+   * Detect auth code for login
+   */
+  useEffect(() => {
+    (async () => {
+      try {
+        const params = new URLSearchParams(location.hash.replace("#", "?"));
+        const token = params.get("token")
+
+        if (token) {
+          setAuthToken(token)
+          let response = await axios({
+            method: "GET",
+            url: "https://api.global.id/v1/identities/me",
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`
+            }
+          })
+          if (response.status === 200) {
+            // TODO: address whitelisting
+            history.push("/assets")
+          }
+        } else {
+          // TODO: display error alert on login callback error
+          history.push("/login")
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [location, history, setAuthToken])
+
+  return (
+    <div className="d-flex justify-content-center align-items-center">
+      <span className="fa fa-spin fa-spinner fa-3x" />
+    </div>
+  )
 }
 
 export default App;

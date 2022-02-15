@@ -1,29 +1,38 @@
 import React, { useContext } from 'react';
+import numbro from "numbro"
+import useSWR from 'swr';
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { Contract } from "ethers";
+import { Contract, utils } from "ethers";
 import web3 from "web3";
+import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import {
   WAD,
   NATIVE_TOKEN,
+  VAULT_ENGINE,
   INTERFACES
 } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
+import { getNativeTokenSymbol } from '../../utils';
 
 function Assets() {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
-  const [collateralAmount, setCollateralAmount] = React.useState(0);
+  const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
+
+  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
 
   // Set activity by the path
   React.useEffect(() => {
@@ -40,12 +49,14 @@ function Assets() {
         // Deposit collateral
         const args = [{
           gasLimit: web3.utils.toWei('400000', 'wei'),
-          value: WAD.mul(collateralAmount)
+          value: WAD.mul(amount)
         }]
         await nativeToken.callStatic.deposit(...args)
         const result = await nativeToken.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
+        mutateVault(undefined, true)
+        setAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -61,12 +72,14 @@ function Assets() {
       setLoading(true)
 
       try {
-        // Withdraw collateral
-        const args = [WAD.mul(collateralAmount)]
+        // Withdraw asset
+        const args = [WAD.mul(amount)]
         await nativeToken.callStatic.withdraw(...args)
         const result = await nativeToken.withdraw(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
+        mutateVault(undefined, true)
+        setAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
@@ -76,9 +89,11 @@ function Assets() {
     }
   }
 
-  const onCollateralAmountChange = (event: any) => {
-    const delta = Number(event.target.value);
-    setCollateralAmount(delta);
+  const onAmountChange = (event: any) => {
+    let delta
+    if (!event.target.value) delta = 0
+    else delta = Number(numbro.unformat(event.target.value));
+    setAmount(delta);
   }
 
   return (
@@ -93,23 +108,23 @@ function Assets() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/wallet/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setCollateralAmount(0) }}>Deposit</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/wallet/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setAmount(0) }}>Deposit</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/wallet/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setCollateralAmount(0) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/wallet/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setAmount(0) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
           <hr />
-          {/* Collateral Activities */}
+          {/* Activities */}
           <Activity active={active} activity={activity} error={error}>
             <>
             {
               activity === ActivityType.Deposit && (
                 <DepositActivity
-                  collateralAmount={collateralAmount}
+                  amount={amount}
                   loading={loading}
-                  onCollateralAmountChange={onCollateralAmountChange}
+                  onAmountChange={onAmountChange}
                   deposit={deposit}
                 />
               )
@@ -117,8 +132,8 @@ function Assets() {
             {
               activity === ActivityType.Withdraw && (
                 <WithdrawActivity
-                  collateralAmount={collateralAmount}
-                  onCollateralAmountChange={onCollateralAmountChange}
+                  amount={amount}
+                  onAmountChange={onAmountChange}
                   loading={loading}
                   withdraw={withdraw}
                 />

@@ -231,33 +231,21 @@ function Balances() {
                           </ul>
                         </div>
                         <div className="px-3 py-2 text-truncate">
-                          <div className="row my-2">
-                            <div className="col-6">
-                              Standby
-                            </div>
-                            <div className="col-6 text-end">
-                              <span className="text-truncate">
-                                {numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}
-                              </span>
-                            </div>
+                          <div className="my-2 d-flex justify-content-between">
+                            <h6>Standby</h6>
+                            <span className="text-truncate">
+                              {numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}
+                            </span>
                           </div>
-                          <div className="row my-2 text-truncate">
-                            <div className="col-6">
-                              Active
-                            </div>
-                            <div className="col-6 text-end">
-                              <span className="text-truncate">
-                                {numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}
-                              </span>
-                            </div>
+                          <div className="my-2 d-flex justify-content-between">
+                            <h6>Active</h6>
+                            <span className="text-truncate">
+                              {numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}
+                            </span>
                           </div>
-                          <div className="row my-2 text-truncate">
-                            <div className="col-6">
-                              Total
-                            </div>
-                            <div className="col-6 text-end">
-                              <span className="text-truncate">{numbro(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
-                            </div>
+                          <div className="my-2 d-flex justify-content-between">
+                            <h6>Total</h6>
+                            <span className="text-truncate">{numbro(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                           </div>
                         </div>
                       </div>
@@ -271,51 +259,31 @@ function Balances() {
                     </h2>
                     <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo">
                       <div className="accordion-body">
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Equity Balance
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
-                            </span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Equity Balance</h6>
+                          <span className="text-truncate">
+                            {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                          </span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Underlying
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">
-                              {numbro(utils.formatEther(vault.underlying)).format(formatOptions)} {ctx.asset}
-                            </span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Underlying</h6>
+                          <span className="text-truncate">
+                            {numbro(utils.formatEther(vault.underlying)).format(formatOptions)} {ctx.asset}
+                          </span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Underlying Ratio
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{underlyingRatio}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Underlying Ratio</h6>
+                          <span className="text-truncate">{underlyingRatio}</span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Current APY
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{estimatedAPY}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Current APY</h6>
+                          <span className="text-truncate">{estimatedAPY}</span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Interest Earned
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
-                            </span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Interest Earned</h6>
+                          <span className="text-truncate">
+                            {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -328,41 +296,25 @@ function Balances() {
                     </h2>
                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree">
                       <div className="accordion-body">
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Debt Balance
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">
-                              {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
-                            </span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Debt Balance</h6>
+                          <span className="text-truncate">
+                            {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                          </span>
                         </div>
-                        <div className="row my-2">
-                          <div className="col-6">
-                            Collateral
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">
-                              {numbro(utils.formatEther(vault.collateral)).format(formatOptions)} {ctx.asset}
-                            </span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Collateral</h6>
+                          <span className="text-truncate">
+                            {numbro(utils.formatEther(vault.collateral)).format(formatOptions)} {ctx.asset}
+                          </span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Collateral Ratio
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{collateralRatio}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Collateral Ratio</h6>
+                          <span className="text-truncate">{collateralRatio}</span>
                         </div>
-                        <div className="row my-2 text-truncate">
-                          <div className="col-6">
-                            Current APR
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{estimatedAPR}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Current APR</h6>
+                          <span className="text-truncate">{estimatedAPR}</span>
                         </div>
                       </div>
                     </div>
@@ -375,21 +327,13 @@ function Balances() {
                     </h2>
                     <div id="collapseFour" className="accordion-collapse collapse" aria-labelledby="headingFour">
                       <div className="accordion-body">
-                        <div className="row text-truncate my-2">
-                          <div className="col-6">
-                            Vault {getStablecoinSymbol(chainId!)}
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{vaultStablecoinBalance ? numbro(utils.formatEther(vaultStablecoinBalance.div(RAY))).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>Vault {getStablecoinSymbol(chainId!)}</h6>
+                          <span className="text-truncate">{vaultStablecoinBalance ? numbro(utils.formatEther(vaultStablecoinBalance.div(RAY))).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
                         </div>
-                        <div className="row text-truncate my-2">
-                          <div className="col-6">
-                            ERC20 {getStablecoinSymbol(chainId!)}
-                          </div>
-                          <div className="col-6 text-end">
-                            <span className="text-truncate">{stablecoinERC20Balance ? numbro(utils.formatEther(stablecoinERC20Balance)).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
-                          </div>
+                        <div className="my-2 d-flex justify-content-between">
+                          <h6>ERC20 {getStablecoinSymbol(chainId!)}</h6>
+                          <span className="text-truncate">{stablecoinERC20Balance ? numbro(utils.formatEther(stablecoinERC20Balance)).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
                         </div>
                       </div>
                     </div>
@@ -401,21 +345,13 @@ function Balances() {
                       </h2>
                       <div id="collapseFive" className="accordion-collapse collapse" aria-labelledby="headingFive">
                         <div className="accordion-body">
-                          <div className="row text-truncate my-2">
-                            <div className="col-6">
-                              Vault PBT
-                            </div>
-                            <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtBalance ? numbro(utils.formatEther(pbtBalance.div(RAY))).format(formatOptions) : "0"} PBT</span>
-                            </div>
+                          <div className="my-2 d-flex justify-content-between">
+                            <h6>Vault PBT</h6>
+                            <span className="text-truncate">{pbtBalance && vault && asset ? numbro(utils.formatUnits(pbtBalance.div(RAY).add(vault.equity).mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
                           </div>
-                          <div className="row text-truncate my-2">
-                            <div className="col-6">
-                              ERC20 PBT                 
-                            </div>
-                            <div className="col-6 text-end">
-                              <span className="text-truncate">{pbtERC20Balance ? numbro(utils.formatEther(pbtERC20Balance)).format(formatOptions) : "0"} PBT</span>
-                            </div>
+                          <div className="my-2 d-flex justify-content-between">
+                            <h6>ERC20 PBT</h6>
+                            <span className="text-truncate">{pbtERC20Balance ? numbro(utils.formatEther(pbtERC20Balance)).format(formatOptions) : "0"} PBT</span>
                           </div>
                         </div>
                       </div>
@@ -427,45 +363,25 @@ function Balances() {
           ) : (
             <>
               <h5>System Stats</h5>
-              <div className="row my-2 mt-4 text-truncate">
-                <div className="col-6">
-                  <h6>Circulating Supply</h6>
-                </div>
-                  <div className="col-6 text-end">
-                  <span className="text-truncate">{totalStablecoinSupply ? numbro(utils.formatEther(totalStablecoinSupply)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
+              <div className="my-2 mt-4 d-flex justify-content-between">
+                <h6>Circulating Supply</h6>
+                <span className="text-truncate">{totalStablecoinSupply ? numbro(utils.formatEther(totalStablecoinSupply)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
               </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  <h6>Total Supply</h6>
-                </div>
-                <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Total Supply</h6>
+                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
               </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  <h6>Working Capital</h6>
-                </div>
-                <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Working Capital</h6>
+                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
               </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  <h6>Utilization Ratio</h6>
-                </div>
-                <div className="col-6 text-end">
-                  <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.mul(RAY).div(totalDebt), 27)).format('0,0.0[000]') : null}%</span>
-                </div>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Utilization Ratio</h6>
+                <span className="text-truncate">{totalEquity && totalDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(totalDebt.mul(RAY).div(totalEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
               </div>
-              <div className="row my-2 text-truncate">
-                <div className="col-6">
-                  <h6>Total Debt</h6>
-                </div>
-                <div className="col-6 text-end">
-                  <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
-                </div>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Total Debt</h6>
+                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
               </div>
             </>
           )

@@ -7,6 +7,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { INTERFACES, RAY, WAD } from "../../constants";
+import { getStablecoinSymbol, getAssetId } from "../../utils";
 
 function RowToggle({ eventKey, name, tx }: any) {
   const decoratedOnClick = useAccordionButton(eventKey);
@@ -32,7 +33,7 @@ function RowToggle({ eventKey, name, tx }: any) {
 
 export default function Transactions() {
   const web3 = new Web3(Web3.givenProvider || "http://localhost:9560/ext/bc/C/rpc");
-  const { active, library } = useWeb3React<Web3Provider>();
+  const { active, library, chainId } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
 
   let rows = ctx.transactions.map((tx: any, index) => {
@@ -79,7 +80,7 @@ export default function Transactions() {
               (name === "WithdrawStablecoin") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()}</div>
+                    <div>Amount: {utils.formatEther(log.args.amount).toString()} {getStablecoinSymbol(chainId!)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -148,6 +149,34 @@ export default function Transactions() {
               (name === "RedemptionCompleted") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="p-4"></div>
+                </Accordion.Collapse>
+              )
+            }
+            {
+              (name === "WithdrawPbt") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="d-flex justify-content-around p-4">
+                    <div>Amount: {utils.formatEther(log.args.amount).toString()} PBT</div>
+                  </div>
+                </Accordion.Collapse>
+              )
+            }
+            {
+              (name === "AuctionStarted") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="d-flex justify-content-around p-4">
+                    <div>ID: {log.args.auctionId.toString()}</div>
+                    <div>Lot Size: {utils.formatEther(log.args.lotSize).toString()} {getAssetId(log.args.collId.toString())}</div>
+                  </div>
+                </Accordion.Collapse>
+              )
+            }
+            {
+              (name === "Log") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="p-4">
+                    <pre>{JSON.stringify(log.args, null, 2)}</pre>
+                  </div>
                 </Accordion.Collapse>
               )
             }
