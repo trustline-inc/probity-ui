@@ -141,7 +141,7 @@ function App() {
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
-          (auth && auth?.expiresAt > new Date()) ? (
+          (auth && new Date(auth?.expiresAt) > new Date()) ? (
             <>
               <div className="d-flex main-container min-vh-100">
                 <div className="min-vh-100 left-nav">
@@ -429,6 +429,7 @@ const LoginCallback = ({ setAuth }: any) => {
               Authorization: `Bearer ${token}`
             }
           })
+
           if (response.status === 200) {
             setAuth({ token, expiresAt })
             // TODO: address whitelisting
