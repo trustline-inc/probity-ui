@@ -45,7 +45,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, INTERFACES[FTSO].abi),
   })
 
-  const { data: asset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
+  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -215,6 +215,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
+        mutateAsset(undefined, true);
         setInterestAmount(0)
       } catch (error) {
         console.log(error);
