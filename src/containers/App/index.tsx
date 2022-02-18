@@ -20,6 +20,7 @@ import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
 import Assets from "../../pages/Assets";
+import Address from "../../pages/Address";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -233,7 +234,19 @@ function App() {
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
-                              <Route path="/wallet">
+                              <Route path="/eoa">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Address />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/assets">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Assets />
                                 </div>
