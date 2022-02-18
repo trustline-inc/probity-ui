@@ -43,6 +43,7 @@ function App() {
     const initialValue = JSON.parse(value!);
     return initialValue || "";
   });
+  const [gidUuid, setGidUuid] = useState("")
   const handleClose = () => setShowConnectorModal(false);
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -80,6 +81,7 @@ function App() {
         }
       })
       if (response.status === 200) {
+        setGidUuid(response.data.gid_uuid)
         localStorage.setItem("probity__auth", JSON.stringify(auth));
       }
     })()
@@ -235,7 +237,7 @@ function App() {
                             <Switch>
                               <Route path="/address">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                  <Address />
+                                  <Address globalId={gidUuid} />
                                 </div>
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
