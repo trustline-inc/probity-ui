@@ -163,7 +163,7 @@ function Balances() {
     }
   }, [account, library, chainId, totalDebt, totalEquity, currentAsset])
 
-  if (!vault) return null;
+  if (!vault || !asset) return null;
 
   return (
     <>
