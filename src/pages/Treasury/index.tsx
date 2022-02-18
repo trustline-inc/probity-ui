@@ -18,7 +18,7 @@ import { TREASURY, VAULT_ENGINE, INTERFACES, PRICE_FEED } from '../../constants'
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeAssetManagerSymbol } from '../../utils';
+import { getNativeTokenSymbol } from '../../utils';
 
 function Treasury({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
@@ -33,11 +33,11 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   const [totalUnderlying, setTotalUnderlying] = React.useState(0);
   const [underlyingRatio, setUnderlyingRatio] = React.useState(0);
   const eventContext = React.useContext(EventContext)
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeAssetManagerSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -130,7 +130,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       try {
         const args = [
-          utils.id(getNativeAssetManagerSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(underlyingAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
@@ -161,7 +161,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
 
       try {
         const args = [
-          utils.id(getNativeAssetManagerSymbol(chainId!)),
+          utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-underlyingAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
@@ -191,7 +191,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
 
       try {
-        let args: any = [utils.id(getNativeAssetManagerSymbol(chainId!))]
+        let args: any = [utils.id(getNativeTokenSymbol(chainId!))]
         await vaultEngine.callStatic.collectInterest(...args)
         let result = await vaultEngine.collectInterest(...args);
         let data = await result.wait();

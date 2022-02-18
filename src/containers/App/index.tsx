@@ -31,7 +31,7 @@ import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
 import Stablecoins from "../../pages/Stablecoins";
-import { getNativeAssetManagerSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 import Login from "../../pages/Login";
 import axios from "axios";
 
@@ -53,7 +53,7 @@ function App() {
     true
   );
   const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
-  const [asset, setAsset] = useState<string>(getNativeAssetManagerSymbol(chainId!))
+  const [asset, setAsset] = useState<string>(getNativeTokenSymbol(chainId!))
   const updateTransactions = (transaction: any) => {
     const newTxs = [...transactions, transaction]
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
@@ -62,7 +62,7 @@ function App() {
   const updateAsset = (asset: string) => {
     setAsset(asset)
   }
-  const { data, mutate } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
+  const { data: price, mutate } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
     fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
   })
 
@@ -91,14 +91,14 @@ function App() {
   useEffect(() => {
     ;(async () => {
       try {
-        if (data !== undefined) {
-          setCollateralPrice((Number(utils.formatUnits(String(data._price), 5).toString())));
+        if (price !== undefined) {
+          setCollateralPrice((Number(utils.formatUnits(String(price), 27).toString())));
         } else {
           if (library) {
             try {
               const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
-              const result = await priceFeed.getPrice(utils.id(asset));
-              setCollateralPrice((Number(utils.formatUnits(String(result._price), 5).toString())));
+              const result = await priceFeed.callStatic.getPrice(utils.id(asset));
+              setCollateralPrice((Number(utils.formatUnits(String(result), 27).toString())));
             } catch (error) {
               console.error(error)
             }
@@ -108,7 +108,7 @@ function App() {
         console.error(error)
       }
     })()
-  }, [library, data]);
+  }, [library, price, asset]);
 
   /**
    * Set block listener

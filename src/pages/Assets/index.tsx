@@ -11,7 +11,7 @@ import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import {
   WAD,
-  NATIVE_TOKEN,
+  NATIVE_ASSET_MANAGER,
   VAULT_ENGINE,
   INTERFACES
 } from '../../constants';
@@ -19,7 +19,7 @@ import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
-import { getNativeAssetManagerSymbol } from '../../utils';
+import { getNativeTokenSymbol } from '../../utils';
 
 function Assets() {
   const location = useLocation();
@@ -30,7 +30,7 @@ function Assets() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeAssetManagerSymbol(chainId!)), account], {
+  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
@@ -42,7 +42,7 @@ function Assets() {
 
   const deposit = async () => {
     if (library && account) {
-      const nativeToken = new Contract(NATIVE_TOKEN, INTERFACES[NATIVE_TOKEN].abi, library.getSigner())
+      const nativeToken = new Contract(NATIVE_ASSET_MANAGER, INTERFACES[NATIVE_ASSET_MANAGER].abi, library.getSigner())
       setLoading(true)
 
       try {
@@ -68,7 +68,7 @@ function Assets() {
 
   const withdraw = async () => {
     if (library && account) {
-      const nativeToken = new Contract(NATIVE_TOKEN, INTERFACES[NATIVE_TOKEN].abi, library.getSigner())
+      const nativeToken = new Contract(NATIVE_ASSET_MANAGER, INTERFACES[NATIVE_ASSET_MANAGER].abi, library.getSigner())
       setLoading(true)
 
       try {

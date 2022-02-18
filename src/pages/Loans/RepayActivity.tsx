@@ -2,7 +2,7 @@ import React from "react"
 import numbro from "numbro"
 import NumberFormat from 'react-number-format';
 import PriceFeed from "../../components/PriceFeed"
-import { getNativeAssetManagerSymbol, getStablecoinSymbol } from "../../utils"
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import AssetSelector from "../../components/AssetSelector";
@@ -36,7 +36,7 @@ function RepayActivity({
   const onSelect = () => {
     setShow(false)
   }
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <>

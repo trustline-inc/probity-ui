@@ -5,7 +5,7 @@ import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
-import { getNativeAssetManagerSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
+import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import {
   RAY,
@@ -45,7 +45,7 @@ function Balances() {
   const [underlyingRatio, setUnderlyingRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
   const [estimatedAPY, setEstimatedAPY] = React.useState("")
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
   // Read data from deployed contracts
@@ -135,13 +135,13 @@ function Balances() {
             debtAccumulator
           } = await vaultEngine.assets(utils.id(currentAsset));
           const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
-          const { _price } = await priceFeed.getPrice(utils.id(currentAsset))
+          const { _price } = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
   
           const _debt = debt.mul(debtAccumulator)
 
           // Get collateral ratio
           if (_debt.toString() !== "0") {
-            const numerator = Number(utils.formatEther(String(collateral))) * Number(utils.formatUnits(String(_price), 5))
+            const numerator = Number(utils.formatEther(String(collateral))) * Number(utils.formatUnits(String(_price), 27))
             const denominator = Number(utils.formatUnits(String(_debt), 45))
             const _collateralRatio = `${((numerator / denominator) * 100).toFixed(4)}%`
             setCollateralRatio(_collateralRatio)

@@ -17,21 +17,21 @@ import VaultEngineSBABI from "@trustline-inc/probity/artifacts/contracts/probity
 /**
  * Contract addresses
  */
-export const AUREI             = process.env && process.env.REACT_APP_AUREI             ? process.env.REACT_APP_AUREI             : "";
-export const PHI               = process.env && process.env.REACT_APP_PHI               ? process.env.REACT_APP_PHI               : "";
-export const AUCTIONEER        = process.env && process.env.REACT_APP_AUCTIONEER        ? process.env.REACT_APP_AUCTIONEER        : "";
-export const BRIDGE            = process.env && process.env.REACT_APP_BRIDGE            ? process.env.REACT_APP_BRIDGE            : "";
-export const LIQUIDATOR        = process.env && process.env.REACT_APP_LIQUIDATOR        ? process.env.REACT_APP_LIQUIDATOR        : ""
-export const PRICE_FEED        = process.env && process.env.REACT_APP_PRICE_FEED        ? process.env.REACT_APP_PRICE_FEED        : "";
-export const NATIVE_TOKEN      = process.env && process.env.REACT_APP_NATIVE_TOKEN      ? process.env.REACT_APP_NATIVE_TOKEN      : "";
-export const REGISTRY          = process.env && process.env.REACT_APP_REGISTRY          ? process.env.REACT_APP_REGISTRY          : "";
-export const STATE_CONNECTOR   = process.env && process.env.REACT_APP_STATE_CONNECTOR   ? process.env.REACT_APP_STATE_CONNECTOR   : "";
-export const PBT_TOKEN         = process.env && process.env.REACT_APP_PBT_TOKEN         ? process.env.REACT_APP_PBT_TOKEN         : "";
-export const RESERVE_POOL      = process.env && process.env.REACT_APP_RESERVE_POOL      ? process.env.REACT_APP_RESERVE_POOL      : "";
-export const TELLER            = process.env && process.env.REACT_APP_TELLER            ? process.env.REACT_APP_TELLER            : "";
-export const TREASURY          = process.env && process.env.REACT_APP_TREASURY          ? process.env.REACT_APP_TREASURY          : "";
-export const VAULT_ENGINE      = process.env && process.env.REACT_APP_VAULT_ENGINE      ? process.env.REACT_APP_VAULT_ENGINE      : "";
-export const VAULT_MANAGER     = process.env && process.env.REACT_APP_VAULT_MANAGER     ? process.env.REACT_APP_VAULT_MANAGER     : "";
+export const AUREI                = process.env && process.env.REACT_APP_AUREI                ? process.env.REACT_APP_AUREI                : "";
+export const PHI                  = process.env && process.env.REACT_APP_PHI                  ? process.env.REACT_APP_PHI                  : "";
+export const AUCTIONEER           = process.env && process.env.REACT_APP_AUCTIONEER           ? process.env.REACT_APP_AUCTIONEER           : "";
+export const BRIDGE               = process.env && process.env.REACT_APP_BRIDGE               ? process.env.REACT_APP_BRIDGE               : "";
+export const LIQUIDATOR           = process.env && process.env.REACT_APP_LIQUIDATOR           ? process.env.REACT_APP_LIQUIDATOR           : ""
+export const PRICE_FEED           = process.env && process.env.REACT_APP_PRICE_FEED           ? process.env.REACT_APP_PRICE_FEED           : "";
+export const NATIVE_ASSET_MANAGER = process.env && process.env.REACT_APP_NATIVE_ASSET_MANAGER ? process.env.REACT_APP_NATIVE_ASSET_MANAGER : "";
+export const REGISTRY             = process.env && process.env.REACT_APP_REGISTRY             ? process.env.REACT_APP_REGISTRY             : "";
+export const STATE_CONNECTOR      = process.env && process.env.REACT_APP_STATE_CONNECTOR      ? process.env.REACT_APP_STATE_CONNECTOR      : "";
+export const PBT_TOKEN            = process.env && process.env.REACT_APP_PBT_TOKEN            ? process.env.REACT_APP_PBT_TOKEN            : "";
+export const RESERVE_POOL         = process.env && process.env.REACT_APP_RESERVE_POOL         ? process.env.REACT_APP_RESERVE_POOL         : "";
+export const TELLER               = process.env && process.env.REACT_APP_TELLER               ? process.env.REACT_APP_TELLER               : "";
+export const TREASURY             = process.env && process.env.REACT_APP_TREASURY             ? process.env.REACT_APP_TREASURY             : "";
+export const VAULT_ENGINE         = process.env && process.env.REACT_APP_VAULT_ENGINE         ? process.env.REACT_APP_VAULT_ENGINE         : "";
+export const VAULT_MANAGER        = process.env && process.env.REACT_APP_VAULT_MANAGER        ? process.env.REACT_APP_VAULT_MANAGER        : "";
 
 /**
  * Contract ABIs
@@ -44,7 +44,7 @@ export const INTERFACES = {
   [BRIDGE]: BridgeABI,
   [LIQUIDATOR]: LiquidatorABI,
   [PRICE_FEED]: PriceFeedABI,
-  [NATIVE_TOKEN]: NativeAssetManagerABI,
+  [NATIVE_ASSET_MANAGER]: NativeAssetManagerABI,
   [REGISTRY]: RegistryABI,
   [RESERVE_POOL]: ReservePoolABI,
   [STATE_CONNECTOR]: StateConnectorABI,

@@ -4,7 +4,7 @@ import NumberFormat from "react-number-format"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed";
-import { getNativeAssetManagerSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
@@ -35,7 +35,7 @@ function InvestingActivity({
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const onSelect = () => setShow(false);
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />

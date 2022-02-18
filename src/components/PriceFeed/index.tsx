@@ -13,19 +13,19 @@ function PriceFeed({ asset, amount }: { asset: string, amount: number; }) {
   const [price, setPrice] = React.useState(0.00);
   const [value, setValue] = React.useState(0.00);
 
-  const { data, mutate: mutatePrice } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
+  const { data: _price, mutate: mutatePrice } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
     fetcher: fetcher(library, PriceFeedABI.abi),
   })
 
   // Start listening to price feed
   React.useEffect(() => {
     const runEffect = async () => {
-      if (data !== undefined) {
-        setPrice((Number(utils.formatUnits(String(data._price), 5))));
+      if (_price !== undefined) {
+        setPrice((Number(utils.formatUnits(String(_price), 27))));
       }
     }
     runEffect();
-  }, [data]);
+  }, [_price]);
 
   React.useEffect(() => {
     if (library) {

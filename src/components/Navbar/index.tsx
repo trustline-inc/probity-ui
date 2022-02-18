@@ -13,14 +13,14 @@ import logo from "../../assets/probity.png";
 import "./index.css";
 import ExternalSites from "../ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeAssetManagerSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 import { BRIDGE } from "../../constants"
 import AssetContext from "../../contexts/AssetContext"
 
 function Balance() {
   const ctx = React.useContext(AssetContext)
   const { account, library, chainId } = useWeb3React<Web3Provider>();
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
   // TODO: Fetch balance based on currentAsset
@@ -46,7 +46,7 @@ function Balance() {
       <h3>Your balance</h3>
       <span className="tokens">
         {/* TODO: Fetch balance of ERC20 tokens */}
-        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {getNativeAssetManagerSymbol(chainId!)}
+        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {getNativeTokenSymbol(chainId!)}
       </span>
     </div>
   );
@@ -195,7 +195,7 @@ function Navbar() {
                       variant="light"
                       onClick={handleFaucetRequest}
                     >
-                      <span><i className="mr-2" /> Use Faucet ({getNativeAssetManagerSymbol(chainId!)})</span>
+                      <span><i className="mr-2" /> Use Faucet ({getNativeTokenSymbol(chainId!)})</span>
                     </Button>
                     <div className="spacer spacer-1" />
                   </>

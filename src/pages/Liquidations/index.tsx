@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import { getNativeAssetManagerSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
 
 const formatOptions = {
   thousandSeparated: true,
@@ -26,7 +26,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
   const [error, setError] = useState<any|null>(null);
   const eventContext = useContext(EventContext)
   const assetContext = useContext(AssetContext)
-  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
+  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = assetContext.asset || nativeTokenSymbol
 
   useEffect(() => {
