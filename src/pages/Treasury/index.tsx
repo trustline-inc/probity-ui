@@ -14,7 +14,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES, PRICE_FEED } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES, PRICE_FEED, RAY } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -50,8 +50,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   })
 
   let liquidationRatio = "";
-  if (price?._price && asset?.adjustedPrice) {
-    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(1e5).div(price._price), 27).toString())).toString()
+  if (price && asset?.adjustedPrice) {
+    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(RAY).div(price), 27).toString())).toString()
   } else {
     liquidationRatio = `<Loading...>`
   }

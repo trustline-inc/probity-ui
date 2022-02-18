@@ -135,13 +135,13 @@ function Balances() {
             debtAccumulator
           } = await vaultEngine.assets(utils.id(currentAsset));
           const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
-          const { _price } = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
+          const price = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
   
           const _debt = debt.mul(debtAccumulator)
 
           // Get collateral ratio
           if (_debt.toString() !== "0") {
-            const numerator = Number(utils.formatEther(String(collateral))) * Number(utils.formatUnits(String(_price), 27))
+            const numerator = Number(utils.formatEther(String(collateral))) * Number(utils.formatUnits(String(price), 27))
             const denominator = Number(utils.formatUnits(String(_debt), 45))
             const _collateralRatio = `${((numerator / denominator) * 100).toFixed(4)}%`
             setCollateralRatio(_collateralRatio)
@@ -151,7 +151,7 @@ function Balances() {
 
           // Get underlying ratio
           if (initialEquity.toString() !== "0") {
-            const _underlyingRatio = `${underlying.mul(_price).div("100000").mul(100).mul(RAY).div(initialEquity).toString()}%`
+            const _underlyingRatio = `${underlying.mul(price).div(RAY).mul(100).mul(RAY).div(initialEquity).toNumber().toFixed(4)}%`
             setUnderlyingRatio(_underlyingRatio)
           } else {
             setUnderlyingRatio("0%")
