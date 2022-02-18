@@ -8,7 +8,7 @@ import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import { RAY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeAssetManagerSymbol, getStablecoinSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 import NumberFormat from "react-number-format";
@@ -55,7 +55,7 @@ function BorrowActivity({
   const onSelect = () => {
     setShow(false)
   }
-  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
   React.useEffect(() => {

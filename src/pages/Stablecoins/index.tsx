@@ -14,7 +14,7 @@ import { TREASURY } from '../../constants';
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol } from '../../utils';
+import { getNativeAssetManagerSymbol } from '../../utils';
 
 function Stablecoins() {
   const location = useLocation();
@@ -26,7 +26,7 @@ function Stablecoins() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeAssetManagerSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 

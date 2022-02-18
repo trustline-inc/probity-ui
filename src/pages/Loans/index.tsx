@@ -14,7 +14,7 @@ import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol } from '../../utils';
+import { getNativeAssetManagerSymbol } from '../../utils';
 
 function Loans({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
@@ -28,11 +28,11 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
-  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeAssetManagerSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { data: rate } = useSWR([TELLER, 'apr'], {
@@ -58,7 +58,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
       try {
         const result = await vaultEngine.modifyDebt(
-          utils.id(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeAssetManagerSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(collateralAmount), 18),
           utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
@@ -87,7 +87,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
       try {
         const result = await vault.modifyDebt(
-          utils.id(getNativeTokenSymbol(chainId!)),
+          utils.id(getNativeAssetManagerSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-collateralAmount), 18),
           utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),

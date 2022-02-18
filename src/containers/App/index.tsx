@@ -12,9 +12,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import ConnectorModal from "../../components/ConnectorModal"
-import { FTSO } from '../../constants';
+import { PRICE_FEED, INTERFACES } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
@@ -32,7 +31,7 @@ import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
 import Stablecoins from "../../pages/Stablecoins";
-import { getNativeTokenSymbol } from "../../utils";
+import { getNativeAssetManagerSymbol } from "../../utils";
 import Login from "../../pages/Login";
 import axios from "axios";
 
@@ -54,7 +53,7 @@ function App() {
     true
   );
   const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
-  const [asset, setAsset] = useState<string>(getNativeTokenSymbol(chainId!))
+  const [asset, setAsset] = useState<string>(getNativeAssetManagerSymbol(chainId!))
   const updateTransactions = (transaction: any) => {
     const newTxs = [...transactions, transaction]
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
@@ -63,8 +62,8 @@ function App() {
   const updateAsset = (asset: string) => {
     setAsset(asset)
   }
-  const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
-    fetcher: fetcher(library, FtsoABI.abi),
+  const { data, mutate } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
+    fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
   })
 
   /**
@@ -97,8 +96,8 @@ function App() {
         } else {
           if (library) {
             try {
-              const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
-              const result = await ftso.getCurrentPrice();
+              const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
+              const result = await priceFeed.getPrice(utils.id(asset));
               setCollateralPrice((Number(utils.formatUnits(String(result._price), 5).toString())));
             } catch (error) {
               console.error(error)

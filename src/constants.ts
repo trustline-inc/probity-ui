@@ -3,10 +3,9 @@ import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/
 import PhiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Phi.sol/Phi.json";
 import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
 import BridgeABI from "@trustline-inc/bridge/artifacts/contracts/Bridge.sol/Bridge.json";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
-import NativeTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeToken.sol/NativeToken.json";
+import NativeAssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
 import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import ReservePoolABI from "@trustline-inc/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
 import StateConnectorABI from "@trustline-inc/bridge/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -22,7 +21,6 @@ export const AUREI             = process.env && process.env.REACT_APP_AUREI     
 export const PHI               = process.env && process.env.REACT_APP_PHI               ? process.env.REACT_APP_PHI               : "";
 export const AUCTIONEER        = process.env && process.env.REACT_APP_AUCTIONEER        ? process.env.REACT_APP_AUCTIONEER        : "";
 export const BRIDGE            = process.env && process.env.REACT_APP_BRIDGE            ? process.env.REACT_APP_BRIDGE            : "";
-export const FTSO              = process.env && process.env.REACT_APP_FTSO              ? process.env.REACT_APP_FTSO              : "";
 export const LIQUIDATOR        = process.env && process.env.REACT_APP_LIQUIDATOR        ? process.env.REACT_APP_LIQUIDATOR        : ""
 export const PRICE_FEED        = process.env && process.env.REACT_APP_PRICE_FEED        ? process.env.REACT_APP_PRICE_FEED        : "";
 export const NATIVE_TOKEN      = process.env && process.env.REACT_APP_NATIVE_TOKEN      ? process.env.REACT_APP_NATIVE_TOKEN      : "";
@@ -44,10 +42,9 @@ export const INTERFACES = {
   [PHI]: PhiABI,
   [AUCTIONEER]: AuctioneerABI,
   [BRIDGE]: BridgeABI,
-  [FTSO]: FtsoABI,
   [LIQUIDATOR]: LiquidatorABI,
   [PRICE_FEED]: PriceFeedABI,
-  [NATIVE_TOKEN]: NativeTokenABI,
+  [NATIVE_TOKEN]: NativeAssetManagerABI,
   [REGISTRY]: RegistryABI,
   [RESERVE_POOL]: ReservePoolABI,
   [STATE_CONNECTOR]: StateConnectorABI,

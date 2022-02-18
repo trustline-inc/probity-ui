@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import NumberFormat from "react-number-format"
 import PriceFeed from "../../components/PriceFeed";
-import { getNativeTokenSymbol } from "../../utils";
+import { getNativeAssetManagerSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 
@@ -29,7 +29,7 @@ function DepositActivity({
   const onSelect = () => {
     setShow(false)
   }
-  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <>

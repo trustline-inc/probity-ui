@@ -45,7 +45,7 @@ export const getAssetId = (hash: string) => {
   return id || "UNRECOGNIZED_ID"
 }
 
-export const getNativeTokenSymbol = (chainId: number) => {
+export const getNativeAssetManagerSymbol = (chainId: number) => {
   switch (chainId) {
     case 14:
       return "FLR"

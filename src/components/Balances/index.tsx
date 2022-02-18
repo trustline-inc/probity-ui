@@ -5,11 +5,11 @@ import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
-import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
+import { getNativeAssetManagerSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import {
   RAY,
-  FTSO,
+  PRICE_FEED,
   PBT_TOKEN,
   VAULT_ENGINE,
   INTERFACES
@@ -45,7 +45,7 @@ function Balances() {
   const [underlyingRatio, setUnderlyingRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
   const [estimatedAPY, setEstimatedAPY] = React.useState("")
-  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
+  const nativeTokenSymbol = getNativeAssetManagerSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
   // Read data from deployed contracts
@@ -134,8 +134,8 @@ function Balances() {
           const {
             debtAccumulator
           } = await vaultEngine.assets(utils.id(currentAsset));
-          const ftsoContract = new Contract(FTSO, INTERFACES[FTSO].abi, library.getSigner())
-          const { _price } = await ftsoContract.getCurrentPrice()
+          const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
+          const { _price } = await priceFeed.getPrice(utils.id(currentAsset))
   
           const _debt = debt.mul(debtAccumulator)
 
