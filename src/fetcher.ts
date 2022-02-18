@@ -13,7 +13,7 @@ const fetcher = (library: any, abi?: any) => (...args: any) => {
 
   // An EVM call using provider
   const method = arg1
-  return (library as any).callStatic[method](arg2, ...params)
+  return (library as any)[method](arg2, ...params)
 }
 
 export default fetcher;
