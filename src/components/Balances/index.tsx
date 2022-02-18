@@ -282,7 +282,7 @@ function Balances() {
                         <div className="my-2 d-flex justify-content-between">
                           <h6>Interest Earned</h6>
                           <span className="text-truncate">
-                            {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 27)).format({ ...formatOptions }) : null} {getStablecoinSymbol(chainId!)}
+                            {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} {getStablecoinSymbol(chainId!)}
                           </span>
                         </div>
                       </div>
@@ -347,7 +347,7 @@ function Balances() {
                         <div className="accordion-body">
                           <div className="my-2 d-flex justify-content-between">
                             <h6>Vault PBT</h6>
-                            <span className="text-truncate">{vaultPbtBalance && vault && asset ? numbro(utils.formatUnits(vaultPbtBalance, 36)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
+                            <span className="text-truncate">{vaultPbtBalance && vault && asset ? numbro(utils.formatUnits(vaultPbtBalance, 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
                           </div>
                           <div className="my-2 d-flex justify-content-between">
                             <h6>ERC20 PBT</h6>
