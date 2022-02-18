@@ -233,7 +233,7 @@ function App() {
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
-                              <Route path="/eoa">
+                              <Route path="/address">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Address />
                                 </div>
