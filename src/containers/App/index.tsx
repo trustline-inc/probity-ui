@@ -72,17 +72,19 @@ function App() {
    */
   useEffect(() => {
     (async () => {
-      const response = await axios({
-        method: "GET",
-        url: "https://api.global.id/v1/identities/me",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${auth?.token}`
+      if (auth) {
+        const response = await axios({
+          method: "GET",
+          url: "https://api.global.id/v1/identities/me",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${auth?.accessToken}`
+          }
+        })
+        if (response.status === 200) {
+          setGidUuid(response.data.gid_uuid)
+          localStorage.setItem("probity__auth", JSON.stringify(auth));
         }
-      })
-      if (response.status === 200) {
-        setGidUuid(response.data.gid_uuid)
-        localStorage.setItem("probity__auth", JSON.stringify(auth));
       }
     })()
   }, [auth]);
@@ -237,7 +239,7 @@ function App() {
                             <Switch>
                               <Route path="/address">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                  <Address globalId={gidUuid} />
+                                  <Address globalId={gidUuid} auth={auth} />
                                 </div>
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
@@ -387,7 +389,7 @@ function App() {
                   </Route>
                   <Route path="*">
                     <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
-                      <Login />
+                      <Login error={null} />
                     </div>
                   </Route>
                 </Switch>
@@ -410,33 +412,49 @@ const LoginCallback = ({ setAuth }: any) => {
   useEffect(() => {
     (async () => {
       try {
-        const params = new URLSearchParams(location.hash.replace("#", "?"));
-        const token = params.get("token")
-        const expiresIn = params.get("expires_in")
+        const params = new URLSearchParams(location.search);
+        const code = params.get("code")
+
+        // Get auth token
+        let response = await axios({
+          method: "GET",
+          url: `http://localhost:8080/v1/auth/token`,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          params: { code }
+        })
+
+        const { access_token: accessToken, id_token: idToken, expires_in: expiresIn } = response.data
         const expiresAt = new Date()
         expiresAt.setSeconds(expiresAt.getSeconds() + Number(expiresIn))
 
-        if (token) {
-          let response = await axios({
+        if (accessToken) {
+          response = await axios({
             method: "GET",
             url: "https://api.global.id/v1/identities/me",
             headers: {
               Accept: "application/json",
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${accessToken}`
             }
           })
 
           if (response.status === 200) {
-            setAuth({ token, expiresAt })
-            // TODO: address whitelisting
+            setAuth({ accessToken, idToken, expiresAt })
             history.push("/assets")
           }
         } else {
-          // TODO: display error alert on login callback error
-          history.push("/login")
+          history.push("/login", { error: "There was an error." })
         }
-      } catch (error) {
+      } catch (error: any) {
+        console.log("Failed to fetch identity.")
         console.error(error)
+
+        if (error?.response?.status === 401) {
+          history.push("/login", { error: "Unauthorized." })
+        } else {
+          history.push("/login", { error: error.toString() })
+        }
       }
     })()
   }, [location, history, setAuth])

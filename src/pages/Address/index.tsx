@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core';
 import axios from 'axios';
 import React from 'react';
 
-function Address({ globalId }: { globalId: string }) {
+function Address({ globalId, auth }: { globalId: string, auth: any }) {
   const [address, setAddress] = React.useState("")
   const [proposedAddress, setProposedAddress] = React.useState("")
   const { account } = useWeb3React()
