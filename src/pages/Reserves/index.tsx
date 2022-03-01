@@ -34,32 +34,49 @@ function ChartContainer() {
         }
       }
     },
-    yAxis: {
-      title: {
-        text: "Value"
+    yAxis: [
+      {
+        title: {
+          text: "Supply"
+        },
+        labels: {
+          format: "${value}"
+        },
+        opposite: true
+      },
+      {
+        title: {
+          text: "Reserve Ratio"
+        },
+        labels: {
+          format: "{value}%"
+        }
       }
-    },
+    ],
     series: [
       {
         name: "Circulating Supply",
         color: "#FFD700",
-        data: [1, 2, 1, 4, 3, 6],
+        data: [5000000, 6000000, 7500000, 8000000, 13000000, 30000000],
         pointStart: Date.UTC(2010, 0, 1),
-        pointInterval: 3600 * 1000 // one hour
+        pointInterval: 3600 * 1000, // one hour
+        yAxis: 0
       },
       {
         name: "Total Supply",
         color: "#DAA520",
-        data: [5, 3, 5, 5, 6, 7],
+        data: [50000000, 60000000, 75000000, 80000000, 90000000, 100000000],
         pointStart: Date.UTC(2010, 0, 1),
-        pointInterval: 3600 * 1000 // one hour
+        pointInterval: 3600 * 1000, // one hour
+        yAxis: 0
       },
       {
         name: "Reserve Ratio",
         color: "#8e9294",
-        data: [6, 6, 6, 7, 6, 7],
+        data: [100, 100, 100, 100, 100, 101],
         pointStart: Date.UTC(2010, 0, 1),
-        pointInterval: 3600 * 1000 // one hour
+        pointInterval: 3600 * 1000, // one hour
+        yAxis: 1
       }
     ],
     credits: {
@@ -78,27 +95,27 @@ function ChartContainer() {
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                10,00,00&nbsp;{getStablecoinSymbol(chainId!)}
+                10,000,000&nbsp;{getStablecoinSymbol(chainId!)}
               </h3>
-              <span className="text-danger"><span className="fa fa-caret-down"/>10%</span><br/>
+              <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
               <span className="statcard-desc">Circulating Supply</span>
             </div>
           </div>
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                100,00,000&nbsp;{getStablecoinSymbol(chainId!)}
+                100,000,000&nbsp;{getStablecoinSymbol(chainId!)}
               </h3>
-              <span className="text-danger"><span className="fa fa-caret-down"/>10%</span><br/>
+              <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
               <span className="statcard-desc">Total Supply</span>
             </div>
           </div>
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                100%&nbsp;
+                101%&nbsp;
               </h3>
-              <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
+              <span className="text-success"><span className="fa fa-caret-up"/>1%</span><br/>
               <span className="statcard-desc">Reserve Ratio</span>
             </div>
           </div>
