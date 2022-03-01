@@ -18,6 +18,9 @@ export enum Activity {
   InboundTransfer,
   OutboundTransfer,
 
+  // Auth
+  Login,
+
   // Liquidations
   Liquidate
 }

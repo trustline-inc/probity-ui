@@ -39,6 +39,7 @@ export const useScroll = () => {
 
 export const getAssetId = (hash: string) => {
   const id = {
+    "0x277471588dc8a8a12d9c788cbcd8dc8e5bfbd906b1c63d46bdba8d080442bf82": "FLR",
     "0x34f0798059a90d875925407ee1d283ae0650aaa8085071fb70c8c42029adc150": "SGB",
     "0x3394a96ae3d76664d9a21dad8ede426bf36b6faee767e047d6aaf44653934fa9": "CFLR"
   }[hash]
@@ -50,11 +51,11 @@ export const getNativeTokenSymbol = (chainId: number) => {
     case 14:
       return "FLR"
     case 16:
-      return "CFLR"
+      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL || "CFLR"
     case 19:
       return "SGB"
     default:
-      return "CFLR"
+      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL || "CFLR"
   }
 }
 

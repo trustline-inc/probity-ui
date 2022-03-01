@@ -14,7 +14,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES, FTSO } from '../../constants';
+import { TREASURY, VAULT_ENGINE, INTERFACES, PRICE_FEED, RAY } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -41,17 +41,17 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
-  const { data: price } = useSWR([FTSO, 'getCurrentPrice'], {
-    fetcher: fetcher(library, INTERFACES[FTSO].abi),
+  const { data: price } = useSWR([PRICE_FEED, 'getPrice', utils.id(currentAsset)], {
+    fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
   })
 
-  const { data: asset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
+  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
   let liquidationRatio = "";
-  if (price?._price && asset?.adjustedPrice) {
-    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(1e5).div(price._price), 27).toString())).toString()
+  if (price && asset?.adjustedPrice) {
+    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(RAY).div(price), 27).toString())).toString()
   } else {
     liquidationRatio = `<Loading...>`
   }
@@ -215,6 +215,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
         data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
+        mutateAsset(undefined, true);
         setInterestAmount(0)
       } catch (error) {
         console.log(error);

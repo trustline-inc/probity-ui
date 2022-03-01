@@ -162,6 +162,15 @@ export default function Transactions() {
               )
             }
             {
+              (name === "InterestCollected") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="d-flex justify-content-around p-4">
+                    <div>Amount: {utils.formatEther(log.args.interestAmount).toString()}</div>
+                  </div>
+                </Accordion.Collapse>
+              )
+            }
+            {
               (name === "AuctionStarted") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">

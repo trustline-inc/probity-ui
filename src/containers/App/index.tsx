@@ -12,14 +12,14 @@ import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import FtsoABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockFtso.sol/MockFtso.json";
 import ConnectorModal from "../../components/ConnectorModal"
-import { FTSO } from '../../constants';
+import { PRICE_FEED, INTERFACES } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
 import Loans from "../../pages/Loans";
 import Assets from "../../pages/Assets";
+import Address from "../../pages/Address";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
@@ -44,6 +44,7 @@ function App() {
     const initialValue = JSON.parse(value!);
     return initialValue || "";
   });
+  const [gidUuid, setGidUuid] = useState("")
   const handleClose = () => setShowConnectorModal(false);
   const handleShow = () => setShowConnectorModal(true);
   const [mobileDevice, setMobileDevice] = useState(false);
@@ -63,8 +64,8 @@ function App() {
   const updateAsset = (asset: string) => {
     setAsset(asset)
   }
-  const { data, mutate } = useSWR([FTSO, 'getCurrentPrice'], {
-    fetcher: fetcher(library, FtsoABI.abi),
+  const { data: price, mutate } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
+    fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
   })
 
   /**
@@ -72,16 +73,19 @@ function App() {
    */
   useEffect(() => {
     (async () => {
-      const response = await axios({
-        method: "GET",
-        url: "https://api.global.id/v1/identities/me",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${auth?.token}`
+      if (auth) {
+        const response = await axios({
+          method: "GET",
+          url: "https://api.global.id/v1/identities/me",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${auth?.accessToken}`
+          }
+        })
+        if (response.status === 200) {
+          setGidUuid(response.data.gid_uuid)
+          localStorage.setItem("probity__auth", JSON.stringify(auth));
         }
-      })
-      if (response.status === 200) {
-        localStorage.setItem("probity__auth", JSON.stringify(auth));
       }
     })()
   }, [auth]);
@@ -92,14 +96,14 @@ function App() {
   useEffect(() => {
     ;(async () => {
       try {
-        if (data !== undefined) {
-          setCollateralPrice((Number(utils.formatUnits(String(data._price), 5).toString())));
+        if (price !== undefined) {
+          setCollateralPrice((Number(utils.formatUnits(String(price), 27).toString())));
         } else {
           if (library) {
             try {
-              const ftso = new Contract(FTSO, FtsoABI.abi, library.getSigner())
-              const result = await ftso.getCurrentPrice();
-              setCollateralPrice((Number(utils.formatUnits(String(result._price), 5).toString())));
+              const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
+              const result = await priceFeed.callStatic.getPrice(utils.id(asset));
+              setCollateralPrice((Number(utils.formatUnits(String(result), 27).toString())));
             } catch (error) {
               console.error(error)
             }
@@ -109,7 +113,7 @@ function App() {
         console.error(error)
       }
     })()
-  }, [library, data]);
+  }, [library, price, asset]);
 
   /**
    * Set block listener
@@ -234,7 +238,19 @@ function App() {
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
-                              <Route path="/wallet">
+                              <Route path="/address">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Address globalId={gidUuid} auth={auth} />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              <Route path="/assets">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Assets />
                                 </div>
@@ -391,7 +407,7 @@ function App() {
                   </Route>
                   <Route path="*">
                     <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
-                      <Login />
+                      <Login error={null} />
                     </div>
                   </Route>
                 </Switch>
@@ -414,33 +430,49 @@ const LoginCallback = ({ setAuth }: any) => {
   useEffect(() => {
     (async () => {
       try {
-        const params = new URLSearchParams(location.hash.replace("#", "?"));
-        const token = params.get("token")
-        const expiresIn = params.get("expires_in")
+        const params = new URLSearchParams(location.search);
+        const code = params.get("code")
+
+        // Get auth token
+        let response = await axios({
+          method: "GET",
+          url: `http://localhost:8080/v1/auth/token`,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          params: { code }
+        })
+
+        const { access_token: accessToken, id_token: idToken, expires_in: expiresIn } = response.data
         const expiresAt = new Date()
         expiresAt.setSeconds(expiresAt.getSeconds() + Number(expiresIn))
 
-        if (token) {
-          let response = await axios({
+        if (accessToken) {
+          response = await axios({
             method: "GET",
             url: "https://api.global.id/v1/identities/me",
             headers: {
               Accept: "application/json",
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${accessToken}`
             }
           })
 
           if (response.status === 200) {
-            setAuth({ token, expiresAt })
-            // TODO: address whitelisting
+            setAuth({ accessToken, idToken, expiresAt })
             history.push("/assets")
           }
         } else {
-          // TODO: display error alert on login callback error
-          history.push("/login")
+          history.push("/login", { error: "There was an error." })
         }
-      } catch (error) {
+      } catch (error: any) {
+        console.log("Failed to fetch identity.")
         console.error(error)
+
+        if (error?.response?.status === 401) {
+          history.push("/login", { error: "Unauthorized." })
+        } else {
+          history.push("/login", { error: error.toString() })
+        }
       }
     })()
   }, [location, history, setAuth])
