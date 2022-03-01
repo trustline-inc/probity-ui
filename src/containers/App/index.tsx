@@ -233,7 +233,7 @@ function App() {
                     )}
 
                     {active ? (
-                      <div className="row h-100 pt-3">
+                      <div className="row pt-3">
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
