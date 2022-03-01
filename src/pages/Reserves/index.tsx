@@ -95,7 +95,7 @@ function ChartContainer() {
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                10,000,000&nbsp;{getStablecoinSymbol(chainId!)}
+                10,000,000&nbsp;
               </h3>
               <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
               <span className="statcard-desc">Circulating Supply</span>
@@ -104,7 +104,7 @@ function ChartContainer() {
           <div className="col-sm-4">
             <div className="border rounded p-3">
               <h3 className="statcard-number">
-                100,000,000&nbsp;{getStablecoinSymbol(chainId!)}
+                100,000,000&nbsp;
               </h3>
               <span className="text-success"><span className="fa fa-caret-up"/>10%</span><br/>
               <span className="statcard-desc">Total Supply</span>
