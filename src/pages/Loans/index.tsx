@@ -135,7 +135,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
   // Dynamically calculate the collateralization ratio
   React.useEffect(() => {
-    if (vault) {
+    if (vault && asset) {
       switch (activity) {
         case ActivityType.Borrow:
           setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) + Number(amount)));
