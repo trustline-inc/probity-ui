@@ -48,7 +48,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
 
-  // Set activity by the path
+  /**
+   * Set activity by the path
+   */
   React.useEffect(() => {
     if (location.pathname === "/loans/borrow") setActivity(ActivityType.Borrow);
     if (location.pathname === "/loans/repay") setActivity(ActivityType.Repay);
@@ -116,6 +118,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     }
   }
 
+  /**
+   * @function onAmountChange
+   * @param event
+   */
   const onAmountChange = (event: any) => {
     let amount;
     if (event.target.value === null) amount = 0
@@ -123,6 +129,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     setAmount(amount);
   }
 
+  /**
+   * @function onCollateralAmountChange
+   * @param event
+   */
   const onCollateralAmountChange = (event: any) => {
     let totalAmount, delta;
     if (!event.target.value) delta = 0
@@ -133,15 +143,19 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     setCollateralAmount(delta);
   }
 
-  // Dynamically calculate the collateralization ratio
+  /**
+   * Dynamically calculate the collateralization ratio
+   */
   React.useEffect(() => {
     if (vault && asset) {
+      let newDebtAmount
       switch (activity) {
         case ActivityType.Borrow:
-          setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) + Number(amount)));
+          newDebtAmount = (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) + Number(amount))
+          setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;
         case ActivityType.Repay:
-          const newDebtAmount = (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) - Number(amount))
+          newDebtAmount = (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) - Number(amount))
           if (newDebtAmount === 0) setCollateralRatio(0)
           else setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;
