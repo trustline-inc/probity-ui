@@ -33,6 +33,7 @@ function Assets() {
   const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
+  const { mutate: mutateBalance } = useSWR(["getBalance", account, "latest"])
 
   // Set activity by the path
   React.useEffect(() => {
@@ -56,6 +57,7 @@ function Assets() {
         const data = await result.wait();
         ctx.updateTransactions(data);
         mutateVault(undefined, true)
+        mutateBalance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
@@ -79,6 +81,7 @@ function Assets() {
         const data = await result.wait();
         ctx.updateTransactions(data);
         mutateVault(undefined, true)
+        mutateBalance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
