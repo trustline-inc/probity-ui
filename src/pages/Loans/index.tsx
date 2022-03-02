@@ -35,6 +35,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
+  const { mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
   const { mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
     fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
@@ -70,6 +73,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
         mutateAurErc20Balance(undefined, true)
+        mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)
       } catch (error) {
@@ -100,6 +104,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
         mutateAurErc20Balance(undefined, true)
+        mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)
       } catch (error) {
