@@ -27,7 +27,7 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
     try {
       const response = await axios({
         method: "POST",
-        url: `http://localhost:8080/v1/auth`,
+        url: "http://localhost:8080/v1/users",
         data: { address: proposedAddress, id: globalId },
         headers: {
           "Content-Type": "application/json"

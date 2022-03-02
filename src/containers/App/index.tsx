@@ -441,7 +441,7 @@ const LoginCallback = ({ setAuth }: any) => {
 
           if (response.status === 200) {
             setAuth({ accessToken, idToken, expiresAt })
-            history.push("/assets")
+            history.push("/address")
           }
         } else {
           history.push("/login", { error: "There was an error." })
