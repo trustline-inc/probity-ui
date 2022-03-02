@@ -14,7 +14,7 @@ import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol, getStablecoinAddress, getStablecoinABI } from '../../utils';
+import { getNativeTokenSymbol } from '../../utils';
 
 function Loans({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
@@ -24,7 +24,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const [error, setError] = React.useState<any|null>(null);
   const [collateralAmount, setCollateralAmount] = React.useState(0);
   const [totalCollateral, setTotalCollateral] = React.useState(0);
-  const [amount, setBorrowAmount] = React.useState(0);
+  const [amount, setAmount] = React.useState(0);
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
@@ -74,7 +74,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         mutateVault(undefined, true);
         mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
-        setBorrowAmount(0)
+        setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
         console.log(error);
@@ -105,7 +105,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         mutateVault(undefined, true);
         mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
-        setBorrowAmount(0)
+        setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
         console.log(error);
@@ -118,9 +118,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
   const onAmountChange = (event: any) => {
     let amount;
-    if (!event.target.value) amount = 0
+    if (event.target.value === null) amount = 0
     else amount = Number(numbro.unformat(event.target.value));
-    setBorrowAmount(amount);
+    setAmount(amount);
   }
 
   const onCollateralAmountChange = (event: any) => {
