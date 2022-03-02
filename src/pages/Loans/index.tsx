@@ -14,7 +14,7 @@ import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol } from '../../utils';
+import { getNativeTokenSymbol, getStablecoinAddress, getStablecoinABI } from '../../utils';
 
 function Loans({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
@@ -34,6 +34,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
+  const { mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
+    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: rate } = useSWR([TELLER, 'apr'], {
     fetcher: fetcher(library, INTERFACES[TELLER].abi),
@@ -66,6 +69,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
+        mutateAurErc20Balance(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)
       } catch (error) {
@@ -95,6 +99,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
+        mutateAurErc20Balance(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)
       } catch (error) {
@@ -131,7 +136,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
           setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatEther(vault.debt)) + Number(amount)));
           break;
         case ActivityType.Repay:
-          setCollateralRatio((totalCollateral * assetPrice) / (Number(utils.formatEther(vault.debt)) - Number(amount)));
+          const newDebtAmount = (Number(utils.formatEther(vault.debt)) - Number(amount))
+          if (newDebtAmount === 0) setCollateralRatio(0)
+          else setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;
       }
     }

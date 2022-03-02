@@ -82,7 +82,7 @@ function RepayActivity({
           {currentAsset}
         </button>
       </div>
-      <PriceFeed asset={currentAsset} amount={amount} />
+      <PriceFeed asset={currentAsset} amount={collateralAmount} />
       <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">

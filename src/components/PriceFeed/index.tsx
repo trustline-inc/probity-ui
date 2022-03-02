@@ -50,7 +50,11 @@ function PriceFeed({ asset, amount }: { asset: string, amount: number; }) {
       <div className="col-12">
         <div className="py-2 h-100 d-flex flex-row align-items-center justify-content-center text-center">
           <div className="mx-4"><span className="text-muted">{asset}/USD</span><br />${price}</div>
-          <div className="mx-4"><span className="text-muted">Value</span><br />${numbro(Math.abs(value).toFixed(2)).format({ thousandSeparated: true })}</div>
+          <div className="mx-4">
+            <span className="text-muted">Value</span>
+            <br />
+            ${numbro(Math.abs(value).toFixed(2)).format({ thousandSeparated: true })}
+          </div>
         </div>
       </div>
     </div>

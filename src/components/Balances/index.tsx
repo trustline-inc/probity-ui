@@ -115,7 +115,7 @@ function Balances() {
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
       setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
-  }, [totalEquity, totalDebt])
+  }, [totalEquity, totalDebt, vault])
 
   /**
    * Updates the collateral and underlying ratios
@@ -161,7 +161,7 @@ function Balances() {
         }
       })()
     }
-  }, [account, library, chainId, totalDebt, totalEquity, currentAsset])
+  }, [account, library, chainId, totalDebt, totalEquity, currentAsset, vault])
 
   if (!vault || !asset) return null;
 
