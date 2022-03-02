@@ -32,7 +32,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
@@ -71,6 +71,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
         mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
@@ -101,6 +102,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
+        mutateVault(undefined, true);
         mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
