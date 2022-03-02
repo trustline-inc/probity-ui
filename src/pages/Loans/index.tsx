@@ -32,14 +32,14 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
+  const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
   const { mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
-  })
-  const { mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
-    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
   const { data: rate } = useSWR([TELLER, 'apr'], {
     fetcher: fetcher(library, INTERFACES[TELLER].abi),
@@ -71,8 +71,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
-        mutateVault(undefined, true);
-        mutateAurErc20Balance(undefined, true)
+        mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)
@@ -90,11 +89,11 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    */
   const repay = async () => {
     if (library && account) {
-      const vault = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
       setLoading(true)
 
       try {
-        const result = await vault.modifyDebt(
+        const result = await vaultEngine.modifyDebt(
           utils.id(getNativeTokenSymbol(chainId!)),
           TREASURY,
           utils.parseUnits(String(-collateralAmount), 18),
@@ -102,8 +101,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         );
         const data = await result.wait();
         eventContext.updateTransactions(data);
-        mutateVault(undefined, true);
-        mutateAurErc20Balance(undefined, true)
+        mutateVaultAurBalance(undefined, true);
         mutateTotalDebt(undefined, true)
         setBorrowAmount(0)
         setCollateralAmount(0)

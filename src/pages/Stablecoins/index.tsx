@@ -14,7 +14,7 @@ import { TREASURY } from '../../constants';
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol } from '../../utils';
+import { getStablecoinABI, getStablecoinAddress } from '../../utils';
 
 function Stablecoins() {
   const location = useLocation();
@@ -26,8 +26,11 @@ function Stablecoins() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  })
+  const { mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
+    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
   })
 
   // Set activity by the path
@@ -49,7 +52,8 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
-        mutateVault(undefined, true)
+        mutateVaultAurBalance(undefined, true)
+        mutateAurErc20Balance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
@@ -72,7 +76,8 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
-        mutateVault(undefined, true)
+        mutateVaultAurBalance(undefined, true)
+        mutateAurErc20Balance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
