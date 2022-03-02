@@ -65,8 +65,11 @@ function BorrowActivity({
         const supply = Number(utils.formatEther(totalEquity.div(RAY)));
         const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
-        const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-        setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+        if (newUtilization >= 1) setEstimatedAPR(100)
+        else {
+          const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
+          setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+        }
         setMaxSize(supply - borrows)
       } catch(e) {
         console.log(e)
@@ -101,11 +104,7 @@ function BorrowActivity({
             <div className="m-2">
               <span className="text-muted">Estimated APR</span>
               <br />
-              {rate && (
-                amount ? (
-                  Math.min(Math.abs(estimatedAPR === "0.00" ? 100 : estimatedAPR), 100)
-                ) : utils.formatEther(rate.div("10000000").toString().slice(2))
-              )}%
+              {rate && (amount ? estimatedAPR : utils.formatEther(rate.div("10000000").toString().slice(2)))}%
             </div>
           </div>
         </div>
