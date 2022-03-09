@@ -172,6 +172,11 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     }
   }, [account, library, chainId, totalDebt, totalEquity, currentAsset, vault])
 
+  const updateActiveKey = (key: string) => {
+    if (activeKey === key) setActiveKey("")
+    else setActiveKey(key)
+  }
+
   if (!vault || !asset) return null;
 
   return (
@@ -200,7 +205,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           selected === BalanceType.Individual ? (
             <>
               <Accordion defaultActiveKey="assets" activeKey={activeKey}>
-                <Accordion.Item eventKey="assets" onClick={() => setActiveKey("assets")}>
+                <Accordion.Item eventKey="assets" onClick={() => updateActiveKey("assets")}>
                   <Accordion.Header>
                     <h5>Assets</h5>
                   </Accordion.Header>
@@ -255,7 +260,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="equity" onClick={() => setActiveKey("equity")}>
+                <Accordion.Item eventKey="equity" onClick={() => updateActiveKey("equity")}>
                   <Accordion.Header>
                     <h5>Equity Position</h5>
                   </Accordion.Header>
@@ -288,7 +293,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="debt" onClick={() => setActiveKey("debt")}>
+                <Accordion.Item eventKey="debt" onClick={() => updateActiveKey("debt")}>
                   <Accordion.Header>
                     <h5>Debt Position</h5>
                   </Accordion.Header>
@@ -315,7 +320,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="stablecoins" onClick={() => setActiveKey("stablecoins")}>
+                <Accordion.Item eventKey="stablecoins" onClick={() => updateActiveKey("stablecoins")}>
                   <Accordion.Header>
                     <h5>Stablecoins</h5>
                   </Accordion.Header>
@@ -330,7 +335,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="voting" onClick={() => setActiveKey("voting")}>
+                <Accordion.Item eventKey="voting" onClick={() => updateActiveKey("voting")}>
                   <Accordion.Header>
                     <h5>Voting Power</h5>
                   </Accordion.Header>
