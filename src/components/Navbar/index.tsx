@@ -132,7 +132,7 @@ function Navbar() {
               activeClassName="active"
               to="/treasury"
             >
-              <i className="fa fa-landmark"></i> Shares
+              <i className="fa fa-landmark"></i> Savings
             </NavLink>
           </li>
           <li className="nav-item my-1">

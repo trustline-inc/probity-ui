@@ -1,12 +1,12 @@
 export enum Activity {
   Auction,
 
-  // Equity
-  Supply,
+  // Equity Management
+  Invest,
   Redeem,
-  Interest,
+  Collect,
 
-  // Loans
+  // Debt Management
   Borrow,
   Repay,
 

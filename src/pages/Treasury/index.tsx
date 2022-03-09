@@ -77,7 +77,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   React.useEffect(() => {
     if (vault) {
       switch (activity) {
-        case ActivityType.Supply:
+        case ActivityType.Invest:
           setUnderlyingRatio((totalUnderlying * assetPrice) / (Number(utils.formatUnits(vault.initialEquity, 45)) + Number(equityAmount)));
           break;
         case ActivityType.Redeem:
@@ -116,9 +116,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.Supply);
+    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.Invest);
     if (location.pathname === "/treasury/redeem") setActivity(ActivityType.Redeem);
-    if (location.pathname === "/treasury/collect-interest") setActivity(ActivityType.Interest);
+    if (location.pathname === "/treasury/collect-interest") setActivity(ActivityType.Collect);
   }, [location])
 
   /**
@@ -237,13 +237,13 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Supply); setUnderlyingAmount(0) }}>Invest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Invest); setUnderlyingAmount(0) }}>Invest</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setUnderlyingAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Interest); setUnderlyingAmount(0) }}>Collect</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}>Collect</NavLink>
               </li>
             </ul>
           </div>
@@ -251,7 +251,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           {/* Fund Management Activities */}
           <Activity active={active} activity={activity} error={error}>
             {
-              activity === ActivityType.Supply && (
+              activity === ActivityType.Invest && (
                 <InvestActivity
                   underlyingAmount={underlyingAmount}
                   equityAmount={equityAmount}
@@ -281,7 +281,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
               )
             }
             {
-              activity === ActivityType.Interest && (
+              activity === ActivityType.Collect && (
                 <CollectActivity
                   interestAmount={interestAmount}
                   onInterestAmountChange={onInterestAmountChange}
