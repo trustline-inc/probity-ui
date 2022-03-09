@@ -51,7 +51,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
 
   let liquidationRatio = "";
   if (price && asset?.adjustedPrice) {
-    liquidationRatio = (1 / Number(utils.formatUnits(asset.adjustedPrice.mul(RAY).div(price), 27).toString())).toString()
+    // Get the liquidation ratio
+    const denominator = Number(String(utils.formatUnits(asset.adjustedPrice.mul(RAY).div(price), 27)))
+    liquidationRatio = String(1 / denominator)
   } else {
     liquidationRatio = `<Loading...>`
   }

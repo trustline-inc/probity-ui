@@ -19,7 +19,7 @@ interface Props {
   liquidationRatio: string;
 }
 
-function InvestingActivity({
+function InvestActivity({
   underlyingAmount,
   equityAmount,
   underlyingRatio,
@@ -122,4 +122,4 @@ function InvestingActivity({
   )
 }
 
-export default InvestingActivity
+export default InvestActivity
