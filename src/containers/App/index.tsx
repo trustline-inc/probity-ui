@@ -244,7 +244,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -256,7 +256,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="assets" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -268,7 +268,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-4 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="equity" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -280,7 +280,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="debt" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -292,7 +292,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="stablecoins" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -304,7 +304,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="stablecoins" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -317,7 +317,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-4 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="stablecoins" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -330,7 +330,7 @@ function App() {
                                 <div className="col-xl-3 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="stablecoins" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -342,7 +342,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-4 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -354,7 +354,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-4 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances />
+                                      <Balances newActiveKey="" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
