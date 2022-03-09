@@ -4,7 +4,7 @@ import numbro from "numbro";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
 import fetcher from "../../fetcher";
 import { RAY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
@@ -17,7 +17,7 @@ interface Props {
   collateralRatio: number;
   collateralAmount: number;
   amount: number;
-  rate: any;
+  rate: BigNumber;
   borrow: () => void;
   loading: boolean;
   maxSize: number;
@@ -40,7 +40,7 @@ function BorrowActivity({
 }: Props) {
   const ctx = React.useContext(AssetContext)
   const { library, chainId } = useWeb3React<Web3Provider>()
-  const [estimatedAPR, setEstimatedAPR] = React.useState(rate)
+  const [estimatedAPR, setEstimatedAPR] = React.useState(rate.toString())
 
   const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
@@ -65,10 +65,10 @@ function BorrowActivity({
         const supply = Number(utils.formatEther(totalEquity.div(RAY)));
         const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
-        if (newUtilization >= 1) setEstimatedAPR(100)
+        if (newUtilization >= 1) setEstimatedAPR("100")
         else {
           const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-          setEstimatedAPR((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2))
+          setEstimatedAPR(String((Math.ceil(newAPR / 0.25) * 0.25).toFixed(2)))
         }
         setMaxSize(supply - borrows)
       } catch(e) {
