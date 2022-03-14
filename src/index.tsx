@@ -2,9 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
+import { utils } from 'ethers'
 import './index.css';
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
+
+utils.Logger.setLogLevel(utils.Logger.levels.ERROR);
 
 function getLibrary(provider: any, connector: any): Web3Provider {
   const library = new Web3Provider(provider)
