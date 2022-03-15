@@ -67,7 +67,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
     let totalAmount, delta;
     if (!event.target.value) delta = 0
     else delta = Number(numbro.unformat(event.target.value));
-    if (activity === ActivityType.Redeem) totalAmount = Number(utils.formatEther(vault.underlying)) - Number(delta);
+    if (activity === ActivityType.RedeemEquity) totalAmount = Number(utils.formatEther(vault.underlying)) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.underlying)) + Number(delta);
     setTotalUnderlying(totalAmount);
     setUnderlyingAmount(delta);
@@ -79,10 +79,10 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   React.useEffect(() => {
     if (vault) {
       switch (activity) {
-        case ActivityType.Invest:
+        case ActivityType.IssueEquity:
           setUnderlyingRatio((totalUnderlying * assetPrice) / (Number(utils.formatUnits(vault.initialEquity, 45)) + Number(equityAmount)));
           break;
-        case ActivityType.Redeem:
+        case ActivityType.RedeemEquity:
           setUnderlyingRatio((totalUnderlying * assetPrice) / (Number(utils.formatUnits(vault.initialEquity, 45)) - Number(equityAmount)));
           break;
       }
@@ -118,8 +118,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.Invest);
-    if (location.pathname === "/treasury/redeem") setActivity(ActivityType.Redeem);
+    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.IssueEquity);
+    if (location.pathname === "/treasury/redeem") setActivity(ActivityType.RedeemEquity);
     if (location.pathname === "/treasury/collect-interest") setActivity(ActivityType.Collect);
   }, [location])
 
@@ -239,10 +239,10 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.Invest); setUnderlyingAmount(0) }}>Invest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}>Invest</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.Redeem); setUnderlyingAmount(0) }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}>Collect</NavLink>
@@ -253,7 +253,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           {/* Fund Management Activities */}
           <Activity active={active} activity={activity} error={error}>
             {
-              activity === ActivityType.Invest && (
+              activity === ActivityType.IssueEquity && (
                 <InvestActivity
                   underlyingAmount={underlyingAmount}
                   equityAmount={equityAmount}
@@ -268,7 +268,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
               )
             }
             {
-              activity === ActivityType.Redeem && (
+              activity === ActivityType.RedeemEquity && (
                 <RedemptionActivity
                   underlyingAmount={underlyingAmount}
                   onUnderlyingAmountChange={onUnderlyingAmountChange}

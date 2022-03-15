@@ -11,12 +11,12 @@ import { VAULT_ENGINE, INTERFACES } from '../../constants';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import { TREASURY } from '../../constants';
-import RedemptionActivity from './RedemptionActivity';
-import IssuanceActivity from './IssuanceActivity';
+import DepositActivity from '../Vault/DepositActivity';
+import WithdrawActivity from '../Vault/WithdrawActivity';
 import EventContext from "../../contexts/TransactionContext"
 import { getStablecoinABI, getStablecoinAddress } from '../../utils';
 
-function Stablecoins() {
+function Vault() {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -35,14 +35,14 @@ function Stablecoins() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/stablecoins/redeem") setActivity(ActivityType.RedeemCurrency);
-    if (location.pathname === "/stablecoins/issue") setActivity(ActivityType.IssueCurrency);
+    if (location.pathname === "/vault/deposit") setActivity(ActivityType.Deposit);
+    if (location.pathname === "/vault/withdraw") setActivity(ActivityType.Withdraw);
   }, [location])
 
   /**
-   * @function issue
+   * @function withdraw
    */
-    const issue = async () => {
+    const withdraw = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
       setLoading(true)
@@ -64,9 +64,9 @@ function Stablecoins() {
   }
 
   /**
-   * @function redeem
+   * @function deposit
    */
-  const redeem = async () => {
+  const deposit = async () => {
     if (library && account) {
       const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
       setLoading(true)
@@ -97,7 +97,7 @@ function Stablecoins() {
   return (
     <>
       <header>
-        <h1>Stablecoins</h1>
+        <h1>Vault</h1>
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="col-md-12 col-lg-8 offset-lg-2">
@@ -105,10 +105,10 @@ function Stablecoins() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/stablecoins/issue"} onClick={() => { setActivity(ActivityType.IssueCurrency); }}>Issue</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/withdraw"} onClick={() => { setActivity(ActivityType.Withdraw); }}>Withdraw</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/stablecoins/redeem"} onClick={() => { setActivity(ActivityType.RedeemCurrency); }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/vault/deposit"} onClick={() => { setActivity(ActivityType.Deposit); }}>Deposit</NavLink>
               </li>
             </ul>
           </div>
@@ -117,25 +117,25 @@ function Stablecoins() {
           <Activity active={active} activity={activity} error={error}>
             <>
               {
-                activity === ActivityType.IssueCurrency && (
-                  <IssuanceActivity
+                activity === ActivityType.Withdraw && (
+                  <WithdrawActivity
                     maxSize={maxSize}
                     setMaxSize={setMaxSize}
                     amount={amount}
                     onAmountChange={onAmountChange}
-                    issue={issue}
+                    withdraw={withdraw}
                     loading={loading}
                   />
                 )
               }
               {
-                activity === ActivityType.RedeemCurrency && (
-                  <RedemptionActivity
+                activity === ActivityType.Deposit && (
+                  <DepositActivity
                     maxSize={maxSize}
                     setMaxSize={setMaxSize}
                     amount={amount}
                     onAmountChange={onAmountChange}
-                    redeem={redeem}
+                    deposit={deposit}
                     loading={loading}
                   />
                 )
@@ -148,4 +148,4 @@ function Stablecoins() {
   );
 }
 
-export default Stablecoins;
+export default Vault;

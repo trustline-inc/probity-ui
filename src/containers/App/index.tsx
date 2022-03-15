@@ -34,6 +34,7 @@ import Stablecoins from "../../pages/Stablecoins";
 import { getNativeTokenSymbol } from "../../utils";
 import Login from "../../pages/Login";
 import axios from "axios";
+import Vault from "../../pages/Vault";
 
 function App() {
   const [showConnectorModal, setShowConnectorModal] = useState(false);
@@ -237,6 +238,7 @@ function App() {
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, updateAsset }}>
                             <Switch>
+                              {/* Address Management */}
                               <Route path="/address">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Address globalId={gidUuid} auth={auth} />
@@ -249,6 +251,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Asset Management */}
                               <Route path="/assets">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Assets />
@@ -261,6 +264,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Equity Management */}
                               <Route path="/treasury">
                                 <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                                   <Treasury assetPrice={assetPrice} />
@@ -273,6 +277,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Debt Management */}
                               <Route path="/loans">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Loans assetPrice={assetPrice} />
@@ -285,6 +290,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Stablecoins */}
                               <Route path="/stablecoins">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Stablecoins />
@@ -297,9 +303,23 @@ function App() {
                                   )}
                                 </div>
                               </Route>
+                              {/* Transfers */}
                               <Route path="/transfers">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Transfers />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, updateAsset }}>
+                                      <Balances newActiveKey="stablecoins" />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              {/* Vault */}
+                              <Route path="/vault">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Vault />
                                 </div>
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (

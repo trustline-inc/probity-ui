@@ -126,6 +126,16 @@ function Navbar() {
               <i className="fas fa-wallet"></i> Assets
             </NavLink>
           </li>
+          {
+            // Not enabled on any chain, yet.
+            chainId && [].includes(chainId as never) && (
+              <li className="nav-item my-1">
+                <NavLink className="nav-link" activeClassName="active" to="/stablecoins">
+                  <i className="fas fa-coins"></i> Stablecoins
+                </NavLink>
+              </li>
+            )
+          }
           <li className="nav-item my-1">
             <NavLink
               className="nav-link"
@@ -141,8 +151,8 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/stablecoins">
-              <i className="fas fa-coins"></i> Stablecoins
+            <NavLink className="nav-link" activeClassName="active" to="/vault">
+              <i className="fas fa-vault" /> Vault
             </NavLink>
           </li>
           {
@@ -157,7 +167,7 @@ function Navbar() {
           }
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/liquidations">
-              <i className="fas fa-vault" /> Vaults
+              <i className="fa-solid fa-water"></i> Liquidator
             </NavLink>
           </li>
           <li className="nav-item my-1">
@@ -201,10 +211,12 @@ function Navbar() {
                   </>
                 )
               }
-              {/* <Button variant="light" onClick={whitelist}>
-                {loading ? (<i className="fa fa-spinner fa-spin" />) : "Whitelist Address"}
-              </Button>
-              <div className="spacer spacer-1" /> */}
+              {/*
+                <Button variant="light" onClick={whitelist}>
+                  {loading ? (<i className="fa fa-spinner fa-spin" />) : "Whitelist Address"}
+                </Button>
+                <div className="spacer spacer-1" />
+              */}
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (

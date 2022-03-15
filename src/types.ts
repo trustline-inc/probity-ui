@@ -2,13 +2,17 @@ export enum Activity {
   Auction,
 
   // Equity Management
-  Invest,
-  Redeem,
+  IssueEquity,
+  RedeemEquity,
   Collect,
 
   // Debt Management
   Borrow,
   Repay,
+
+  // Stablecoins
+  IssueCurrency,
+  RedeemCurrency,
 
   // Vault
   Deposit,
