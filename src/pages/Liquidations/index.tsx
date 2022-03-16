@@ -151,24 +151,13 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         <div className="card-body text-center">
           <div className="row mb-3">
             <div className="col-12">
-              <code>{vault.address}</code>
+              <div className="input-group mb-3">
+                <span className="input-group-text" id="basic-addon1"><i className="fa fa-vault"></i></span>
+                <input className="form-control" type="text" value={vault.address} readOnly />
+              </div>
             </div>
           </div>
           <div className="row">
-            <div className="col-4">
-              <h5>Debt</h5>
-              {vault.debt}
-            </div>
-            <div className="col-4">
-              <h5>Collateral</h5>
-              {vault.collateral}
-            </div>
-            <div className="col-4">
-              <h5>Collateral Ratio</h5>
-              {vault.collateralRatio}
-            </div>
-          </div>
-          <div className="row mt-4">
             <div className="col-4">
               <h5>Equity</h5>
               {vault.equity}
@@ -180,6 +169,20 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
             <div className="col-4">
               <h5>Supply Ratio</h5>
               {vault.underlyingRatio}
+            </div>
+          </div>
+          <div className="row mt-4">
+            <div className="col-4">
+              <h5>Debt</h5>
+              {vault.debt}
+            </div>
+            <div className="col-4">
+              <h5>Collateral</h5>
+              {vault.collateral}
+            </div>
+            <div className="col-4">
+              <h5>Collateral Ratio</h5>
+              {vault.collateralRatio}
             </div>
           </div>
         </div>
