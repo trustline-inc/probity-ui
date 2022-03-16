@@ -18,7 +18,7 @@ import {
 import './index.css';
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
-import TUSD from "../../assets/TUSD.png"
+import USD from "../../assets/USD.png"
 import XRP from "../../assets/xrp.png"
 import AssetContext from "../../contexts/AssetContext"
 
@@ -26,8 +26,7 @@ const assetIcons: { [key: string]: string } = {
   CFLR: FLR,
   SGB,
   FLR,
-  TUSD,
-  FXRP: XRP
+  USD,
 }
 
 const formatOptions = {
@@ -220,24 +219,26 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       </button>
                       {/* Dropdown selection menu of other assets */}
                       <ul className="dropdown-menu w-100 p-0">
+                        <li className="dropdown-item border" onClick={() => ctx.updateAsset("USD")}>
+                          <div className="asset py-2 d-flex justify-content-between">
+                            <h4 className="d-flex align-items-center mb-0">USD</h4>
+                            <img src={USD} className="rounded-circle border" alt="USD" height="50" />
+                          </div>
+                        </li>
                         <li className="dropdown-item border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>
                           <div className="asset py-2 d-flex justify-content-between">
                             <h4 className="d-flex align-items-center mb-0">{nativeTokenSymbol}</h4>
-                            <img src={FLR} className="rounded-circle border" alt={nativeTokenSymbol} height="50" />
+                            <img src={assetIcons[nativeTokenSymbol]} className="rounded-circle border" alt={nativeTokenSymbol} height="50" />
                           </div>
                         </li>
+                        {/*
                         <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("FXRP")}>
                           <div className="asset py-2 d-flex justify-content-between">
                             <h4 className="d-flex align-items-center mb-0">FXRP</h4>
                             <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
                           </div>
                         </li>
-                        <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("TUSD")}>
-                          <div className="asset py-2 d-flex justify-content-between">
-                            <h4 className="d-flex align-items-center mb-0">USD</h4>
-                            <img src={TUSD} className="rounded-circle border" alt="USD" height="50" />
-                          </div>
-                        </li>
+                        */}
                       </ul>
                     </div>
                     <div className="px-3 py-2 text-truncate">
