@@ -267,7 +267,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Equity Balance</h6>
+                      <h6>Equity</h6>
                       <span className="text-truncate">
                         {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
                       </span>
@@ -279,7 +279,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Underlying Ratio</h6>
+                      <h6>Supply Ratio</h6>
                       <span className="text-truncate">{underlyingRatio}</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -300,7 +300,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Debt Balance</h6>
+                      <h6>Debt</h6>
                       <span className="text-truncate">
                         {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
                       </span>

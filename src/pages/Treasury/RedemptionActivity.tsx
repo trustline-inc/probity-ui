@@ -97,7 +97,7 @@ function RedemptionActivity({
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2">
-              <span>Underlying Ratio:</span>
+              <span>Supply Ratio:</span>
               <br />
               <small className="text-muted">(Value to Shares)</small>
               <br />

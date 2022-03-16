@@ -178,7 +178,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
               {vault.underlying}
             </div>
             <div className="col-4">
-              <h5>Underlying Ratio</h5>
+              <h5>Supply Ratio</h5>
               {vault.underlyingRatio}
             </div>
           </div>
