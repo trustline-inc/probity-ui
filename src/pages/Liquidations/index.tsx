@@ -9,7 +9,7 @@ import { Activity as ActivityType } from "../../types";
 import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 
 const formatOptions = {
   thousandSeparated: true,
@@ -85,8 +85,8 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
           _vaults.push({
             address: address,
-            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} ${getStablecoinSymbol(chainId!)}`,
-            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} ${getStablecoinSymbol(chainId!)}`,
+            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} AUR`,
+            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} AUR`,
             collateralRatio,
             underlyingRatio,
             liquidationEligible,

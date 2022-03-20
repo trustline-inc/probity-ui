@@ -1,6 +1,5 @@
 import { BigNumber } from "ethers";
 import AureiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Aurei.sol/Aurei.json";
-import PhiABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Phi.sol/Phi.json";
 import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
 import BridgeABI from "@trustline-inc/bridge/artifacts/contracts/Bridge.sol/Bridge.json";
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
@@ -12,13 +11,14 @@ import StateConnectorABI from "@trustline-inc/bridge/artifacts/contracts/test/St
 import PbtTokenABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/PbtToken.sol/PbtToken.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultEngineSBABI from "@trustline-inc/probity/artifacts/contracts/probity/songbird/VaultEngineSB.sol/VaultEngineSB.json";
+import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineLimitedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineLimited.sol/VaultEngineLimited.json";
+import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineUnrestricted.sol/VaultEngineUnrestricted.json";
 
 /**
  * Contract addresses
  */
 export const AUREI                = process.env && process.env.REACT_APP_AUREI                ? process.env.REACT_APP_AUREI                : "";
-export const PHI                  = process.env && process.env.REACT_APP_PHI                  ? process.env.REACT_APP_PHI                  : "";
 export const AUCTIONEER           = process.env && process.env.REACT_APP_AUCTIONEER           ? process.env.REACT_APP_AUCTIONEER           : "";
 export const BRIDGE               = process.env && process.env.REACT_APP_BRIDGE               ? process.env.REACT_APP_BRIDGE               : "";
 export const LIQUIDATOR           = process.env && process.env.REACT_APP_LIQUIDATOR           ? process.env.REACT_APP_LIQUIDATOR           : ""
@@ -39,7 +39,6 @@ export const VAULT_MANAGER        = process.env && process.env.REACT_APP_VAULT_M
  */
 export const INTERFACES = {
   [AUREI]: AureiABI,
-  [PHI]: PhiABI,
   [AUCTIONEER]: AuctioneerABI,
   [BRIDGE]: BridgeABI,
   [LIQUIDATOR]: LiquidatorABI,
@@ -51,7 +50,7 @@ export const INTERFACES = {
   [PBT_TOKEN]: PbtTokenABI,
   [TELLER]: TellerABI,
   [TREASURY]: TreasuryABI,
-  [VAULT_ENGINE]: VaultEngineSBABI
+  [VAULT_ENGINE]: VaultEngineABI
 }
 
 // WalletConnect

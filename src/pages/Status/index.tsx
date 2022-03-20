@@ -4,7 +4,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import {
   AUREI,
-  PHI,
   AUCTIONEER,
   BRIDGE,
   LIQUIDATOR,
@@ -25,7 +24,6 @@ function Status() {
   const { library } = useWeb3React<Web3Provider>()
   const [statuses, setStatuses] = React.useState<{ [key: string]: boolean}>({
     AUREI: false,
-    PHI: false,
     AUCTIONEER: false,
     BRIDGE: false,
     LIQUIDATOR: false,
@@ -42,7 +40,6 @@ function Status() {
   const [fetched, setFetched] = React.useState(false)
   const contracts: { [key: string]: string } = {
     "AUREI": AUREI,
-    "PHI": PHI,
     "AUCTIONEER": AUCTIONEER,
     "BRIDGE": BRIDGE,
     "LIQUIDATOR": LIQUIDATOR,

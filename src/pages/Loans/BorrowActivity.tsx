@@ -8,7 +8,7 @@ import { BigNumber, utils } from "ethers";
 import fetcher from "../../fetcher";
 import { RAY, VAULT_ENGINE } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import AssetContext from "../../contexts/AssetContext"
 import NumberFormat from "react-number-format";
@@ -96,7 +96,7 @@ function BorrowActivity({
           onChange={onAmountChange}
           value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
         />
-        <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+        <span className="input-group-text font-monospace">AUR</span>
       </div>
       <div className="row pt-3 pb-1">
         <div className="col-12">

@@ -6,10 +6,11 @@ import { Nav } from 'react-bootstrap'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
-import { getNativeTokenSymbol, getStablecoinABI, getStablecoinAddress, getStablecoinSymbol } from "../../utils"
+import { getNativeTokenSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import {
   RAY,
+  AUREI,
   PRICE_FEED,
   PBT_TOKEN,
   VAULT_ENGINE,
@@ -59,14 +60,14 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE, 'pbt', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
-    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
+  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([AUREI, 'balanceOf', account], {
+    fetcher: fetcher(library, INTERFACES[AUREI].abi),
   })
   const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT_TOKEN, 'balanceOf', account], {
     fetcher: fetcher(library, INTERFACES[PBT_TOKEN].abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([getStablecoinAddress(chainId!), 'totalSupply'], {
-    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([AUREI, 'totalSupply'], {
+    fetcher: fetcher(library, INTERFACES[AUREI].abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
@@ -269,7 +270,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Equity</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                        {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} AUR
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -289,7 +290,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Interest Earned</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} {getStablecoinSymbol(chainId!)}
+                        {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} AUR
                       </span>
                     </div>
                   </Accordion.Body>
@@ -302,7 +303,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Debt</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} {getStablecoinSymbol(chainId!)}
+                        {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} AUR
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -327,12 +328,12 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Vault {getStablecoinSymbol(chainId!)}</h6>
-                      <span className="text-truncate">{vaultAurBalance ? numbro(utils.formatEther(vaultAurBalance.div(RAY))).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
+                      <h6>Vault AUR</h6>
+                      <span className="text-truncate">{vaultAurBalance ? numbro(utils.formatEther(vaultAurBalance.div(RAY))).format(formatOptions) : "0"} AUR</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>ERC20 {getStablecoinSymbol(chainId!)}</h6>
-                      <span className="text-truncate">{aurErc20Balance ? numbro(utils.formatEther(aurErc20Balance)).format(formatOptions) : "0"} {getStablecoinSymbol(chainId!)}</span>
+                      <h6>ERC20 AUR</h6>
+                      <span className="text-truncate">{aurErc20Balance ? numbro(utils.formatEther(aurErc20Balance)).format(formatOptions) : "0"} AUR</span>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
@@ -358,15 +359,15 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               <h5>System Stats</h5>
               <div className="my-2 mt-4 d-flex justify-content-between">
                 <h6>Circulating Supply</h6>
-                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} AUR</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
-                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} AUR</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Working Capital</h6>
-                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} AUR</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
@@ -374,7 +375,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
-                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} {getStablecoinSymbol(chainId!)}</span>
+                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} AUR</span>
               </div>
             </>
           )

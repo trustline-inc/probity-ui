@@ -10,7 +10,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 // import EventContext from "../../contexts/TransactionContext"
-import { getAssetId, getStablecoinSymbol } from "../../utils";
+import { getAssetId } from "../../utils";
 
 const formatOptions = {
   thousandSeparated: true,
@@ -249,7 +249,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             <input className="form-control" placeholder="0.00" onChange={onChangeLot} />
                           </div>
                           <div className="my-3">
-                            <label>Max Price ({getStablecoinSymbol(chainId!)})</label>
+                            <label>Max Price (AUR)</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeMaxPrice} />
                           </div>
                           <button disabled={auction?.isOver} className="btn btn-outline-primary my-3 w-100" onClick={() => buyNow(auction.id, lot, maxPrice)}>
@@ -266,7 +266,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                           <h6>Current High Bid</h6>
                           {
                             auction.highestBid ? (
-                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} {getStablecoinSymbol(chainId!)}</div>
+                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} AUR</div>
                             ) : (
                               <p className="text-muted">No bids</p>
                             )
@@ -280,7 +280,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidLot} />
                           </div>
                           <div className="my-3">
-                            <label>Bid Price ({getStablecoinSymbol(chainId!)})</label>
+                            <label>Bid Price (AUR)</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidPrice} />
                           </div>
                           <button className="btn btn-primary w-100" disabled={metamaskLoading || (!bidPrice || !bidLot)} onClick={(event) => placeBid(auction.id)}>

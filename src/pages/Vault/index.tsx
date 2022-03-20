@@ -7,18 +7,17 @@ import { Web3Provider } from '@ethersproject/providers';
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import { VAULT_ENGINE, INTERFACES } from '../../constants';
+import { AUREI, VAULT_ENGINE, INTERFACES } from '../../constants';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import { TREASURY } from '../../constants';
 import DepositActivity from '../Vault/DepositActivity';
 import WithdrawActivity from '../Vault/WithdrawActivity';
 import EventContext from "../../contexts/TransactionContext"
-import { getStablecoinABI, getStablecoinAddress } from '../../utils';
 
 function Vault() {
   const location = useLocation();
-  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
+  const { account, active, library } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
   const [amount, setAmount] = React.useState(0);
@@ -29,8 +28,8 @@ function Vault() {
   const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
     fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
   })
-  const { mutate: mutateAurErc20Balance } = useSWR([getStablecoinAddress(chainId!), 'balanceOf', account], {
-    fetcher: fetcher(library, getStablecoinABI(chainId!).abi),
+  const { mutate: mutateAurErc20Balance } = useSWR([AUREI, 'balanceOf', account], {
+    fetcher: fetcher(library, INTERFACES[AUREI].abi),
   })
 
   // Set activity by the path

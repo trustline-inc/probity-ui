@@ -1,8 +1,6 @@
-import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import numbro from "numbro"
 import NumberFormat from "react-number-format"
-import { getStablecoinName, getStablecoinSymbol } from "../../utils"
 
 interface Props {
   amount: number;
@@ -20,8 +18,6 @@ function IssuanceActivity({
   loading,
   maxSize,
 }: Props) {
-  const { chainId } = useWeb3React()
-
   return (
     <>
       <div className="row">
@@ -29,7 +25,7 @@ function IssuanceActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Issuance Amount<br/>
             <small className="form-text text-muted">
-              Amount of {getStablecoinName(chainId!)} to issue
+              Amount of AUR to issue
             </small>
           </label>
           <div className="input-group">
@@ -42,7 +38,7 @@ function IssuanceActivity({
               onChange={onAmountChange}
               value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+            <span className="input-group-text font-monospace">AUR</span>
           </div>
         </div>
       </div>

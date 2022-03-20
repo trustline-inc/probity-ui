@@ -2,7 +2,7 @@ import React from "react"
 import numbro from "numbro"
 import NumberFormat from 'react-number-format';
 import PriceFeed from "../../components/PriceFeed"
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils"
+import { getNativeTokenSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import AssetSelector from "../../components/AssetSelector";
@@ -56,7 +56,7 @@ function RepayActivity({
           onChange={onAmountChange}
           value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
         />
-        <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+        <span className="input-group-text font-monospace">AUR</span>
       </div>
       <br/>
       <label className="form-label">

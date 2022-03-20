@@ -7,7 +7,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { INTERFACES, RAY, WAD } from "../../constants";
-import { getStablecoinSymbol, getAssetId } from "../../utils";
+import { getAssetId } from "../../utils";
 
 function RowToggle({ eventKey, name, tx }: any) {
   const decoratedOnClick = useAccordionButton(eventKey);
@@ -80,7 +80,7 @@ export default function Transactions() {
               (name === "WithdrawStablecoin") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()} {getStablecoinSymbol(chainId!)}</div>
+                    <div>Amount: {utils.formatEther(log.args.amount).toString()} AUR</div>
                   </div>
                 </Accordion.Collapse>
               )

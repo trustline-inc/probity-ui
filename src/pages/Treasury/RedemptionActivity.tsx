@@ -4,7 +4,7 @@ import NumberFormat from "react-number-format"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import PriceFeed from "../../components/PriceFeed"
-import { getNativeTokenSymbol, getStablecoinSymbol } from "../../utils";
+import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 
 interface Props {
@@ -88,7 +88,7 @@ function RedemptionActivity({
               onChange={onEquityAmountChange}
               value={equityAmount === 0 ? "" : numbro(equityAmount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+            <span className="input-group-text font-monospace">AUR</span>
           </div>
         </div>
       </div>

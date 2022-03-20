@@ -11,6 +11,7 @@ import * as bridge from "@trustline-inc/bridge"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
+  AUREI,
   BRIDGE,
   DEFAULT_APP_METADATA,
   DEFAULT_LOGGER,
@@ -25,7 +26,6 @@ import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
-import { getStablecoinAddress, getStablecoinName, getStablecoinSymbol } from "../../utils";
 
 export default function Transfers() {
   const location = useLocation();
@@ -260,7 +260,7 @@ export default function Transfers() {
         method: "createTrustLine",
         params: [
           issuerAddress,
-          "PHI"
+          "AUR"
         ],
       },
     });
@@ -277,7 +277,7 @@ export default function Transfers() {
       setTransferModalBody(
         <>
           <p>
-            Issue precisely {transferAmount} {getStablecoinSymbol(chainId!)} from the issuing account to the receiving account.
+            Issue precisely {transferAmount} AUR from the issuing account to the receiving account.
           </p>
           <div>
             From: <code>{issuerAddress}</code><br/>
@@ -395,7 +395,7 @@ export default function Transfers() {
             destination: "XRPL_TESTNET"
           },
           amount: BigNumber.from(transferAmount).mul(WAD),
-          tokenAddress: getStablecoinAddress(chainId!),
+          tokenAddress: AUREI,
           bridgeAddress: BRIDGE,
           provider: library,
           signer: library.getSigner() as any
@@ -408,15 +408,15 @@ export default function Transfers() {
         })
 
         // First check the allowance
-        const stablecoin = new Contract(getStablecoinAddress(chainId!), INTERFACES[getStablecoinAddress(chainId!)].abi, library.getSigner())
+        const stablecoin = new Contract(AUREI, INTERFACES[AUREI].abi, library.getSigner())
         const allowance = await stablecoin.allowance(account, BRIDGE)
 
         if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
           setTransferStage("OUTBOUND_PERMIT")
-          setTransferModalBody(`Permit the Bridge contract to spend your ${getStablecoinSymbol(chainId!)} for the transfer.`)
+          setTransferModalBody(`Permit the Bridge contract to spend your AUR for the transfer.`)
           let data = await _transfer.approve()
           const transactionObject = {
-            to: getStablecoinAddress(chainId!),
+            to: AUREI,
             from: account,
             data
           };
@@ -470,7 +470,7 @@ export default function Transfers() {
         })
         setTransferModalBody(
           <>
-            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>PHI</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>AUR</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
           </>
         )
       }
@@ -542,7 +542,7 @@ export default function Transfers() {
           source: "XRPL",
           destination: "FLARE"
         },
-        tokenAddress: getStablecoinAddress(chainId!),
+        tokenAddress: AUREI,
         bridgeAddress: BRIDGE,
         provider: library,
         signer: library!.getSigner() as any
@@ -615,7 +615,7 @@ export default function Transfers() {
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
           <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
-          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → PHI → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
           <button className="btn btn-primary my-4" onClick={() => { console.log("test") }}>Continue</button>
         </div>
       )
@@ -781,7 +781,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer {getStablecoinName(chainId!)} between Songbird and the XRP Ledger networks via Trustline's <a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer AUR between Songbird and the XRP Ledger networks via Trustline's <a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         {/* Activity Navigation */}
@@ -800,13 +800,13 @@ export default function Transfers() {
           {
             activity === ActivityType.OutboundTransfer && (
               <>
-                <h4 className="text-center">Send {getStablecoinName(chainId!)}</h4>
+                <h4 className="text-center">Send AUR</h4>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
                     <label className="form-label">Amount</label>
                     <div className="input-group">
                       <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={transferAmount ? transferAmount : ""} onChange={onTransferAmountChange} />
-                      <span className="input-group-text font-monospace">{getStablecoinSymbol(chainId!)}</span>
+                      <span className="input-group-text font-monospace">AUR</span>
                     </div>
                   </div>
                 </div>
@@ -860,7 +860,7 @@ export default function Transfers() {
           {
             activity === ActivityType.InboundTransfer && (
               <>
-                <h4 className="text-center">Receive {getStablecoinName(chainId!)}</h4>
+                <h4 className="text-center">Receive AUR</h4>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
                     <button

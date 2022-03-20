@@ -1,8 +1,6 @@
-import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import numbro from "numbro"
 import NumberFormat from "react-number-format"
-import { getStablecoinSymbol } from "../../utils"
 
 interface Props {
   interestAmount: number;
@@ -21,8 +19,6 @@ function CollectActivity({
   setInterestType,
   interestType
 }: Props) {
-  const { chainId } = useWeb3React()
-
   return (
     <>
       <div className="row">
@@ -35,8 +31,8 @@ function CollectActivity({
                 <label className="form-check-label" htmlFor="PBT">PBT</label>
               </div>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id={getStablecoinSymbol(chainId!)} value={getStablecoinSymbol(chainId!)} checked={interestType === getStablecoinSymbol(chainId!)} onChange={() => { setInterestType(getStablecoinSymbol(chainId!)) }} />
-                <label className="form-check-label" htmlFor={getStablecoinSymbol(chainId!)}>{getStablecoinSymbol(chainId!)}</label>
+                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onChange={() => { setInterestType("AUR") }} />
+                <label className="form-check-label" htmlFor="AUR">AUR</label>
               </div>
             </div>
           </div>
