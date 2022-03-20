@@ -50,10 +50,10 @@
     "start": "react-scripts start",
     "start:https": "HTTPS=true SSL_CRT_FILE=./local-dev.pem SSL_KEY_FILE=./local-dev-key.pem react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "aws s3 sync build/ s3://probity.finance --acl public-read",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

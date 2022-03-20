@@ -57,14 +57,22 @@ Then you can use the `start:https` script.
 
 ## Deployment
 
-**1. Update the version**
+**Update the version**
 
 Make sure the version in `package.json` is updated following [semantic versioning](https://semver.org/).
 
-**2. Deploy to GitHub Pages**
+**Deploy**
 
-Deploy the UI to GitHub Pages (requires repository push access)
+1. Build the app for production: `yarn build`
+
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.
+
+2. Deploy a new version to the S3 bucket: `yarn deploy`
+
+3. Invalidate the CloudFront cache:
 
 ```
-npm run deploy
+aws cloudfront create-invalidation --distribution-id E1VYLNAZMQ8J88 --paths "/*"
 ```
