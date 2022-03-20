@@ -13,7 +13,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
 import ConnectorModal from "../../components/ConnectorModal"
-import { PRICE_FEED, INTERFACES } from '../../constants';
+import { CONTRACTS } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Treasury from "../../pages/Treasury";
@@ -64,8 +64,8 @@ function App() {
   const updateAsset = (asset: string) => {
     setAsset(asset)
   }
-  const { data: price, mutate } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
-    fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
+  const { data: price, mutate } = useSWR([CONTRACTS[chainId!]?.PRICE_FEED?.address, 'getPrice', utils.id(asset)], {
+    fetcher: fetcher(library, CONTRACTS[chainId!]?.PRICE_FEED?.abi),
   })
 
   /**
@@ -101,7 +101,7 @@ function App() {
         } else {
           if (library) {
             try {
-              const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
+              const priceFeed = new Contract(CONTRACTS[chainId!].PRICE_FEED.address, CONTRACTS[chainId!].PRICE_FEED.abi, library.getSigner())
               const result = await priceFeed.callStatic.getPrice(utils.id(asset));
               setCollateralPrice((Number(utils.formatUnits(String(result), 27).toString())));
             } catch (error) {
@@ -436,9 +436,14 @@ const LoginCallback = ({ setAuth }: any) => {
         const code = params.get("code")
 
         // Get auth token
+        let url;
+        if (process.env.NODE_ENV === "production")
+          url = `https://api.trustline.co/v1/auth/token`
+        else
+          url = `http://localhost:8080/v1/auth/token`
         let response = await axios({
           method: "GET",
-          url: `http://localhost:8080/v1/auth/token`,
+          url,
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
           },

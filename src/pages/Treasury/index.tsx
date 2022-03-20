@@ -14,7 +14,7 @@ import InvestActivity from "./InvestActivity";
 import RedemptionActivity from "./RedemptionActivity";
 import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { TREASURY, VAULT_ENGINE, INTERFACES, PRICE_FEED, RAY } from '../../constants';
+import { CONTRACTS, RAY } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -37,16 +37,16 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
-  const { data: price } = useSWR([PRICE_FEED, 'getPrice', utils.id(currentAsset)], {
-    fetcher: fetcher(library, INTERFACES[PRICE_FEED].abi),
+  const { data: price } = useSWR([CONTRACTS[chainId!].PRICE_FEED.address, 'getPrice', utils.id(currentAsset)], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].PRICE_FEED.abi),
   })
 
-  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: asset, mutate: mutateAsset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
   let liquidationRatio = "";
@@ -128,12 +128,12 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    */
    const invest = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
       try {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
-          TREASURY,
+          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(underlyingAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
           { gasLimit: 300000 }
@@ -158,13 +158,13 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    */
   const redeem = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
 
       try {
         const args = [
           utils.id(getNativeTokenSymbol(chainId!)),
-          TREASURY,
+          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(-underlyingAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
         ]
@@ -188,8 +188,8 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
    */
     const collect = async () => {
     if (library && account) {
-      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
-      const vaultEngine = new Contract(VAULT_ENGINE, VaultEngineABI.abi, library.getSigner())
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
+      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, VaultEngineABI.abi, library.getSigner())
       setLoading(true)
 
       try {

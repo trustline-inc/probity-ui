@@ -4,7 +4,7 @@ import { scrollToTop, useScroll } from "../../utils"
 import { utils } from "ethers";
 import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
-import { AUCTIONEER, INTERFACES, RESERVE_POOL } from '../../constants';
+import { CONTRACTS } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -37,6 +37,8 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
   const scrollPosition = useScroll()
   const lastAuctionId = currentPage * auctionsPerPage
   const firstAuctionId = Math.max(0, lastAuctionId - auctionsPerPage)
+  const AUCTIONEER = CONTRACTS[chainId!].AUCTIONEER
+  const RESERVE_POOL = CONTRACTS[chainId!].RESERVE_POOL
 
   /**
    * Sets auction count
@@ -45,7 +47,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     if (library) {
       (async () => {
         setLoading(true)
-        const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
+        const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library.getSigner())
         const _auctionCount = await auctioneer.auctionCount()
         setAuctionCount(_auctionCount.toNumber());
         setCurrentPage(1)
@@ -61,7 +63,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     if (library && auctionCount) {
       (async () => {
         setLoading(true)
-        const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library.getSigner())
+        const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library.getSigner())
         const _auctions = []
         for (let id = firstAuctionId; id < Math.min(lastAuctionId, auctionCount); id++) {
           let auction: any = await auctioneer.auctions(id)
@@ -106,7 +108,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
   const placeBid = async (auctionId: number) => {
     try {
       console.log("placing bid:", bidPrice)
-      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
       const bidLot = 0
       const tx = await auctioneer.placeBid(auctionId, bidPrice, bidLot)
       setMetamaskLoading(true)
@@ -120,7 +122,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
 
   const buyNow = async (auctionId: number, lot: number|string, maxPrice: number|string) => {
     try {
-      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
       const args = [
         auctionId,
         utils.parseUnits(String(maxPrice), 27),
@@ -141,7 +143,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
   const finalizeSale = async (auctionId: number) => {
     try {
       console.log("finalizing sale")
-      const auctioneer = new Contract(AUCTIONEER, INTERFACES[AUCTIONEER].abi, library!.getSigner())
+      const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
       const tx = await auctioneer.finalizeSale(auctionId)
       setMetamaskLoading(true)
       await tx.wait()
@@ -167,7 +169,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
         ) : 
           <>
             <div className="alert alert-info">
-              <code>{RESERVE_POOL}</code> is the Reserve Pool's address.
+              <code>{RESERVE_POOL.address}</code> is the Reserve Pool's address.
             </div>
             {auctions.map((auction: any, index: number) => {
               const collId = getAssetId(auction?.collId)

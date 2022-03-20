@@ -14,7 +14,7 @@ import "./index.css";
 import ExternalSites from "../ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
-import { BRIDGE } from "../../constants"
+import { CONTRACTS } from "../../constants"
 import AssetContext from "../../contexts/AssetContext"
 
 function Balance() {
@@ -157,7 +157,7 @@ function Navbar() {
           </li>
           {
             // Only show Transfers tab if the bridge contract is in the env.
-            BRIDGE && (
+            CONTRACTS[chainId!].BRIDGE.address && (
               <li className="nav-item my-1">
                 <NavLink className="nav-link" activeClassName="active" to="/transfers">
                   <i className="fas fa-paper-plane" /> Transfers

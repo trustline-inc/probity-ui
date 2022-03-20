@@ -5,15 +5,15 @@ import { Web3Provider } from '@ethersproject/providers';
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockPriceFeed.sol/MockPriceFeed.json";
 import { utils } from "ethers";
 import numbro from "numbro";
-import { PRICE_FEED } from '../../constants';
+import { CONTRACTS } from '../../constants';
 import fetcher from "../../fetcher";
 
 function PriceFeed({ asset, amount }: { asset: string, amount: number; }) {
-  const { library } = useWeb3React<Web3Provider>()
+  const { library, chainId } = useWeb3React<Web3Provider>()
   const [price, setPrice] = React.useState(0.00);
   const [value, setValue] = React.useState(0.00);
 
-  const { data: _price, mutate: mutatePrice } = useSWR([PRICE_FEED, 'getPrice', utils.id(asset)], {
+  const { data: _price, mutate: mutatePrice } = useSWR([CONTRACTS[chainId!].PRICE_FEED.address, 'getPrice', utils.id(asset)], {
     fetcher: fetcher(library, PriceFeedABI.abi),
   })
 

@@ -8,14 +8,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
 import { getNativeTokenSymbol } from "../../utils"
 import fetcher from "../../fetcher";
-import {
-  RAY,
-  AUREI,
-  PRICE_FEED,
-  PBT_TOKEN,
-  VAULT_ENGINE,
-  INTERFACES
-} from "../../constants";
+import { RAY, CONTRACTS } from "../../constants";
 import './index.css';
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
@@ -49,34 +42,38 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const [activeKey, setActiveKey] = React.useState("assets")
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
+  const AUREI = CONTRACTS[chainId!].AUREI
+  const PBT_TOKEN = CONTRACTS[chainId!].PBT_TOKEN
+  const PRICE_FEED = CONTRACTS[chainId!].PRICE_FEED
+  const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, "vaults", utils.id(currentAsset), account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id(currentAsset), account], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: vaultAurBalance, mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: vaultAurBalance, mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE.address, 'stablecoin', account], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE, 'pbt', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([AUREI, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[AUREI].abi),
+  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([AUREI.address, 'balanceOf', account], {
+    fetcher: fetcher(library, AUREI.abi),
   })
-  const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT_TOKEN, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[PBT_TOKEN].abi),
+  const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT_TOKEN.address, 'balanceOf', account], {
+    fetcher: fetcher(library, PBT_TOKEN.abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([AUREI, 'totalSupply'], {
-    fetcher: fetcher(library, INTERFACES[AUREI].abi),
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([AUREI.address, 'totalSupply'], {
+    fetcher: fetcher(library, AUREI.abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalEquity'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
 
   /**
@@ -133,7 +130,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     if (library) {
       (async () => {
         try {
-          const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+          const vaultEngine = new Contract(VAULT_ENGINE.address, VAULT_ENGINE.abi, library.getSigner())
           const {
             debt,
             collateral,
@@ -143,7 +140,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           const {
             debtAccumulator
           } = await vaultEngine.assets(utils.id(currentAsset));
-          const priceFeed = new Contract(PRICE_FEED, INTERFACES[PRICE_FEED].abi, library.getSigner())
+          const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
           const price = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
   
           const _debt = debt.mul(debtAccumulator)

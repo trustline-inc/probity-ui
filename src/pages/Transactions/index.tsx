@@ -6,7 +6,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
-import { INTERFACES, RAY, WAD } from "../../constants";
+import { CONTRACTS, RAY, WAD } from "../../constants";
 import { getAssetId } from "../../utils";
 
 function RowToggle({ eventKey, name, tx }: any) {
@@ -40,7 +40,7 @@ export default function Transactions() {
     return tx.logs.map((element: any, idx: number) => {
       try {
         const checksumAddress = web3.utils.toChecksumAddress(element.address)
-        const contract = new Contract(element.address, INTERFACES[checksumAddress].abi, library?.getSigner())
+        const contract = new Contract(element.address, CONTRACTS[chainId!].INTERFACES[checksumAddress].abi, library?.getSigner())
         let log = contract.interface.parseLog(element);
         const name = log.name
         const key = `${index}${idx}`

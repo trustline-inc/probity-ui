@@ -11,15 +11,12 @@ import * as bridge from "@trustline-inc/bridge"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
-  AUREI,
-  BRIDGE,
   DEFAULT_APP_METADATA,
   DEFAULT_LOGGER,
   DEFAULT_METHODS,
   DEFAULT_RELAY_PROVIDER,
-  STATE_CONNECTOR,
+  CONTRACTS,
   WAD,
-  INTERFACES
 } from '../../constants';
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
@@ -151,7 +148,7 @@ export default function Transfers() {
     (async () => {
       // Get verified issuers
       try {
-        const bridge = new Contract(BRIDGE, INTERFACES[BRIDGE].abi, library)
+        const bridge = new Contract(CONTRACTS[chainId!].BRIDGE.address, CONTRACTS[chainId!].BRIDGE.abi, library)
         const _verifiedIssuers = await bridge.getVerifiedIssuers()
         setVerifiedIssuers(_verifiedIssuers)
       } catch (error) {
@@ -395,8 +392,8 @@ export default function Transfers() {
             destination: "XRPL_TESTNET"
           },
           amount: BigNumber.from(transferAmount).mul(WAD),
-          tokenAddress: AUREI,
-          bridgeAddress: BRIDGE,
+          tokenAddress: CONTRACTS[chainId!].AUREI.address,
+          bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
           provider: library,
           signer: library.getSigner() as any
         })
@@ -408,15 +405,15 @@ export default function Transfers() {
         })
 
         // First check the allowance
-        const stablecoin = new Contract(AUREI, INTERFACES[AUREI].abi, library.getSigner())
-        const allowance = await stablecoin.allowance(account, BRIDGE)
+        const stablecoin = new Contract(CONTRACTS[chainId!].AUREI.address, CONTRACTS[chainId!].AUREI.abi, library.getSigner())
+        const allowance = await stablecoin.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 
         if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
           setTransferStage("OUTBOUND_PERMIT")
           setTransferModalBody(`Permit the Bridge contract to spend your AUR for the transfer.`)
           let data = await _transfer.approve()
           const transactionObject = {
-            to: AUREI,
+            to: CONTRACTS[chainId!].AUREI.address,
             from: account,
             data
           };
@@ -456,7 +453,7 @@ export default function Transfers() {
         setLoading(true)
         let data = await transfer!.createIssuer(issuerAddress)
         const transactionObject = {
-          to: BRIDGE,
+          to: CONTRACTS[chainId!].BRIDGE.address,
           from: account,
           data
         };
@@ -504,13 +501,13 @@ export default function Transfers() {
     try {
       if (library) {
         setLoading(true)
-        const stateConnector = new Contract(STATE_CONNECTOR, INTERFACES[STATE_CONNECTOR].abi, library.getSigner())
+        const stateConnector = new Contract(CONTRACTS[chainId!].STATE_CONNECTOR.address, CONTRACTS[chainId!].STATE_CONNECTOR.abi, library.getSigner())
         let result = await stateConnector.setFinality(true);
         await result.wait()
         setTransferModalBody(`Verifying issuance, please wait...`)
         let data = await transfer!.verifyIssuance(transactionID, issuerAddress)
         const transactionObject = {
-          to: BRIDGE,
+          to: CONTRACTS[chainId!].BRIDGE.address,
           from: account,
           data
         };
@@ -542,8 +539,8 @@ export default function Transfers() {
           source: "XRPL",
           destination: "FLARE"
         },
-        tokenAddress: AUREI,
-        bridgeAddress: BRIDGE,
+        tokenAddress: CONTRACTS[chainId!].AUREI.address,
+        bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
         provider: library,
         signer: library!.getSigner() as any
       })
@@ -583,7 +580,7 @@ export default function Transfers() {
       setLoading(true)
       let data = await transfer!.createRedemptionReservation(account!, issuerAddress)
       const transactionObject = {
-        to: BRIDGE,
+        to: CONTRACTS[chainId!].BRIDGE.address,
         from: account,
         data
       };
@@ -642,7 +639,7 @@ export default function Transfers() {
                 <Form className="py-3">
                   <Form.Group className="mb-3">
                     <Form.Label>Bridge Address</Form.Label>
-                    <Form.Control type="text" readOnly value={BRIDGE} />
+                    <Form.Control type="text" readOnly value={CONTRACTS[chainId!].BRIDGE.address} />
                     <Form.Text className="text-muted">
                       This is the address of the Bridge contract.
                     </Form.Text>

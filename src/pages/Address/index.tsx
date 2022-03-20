@@ -10,9 +10,14 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
   React.useEffect(() => {
     (async () => {
       try {
+        let url;
+        if (process.env.NODE_ENV === "production")
+          url = `https://api.trustline.co/v1/auth/${globalId}`
+        else
+          url = `http://localhost:8080/v1/auth/${globalId}`
         const response = await axios({
           method: "GET",
-          url: `http://localhost:8080/v1/auth/${globalId}`
+          url
         })
         if (response.status === 200) {
           setAddress(response.data.result.address)
@@ -25,9 +30,14 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
 
   const onSubmit = async () => {
     try {
+      let url;
+      if (process.env.NODE_ENV === "production")
+        url = `https://api.trustline.co/v1/users`
+      else
+        url = `http://localhost:8080/v1/users`
       const response = await axios({
         method: "POST",
-        url: "http://localhost:8080/v1/users",
+        url,
         data: { address: proposedAddress, id: globalId, token: auth.accessToken },
         headers: {
           "Content-Type": "application/json"

@@ -2,26 +2,11 @@ import React from 'react';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
-import {
-  AUREI,
-  AUCTIONEER,
-  BRIDGE,
-  LIQUIDATOR,
-  PRICE_FEED,
-  NATIVE_ASSET_MANAGER,
-  REGISTRY,
-  PBT_TOKEN,
-  RESERVE_POOL,
-  TELLER,
-  TREASURY,
-  VAULT_ENGINE,
-  INTERFACES,
-  VAULT_MANAGER
-} from '../../constants';
+import { CONTRACTS } from '../../constants';
 
 function Status() {
   const [loading, setLoading] = React.useState(false);
-  const { library } = useWeb3React<Web3Provider>()
+  const { library, chainId } = useWeb3React<Web3Provider>()
   const [statuses, setStatuses] = React.useState<{ [key: string]: boolean}>({
     AUREI: false,
     AUCTIONEER: false,
@@ -38,20 +23,19 @@ function Status() {
     VAULT_MANAGER: false,
   })
   const [fetched, setFetched] = React.useState(false)
-  const contracts: { [key: string]: string } = {
-    "AUREI": AUREI,
-    "AUCTIONEER": AUCTIONEER,
-    "BRIDGE": BRIDGE,
-    "LIQUIDATOR": LIQUIDATOR,
-    "PRICE_FEED": PRICE_FEED,
-    "NATIVE_ASSET_MANAGER": NATIVE_ASSET_MANAGER,
-    "REGISTRY": REGISTRY,
-    "PBT_TOKEN": PBT_TOKEN,
-    "RESERVE_POOL": RESERVE_POOL,
-    "TELLER": TELLER,
-    "TREASURY": TREASURY,
-    "VAULT_ENGINE": VAULT_ENGINE,
-    "VAULT_MANAGER": VAULT_MANAGER,
+  const contracts: { [key: string]: any } = {
+    "AUREI": CONTRACTS[chainId!].AUREI,
+    "AUCTIONEER": CONTRACTS[chainId!].AUCTIONEER,
+    "BRIDGE": CONTRACTS[chainId!].BRIDGE,
+    "LIQUIDATOR": CONTRACTS[chainId!].LIQUIDATOR,
+    "PRICE_FEED": CONTRACTS[chainId!].PRICE_FEED,
+    "NATIVE_ASSET_MANAGER": CONTRACTS[chainId!].NATIVE_ASSET_MANAGER,
+    "REGISTRY": CONTRACTS[chainId!].REGISTRY,
+    "PBT_TOKEN": CONTRACTS[chainId!].PBT_TOKEN,
+    "RESERVE_POOL": CONTRACTS[chainId!].RESERVE_POOL,
+    "TELLER": CONTRACTS[chainId!].TELLER,
+    "TREASURY": CONTRACTS[chainId!].TREASURY,
+    "VAULT_ENGINE": CONTRACTS[chainId!].VAULT_ENGINE
   }
 
   const objectZip = (keys: any, values: any) =>
@@ -69,14 +53,14 @@ function Status() {
       (async () => {
         setLoading(true)
         const responses: { [key: string]: boolean } = {}
-        for (let contract in contracts) {
+        for (let key in contracts) {
           try {
-            const address = contracts[contract]
-            if (!address) {
+            const contract = contracts[key]
+            if (!contract.address) {
               console.log("no address for " + contract)
               continue
             }
-            const _contract = new Contract(address, INTERFACES[address].abi, library.getSigner())
+            const _contract = new Contract(contract.address, contract.abi, library.getSigner())
             // If there is no contract currently deployed, the result is 0x.
             responses[contract] = await (new Promise(async (resolve, reject) => {
               if (_contract.address) {

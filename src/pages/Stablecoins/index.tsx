@@ -7,17 +7,16 @@ import { Web3Provider } from '@ethersproject/providers';
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
 import fetcher from "../../fetcher";
-import { AUREI, VAULT_ENGINE, INTERFACES } from '../../constants';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import { TREASURY } from '../../constants';
 import RedemptionActivity from './RedemptionActivity';
 import IssuanceActivity from './IssuanceActivity';
 import EventContext from "../../contexts/TransactionContext"
+import { CONTRACTS } from "../../constants"
 
 function Stablecoins() {
   const location = useLocation();
-  const { account, active, library } = useWeb3React<Web3Provider>()
+  const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
   const [amount, setAmount] = React.useState(0);
@@ -25,11 +24,11 @@ function Stablecoins() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { mutate: mutateVaultAurBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateAurErc20Balance } = useSWR([AUREI, 'balanceOf', account], {
-    fetcher: fetcher(library, INTERFACES[AUREI].abi),
+  const { mutate: mutateAurErc20Balance } = useSWR([CONTRACTS[chainId!].AUREI.address, 'balanceOf', account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].AUREI.abi),
   })
 
   // Set activity by the path
@@ -43,7 +42,7 @@ function Stablecoins() {
    */
     const issue = async () => {
     if (library && account) {
-      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
       setLoading(true)
       try {
         const result = await treasury.withdrawStablecoin(
@@ -67,7 +66,7 @@ function Stablecoins() {
    */
   const redeem = async () => {
     if (library && account) {
-      const treasury = new Contract(TREASURY, TreasuryABI.abi, library.getSigner())
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
       setLoading(true)
       try {
         const result = await treasury.depositStablecoin(

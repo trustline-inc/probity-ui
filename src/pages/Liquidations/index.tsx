@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { utils } from "ethers";
 import Activity from "../../containers/Activity";
-import { LIQUIDATOR, VAULT_ENGINE, INTERFACES, RAY } from '../../constants';
+import { CONTRACTS, RAY } from '../../constants';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
@@ -32,7 +32,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
   useEffect(() => {
     if (library) {
       (async () => {
-        const vault = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+        const vault = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
         const _users = await vault.getUserList();
         setUsers(_users);
       })()
@@ -45,7 +45,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         setLoading(true)
         const _vaults: any[] = [];
         for (let address of users) {
-          const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+          const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
           const {
             underlying,
             equity,
@@ -102,7 +102,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
   const liquidate = async (vault: any, index: number) => {
     if (library) {
-      const liquidator = new Contract(LIQUIDATOR, INTERFACES[LIQUIDATOR].abi, library.getSigner())
+      const liquidator = new Contract(CONTRACTS[chainId!].LIQUIDATOR.address, CONTRACTS[chainId!].LIQUIDATOR.abi, library.getSigner())
 
       try {
         const result = await liquidator.liquidateVault(utils.id("CFLR"), vault.address);

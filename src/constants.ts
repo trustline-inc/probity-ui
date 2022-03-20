@@ -18,39 +18,75 @@ import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contrac
 /**
  * Contract addresses
  */
-export const AUREI                = process.env && process.env.REACT_APP_AUREI                ? process.env.REACT_APP_AUREI                : "";
-export const AUCTIONEER           = process.env && process.env.REACT_APP_AUCTIONEER           ? process.env.REACT_APP_AUCTIONEER           : "";
-export const BRIDGE               = process.env && process.env.REACT_APP_BRIDGE               ? process.env.REACT_APP_BRIDGE               : "";
-export const LIQUIDATOR           = process.env && process.env.REACT_APP_LIQUIDATOR           ? process.env.REACT_APP_LIQUIDATOR           : ""
-export const PRICE_FEED           = process.env && process.env.REACT_APP_PRICE_FEED           ? process.env.REACT_APP_PRICE_FEED           : "";
-export const NATIVE_ASSET_MANAGER = process.env && process.env.REACT_APP_NATIVE_ASSET_MANAGER ? process.env.REACT_APP_NATIVE_ASSET_MANAGER : "";
-export const REGISTRY             = process.env && process.env.REACT_APP_REGISTRY             ? process.env.REACT_APP_REGISTRY             : "";
-export const STATE_CONNECTOR      = process.env && process.env.REACT_APP_STATE_CONNECTOR      ? process.env.REACT_APP_STATE_CONNECTOR      : "";
-export const PBT_TOKEN            = process.env && process.env.REACT_APP_PBT_TOKEN            ? process.env.REACT_APP_PBT_TOKEN            : "";
-export const RESERVE_POOL         = process.env && process.env.REACT_APP_RESERVE_POOL         ? process.env.REACT_APP_RESERVE_POOL         : "";
-export const TELLER               = process.env && process.env.REACT_APP_TELLER               ? process.env.REACT_APP_TELLER               : "";
-export const TREASURY             = process.env && process.env.REACT_APP_TREASURY             ? process.env.REACT_APP_TREASURY             : "";
-export const VAULT_ENGINE         = process.env && process.env.REACT_APP_VAULT_ENGINE         ? process.env.REACT_APP_VAULT_ENGINE         : "";
-export const VAULT_MANAGER        = process.env && process.env.REACT_APP_VAULT_MANAGER        ? process.env.REACT_APP_VAULT_MANAGER        : "";
+export const CONTRACTS: { [key: number]: any } = {
+  // Songbird
+  16: {
+    AUREI: {
+      address: "0x5322E9cE9DFc60372222F899D2B3683D45D9C167",
+      abi: AureiABI
+    },
+    AUCTIONEER: {
+      address: "0x80584b42bC51219fB5556e27fa6c16ADbaEA1E53",
+      abi: AuctioneerABI
+    },
+    BRIDGE: {
+      address: "",
+      abi: null
+    },
+    LIQUIDATOR: {
+      address: "0xfE850285031a976de274b969d098fBb9E94fc7bb",
+      abi: LiquidatorABI
+    },
+    PRICE_FEED: {
+      address: "0x51D82d9d17fAdaC40cDef03cf9CB07b1Fb65563C",
+      abi: PriceFeedABI
+    },
+    NATIVE_ASSET_MANAGER: {
+      address: "0x836BD8CBf5baFc971012397879490Ef7Ede64a38",
+      abi: NativeAssetManagerABI
+    },
+    REGISTRY: {
+      address: "0xCA33D13E5D03b262C06E98244cb47328d5f890f3",
+      abi: RegistryABI
+    },
+    PBT_TOKEN: {
+      address: "0x9E9600168c3b6FA0d3A779956969c41aaD21e1a1",
+      abi: PbtTokenABI
+    },
+    RESERVE_POOL: {
+      address: "0x13F332fd05F85909E1f1a74949c30fC74D9Ce3B1",
+      abi: ReservePoolABI
+    },
+    TELLER: {
+      address: "0x25bb8E3bf6228e9cd4F8A29337438357BdDbDfeF",
+      abi: TellerABI
+    },
+    TREASURY: {
+      address: "0x08E6eC157F126d30D3E2Ba0f9c3F95Fb53bd0613",
+      abi: TreasuryABI
+    },
+    VAULT_ENGINE: {
+      address: "0x02b1A3b0efB8D04A3d91e3CD548885bC4c4bC1c7",
+      abi: VaultEngineLimitedABI
+    },
+    INTERFACES: {
+      "0x5322E9cE9DFc60372222F899D2B3683D45D9C167": AureiABI,
+      "0x80584b42bC51219fB5556e27fa6c16ADbaEA1E53": AuctioneerABI,
+      "0xfE850285031a976de274b969d098fBb9E94fc7bb": LiquidatorABI,
+      "0x51D82d9d17fAdaC40cDef03cf9CB07b1Fb65563C": PriceFeedABI,
+      "0x836BD8CBf5baFc971012397879490Ef7Ede64a38": NativeAssetManagerABI,
+      "0xCA33D13E5D03b262C06E98244cb47328d5f890f3": RegistryABI,
+      "0x9E9600168c3b6FA0d3A779956969c41aaD21e1a1": PbtTokenABI,
+      "0x13F332fd05F85909E1f1a74949c30fC74D9Ce3B1": ReservePoolABI,
+      "0x25bb8E3bf6228e9cd4F8A29337438357BdDbDfeF": TellerABI,
+      "0x08E6eC157F126d30D3E2Ba0f9c3F95Fb53bd0613": TreasuryABI,
+      "0x02b1A3b0efB8D04A3d91e3CD548885bC4c4bC1c7": VaultEngineABI
+    }
+  },
+  // Coston
+  19: {
 
-/**
- * Contract ABIs
- * Contract addresses are lowercase because web3.eth.sendTransaction returns `tx.to` in lowercase.
- */
-export const INTERFACES = {
-  [AUREI]: AureiABI,
-  [AUCTIONEER]: AuctioneerABI,
-  [BRIDGE]: BridgeABI,
-  [LIQUIDATOR]: LiquidatorABI,
-  [PRICE_FEED]: PriceFeedABI,
-  [NATIVE_ASSET_MANAGER]: NativeAssetManagerABI,
-  [REGISTRY]: RegistryABI,
-  [RESERVE_POOL]: ReservePoolABI,
-  [STATE_CONNECTOR]: StateConnectorABI,
-  [PBT_TOKEN]: PbtTokenABI,
-  [TELLER]: TellerABI,
-  [TREASURY]: TreasuryABI,
-  [VAULT_ENGINE]: VaultEngineABI
+  }
 }
 
 // WalletConnect

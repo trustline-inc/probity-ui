@@ -8,7 +8,7 @@ import { Contract, utils } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { TELLER, TREASURY, VAULT_ENGINE, INTERFACES } from '../../constants';
+import { CONTRACTS } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -32,20 +32,20 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE, 'stablecoin', account], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { mutate: mutateVaultAurBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { mutate: mutateTotalDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'totalDebt'], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { data: rate } = useSWR([TELLER, 'apr'], {
-    fetcher: fetcher(library, INTERFACES[TELLER].abi),
+  const { data: rate } = useSWR([CONTRACTS[chainId!].TELLER, 'apr'], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].TELLER.abi),
   })
-  const { data: asset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
-    fetcher: fetcher(library, INTERFACES[VAULT_ENGINE].abi),
+  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
   /**
@@ -61,13 +61,13 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    */
   const borrow = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
 
       try {
         const result = await vaultEngine.modifyDebt(
           utils.id(getNativeTokenSymbol(chainId!)),
-          TREASURY,
+          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(collateralAmount), 18),
           utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
         );
@@ -92,13 +92,13 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    */
   const repay = async () => {
     if (library && account) {
-      const vaultEngine = new Contract(VAULT_ENGINE, INTERFACES[VAULT_ENGINE].abi, library.getSigner())
+      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
 
       try {
         const result = await vaultEngine.modifyDebt(
           utils.id(getNativeTokenSymbol(chainId!)),
-          TREASURY,
+          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(-collateralAmount), 18),
           utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
         );

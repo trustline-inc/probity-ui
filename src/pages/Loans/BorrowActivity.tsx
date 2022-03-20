@@ -6,7 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import PriceFeed from "../../components/PriceFeed";
 import { BigNumber, utils } from "ethers";
 import fetcher from "../../fetcher";
-import { RAY, VAULT_ENGINE } from '../../constants';
+import { RAY, CONTRACTS } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
@@ -42,10 +42,10 @@ function BorrowActivity({
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate.toString())
 
-  const { data: totalDebt } = useSWR([VAULT_ENGINE, "totalDebt"], {
+  const { data: totalDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "totalDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalEquity } = useSWR([VAULT_ENGINE, "totalEquity"], {
+  const { data: totalEquity } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "totalEquity"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
