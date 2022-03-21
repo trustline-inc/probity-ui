@@ -7,6 +7,7 @@ import {
   useHistory
 } from "react-router-dom";
 import useSWR from 'swr';
+import { Alert } from "react-bootstrap"
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
@@ -167,7 +168,7 @@ function App() {
                             <strong>
                               <i className="fas fa-exclamation-circle"></i> Notice
                             </strong>{" "}
-                            Probity is currently running on a test network only. The Songbird release is scheduled to be available for limited testing in Q1 2022.
+                            The Songbird beta release is now live! Vaults are limited to 1000 SGB.
                             <button
                               type="button"
                               className="btn-close"
@@ -179,6 +180,9 @@ function App() {
                             ></button>
                           </div>
                         ) : null}
+                        <Alert variant="danger">
+                          Caution: This is beta software and there may be bugs. User acknowledges that a bug may result in complete loss of funds. By using this software, the user agrees not to hold Trustline Inc. ("developer") liable for any losses incurred.
+                        </Alert>
                       </div>
                     </div>
 
