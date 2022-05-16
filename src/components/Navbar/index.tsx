@@ -157,7 +157,7 @@ function Navbar() {
           </li>
           {
             // Only show Transfers tab if the bridge contract is in the env.
-            CONTRACTS[chainId!].BRIDGE.address && (
+            CONTRACTS[chainId!]?.BRIDGE?.address && (
               <li className="nav-item my-1">
                 <NavLink className="nav-link" activeClassName="active" to="/transfers">
                   <i className="fas fa-paper-plane" /> Transfers

@@ -19,6 +19,13 @@ import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contrac
  * Contract addresses
  */
 export const CONTRACTS: { [key: number]: any } = {
+  // Local
+  1337: {
+    BRIDGE: {
+      address: "",
+      abi: null
+    },
+  },
   // Songbird
   16: {
     AUREI: {

@@ -146,7 +146,7 @@ function App() {
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
-          (auth && new Date(auth?.expiresAt) > new Date()) ? (
+          (process.env.REQUIRE_AUTH ? (auth && new Date(auth?.expiresAt) > new Date()) : true) ? (
             <>
               <div className="d-flex main-container min-vh-100">
                 <div className="min-vh-100 left-nav">
