@@ -2159,6 +2159,11 @@
     "mkdirp" "^1.0.4"
     "rimraf" "^3.0.2"
 
+"@openzeppelin/contracts@^4.5.0":
+  "integrity" "sha512-8vi4d50NNya/bQqCmaVzvHNmwHvS0OBKb7HNtuNwEE3scXWrP31fKQoGxNMT+KbzmrNZzatE3QK5p2gFONI/hg=="
+  "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.6.0.tgz"
+  "version" "4.6.0"
+
 "@pedrouid/environment@^1.0.1":
   "integrity" "sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug=="
   "resolved" "https://registry.npmjs.org/@pedrouid/environment/-/environment-1.0.1.tgz"
@@ -2493,10 +2498,12 @@
     "axios" "^0.22.0"
     "ripple-lib" "^1.10.0"
 
-"@trustline-inc/probity@1.0.0-alpha13":
-  "integrity" "sha512-7XjYUVj6a8E/hWLZsrJVOsQEXj2XfD1+U8IqE6aE70VRZVRKxyZg5WuYClqFSmlJ1+L5ZNGk9L0d+GvDxoTVmg=="
-  "resolved" "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha13/7501c5e43b8afb343839315c713bb52bd875d520935f016878604a1f93d28414"
-  "version" "1.0.0-alpha13"
+"@trustline-inc/probity@1.0.0-alpha14":
+  "integrity" "sha512-+bNeNNjbuHZIiC/Z2wH9X5TLP5pCrfDAGVplaCYni1+yfQbq1hlG96fEA6OkCLeTb4pcBxyh1l5wvFJqIr9EWw=="
+  "resolved" "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha14/360ef17a9abc3eeb79343a88eba9575364dee84ea434321625380b3bb2cd6810"
+  "version" "1.0.0-alpha14"
+  dependencies:
+    "@openzeppelin/contracts" "^4.5.0"
 
 "@types/aria-query@^4.2.0":
   "integrity" "sha512-HnYpAE1Y6kRyKM/XkEuiRQhTHvkzMBurTHnpFLYLBGPIylZNPs9jJcuOOYWxPLJCSEtmZT0Y8rHDokKN7rRTig=="
