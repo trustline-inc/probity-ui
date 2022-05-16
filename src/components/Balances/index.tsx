@@ -66,13 +66,14 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([AUREI.address, 'totalSupply'], {
     fetcher: fetcher(library, AUREI.abi),
   })
-  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE, 'totalDebt'], {
+  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'totalDebt'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE, 'totalEquity'], {
+  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'totalEquity'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE, 'assets', utils.id(currentAsset)], {
+  console.log(VAULT_ENGINE)
+  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
 

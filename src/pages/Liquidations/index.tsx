@@ -33,7 +33,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
     if (library) {
       (async () => {
         const vault = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
-        const _users = await vault.getUserList();
+        const _users = await vault.getVaultList();
         setUsers(_users);
       })()
     }
