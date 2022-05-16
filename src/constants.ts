@@ -21,10 +21,67 @@ import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contrac
 export const CONTRACTS: { [key: number]: any } = {
   // Local
   1337: {
+    AUREI: {
+      address: "0x320Dd91E71490799a763EE0e08626C634C44467b",
+      abi: AureiABI
+    },
+    AUCTIONEER: {
+      address: "0x23C72E4b949f30476E03B099A7c09D871ECD234f",
+      abi: AuctioneerABI
+    },
     BRIDGE: {
       address: "",
       abi: null
     },
+    LIQUIDATOR: {
+      address: "0xAd7a92efd3f13e13C5259Ad170e28b7f25343509",
+      abi: LiquidatorABI
+    },
+    PRICE_FEED: {
+      address: "0xdd3667DF55db13F6B36eb46d5168f6DFB59E20dF",
+      abi: PriceFeedABI
+    },
+    NATIVE_ASSET_MANAGER: {
+      address: "0xe6Ddb964B81db85aa920d3eCDF692334aA0236dA",
+      abi: NativeAssetManagerABI
+    },
+    REGISTRY: {
+      address: "0xa0004f1e4dB53925C89900EC1dD8774BCA08c451",
+      abi: RegistryABI
+    },
+    PBT_TOKEN: {
+      address: "0x3aa5D1683c8c2af0bf98c986d2B25dBA239DdFaa",
+      abi: PbtTokenABI
+    },
+    RESERVE_POOL: {
+      address: "0xcd012878cC015788767fb0B07ffba6a00b831B76",
+      abi: ReservePoolABI
+    },
+    TELLER: {
+      address: "0x004E80Ae535360322b070c4d380308D1A0177b21",
+      abi: TellerABI
+    },
+    TREASURY: {
+      address: "0x1fC60084AdC09B7617BC3431F1008851AfaC03D6",
+      abi: TreasuryABI
+    },
+    VAULT_ENGINE: {
+      address: "0x40c7009A2e026d596bB9E61C909d6F8eB255dcFa",
+      abi: VaultEngineLimitedABI
+    },
+    INTERFACES: {
+      "0x320Dd91E71490799a763EE0e08626C634C44467b": AureiABI,
+      "0x23C72E4b949f30476E03B099A7c09D871ECD234f": AuctioneerABI,
+      "0xAd7a92efd3f13e13C5259Ad170e28b7f25343509": LiquidatorABI,
+      "0xdd3667DF55db13F6B36eb46d5168f6DFB59E20dF": PriceFeedABI,
+      "0xe6Ddb964B81db85aa920d3eCDF692334aA0236dA": NativeAssetManagerABI,
+      "0xa0004f1e4dB53925C89900EC1dD8774BCA08c451": RegistryABI,
+      "0x3aa5D1683c8c2af0bf98c986d2B25dBA239DdFaa": PbtTokenABI,
+      "0xcd012878cC015788767fb0B07ffba6a00b831B76": ReservePoolABI,
+      "0x004E80Ae535360322b070c4d380308D1A0177b21": TellerABI,
+      "0x1fC60084AdC09B7617BC3431F1008851AfaC03D6": TreasuryABI,
+      "0x40c7009A2e026d596bB9E61C909d6F8eB255dcFa": VaultEngineABI
+    }
   },
   // Songbird
   16: {

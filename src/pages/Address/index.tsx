@@ -9,21 +9,23 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
 
   React.useEffect(() => {
     (async () => {
-      try {
-        let url;
-        if (process.env.NODE_ENV === "production")
-          url = `https://api.trustline.co/v1/auth/${globalId}`
-        else
-          url = `http://localhost:8080/v1/auth/${globalId}`
-        const response = await axios({
-          method: "GET",
-          url
-        })
-        if (response.status === 200) {
-          setAddress(response.data.result.address)
+      if (process.env.REQUIRE_AUTH) {
+        try {
+          let url;
+          if (process.env.NODE_ENV === "production")
+            url = `https://api.trustline.co/v1/auth/${globalId}`
+          else
+            url = `http://localhost:8080/v1/auth/${globalId}`
+          const response = await axios({
+            method: "GET",
+            url
+          })
+          if (response.status === 200) {
+            setAddress(response.data.result.address)
+          }
+        } catch (error) {
+          console.error(error)
         }
-      } catch (error) {
-        console.error(error)
       }
     })()
   }, [globalId])
