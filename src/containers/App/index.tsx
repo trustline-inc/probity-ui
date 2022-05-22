@@ -146,7 +146,7 @@ function App() {
       <div className="App">
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
-          (process.env.REQUIRE_AUTH ? (auth && new Date(auth?.expiresAt) > new Date()) : true) ? (
+          (process.env.REACT_APP_REQUIRE_AUTH ? (auth && new Date(auth?.expiresAt) > new Date()) : true) ? (
             <>
               <div className="d-flex main-container min-vh-100">
                 <div className="min-vh-100 left-nav">
@@ -157,7 +157,7 @@ function App() {
                   </EventContext.Provider>
                 </div>
                 <div className="flex-grow-1 min-vh-100 page-container py-2 px-md-3">
-                  <div className="container-fluid h-100">
+                  <div className="container-fluid">
                     <div className="row">
                       <div className="col-12">
                         {displayInfoAlert ? (
