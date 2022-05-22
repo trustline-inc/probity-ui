@@ -180,7 +180,7 @@ function App() {
                             ></button>
                           </div>
                         ) : null}
-                        <Alert variant="danger">
+                        <Alert variant="warning">
                           Caution: This is beta software and there may be bugs. User acknowledges that a bug may result in complete loss of funds. By using this software, the user agrees not to hold Trustline Inc. ("developer") liable for any losses incurred.
                         </Alert>
                       </div>
