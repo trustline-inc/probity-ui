@@ -27,8 +27,8 @@ function Stablecoins() {
   const { mutate: mutateVaultAurBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateAurErc20Balance } = useSWR([CONTRACTS[chainId!].AUREI.address, 'balanceOf', account], {
-    fetcher: fetcher(library, CONTRACTS[chainId!].AUREI.abi),
+  const { mutate: mutateAurErc20Balance } = useSWR([CONTRACTS[chainId!].USD.address, 'balanceOf', account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].USD.abi),
   })
 
   // Set activity by the path

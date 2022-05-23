@@ -12,8 +12,7 @@ import { RAY, CONTRACTS } from "../../constants";
 import './index.css';
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
-import USD from "../../assets/USD.png"
-import XRP from "../../assets/xrp.png"
+import USD from "../../assets/usd.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const assetIcons: { [key: string]: string } = {
@@ -42,8 +41,8 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const [activeKey, setActiveKey] = React.useState("assets")
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
-  const AUREI = CONTRACTS[chainId!].AUREI
-  const PBT_TOKEN = CONTRACTS[chainId!].PBT_TOKEN
+  const USD = CONTRACTS[chainId!].USD
+  const PBT = CONTRACTS[chainId!].PBT
   const PRICE_FEED = CONTRACTS[chainId!].PRICE_FEED
   const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
@@ -57,14 +56,14 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([AUREI.address, 'balanceOf', account], {
-    fetcher: fetcher(library, AUREI.abi),
+  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([USD.address, 'balanceOf', account], {
+    fetcher: fetcher(library, USD.abi),
   })
-  const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT_TOKEN.address, 'balanceOf', account], {
-    fetcher: fetcher(library, PBT_TOKEN.abi),
+  const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
+    fetcher: fetcher(library, PBT.abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([AUREI.address, 'totalSupply'], {
-    fetcher: fetcher(library, AUREI.abi),
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'totalSupply'], {
+    fetcher: fetcher(library, USD.abi),
   })
   const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'totalDebt'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
@@ -221,7 +220,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                         <li className="dropdown-item border" onClick={() => ctx.updateAsset("USD")}>
                           <div className="asset py-2 d-flex justify-content-between">
                             <h4 className="d-flex align-items-center mb-0">USD</h4>
-                            <img src={USD} className="rounded-circle border" alt="USD" height="50" />
+                            <img src={assetIcons["USD"]} className="rounded-circle border" alt="USD" height="50" />
                           </div>
                         </li>
                         <li className="dropdown-item border" onClick={() => ctx.updateAsset(nativeTokenSymbol)}>

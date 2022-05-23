@@ -11,6 +11,7 @@ import * as bridge from "@trustline-inc/bridge"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
+  PROJECT_ID,
   DEFAULT_APP_METADATA,
   DEFAULT_LOGGER,
   DEFAULT_METHODS,
@@ -22,7 +23,7 @@ import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
-import { PairingTypes, SessionTypes } from "@walletconnect/types";
+import { PairingTypes, SessionTypes, ClientTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const location = useLocation();
@@ -34,7 +35,7 @@ export default function Transfers() {
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>([])
   const [session, setSession] = React.useState<any|undefined>()
-  const [pairings, setPairings] = React.useState<string[]|undefined>()
+  const [pairings, setPairings] = React.useState<any|string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [username, setUsername] = React.useState("");
@@ -70,42 +71,45 @@ export default function Transfers() {
     (async () => {
       try {
         if (!client) {
-          const _client = await Client.init({
+          const options: ClientTypes.Options = {
             logger: DEFAULT_LOGGER,
             relayUrl: DEFAULT_RELAY_PROVIDER,
-            projectId: process.env.REACT_APP_WALLETCONNECT_API_KEY,
+            projectId: PROJECT_ID,
             metadata: DEFAULT_APP_METADATA
-          });
-
-          _client.on(
-            CLIENT_EVENTS.pairing_ping,
-            async (proposal: any) => {
-              const { uri } = proposal.signal.params;
-              console.log("EVENT", "QR Code Modal open");
-              QRCodeModal.open(uri, () => {
-                console.log("EVENT", "QR Code Modal closed");
-              });
-            },
-          );
-
-          _client.on(CLIENT_EVENTS.pairing.created, async (proposal: any) => {
-            if (typeof _client === "undefined") return;
-            setPairings(_client.pairing.topics);
-          });
-
-          _client.on(CLIENT_EVENTS.session.deleted, (session: any) => {
-            if (session.topic !== session?.topic) return;
-            console.log("EVENT", "session_deleted");
-          });
-
-          setClient(_client)
-          setPairings(_client.pairing.topics);
-          if (typeof session !== "undefined") return;
-          // populates existing session to state (assume only the top one)
-          if (_client.session.topics.length) {
-            const session = await _client.session.get(_client.session.topics[0]);
-            onSessionConnected(session);
           }
+          console.log(options)
+          const _client = new Client(options);
+          console.log(_client)
+
+          // _client.on(
+          //   CLIENT_EVENTS.request,
+          //   async (proposal: any) => {
+          //     const { uri } = proposal.signal.params;
+          //     console.log("EVENT", "QR Code Modal open");
+          //     QRCodeModal.open(uri, () => {
+          //       console.log("EVENT", "QR Code Modal closed");
+          //     });
+          //   },
+          // );
+
+          // _client.on(CLIENT_EVENTS.request, async (proposal: any) => {
+          //   if (typeof _client === "undefined") return;
+          //   setPairings(_client.pairing);
+          // });
+
+          // _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
+          //   if (session.topic !== session?.topic) return;
+          //   console.log("EVENT", "session_deleted");
+          // });
+
+          // setClient(_client)
+          // setPairings(_client.pairing);
+          // if (typeof session !== "undefined") return;
+          // populates existing session to state (assume only the top one)
+          // if (_client.session.length) {
+            // const session = await _client.session.get(_client.session[0]);
+            // onSessionConnected(session);
+          // }
         }
       } catch (error) {
         console.log("connection error")
@@ -198,16 +202,24 @@ export default function Transfers() {
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
       const session = await client.connect({
-        metadata: getAppMetadata() || DEFAULT_APP_METADATA,
-        pairing,
-        permissions: {
-          blockchain: {
-            chains: ["xrpl:2"],
-          },
-          jsonrpc: {
+        requiredNamespaces: {
+          xrpl: {
+            chains: ["xrpl:1, xrpl:2"],
             methods,
+            events: []
           },
-        },
+
+        }
+        // metadata: getAppMetadata() || DEFAULT_APP_METADATA,
+        // pairing,
+        // permissions: {
+        //   blockchain: {
+        //     chains: ["xrpl:2"],
+        //   },
+        //   jsonrpc: {
+        //     methods,
+        //   },
+        // },
       });
       console.log("session", session)
 
@@ -244,13 +256,13 @@ export default function Transfers() {
    * @param _session
    * Runs when WalletConnect session is created. Called in `connect`.
    */
-  const onSessionConnected = async (_session: SessionTypes.Settled) => {
+  const onSessionConnected = async (_session: any) => {
     console.log("Connected to session", _session)
     setSession(_session)
     onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
 
     // Make RPC request
-    const success: boolean = await client?.request({
+    const success = await client?.request({
       topic: _session.topic,
       chainId: "xrpl:2",
       request: {
@@ -392,7 +404,7 @@ export default function Transfers() {
             destination: "XRPL_TESTNET"
           },
           amount: BigNumber.from(transferAmount).mul(WAD),
-          tokenAddress: CONTRACTS[chainId!].AUREI.address,
+          tokenAddress: CONTRACTS[chainId!].USD.address,
           bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
           provider: library,
           signer: library.getSigner() as any
@@ -405,7 +417,7 @@ export default function Transfers() {
         })
 
         // First check the allowance
-        const stablecoin = new Contract(CONTRACTS[chainId!].AUREI.address, CONTRACTS[chainId!].AUREI.abi, library.getSigner())
+        const stablecoin = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
         const allowance = await stablecoin.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 
         if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
@@ -413,7 +425,7 @@ export default function Transfers() {
           setTransferModalBody(`Permit the Bridge contract to spend your USD for the transfer.`)
           let data = await _transfer.approve()
           const transactionObject = {
-            to: CONTRACTS[chainId!].AUREI.address,
+            to: CONTRACTS[chainId!].USD.address,
             from: account,
             data
           };
@@ -539,7 +551,7 @@ export default function Transfers() {
           source: "XRPL",
           destination: "FLARE"
         },
-        tokenAddress: CONTRACTS[chainId!].AUREI.address,
+        tokenAddress: CONTRACTS[chainId!].USD.address,
         bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
         provider: library,
         signer: library!.getSigner() as any

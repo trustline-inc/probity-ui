@@ -8,14 +8,14 @@ function Status() {
   const [loading, setLoading] = React.useState(false);
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [statuses, setStatuses] = React.useState<{ [key: string]: boolean}>({
-    AUREI: false,
+    USD: false,
     AUCTIONEER: false,
     BRIDGE: false,
     LIQUIDATOR: false,
     PRICE_FEED: false,
     NATIVE_ASSET_MANAGER: false,
     REGISTRY: false,
-    PBT_TOKEN: false,
+    PBT: false,
     RESERVE_POOL: false,
     TELLER: false,
     TREASURY: false,
@@ -24,14 +24,14 @@ function Status() {
   })
   const [fetched, setFetched] = React.useState(false)
   const contracts: { [key: string]: any } = {
-    "AUREI": CONTRACTS[chainId!].AUREI,
+    "USD": CONTRACTS[chainId!].USD,
     "AUCTIONEER": CONTRACTS[chainId!].AUCTIONEER,
     "BRIDGE": CONTRACTS[chainId!].BRIDGE,
     "LIQUIDATOR": CONTRACTS[chainId!].LIQUIDATOR,
     "PRICE_FEED": CONTRACTS[chainId!].PRICE_FEED,
     "NATIVE_ASSET_MANAGER": CONTRACTS[chainId!].NATIVE_ASSET_MANAGER,
     "REGISTRY": CONTRACTS[chainId!].REGISTRY,
-    "PBT_TOKEN": CONTRACTS[chainId!].PBT_TOKEN,
+    "PBT": CONTRACTS[chainId!].PBT,
     "RESERVE_POOL": CONTRACTS[chainId!].RESERVE_POOL,
     "TELLER": CONTRACTS[chainId!].TELLER,
     "TREASURY": CONTRACTS[chainId!].TREASURY,

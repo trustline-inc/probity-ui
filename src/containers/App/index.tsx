@@ -168,7 +168,7 @@ function App() {
                             <strong>
                               <i className="fas fa-exclamation-circle"></i> Notice
                             </strong>{" "}
-                            The Songbird beta release is now live! Vaults are limited to 1000 SGB.
+                            The beta release is now live! Vault issuance is limited to $1,000.
                             <button
                               type="button"
                               className="btn-close"

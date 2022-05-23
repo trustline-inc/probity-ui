@@ -2,8 +2,7 @@ import React from "react"
 import { Modal } from "react-bootstrap"
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
-import USD from "../../assets/USD.png"
-import XRP from "../../assets/xrp.png"
+import USD from "../../assets/usd.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const IMAGES: { [key: string]: any } = {
