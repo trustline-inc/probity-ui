@@ -268,7 +268,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Equity</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} AUR
+                        {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -288,7 +288,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Interest Earned</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} AUR
+                        {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
                       </span>
                     </div>
                   </Accordion.Body>
@@ -301,7 +301,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Debt</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} AUR
+                        {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -326,12 +326,12 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Vault AUR</h6>
-                      <span className="text-truncate">{vaultAurBalance ? numbro(utils.formatEther(vaultAurBalance.div(RAY))).format(formatOptions) : "0"} AUR</span>
+                      <h6>Vault USD</h6>
+                      <span className="text-truncate">{vaultAurBalance ? numbro(utils.formatEther(vaultAurBalance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>ERC20 AUR</h6>
-                      <span className="text-truncate">{aurErc20Balance ? numbro(utils.formatEther(aurErc20Balance)).format(formatOptions) : "0"} AUR</span>
+                      <h6>ERC20 USD</h6>
+                      <span className="text-truncate">{aurErc20Balance ? numbro(utils.formatEther(aurErc20Balance)).format(formatOptions) : "0"} USD</span>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
@@ -357,15 +357,15 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               <h5>System Stats</h5>
               <div className="my-2 mt-4 d-flex justify-content-between">
                 <h6>Circulating Supply</h6>
-                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} AUR</span>
+                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
-                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} AUR</span>
+                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Working Capital</h6>
-                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} AUR</span>
+                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
@@ -373,7 +373,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
-                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} AUR</span>
+                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
             </>
           )

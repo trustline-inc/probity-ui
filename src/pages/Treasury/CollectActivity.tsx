@@ -31,8 +31,8 @@ function CollectActivity({
                 <label className="form-check-label" htmlFor="PBT">PBT</label>
               </div>
               <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="interestType" id="AUR" value="AUR" checked={interestType === "AUR"} onChange={() => { setInterestType("AUR") }} />
-                <label className="form-check-label" htmlFor="AUR">AUR</label>
+                <input className="form-check-input" type="radio" name="interestType" id="USD" value="USD" checked={interestType === "USD"} onChange={() => { setInterestType("USD") }} />
+                <label className="form-check-label" htmlFor="USD">USD</label>
               </div>
             </div>
           </div>

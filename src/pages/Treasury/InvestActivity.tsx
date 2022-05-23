@@ -88,7 +88,7 @@ function InvestActivity({
               onChange={onEquityAmountChange}
               value={equityAmount === 0 ? "" : numbro(equityAmount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">USD</span>
           </div>
         </div>
       </div>

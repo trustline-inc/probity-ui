@@ -25,7 +25,7 @@ function WithdrawActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Withdrawal Amount<br/>
             <small className="form-text text-muted">
-              Amount of ERC20 AUR to withdraw
+              Amount of ERC20 USD to withdraw
             </small>
           </label>
           <div className="input-group">
@@ -38,7 +38,7 @@ function WithdrawActivity({
               onChange={onAmountChange}
               value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">USD</span>
           </div>
         </div>
       </div>

@@ -56,7 +56,7 @@ function RepayActivity({
           onChange={onAmountChange}
           value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
         />
-        <span className="input-group-text font-monospace">AUR</span>
+        <span className="input-group-text font-monospace">USD</span>
       </div>
       <br/>
       <label className="form-label">

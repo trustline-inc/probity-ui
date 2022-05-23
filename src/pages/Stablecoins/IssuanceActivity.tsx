@@ -25,7 +25,7 @@ function IssuanceActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Issuance Amount<br/>
             <small className="form-text text-muted">
-              Amount of AUR to issue
+              Amount of USD to issue
             </small>
           </label>
           <div className="input-group">
@@ -38,7 +38,7 @@ function IssuanceActivity({
               onChange={onAmountChange}
               value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">USD</span>
           </div>
         </div>
       </div>

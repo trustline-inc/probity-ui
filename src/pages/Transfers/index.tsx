@@ -21,7 +21,7 @@ import {
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import WalletConnectClient, { CLIENT_EVENTS } from "@walletconnect/client";
+import Client, { CLIENT_EVENTS } from "@walletconnect/client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
@@ -32,8 +32,8 @@ export default function Transfers() {
     storage ? JSON.parse(storage) : null
   );
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
-  const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>()
-  const [session, setSession] = React.useState<SessionTypes.Settled|undefined>()
+  const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>([])
+  const [session, setSession] = React.useState<any|undefined>()
   const [pairings, setPairings] = React.useState<string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
@@ -51,7 +51,7 @@ export default function Transfers() {
   const [xrpAddress, setXrpAddress] = React.useState("")
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
-  const [client, setClient] = React.useState<WalletConnectClient>()
+  const [client, setClient] = React.useState<Client>()
   const ctx = useContext(EventContext)
 
   // Transfer modal
@@ -70,16 +70,16 @@ export default function Transfers() {
     (async () => {
       try {
         if (!client) {
-          const _client = await WalletConnectClient.init({
-            controller: false,
+          const _client = await Client.init({
             logger: DEFAULT_LOGGER,
             relayUrl: DEFAULT_RELAY_PROVIDER,
-            projectId: process.env.REACT_APP_WALLETCONNECT_API_KEY
+            projectId: process.env.REACT_APP_WALLETCONNECT_API_KEY,
+            metadata: DEFAULT_APP_METADATA
           });
 
           _client.on(
-            CLIENT_EVENTS.pairing.proposal,
-            async (proposal: PairingTypes.Proposal) => {
+            CLIENT_EVENTS.pairing_ping,
+            async (proposal: any) => {
               const { uri } = proposal.signal.params;
               console.log("EVENT", "QR Code Modal open");
               QRCodeModal.open(uri, () => {
@@ -88,12 +88,12 @@ export default function Transfers() {
             },
           );
 
-          _client.on(CLIENT_EVENTS.pairing.created, async (proposal: PairingTypes.Settled) => {
+          _client.on(CLIENT_EVENTS.pairing.created, async (proposal: any) => {
             if (typeof _client === "undefined") return;
             setPairings(_client.pairing.topics);
           });
 
-          _client.on(CLIENT_EVENTS.session.deleted, (session: SessionTypes.Settled) => {
+          _client.on(CLIENT_EVENTS.session.deleted, (session: any) => {
             if (session.topic !== session?.topic) return;
             console.log("EVENT", "session_deleted");
           });
@@ -119,7 +119,7 @@ export default function Transfers() {
       if (client && session) {
         console.log("attempting disconnect")
         client.disconnect({
-          topic: session.topic,
+          topic: (session as any).topic,
           reason: ERROR.USER_DISCONNECTED.format(),
         });
       }
@@ -233,7 +233,7 @@ export default function Transfers() {
       throw new Error("Session is not connected");
     }
     await client.disconnect({
-      topic: session.topic,
+      topic: (session as any).topic,
       reason: ERROR.USER_DISCONNECTED.format(),
     });
     console.log("disconnected")
@@ -257,7 +257,7 @@ export default function Transfers() {
         method: "createTrustLine",
         params: [
           issuerAddress,
-          "AUR"
+          "USD"
         ],
       },
     });
@@ -274,7 +274,7 @@ export default function Transfers() {
       setTransferModalBody(
         <>
           <p>
-            Issue precisely {transferAmount} AUR from the issuing account to the receiving account.
+            Issue precisely {transferAmount} USD from the issuing account to the receiving account.
           </p>
           <div>
             From: <code>{issuerAddress}</code><br/>
@@ -410,7 +410,7 @@ export default function Transfers() {
 
         if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
           setTransferStage("OUTBOUND_PERMIT")
-          setTransferModalBody(`Permit the Bridge contract to spend your AUR for the transfer.`)
+          setTransferModalBody(`Permit the Bridge contract to spend your USD for the transfer.`)
           let data = await _transfer.approve()
           const transactionObject = {
             to: CONTRACTS[chainId!].AUREI.address,
@@ -467,7 +467,7 @@ export default function Transfers() {
         })
         setTransferModalBody(
           <>
-            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>AUR</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>USD</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
           </>
         )
       }
@@ -612,7 +612,7 @@ export default function Transfers() {
       setTransferModalBody(
         <div className="d-flex flex-column justify-content-center align-items-center my-5">
           <p>The next screen will display a QR code that establishes a WalletConnect session with a supported smartphone wallet.</p>
-          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → AUR → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
+          <p>To scan the QR code from the <a href="https://trustline.co" target="blank">Trustline</a> wallet, go to the Wallet tab → USD → Outbound Transfer. Enter the amount, and scan the code on the next dialog screen.</p>
           <button className="btn btn-primary my-4" onClick={() => { console.log("test") }}>Continue</button>
         </div>
       )
@@ -778,7 +778,7 @@ export default function Transfers() {
         <div className="d-flex align-items-center me-2">
           <span className="fa fa-info-circle"></span>
         </div>
-        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer AUR between Songbird and the XRP Ledger networks via Trustline's <a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
+        <p className="mb-0">This feature uses the <a href="https://walletconnect.com" target="blank">WalletConnect</a> and <a href="https://paystring.org/" target="blank">PayString</a> protocols to transfer USD between Songbird and the XRP Ledger networks via Trustline's <a href="https://trustline.co/bridge" target="blank">non-custodial bridge</a>. Only recommended for advanced users.</p>
       </div>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         {/* Activity Navigation */}
@@ -797,13 +797,13 @@ export default function Transfers() {
           {
             activity === ActivityType.OutboundTransfer && (
               <>
-                <h4 className="text-center">Send AUR</h4>
+                <h4 className="text-center">Send USD</h4>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
                     <label className="form-label">Amount</label>
                     <div className="input-group">
                       <input type="number" min="0.000000000000000000" placeholder="0.000000000000000000" className="form-control" value={transferAmount ? transferAmount : ""} onChange={onTransferAmountChange} />
-                      <span className="input-group-text font-monospace">AUR</span>
+                      <span className="input-group-text font-monospace">USD</span>
                     </div>
                   </div>
                 </div>
@@ -857,7 +857,7 @@ export default function Transfers() {
           {
             activity === ActivityType.InboundTransfer && (
               <>
-                <h4 className="text-center">Receive AUR</h4>
+                <h4 className="text-center">Receive USD</h4>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
                     <button

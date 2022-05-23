@@ -25,7 +25,7 @@ function DepositActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Deposit Amount<br/>
             <small className="form-text text-muted">
-              Amount of ERC20 AUR to deposit
+              Amount of ERC20 USD to deposit
             </small>
           </label>
           <div className="input-group">
@@ -38,7 +38,7 @@ function DepositActivity({
               onChange={onAmountChange}
               value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">USD</span>
           </div>
         </div>
       </div>

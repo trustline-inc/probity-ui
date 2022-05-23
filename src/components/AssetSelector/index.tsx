@@ -9,6 +9,7 @@ import AssetContext from "../../contexts/AssetContext"
 const IMAGES: { [key: string]: any } = {
   "FLR": FLR,
   "SGB": SGB,
+  "CFLR": FLR,
 }
 
 export default function AssetSelector({

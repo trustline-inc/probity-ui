@@ -96,7 +96,7 @@ function BorrowActivity({
           onChange={onAmountChange}
           value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
         />
-        <span className="input-group-text font-monospace">AUR</span>
+        <span className="input-group-text font-monospace">USD</span>
       </div>
       <div className="row pt-3 pb-1">
         <div className="col-12">

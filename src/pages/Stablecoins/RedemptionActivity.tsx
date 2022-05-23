@@ -25,7 +25,7 @@ function RedemptionActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Redemption Amount<br/>
             <small className="form-text text-muted">
-              Amount of AUR to redeem
+              Amount of USD to redeem
             </small>
           </label>
           <div className="input-group">
@@ -38,7 +38,7 @@ function RedemptionActivity({
               onChange={onAmountChange}
               value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
             />
-            <span className="input-group-text font-monospace">AUR</span>
+            <span className="input-group-text font-monospace">USD</span>
           </div>
         </div>
       </div>

@@ -200,7 +200,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Debt
                           </div>
                           <div className="col-9">
-                            {numbro(utils.formatUnits(auction?.debt, 45)).format({ ...formatOptions, mantissa: 18 })} AUR
+                            {numbro(utils.formatUnits(auction?.debt, 45)).format({ ...formatOptions, mantissa: 18 })} USD
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -216,7 +216,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Start Price
                           </div>
                           <div className="col-9">
-                            {numbro(utils.formatUnits(auction?.startPrice, 27)).format({ ...formatOptions, mantissa: 27 })} AUR
+                            {numbro(utils.formatUnits(auction?.startPrice, 27)).format({ ...formatOptions, mantissa: 27 })} USD
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -224,7 +224,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             Current Price
                           </div>
                           <div className="col-9">
-                            {numbro(utils.formatUnits(auction?.currentPrice, 27)).format({ ...formatOptions, mantissa: 27 })} AUR
+                            {numbro(utils.formatUnits(auction?.currentPrice, 27)).format({ ...formatOptions, mantissa: 27 })} USD
                           </div>
                         </div>
                         <div className="row mb-1">
@@ -251,7 +251,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             <input className="form-control" placeholder="0.00" onChange={onChangeLot} />
                           </div>
                           <div className="my-3">
-                            <label>Max Price (AUR)</label>
+                            <label>Max Price (USD)</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeMaxPrice} />
                           </div>
                           <button disabled={auction?.isOver} className="btn btn-outline-primary my-3 w-100" onClick={() => buyNow(auction.id, lot, maxPrice)}>
@@ -268,7 +268,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                           <h6>Current High Bid</h6>
                           {
                             auction.highestBid ? (
-                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} AUR</div>
+                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} USD</div>
                             ) : (
                               <p className="text-muted">No bids</p>
                             )
@@ -282,7 +282,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidLot} />
                           </div>
                           <div className="my-3">
-                            <label>Bid Price (AUR)</label>
+                            <label>Bid Price (USD)</label>
                             <input className="form-control" placeholder="0.00" onChange={onChangeBidPrice} />
                           </div>
                           <button className="btn btn-primary w-100" disabled={metamaskLoading || (!bidPrice || !bidLot)} onClick={(event) => placeBid(auction.id)}>

@@ -51,6 +51,8 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
       }
     } catch (error) {
       console.error(error)
+      const message = (error as any)?.response.data.error.message
+      if (message) alert(message)
     }
   }
 

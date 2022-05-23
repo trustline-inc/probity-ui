@@ -80,7 +80,7 @@ export default function Transactions() {
               (name === "WithdrawStablecoin") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()} AUR</div>
+                    <div>Amount: {utils.formatEther(log.args.amount).toString()} USD</div>
                   </div>
                 </Accordion.Collapse>
               )

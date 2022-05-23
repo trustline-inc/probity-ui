@@ -85,8 +85,8 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
           _vaults.push({
             address: address,
-            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} AUR`,
-            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} AUR`,
+            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
+            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} USD`,
             collateralRatio,
             underlyingRatio,
             liquidationEligible,
