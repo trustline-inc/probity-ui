@@ -63,14 +63,17 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
+      const args = [
+        utils.id(getNativeTokenSymbol(chainId!)),
+        CONTRACTS[chainId!].TREASURY.address,
+        utils.parseUnits(String(collateralAmount), 18),
+        utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
+        { gasLimit: 300000 }
+      ]
 
       try {
-        const result = await vaultEngine.modifyDebt(
-          utils.id(getNativeTokenSymbol(chainId!)),
-          CONTRACTS[chainId!].TREASURY.address,
-          utils.parseUnits(String(collateralAmount), 18),
-          utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
-        );
+        await vaultEngine.callStatic.modifyDebt(...args);
+        const result = await vaultEngine.modifyDebt(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
@@ -94,14 +97,17 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
+      const args = [
+        utils.id(getNativeTokenSymbol(chainId!)),
+        CONTRACTS[chainId!].TREASURY.address,
+        utils.parseUnits(String(-collateralAmount), 18),
+        utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
+        { gasLimit: 300000 }
+      ]
 
       try {
-        const result = await vaultEngine.modifyDebt(
-          utils.id(getNativeTokenSymbol(chainId!)),
-          CONTRACTS[chainId!].TREASURY.address,
-          utils.parseUnits(String(-collateralAmount), 18),
-          utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
-        );
+        await vaultEngine.callStatic.modifyDebt(...args)
+        const result = await vaultEngine.modifyDebt(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
