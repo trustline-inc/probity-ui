@@ -5,6 +5,7 @@ import BridgeABI from "@trustline-inc/bridge/artifacts/contracts/Bridge.sol/Brid
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeAssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
+import Erc20AssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/ERC20AssetManager.sol/ERC20AssetManager.json";
 import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import ReservePoolABI from "@trustline-inc/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
 import StateConnectorABI from "@trustline-inc/bridge/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
@@ -31,8 +32,8 @@ export const CONTRACTS: { [key: number]: any } = {
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
     BRIDGE: {
-      address: "",
-      abi: null
+      address: "0xd7495998599A8cB50382Cd45B8C14BC4fD6fd078",
+      abi: BridgeABI.abi
     },
     LIQUIDATOR: {
       address: "0x4237527d98dc6D8CB751b48Bb3882c5C9a2f66D2",
@@ -45,6 +46,10 @@ export const CONTRACTS: { [key: number]: any } = {
     NATIVE_ASSET_MANAGER: {
       address: "0xde67904D828863cBD66338934D662e8994F0dd6a",
       abi: NativeAssetManagerABI.abi
+    },
+    ERC20_ASSET_MANAGER: {
+      address: "0x2B97625042DA4d517C16bc2c4F528cD4225C5D2a",
+      abi: Erc20AssetManagerABI.abi
     },
     REGISTRY: {
       address: "0x3E39e49c6E4092E41Fa9aEd5087bd871a2960D67",
@@ -76,6 +81,7 @@ export const CONTRACTS: { [key: number]: any } = {
       "0x4237527d98dc6D8CB751b48Bb3882c5C9a2f66D2": LiquidatorABI,
       "0xd6CD14E4323108ae6E0d1BfbBbfFC3F7aA287149": PriceFeedABI,
       "0xde67904D828863cBD66338934D662e8994F0dd6a": NativeAssetManagerABI,
+      "0xCE1C7A493f934e3900926daACFdda6a47A34af9d": Erc20AssetManagerABI,
       "0x3E39e49c6E4092E41Fa9aEd5087bd871a2960D67": RegistryABI,
       "0xf5bc5A8f388d74A0916826622Ba04805BD20b1F3": PbtABI,
       "0xF488e6E6e4F94d32F36549F58B372352B56Dd7ca": ReservePoolABI,
@@ -140,6 +146,7 @@ export const CONTRACTS: { [key: number]: any } = {
       "0xfE850285031a976de274b969d098fBb9E94fc7bb": LiquidatorABI,
       "0x51D82d9d17fAdaC40cDef03cf9CB07b1Fb65563C": PriceFeedABI,
       "0x836BD8CBf5baFc971012397879490Ef7Ede64a38": NativeAssetManagerABI,
+      "": Erc20AssetManagerABI,
       "0xCA33D13E5D03b262C06E98244cb47328d5f890f3": RegistryABI,
       "0x9E9600168c3b6FA0d3A779956969c41aaD21e1a1": PbtABI,
       "0x13F332fd05F85909E1f1a74949c30fC74D9Ce3B1": ReservePoolABI,
