@@ -23,15 +23,24 @@ function Balance() {
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
-  // TODO: Fetch balance based on currentAsset
-  const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
+  // TODO: Make the below code more scalable for other ERC20 tokens besides USD.
+
+  const { data: nativeTokenBalance, mutate: mutateNativeTokenBalance } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library),
   });
+
+  const { data: usdTokenBalance, mutate: mutateUsdTokenBalance } = useSWR([CONTRACTS[chainId!]?.USD?.address, 'balanceOf', account], {
+    fetcher: fetcher(library, CONTRACTS[chainId!]?.USD?.abi)
+  })
+
+  const balance = currentAsset === nativeTokenSymbol ? nativeTokenBalance : usdTokenBalance
+  const symbol = currentAsset === nativeTokenSymbol ? getNativeTokenSymbol(chainId!) : "USD"
 
   React.useEffect(() => {
     if (library !== undefined) {
       library.on("block", () => {
-        mutate(undefined, true); // Update balance
+        mutateNativeTokenBalance(undefined, true); // Update balance
+        mutateUsdTokenBalance(undefined, true); // Update balance
       });
 
       return () => {
@@ -45,8 +54,7 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Your balance</h3>
       <span className="tokens">
-        {/* TODO: Fetch balance of ERC20 tokens */}
-        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {getNativeTokenSymbol(chainId!)}
+        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {symbol}
       </span>
     </div>
   );
