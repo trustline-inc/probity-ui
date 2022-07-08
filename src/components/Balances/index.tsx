@@ -71,7 +71,6 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'totalEquity'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  console.log(VAULT_ENGINE)
   const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })

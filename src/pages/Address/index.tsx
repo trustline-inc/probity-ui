@@ -9,7 +9,7 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
 
   React.useEffect(() => {
     (async () => {
-      if (process.env.REQUIRE_AUTH) {
+      if (process.env.REACT_APP_REQUIRE_AUTH) {
         try {
           let url;
           if (process.env.NODE_ENV === "production")

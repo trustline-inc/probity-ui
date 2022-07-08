@@ -9,13 +9,13 @@ const POLLING_INTERVAL = 12000;
 const RPC_URLS: IDictionary<string> = {
   16: process.env.NODE_ENV === "production" ? "https://coston.trustline.co" : "http://127.0.0.1:9650/ext/bc/C/rpc",
   19: "https://songbird.towolabs.com/rpc",
-  1337: "http://localhost:6379/ext/bc/C/rpc"
+  1337: "http://localhost:9650/ext/bc/C/rpc"
 };
 
 export const injected = new InjectedConnector({
   supportedChainIds: [
-    16,   // Flare Coston
-    19,   // Songbird Canary
+    16,   // Coston
+    19,   // Songbird
     1337, // Localhost (Hardhat)
   ],
 })

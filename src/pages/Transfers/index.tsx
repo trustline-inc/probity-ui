@@ -23,7 +23,7 @@ import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import Client, { CLIENT_EVENTS } from "@walletconnect/client";
-import { PairingTypes, SessionTypes, ClientTypes } from "@walletconnect/types";
+import { PairingTypes, SessionTypes, ClientTypes, ProposalTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const location = useLocation();
@@ -71,45 +71,46 @@ export default function Transfers() {
     (async () => {
       try {
         if (!client) {
+          console.log("Intializing client")
           const options: ClientTypes.Options = {
             logger: DEFAULT_LOGGER,
             relayUrl: DEFAULT_RELAY_PROVIDER,
             projectId: PROJECT_ID,
             metadata: DEFAULT_APP_METADATA
           }
-          console.log(options)
+          console.log("opts:", options)
           const _client = new Client(options);
-          console.log(_client)
+          console.log("Client:", _client)
 
-          // _client.on(
-          //   CLIENT_EVENTS.request,
-          //   async (proposal: any) => {
-          //     const { uri } = proposal.signal.params;
-          //     console.log("EVENT", "QR Code Modal open");
-          //     QRCodeModal.open(uri, () => {
-          //       console.log("EVENT", "QR Code Modal closed");
-          //     });
-          //   },
-          // );
+          _client.on(
+            CLIENT_EVENTS.session_proposal,
+            async (proposal: any) => {
+              const { uri } = proposal.signal.params;
+              console.log("EVENT", "QR Code Modal open");
+              QRCodeModal.open(uri, () => {
+                console.log("EVENT", "QR Code Modal closed");
+              });
+            },
+          );
 
-          // _client.on(CLIENT_EVENTS.request, async (proposal: any) => {
-          //   if (typeof _client === "undefined") return;
-          //   setPairings(_client.pairing);
-          // });
+          _client.on(CLIENT_EVENTS.session_update, async (proposal: any) => {
+            if (typeof _client === "undefined") return;
+            setPairings(_client.pairing);
+          });
 
-          // _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
-          //   if (session.topic !== session?.topic) return;
-          //   console.log("EVENT", "session_deleted");
-          // });
+          _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
+            if (session.topic !== session?.topic) return;
+            console.log("EVENT", "session_deleted");
+          });
 
-          // setClient(_client)
-          // setPairings(_client.pairing);
-          // if (typeof session !== "undefined") return;
+          setClient(_client)
+          setPairings(_client.pairing);
+          if (typeof session !== "undefined") return;
           // populates existing session to state (assume only the top one)
-          // if (_client.session.length) {
-            // const session = await _client.session.get(_client.session[0]);
-            // onSessionConnected(session);
-          // }
+          if (_client.session.length) {
+            const session = await _client.session.get("");
+            onSessionConnected(session);
+          }
         }
       } catch (error) {
         console.log("connection error")
@@ -151,13 +152,13 @@ export default function Transfers() {
 
     (async () => {
       // Get verified issuers
-      try {
-        const bridge = new Contract(CONTRACTS[chainId!].BRIDGE.address, CONTRACTS[chainId!].BRIDGE.abi, library)
-        const _verifiedIssuers = await bridge.getVerifiedIssuers()
-        setVerifiedIssuers(_verifiedIssuers)
-      } catch (error) {
-        console.error(error)
-      }
+      // try {
+      //   const bridge = new Contract(CONTRACTS[chainId!].BRIDGE.address, CONTRACTS[chainId!].BRIDGE.abi, library)
+      //   const _verifiedIssuers = await bridge.getVerifiedIssuers()
+      //   setVerifiedIssuers(_verifiedIssuers)
+      // } catch (error) {
+      //   console.error(error)
+      // }
     })()
   }, [library])
 
@@ -201,14 +202,14 @@ export default function Transfers() {
 
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
+      const requiredNamespaces: ProposalTypes.RequiredNamespace = {
+        chains: ["xrpl:1, xrpl:2"],
+        methods,
+        events: []
+      }
       const session = await client.connect({
         requiredNamespaces: {
-          xrpl: {
-            chains: ["xrpl:1, xrpl:2"],
-            methods,
-            events: []
-          },
-
+          "xrpl": requiredNamespaces
         }
         // metadata: getAppMetadata() || DEFAULT_APP_METADATA,
         // pairing,
@@ -398,6 +399,7 @@ export default function Transfers() {
       }
 
       if (library && account) {
+        console.log("Creating Transfer object")
         const _transfer = new bridge.Transfer({
           direction: {
             source: "LOCAL",
@@ -417,6 +419,7 @@ export default function Transfers() {
         })
 
         // First check the allowance
+        if (!CONTRACTS[chainId!].BRIDGE.address) return alert("Bridge address is not set")
         const stablecoin = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
         const allowance = await stablecoin.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 

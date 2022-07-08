@@ -148,9 +148,9 @@ function Navbar() {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/treasury"
+              to="/lend"
             >
-              <i className="fa fa-percent"></i> Yield
+              <i className="fa fa-percent"></i> Lend
             </NavLink>
           </li>
           <li className="nav-item my-1">

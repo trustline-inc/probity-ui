@@ -45,11 +45,12 @@ function Connector({ title, body, icon, disabled, onClick }: any) {
 }
 
 function ConnectWalletModal({ show, handleClose }: Props) {
+  const { activate } = useWeb3React<Web3Provider>();
+
   const onClick = (connector: any) => {
     activate(connector);
     handleClose()
   };
-  const { activate } = useWeb3React<Web3Provider>();
 
   return (
     <Modal show={show} onHide={handleClose}>

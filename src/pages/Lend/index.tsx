@@ -20,7 +20,7 @@ import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
 
-function Treasury({ assetPrice }: { assetPrice: number }) {
+function Lend({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
   const assetContext = React.useContext(AssetContext)
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
@@ -118,9 +118,9 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/treasury/invest")  setActivity(ActivityType.IssueEquity);
-    if (location.pathname === "/treasury/redeem") setActivity(ActivityType.RedeemEquity);
-    if (location.pathname === "/treasury/collect-interest") setActivity(ActivityType.Collect);
+    if (location.pathname === "/lend/invest")  setActivity(ActivityType.IssueEquity);
+    if (location.pathname === "/lend/redeem") setActivity(ActivityType.RedeemEquity);
+    if (location.pathname === "/lend/collect-interest") setActivity(ActivityType.Collect);
   }, [location])
 
   /**
@@ -230,7 +230,7 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   return (
     <>
       <header>
-        <h1>Equity Management</h1>
+        <h1>Lending</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -239,13 +239,13 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/invest"} onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}>Invest</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/lend/invest"} onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}>Invest</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/redeem"} onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/lend/redeem"} onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}>Redeem</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/treasury/collect-interest"} onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}>Collect</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/lend/collect-interest"} onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}>Collect</NavLink>
               </li>
             </ul>
           </div>
@@ -301,4 +301,4 @@ function Treasury({ assetPrice }: { assetPrice: number }) {
   );
 }
 
-export default Treasury;
+export default Lend;

@@ -12,6 +12,7 @@ import Activity from "../../containers/Activity";
 import { WAD, CONTRACTS } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
+import AssetContext from "../../contexts/AssetContext"
 import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 import { getNativeTokenSymbol } from '../../utils';
@@ -24,6 +25,7 @@ function Assets() {
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
+  const assetContext = useContext(AssetContext)
 
   const { mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
@@ -38,17 +40,40 @@ function Assets() {
 
   const deposit = async () => {
     if (library && account) {
-      const nativeToken = new Contract(CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.address, CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.abi, library.getSigner())
-      setLoading(true)
-
-      try {
-        // Deposit collateral
-        const args = [{
+      const currentAsset = assetContext.asset
+      let assetManager, args
+      if (["CFLR", "FLR", "SGB"].includes(currentAsset)) {
+        // Native Token
+        assetManager = new Contract(CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.address, CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.abi, library.getSigner())
+        args = [{
           gasLimit: web3.utils.toWei('400000', 'wei'),
           value: WAD.mul(amount)
         }]
-        await nativeToken.callStatic.deposit(...args)
-        const result = await nativeToken.deposit(...args);
+      } else {
+        // ERC20 Token
+        assetManager = new Contract(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.abi, library.getSigner())
+        args = [
+          WAD.mul(amount),
+          { gasLimit: web3.utils.toWei('400000', 'wei') },
+        ]
+
+        // ERC20 allowance check
+        const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+        let result = await erc20.allowance(account, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address);
+        console.log("Allowance:", result)
+
+        // ERC20 approve transaction
+        result = await erc20.callStatic.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, WAD.mul(amount))
+        result = await erc20.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, WAD.mul(amount));
+        await result.wait();
+      }
+
+      setLoading(true)
+
+      try {
+        // Deposit asset
+        await assetManager.callStatic.deposit(...args)
+        const result = await assetManager.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
         mutateVault(undefined, true)
