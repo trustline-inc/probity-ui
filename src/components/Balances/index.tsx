@@ -50,13 +50,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id(currentAsset), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: vaultAurBalance, mutate: mutateVaultAurBalance } = useSWR([VAULT_ENGINE.address, 'stablecoin', account], {
+  const { data: vaultBalance, mutate: mutateVaultBalance } = useSWR([VAULT_ENGINE.address, 'balance', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: aurErc20Balance, mutate: mutateAurErc20Balance } = useSWR([USD.address, 'balanceOf', account], {
+  const { data: erc20Balance, mutate: mutateErc20Balance } = useSWR([USD.address, 'balanceOf', account], {
     fetcher: fetcher(library, USD.abi),
   })
   const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
@@ -86,10 +86,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     if (library) {
       library.on("block", () => {
         mutateVault(undefined, true);
-        mutateVaultAurBalance(undefined, true);
+        mutateVaultBalance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateTotalDebt(undefined, true);
-        mutateAurErc20Balance(undefined, true);
+        mutateErc20Balance(undefined, true);
         mutatePbtErc20Balance(undefined, true);
         mutateTotalEquity(undefined, true);
         mutateVaultPbtBalance(undefined, true);
@@ -325,11 +325,11 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Vault USD</h6>
-                      <span className="text-truncate">{vaultAurBalance ? numbro(utils.formatEther(vaultAurBalance.div(RAY))).format(formatOptions) : "0"} USD</span>
+                      <span className="text-truncate">{vaultBalance ? numbro(utils.formatEther(vaultBalance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>ERC20 USD</h6>
-                      <span className="text-truncate">{aurErc20Balance ? numbro(utils.formatEther(aurErc20Balance)).format(formatOptions) : "0"} USD</span>
+                      <span className="text-truncate">{erc20Balance ? numbro(utils.formatEther(erc20Balance)).format(formatOptions) : "0"} USD</span>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>

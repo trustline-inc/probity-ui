@@ -24,10 +24,10 @@ function Stablecoins() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVaultAurBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
+  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateAurErc20Balance } = useSWR([CONTRACTS[chainId!].USD.address, 'balanceOf', account], {
+  const { mutate: mutateErc20Balance } = useSWR([CONTRACTS[chainId!].USD.address, 'balanceOf', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].USD.abi),
   })
 
@@ -50,8 +50,8 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
-        mutateVaultAurBalance(undefined, true)
-        mutateAurErc20Balance(undefined, true)
+        mutateVaultBalance(undefined, true)
+        mutateErc20Balance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);
@@ -74,8 +74,8 @@ function Stablecoins() {
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
-        mutateVaultAurBalance(undefined, true)
-        mutateAurErc20Balance(undefined, true)
+        mutateVaultBalance(undefined, true)
+        mutateErc20Balance(undefined, true)
         setAmount(0)
       } catch (error) {
         console.log(error);

@@ -168,7 +168,7 @@ function App() {
                             <strong>
                               <i className="fas fa-exclamation-circle"></i> Notice
                             </strong>{" "}
-                            The beta release is now live! Vault issuance is limited to $1,000.
+                            Vaults are currently limited to $1,000.
                             <button
                               type="button"
                               className="btn-close"
@@ -181,7 +181,7 @@ function App() {
                           </div>
                         ) : null}
                         <Alert variant="warning">
-                          Caution: This is beta software and there may be bugs. User acknowledges that a bug may result in complete loss of funds. By using this software, the user agrees not to hold Trustline Inc. ("developer") liable for any losses incurred.
+                          THE BETA SOFTWARE LICENSED HEREUNDER IS BELIEVED TO CONTAIN DEFECTS AND A PRIMARY PURPOSE OF THIS BETA TESTING LICENSE IS TO OBTAIN FEEDBACK ON SOFTWARE PERFORMANCE AND THE IDENTIFICATION OF DEFECTS. LICENSEE IS ADVISED TO SAFEGUARD IMPORTANT DATA, TO USE CAUTION AND NOT TO RELY IN ANY WAY ON THE CORRECT FUNCTIONING OR PERFORMANCE OF THE SOFTWARE AND/OR ACCOMPANYING MATERIALS.
                         </Alert>
                       </div>
                     </div>
