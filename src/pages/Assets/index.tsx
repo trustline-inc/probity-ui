@@ -9,7 +9,7 @@ import web3 from "web3";
 import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import { WAD, CONTRACTS } from '../../constants';
+import { WAD, RAY, CONTRACTS } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
@@ -52,19 +52,22 @@ function Assets() {
       } else {
         // ERC20 Token
         assetManager = new Contract(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.abi, library.getSigner())
+
+        let _amount = WAD.mul(amount)
+
         args = [
-          WAD.mul(amount),
+          WAD.mul(_amount),
           { gasLimit: web3.utils.toWei('400000', 'wei') },
         ]
 
         // ERC20 allowance check
         const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
         let result = await erc20.allowance(account, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address);
-        console.log("Allowance:", result)
+        console.log("Allowance:", result.toString())
 
         // ERC20 approve transaction
-        result = await erc20.callStatic.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, WAD.mul(amount))
-        result = await erc20.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, WAD.mul(amount));
+        result = await erc20.callStatic.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount)
+        result = await erc20.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount);
         await result.wait();
       }
 
