@@ -2451,10 +2451,10 @@
     axios "^0.22.0"
     ripple-lib "^1.10.0"
 
-"@trustline-inc/probity@1.0.0-alpha15":
-  version "1.0.0-alpha15"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha15/3019b0464fd16102926824ef8c1f7a2292d263fb03e2c0d5b7eaa8702678bf7e#a319d4d748baf94833d428fddb32f95b7ce8cc6c"
-  integrity sha512-1BbKzHQ4Hl40BPpuRtdCZo4g1oaYyzTAPZmJGe9feIIK2845+uSTHd8AS3MTlPBSGVLdJHGXuAQd/NF94qtrEw==
+"@trustline-inc/probity@1.0.0-alpha16":
+  version "1.0.0-alpha16"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha16/e16541a781997b754fc661ff47db19b112edec7d1f8196618ed661f8bdbb3449#169b5d699cc19ed6633fea0e1527ccd27163ea22"
+  integrity sha512-wIxsv3OS3mB/Rj5sEycDlVWWqlqjraiIsl9qKigu338eWtd7L42BQ4VbmN9FU8LKu+5YKTLqLdQ2+s/eTXCW4Q==
   dependencies:
     "@openzeppelin/contracts" "^4.5.0"
 

@@ -24,7 +24,7 @@ function Vault() {
   const [loading, setLoading] = React.useState(false);
   const ctx = useContext(EventContext)
 
-  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'stablecoin', account], {
+  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'balance', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateErc20Balance } = useSWR([CONTRACTS[chainId!].USD.address, 'balanceOf', account], {
