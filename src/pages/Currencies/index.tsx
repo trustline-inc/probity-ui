@@ -14,7 +14,7 @@ import IssuanceActivity from './IssuanceActivity';
 import EventContext from "../../contexts/TransactionContext"
 import { CONTRACTS } from "../../constants"
 
-function Stablecoins() {
+function Currencies() {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -33,8 +33,8 @@ function Stablecoins() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/stablecoins/redeem") setActivity(ActivityType.RedeemCurrency);
-    if (location.pathname === "/stablecoins/issue") setActivity(ActivityType.IssueCurrency);
+    if (location.pathname === "/currencies/redeem") setActivity(ActivityType.RedeemCurrency);
+    if (location.pathname === "/currencies/issue") setActivity(ActivityType.IssueCurrency);
   }, [location])
 
   /**
@@ -95,7 +95,7 @@ function Stablecoins() {
   return (
     <>
       <header>
-        <h1>Stablecoins</h1>
+        <h1>Currencies</h1>
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="col-md-12 col-lg-8 offset-lg-2">
@@ -103,10 +103,10 @@ function Stablecoins() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/stablecoins/issue"} onClick={() => { setActivity(ActivityType.IssueCurrency); }}>Issue</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/currencies/issue"} onClick={() => { setActivity(ActivityType.IssueCurrency); }}>Issue</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/stablecoins/redeem"} onClick={() => { setActivity(ActivityType.RedeemCurrency); }}>Redeem</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/currencies/redeem"} onClick={() => { setActivity(ActivityType.RedeemCurrency); }}>Redeem</NavLink>
               </li>
             </ul>
           </div>
@@ -146,4 +146,4 @@ function Stablecoins() {
   );
 }
 
-export default Stablecoins;
+export default Currencies;

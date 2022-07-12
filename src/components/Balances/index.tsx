@@ -318,9 +318,9 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="stablecoins">
-                  <Accordion.Header onClick={() => updateActiveKey("stablecoins")}>
-                    <h5>Stablecoins</h5>
+                <Accordion.Item eventKey="currencies">
+                  <Accordion.Header onClick={() => updateActiveKey("currencies")}>
+                    <h5>Currencies</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">

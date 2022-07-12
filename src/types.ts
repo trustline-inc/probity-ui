@@ -10,7 +10,7 @@ export enum Activity {
   Borrow,
   Repay,
 
-  // Stablecoins
+  // Currencies
   IssueCurrency,
   RedeemCurrency,
 

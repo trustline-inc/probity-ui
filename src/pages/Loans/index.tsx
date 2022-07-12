@@ -5,6 +5,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
+import { Helmet } from "react-helmet";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
@@ -171,6 +172,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
 
   return (
     <>
+      <Helmet>
+        <title>Probity | Borrow</title>
+      </Helmet>
       <header>
         <h1>Debt Management</h1>
         {active && <Info />}

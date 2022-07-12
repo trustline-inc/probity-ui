@@ -12,6 +12,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
+import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
 import ConnectorModal from "../../components/ConnectorModal"
 import { CONTRACTS } from '../../constants';
@@ -31,8 +32,7 @@ import "./index.css";
 import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import Stablecoins from "../../pages/Stablecoins";
-import { getNativeTokenSymbol } from "../../utils";
+import Currencies from "../../pages/Currencies";
 import Login from "../../pages/Login";
 import axios from "axios";
 import Vault from "../../pages/Vault";
@@ -144,6 +144,9 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <Helmet>
+          <title>Probity</title>
+        </Helmet>
         <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
         {
           (process.env.REACT_APP_REQUIRE_AUTH ? (auth && new Date(auth?.expiresAt) > new Date()) : true) ? (
@@ -294,15 +297,15 @@ function App() {
                                   )}
                                 </div>
                               </Route>
-                              {/* Stablecoins */}
-                              <Route path="/stablecoins">
+                              {/* Currencies */}
+                              <Route path="/currencies">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                  <Stablecoins />
+                                  <Currencies />
                                 </div>
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances newActiveKey="stablecoins" />
+                                      <Balances newActiveKey="currencies" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -315,7 +318,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances newActiveKey="stablecoins" />
+                                      <Balances newActiveKey="currencies" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -328,7 +331,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances newActiveKey="stablecoins" />
+                                      <Balances newActiveKey="currencies" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -341,7 +344,7 @@ function App() {
                                 <div className="col-xl-4 col-lg-4 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances newActiveKey="stablecoins" />
+                                      <Balances newActiveKey="currencies" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
@@ -354,7 +357,7 @@ function App() {
                                 <div className="col-xl-3 col-lg-6 col-md-12">
                                   {active && (
                                     <AssetContext.Provider value={{ asset, updateAsset }}>
-                                      <Balances newActiveKey="stablecoins" />
+                                      <Balances newActiveKey="currencies" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>

@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import axios from 'axios';
 import React from 'react';
+import { Helmet } from "react-helmet";
 
 function Address({ globalId, auth }: { globalId: string, auth: any }) {
   const [address, setAddress] = React.useState("")
@@ -57,7 +58,10 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
   }
 
   return (
-    <>
+    <>       
+      <Helmet>
+        <title>{address ? "Probity | Registered Address" : "Probity | Register Address"}</title>
+      </Helmet>
       <h1>Address</h1>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="row mb-4">

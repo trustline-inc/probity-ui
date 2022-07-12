@@ -138,8 +138,8 @@ function Navbar() {
             // Not enabled on any chain, yet.
             chainId && [].includes(chainId as never) && (
               <li className="nav-item my-1">
-                <NavLink className="nav-link" activeClassName="active" to="/stablecoins">
-                  <i className="fas fa-coins"></i> Stablecoins
+                <NavLink className="nav-link" activeClassName="active" to="/currencies">
+                  <i className="fas fa-coins"></i> Currencies
                 </NavLink>
               </li>
             )

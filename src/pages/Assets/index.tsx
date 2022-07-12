@@ -6,6 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
 import web3 from "web3";
+import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
@@ -129,6 +130,9 @@ function Assets() {
 
   return (
     <>
+      <Helmet>
+        <title>Probity | Manage Assets</title>
+      </Helmet>
       <header>
         <h1>Asset Management</h1>
         {active && <Info />}

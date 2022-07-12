@@ -8,6 +8,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { Contract, utils } from "ethers";
+import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
 import InvestActivity from "./InvestActivity";
@@ -229,6 +230,9 @@ function Lend({ assetPrice }: { assetPrice: number }) {
 
   return (
     <>
+      <Helmet>
+        <title>Probity | Lend</title>
+      </Helmet>
       <header>
         <h1>Lending</h1>
         {active && <Info />}
