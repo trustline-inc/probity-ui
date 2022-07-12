@@ -189,8 +189,8 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/status">
-              <i className="fas fa-signal" /> Status
+            <NavLink className="nav-link" activeClassName="active" to="/contracts">
+              <i className="fas fa-file-contract" /> Contracts
             </NavLink>
           </li>
         </ul>

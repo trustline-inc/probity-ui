@@ -65,6 +65,11 @@ function Assets() {
         let result = await erc20.allowance(account, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address);
         console.log("Allowance:", result.toString())
 
+        // ERC20 balance check
+        result = await erc20.callStatic.balanceOf(account)
+        result = await erc20.balanceOf(account);
+        console.log("Balance:", result.toString())
+
         // ERC20 approve transaction
         result = await erc20.callStatic.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount)
         result = await erc20.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount);

@@ -371,7 +371,7 @@ function App() {
                                   )}
                                 </div>
                               </Route>
-                              <Route path="/status">
+                              <Route path="/contracts">
                                 <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                                   <Status />
                                 </div>
