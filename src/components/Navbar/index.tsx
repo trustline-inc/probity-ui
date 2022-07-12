@@ -33,8 +33,8 @@ function Balance() {
     fetcher: fetcher(library, CONTRACTS[chainId!]?.USD?.abi)
   })
 
-  const balance = currentAsset === nativeTokenSymbol ? nativeTokenBalance : usdTokenBalance
-  const symbol = currentAsset === nativeTokenSymbol ? getNativeTokenSymbol(chainId!) : "USD"
+  const balance = usdTokenBalance
+  const symbol = "USD"
 
   React.useEffect(() => {
     if (library !== undefined) {

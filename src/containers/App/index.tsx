@@ -56,7 +56,7 @@ function App() {
     true
   );
   const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
-  const [asset, setAsset] = useState<string>(getNativeTokenSymbol(chainId!))
+  const [asset, setAsset] = useState<string>("USD")
   const updateTransactions = (transaction: any) => {
     const newTxs = [...transactions, transaction]
     localStorage.setItem("probity-txs", JSON.stringify(newTxs))
