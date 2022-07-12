@@ -27,7 +27,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
   const [lot, setLot] = useState<number>(0.00)
   const [maxPrice, setMaxPrice] = useState<number>(0.00)
   const [auctions, setAuctions] = useState<any[]>([]);
-  const [auctionCount, setAuctionCount] = useState(0)
+  const [totalAuctions, setTotalAuctions] = useState(0)
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   // const ctx = useContext(EventContext)
@@ -48,8 +48,8 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
       (async () => {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library.getSigner())
-        const _auctionCount = await auctioneer.auctionCount()
-        setAuctionCount(_auctionCount.toNumber());
+        const _totalAuctions = await auctioneer.totalAuctions()
+        setTotalAuctions(_totalAuctions.toNumber());
         setCurrentPage(1)
         setLoading(false)
       })()
@@ -60,12 +60,12 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
    * Fetches the auctions
    */
   useEffect(() => {
-    if (library && auctionCount) {
+    if (library && totalAuctions) {
       (async () => {
         setLoading(true)
         const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library.getSigner())
         const _auctions = []
-        for (let id = firstAuctionId; id < Math.min(lastAuctionId, auctionCount); id++) {
+        for (let id = firstAuctionId; id < Math.min(lastAuctionId, totalAuctions); id++) {
           let auction: any = await auctioneer.auctions(id)
           // const HEAD = "0x0000000000000000000000000000000000000001"
           // let _nextHighestBidder = await auctioneer.nextHighestBidder(id, HEAD)
@@ -83,7 +83,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
         setLoading(false)
       })()
     }
-  }, [library, auctionCount, currentPage, firstAuctionId, lastAuctionId])
+  }, [library, totalAuctions, currentPage, firstAuctionId, lastAuctionId])
 
   const onChangeBidPrice = (event: any) => {
     const { value } = event.target
@@ -309,7 +309,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
       }
       <div className="d-flex justify-content-center">
         <Pagination
-          itemsCount={auctionCount}
+          itemsCount={totalAuctions}
           itemsPerPage={auctionsPerPage}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
