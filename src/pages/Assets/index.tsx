@@ -43,6 +43,8 @@ function Assets() {
     if (library && account) {
       const currentAsset = assetContext.asset
       let assetManager, args
+
+      // Check token type (native token or ERC20 token)
       if (["CFLR", "FLR", "SGB"].includes(currentAsset)) {
         // Native Token
         assetManager = new Contract(CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.address, CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.abi, library.getSigner())

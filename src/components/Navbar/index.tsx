@@ -52,7 +52,7 @@ function Balance() {
   if (!balance) return null;
   return (
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
-      <h3>Your balance</h3>
+      <h3>Balance</h3>
       <span className="tokens">
         {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {symbol}
       </span>

@@ -255,6 +255,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                         <h6>Total</h6>
                         <span className="text-truncate">{numbro(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
+                      <div className="my-2 d-flex justify-content-between">
+                        <h6>Address</h6>
+                        <span className="text-truncate col-8">{ctx.address}</span>
+                      </div>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
