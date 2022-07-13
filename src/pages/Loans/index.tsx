@@ -36,7 +36,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'balance', account], {
+  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateTotalDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'totalDebt'], {

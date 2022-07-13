@@ -41,50 +41,60 @@ function Assets() {
 
   const deposit = async () => {
     if (library && account) {
-      const currentAsset = assetContext.asset
-      let assetManager, args
-
-      // Check token type (native token or ERC20 token)
-      if (["CFLR", "FLR", "SGB"].includes(currentAsset)) {
-        // Native Token
-        assetManager = new Contract(CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.address, CONTRACTS[chainId!].NATIVE_ASSET_MANAGER.abi, library.getSigner())
-        args = [{
-          gasLimit: web3.utils.toWei('400000', 'wei'),
-          value: WAD.mul(amount)
-        }]
-      } else {
-        // ERC20 Token
-        assetManager = new Contract(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.abi, library.getSigner())
-
+      try {
+        const currentAsset = assetContext.asset
+        let contract, args
         let _amount = WAD.mul(amount)
 
-        args = [
-          WAD.mul(_amount),
-          { gasLimit: web3.utils.toWei('400000', 'wei') },
-        ]
+        // Check token type (native token or ERC20 token)
+        if (["CFLR", "FLR", "SGB"].includes(currentAsset)) {
+          // Native Token
+          const nativeAssetManager = CONTRACTS[chainId!].NATIVE_ASSET_MANAGER
+          contract = new Contract(nativeAssetManager.address, nativeAssetManager.abi, library.getSigner())
+          args = [{
+            gasLimit: web3.utils.toWei('400000', 'wei'),
+            value: _amount
+          }]
+        } else {
+          // ERC20 Token
+          const assetManager = CONTRACTS[chainId!].ERC20_ASSET_MANAGER
+          contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
 
-        // ERC20 allowance check
-        const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
-        let result = await erc20.allowance(account, CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address);
-        console.log("Allowance:", result.toString())
+          args = [
+            _amount,
+            { gasLimit: web3.utils.toWei('400000', 'wei') },
+          ]
 
-        // ERC20 balance check
-        result = await erc20.callStatic.balanceOf(account)
-        result = await erc20.balanceOf(account);
-        console.log("Balance:", result.toString())
+          // ERC20 allowance check
+          const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+          let result = await erc20.allowance(account, assetManager.address);
+          const allowance = result
+          console.log("Allowance:", allowance.toString())
+          console.log("owner:", account)
+          console.log("spender:", assetManager.address)
 
-        // ERC20 approve transaction
-        result = await erc20.callStatic.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount)
-        result = await erc20.approve(CONTRACTS[chainId!].ERC20_ASSET_MANAGER.address, _amount);
-        await result.wait();
-      }
+          // ERC20 balance check
+          result = await erc20.callStatic.balanceOf(account)
+          result = await erc20.balanceOf(account);
+          const balance = result
+          console.log("Balance:  ", balance.toString())
 
-      setLoading(true)
+          // ERC20 approve transaction
+          if (allowance.lt(_amount)) {
+            console.log("Creating allowance...")
+            result = await erc20.callStatic.approve(assetManager.address, _amount)
+            result = await erc20.approve(assetManager.address, _amount);
+            const tx = await result.wait();
+            console.log("tx", tx)
+          }
+        }
 
-      try {
+        setLoading(true)
+
         // Deposit asset
-        await assetManager.callStatic.deposit(...args)
-        const result = await assetManager.deposit(...args);
+        console.log("Depositing asset...")
+        await contract.callStatic.deposit(...args)
+        const result = await contract.deposit(...args);
         const data = await result.wait();
         ctx.updateTransactions(data);
         mutateVault(undefined, true)

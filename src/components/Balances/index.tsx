@@ -50,7 +50,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id(currentAsset), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: vaultBalance, mutate: mutateVaultBalance } = useSWR([VAULT_ENGINE.address, 'balance', account], {
+  const { data: balance, mutate: mutateBalance } = useSWR([VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
@@ -62,13 +62,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
     fetcher: fetcher(library, PBT.abi),
   })
-  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'totalSupply'], {
+  const { data: lendingPoolSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'lendingPoolSupply'], {
     fetcher: fetcher(library, USD.abi),
   })
-  const { data: totalDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'totalDebt'], {
+  const { data: lendingPoolDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'lendingPoolDebt'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: totalEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'totalEquity'], {
+  const { data: lendingPoolEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'lendingPoolEquity'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
@@ -86,7 +86,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     if (library) {
       library.on("block", () => {
         mutateVault(undefined, true);
-        mutateVaultBalance(undefined, true);
+        mutateBalance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateTotalDebt(undefined, true);
         mutateErc20Balance(undefined, true);
@@ -106,21 +106,21 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
    * Update the current APR
    */
   React.useEffect(() => {
-    if (totalDebt && totalEquity) {
-      if (totalEquity.toString() === "0" || totalDebt.toString() === "0") {
+    if (lendingPoolDebt && lendingPoolEquity) {
+      if (lendingPoolEquity.toString() === "0" || lendingPoolDebt.toString() === "0") {
         setEstimatedAPR("0%")
         setEstimatedAPY("0%")
         return
       }
-      const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
-      const supply = Number(utils.formatEther(totalEquity.div(RAY)));
+      const borrows = Number(utils.formatEther(lendingPoolDebt.div(RAY)));
+      const supply = Number(utils.formatEther(lendingPoolEquity.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
       const newAPY = newAPR * newUtilization
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
       setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
-  }, [totalEquity, totalDebt, vault])
+  }, [lendingPoolEquity, lendingPoolDebt, vault])
 
   /**
    * Updates the collateral and underlying ratios
@@ -166,7 +166,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, totalDebt, totalEquity, currentAsset, vault])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, vault])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")
@@ -329,7 +329,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Vault USD</h6>
-                      <span className="text-truncate">{vaultBalance ? numbro(utils.formatEther(vaultBalance.div(RAY))).format(formatOptions) : "0"} USD</span>
+                      <span className="text-truncate">{balance ? numbro(utils.formatEther(balance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>ERC20 USD</h6>
@@ -359,23 +359,23 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               <h5>System Stats</h5>
               <div className="my-2 mt-4 d-flex justify-content-between">
                 <h6>Circulating Supply</h6>
-                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatEther(lendingPoolSupply)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
-                <span className="text-truncate">{totalEquity && asset ? numbro(utils.formatEther(totalEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolEquity && asset ? numbro(utils.formatEther(lendingPoolEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Working Capital</h6>
-                <span className="text-truncate">{totalEquity && totalDebt && asset ? numbro(utils.formatUnits(totalEquity.sub(totalDebt).toString(), 45)).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt && asset ? numbro(utils.formatUnits(lendingPoolEquity.sub(lendingPoolDebt).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
-                <span className="text-truncate">{totalEquity && totalDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(totalDebt.mul(RAY).div(totalEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
+                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(lendingPoolDebt.mul(RAY).div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
-                <span className="text-truncate">{totalDebt && asset ? numbro(utils.formatEther(totalDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolDebt && asset ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
             </>
           )
