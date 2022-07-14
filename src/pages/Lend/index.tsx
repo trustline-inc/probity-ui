@@ -38,7 +38,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const [interestType, setInterestType] = React.useState("PBT")
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
@@ -133,7 +133,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       try {
         const args = [
-          utils.id(getNativeTokenSymbol(chainId!)),
+          utils.id(currentAsset),
           CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(underlyingAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
@@ -164,7 +164,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
 
       try {
         const args = [
-          utils.id(getNativeTokenSymbol(chainId!)),
+          utils.id(currentAsset),
           CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(-underlyingAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
