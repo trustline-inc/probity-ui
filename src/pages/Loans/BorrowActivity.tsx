@@ -42,10 +42,10 @@ function BorrowActivity({
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate.toString())
 
-  const { data: totalDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "totalDebt"], {
+  const { data: lendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "lendingPoolDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
-  const { data: totalEquity } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "totalEquity"], {
+  const { data: lendingPoolEquity } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "lendingPoolEquity"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
 
@@ -58,11 +58,12 @@ function BorrowActivity({
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
+  // Set estimated APR
   React.useEffect(() => {
-    if (totalDebt && totalEquity) {
+    if (lendingPoolDebt && lendingPoolEquity) {
       try {
-        const borrows = Number(utils.formatEther(totalDebt.div(RAY)));
-        const supply = Number(utils.formatEther(totalEquity.div(RAY)));
+        const borrows = Number(utils.formatEther(lendingPoolDebt.div(RAY)));
+        const supply = Number(utils.formatEther(lendingPoolEquity.div(RAY)));
         const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
         if (newUtilization >= 1) setEstimatedAPR("100")
@@ -75,7 +76,7 @@ function BorrowActivity({
         console.log(e)
       }
     }
-  }, [rate, amount, totalDebt, totalEquity, setMaxSize])
+  }, [rate, amount, lendingPoolDebt, lendingPoolEquity, setMaxSize])
 
   return (
     <>

@@ -33,13 +33,13 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(getNativeTokenSymbol(chainId!)), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateVaultBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
+  const { mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateTotalDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'totalDebt'], {
+  const { mutate: mutateLendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'lendingPoolDebt'], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { data: rate } = useSWR([CONTRACTS[chainId!].TELLER.address, 'apr'], {
@@ -65,7 +65,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
       const args = [
-        utils.id(getNativeTokenSymbol(chainId!)),
+        utils.id(currentAsset),
         CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
@@ -78,8 +78,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
-        mutateVaultBalance(undefined, true);
-        mutateTotalDebt(undefined, true)
+        mutateBalance(undefined, true);
+        mutateLendingPoolDebt(undefined, true)
         setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
@@ -99,7 +99,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       setLoading(true)
       const args = [
-        utils.id(getNativeTokenSymbol(chainId!)),
+        utils.id(currentAsset),
         CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(-collateralAmount), 18),
         utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
@@ -112,8 +112,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
-        mutateVaultBalance(undefined, true);
-        mutateTotalDebt(undefined, true)
+        mutateBalance(undefined, true);
+        mutateLendingPoolDebt(undefined, true)
         setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
