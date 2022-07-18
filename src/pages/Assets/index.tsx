@@ -52,19 +52,19 @@ function Assets() {
           const nativeAssetManager = CONTRACTS[chainId!].NATIVE_ASSET_MANAGER
           contract = new Contract(nativeAssetManager.address, nativeAssetManager.abi, library.getSigner())
           args = [{
-            gasLimit: web3.utils.toWei('400000', 'wei'),
+            gasLimit: web3.utils.toWei('300000', 'wei'),
             maxFeePerGas: 25 * 1e9,
             value: _amount
           }]
         } else {
           // ERC20 Token
-          const assetManager = CONTRACTS[chainId!].ERC20_ASSET_MANAGER
+          const assetManager = CONTRACTS[chainId!][`${currentAsset}_MANAGER`]
           contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
 
           args = [
             _amount,
             {
-              gasLimit: web3.utils.toWei('400000', 'wei'),
+              gasLimit: web3.utils.toWei('300000', 'wei'),
               maxFeePerGas: 25 * 1e9,
             },
           ]
@@ -86,8 +86,22 @@ function Assets() {
           // ERC20 approve transaction
           if (allowance.lt(_amount)) {
             console.log("Creating allowance...")
-            result = await erc20.callStatic.approve(assetManager.address, _amount)
-            result = await erc20.approve(assetManager.address, _amount);
+            result = await erc20.callStatic.approve(
+              assetManager.address,
+              _amount,
+              {
+                gasLimit: web3.utils.toWei('300000', 'wei'),
+                maxFeePerGas: 25 * 1e9,
+              }
+            )
+            result = await erc20.approve(
+              assetManager.address,
+              _amount,
+              {
+                gasLimit: web3.utils.toWei('300000', 'wei'),
+                maxFeePerGas: 25 * 1e9,
+              }
+            );
             const tx = await result.wait();
             console.log("tx", tx)
           }

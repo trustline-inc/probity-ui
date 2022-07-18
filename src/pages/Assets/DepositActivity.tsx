@@ -62,7 +62,9 @@ function DepositActivity({
           </div>
         </div>
       </div>
-      <PriceFeed amount={amount} asset={currentAsset} />
+      {currentAsset !== "USD" && (
+        <PriceFeed amount={amount} asset={currentAsset} />
+      )}
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button

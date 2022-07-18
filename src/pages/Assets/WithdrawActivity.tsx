@@ -62,7 +62,9 @@ function WithdrawActivity({
           </div>
         </div>
       </div>
-      <PriceFeed asset={currentAsset} amount={amount} />
+      {currentAsset !== "USD" && (
+        <PriceFeed amount={amount} asset={currentAsset} />
+      )}
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button

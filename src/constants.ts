@@ -40,7 +40,7 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0x001732E25B7F1542d6dc22279FA08Cde8d9585ec",
+      address: "0x415c831190a69d0B87D832ba448A6ECdC958bF1C",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
