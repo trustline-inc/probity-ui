@@ -8,7 +8,7 @@ import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Trea
 import { Contract, utils } from "ethers";
 import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
-import { CONTRACTS } from '../../constants';
+import { CONTRACTS, WAD } from '../../constants';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import DepositActivity from '../Vault/DepositActivity';
@@ -47,7 +47,11 @@ function Vault() {
       setLoading(true)
       try {
         const result = await treasury.withdrawStablecoin(
-          utils.parseUnits(String(amount), 18)
+          utils.parseUnits(String(amount), 18),
+          {
+            gasLimit: 300000,
+            maxFeePerGas: 25 *1e9
+          }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);
@@ -71,7 +75,11 @@ function Vault() {
       setLoading(true)
       try {
         const result = await treasury.depositStablecoin(
-          utils.parseUnits(String(amount), 18)
+          utils.parseUnits(String(amount), 18),
+          {
+            gasLimit: 300000,
+            maxFeePerGas: 25 * 1e9
+          }
         );
         const data = await result.wait();
         ctx.updateTransactions(data);

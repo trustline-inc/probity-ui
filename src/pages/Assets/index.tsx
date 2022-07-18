@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import { WAD, RAY, CONTRACTS } from '../../constants';
+import { WAD, CONTRACTS } from '../../constants';
 import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
@@ -53,6 +53,7 @@ function Assets() {
           contract = new Contract(nativeAssetManager.address, nativeAssetManager.abi, library.getSigner())
           args = [{
             gasLimit: web3.utils.toWei('400000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
             value: _amount
           }]
         } else {
@@ -62,7 +63,10 @@ function Assets() {
 
           args = [
             _amount,
-            { gasLimit: web3.utils.toWei('400000', 'wei') },
+            {
+              gasLimit: web3.utils.toWei('400000', 'wei'),
+              maxFeePerGas: 25 * 1e9,
+            },
           ]
 
           // ERC20 allowance check
