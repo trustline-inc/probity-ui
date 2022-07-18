@@ -23,11 +23,11 @@ export const CONTRACTS: { [key: number]: any } = {
   // Local
   1337: {
     USD: {
-      address: "0xbDD721Bf7a6053A869B1d9aeE28B63344e98C6dC",
+      address: "0x60f8E563a7A1Ba3D62136f551E9169B3143C7672",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0xE8cb9F44648bC120Df5F787919f97ac96e493acB",
+      address: "0xCe9a7dABcB38508cC94dBF206D8fD25Ed835F3E7",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -36,58 +36,58 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0xf5BeA4Bf7B915644fBD2707dBB197aAd6aD07f0A",
+      address: "0x4426Ea5Dc1F984b65a87405C93cae10528b69b50",
       abi: LiquidatorABI.abi
     },
-    ERC20_ASSET_MANAGER: {
-      address: "0x3DF44Dff5998B15d5030DDef3B64CF1167060581",
+    USD_MANAGER: {
+      address: "0x001732E25B7F1542d6dc22279FA08Cde8d9585ec",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0xF025104eeA910c93793FbB1CE8aDe9441EF5f689",
+      address: "0x590B3cA87cE8a078709f4E3d30A041038d27a899",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0x105927331d7079Ed0844dFC4c2925E6C36004482",
+      address: "0x3a07c034907c3EFE96C4883fC1144c038eC44434",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0x8b977Ef26392275FE09867b63EeD85efB0e6d7e2",
+      address: "0xe308Ab3312EE410141c38fd428f25638D8C7B171",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0x6660d1dBD8fE33d488B4A6b02471236Fea5841bb",
+      address: "0x1E5f5f115dEa465B86C16D94EDE0705f00758bd9",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0xa8C8664f967D93f0463051679534274feC4d2848",
+      address: "0x0f59ed744D2d3167DBa567aE33598617867aa4de",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0x37519c92ca57357a7100D4a5709bdE47b8F312E2",
+      address: "0x487d56FAb093A69C2367F45a83cAC78047024036",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x83360AdB2B653E253B666043314DD5E2A41A7cb1",
+      address: "0x0e67F5dfFe73a37e1A61EdC874D7C09a4dCBe10A",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0x46E2B3b0a6D01c23918730A959939aBaDc080862",
+      address: "0x2b331eEBBEC584cE1202402B209CF663685F30b7",
       abi: VaultEngineLimitedABI.abi
     },
     INTERFACES: {
-      "0xbDD721Bf7a6053A869B1d9aeE28B63344e98C6dC": UsdABI,
-      "0xE8cb9F44648bC120Df5F787919f97ac96e493acB": AuctioneerABI,
-      "0xf5BeA4Bf7B915644fBD2707dBB197aAd6aD07f0A": LiquidatorABI,
-      "0xF025104eeA910c93793FbB1CE8aDe9441EF5f689": PriceFeedABI,
-      "0x105927331d7079Ed0844dFC4c2925E6C36004482": NativeAssetManagerABI,
-      "0x895603b926C932915fb456030d48C4dF6c0EaB25": Erc20AssetManagerABI,
-      "0x8b977Ef26392275FE09867b63EeD85efB0e6d7e2": RegistryABI,
-      "0x6660d1dBD8fE33d488B4A6b02471236Fea5841bb": PbtABI,
-      "0xa8C8664f967D93f0463051679534274feC4d2848": ReservePoolABI,
-      "0x37519c92ca57357a7100D4a5709bdE47b8F312E2": TellerABI,
-      "0x83360AdB2B653E253B666043314DD5E2A41A7cb1": TreasuryABI,
-      "0x46E2B3b0a6D01c23918730A959939aBaDc080862": VaultEngineLimitedABI
+      "0x60f8E563a7A1Ba3D62136f551E9169B3143C7672": UsdABI,
+      "0xCe9a7dABcB38508cC94dBF206D8fD25Ed835F3E7": AuctioneerABI,
+      "0x4426Ea5Dc1F984b65a87405C93cae10528b69b50": LiquidatorABI,
+      "0x590B3cA87cE8a078709f4E3d30A041038d27a899": PriceFeedABI,
+      "0x3a07c034907c3EFE96C4883fC1144c038eC44434": NativeAssetManagerABI,
+      "0x001732E25B7F1542d6dc22279FA08Cde8d9585ec": Erc20AssetManagerABI,
+      "0xe308Ab3312EE410141c38fd428f25638D8C7B171": RegistryABI,
+      "0x1E5f5f115dEa465B86C16D94EDE0705f00758bd9": PbtABI,
+      "0x0f59ed744D2d3167DBa567aE33598617867aa4de": ReservePoolABI,
+      "0x487d56FAb093A69C2367F45a83cAC78047024036": TellerABI,
+      "0x0e67F5dfFe73a37e1A61EdC874D7C09a4dCBe10A": TreasuryABI,
+      "0x2b331eEBBEC584cE1202402B209CF663685F30b7": VaultEngineLimitedABI
     }
   },
   // Songbird

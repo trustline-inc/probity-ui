@@ -53,6 +53,9 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: balance, mutate: mutateBalance } = useSWR([VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
+  const { data: systemCurrencyIssued, mutate: mutateSystemCurrencyIssued } = useSWR([VAULT_ENGINE.address, 'systemCurrencyIssued'], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
   const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
@@ -62,7 +65,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
     fetcher: fetcher(library, PBT.abi),
   })
-  const { data: lendingPoolSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'lendingPoolSupply'], {
+  const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'totalSupply'], {
     fetcher: fetcher(library, USD.abi),
   })
   const { data: lendingPoolDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'lendingPoolDebt'], {
@@ -285,7 +288,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Supply Ratio</h6>
-                      <span className="text-truncate">{underlyingRatio}</span>
+                      <span className="text-truncate">{underlyingRatio ? underlyingRatio : "0%"}</span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Current APY</h6>
@@ -360,26 +363,31 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             </>
           ) : (
             <>
-              <h5>System Stats</h5>
-              <div className="my-2 mt-4 d-flex justify-content-between">
-                <h6>Circulating Supply</h6>
-                <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatEther(lendingPoolSupply)).format(formatOptions) : null} USD</span>
+              <h5>System Currency</h5>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Vault Supply</h6>
+                <span className="text-truncate">{systemCurrencyIssued && asset ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).toString())).format(formatOptions) : null} USD</span>
+              </div>
+              <div className="my-2 mb-4 d-flex justify-content-between">
+                <h6>ERC20 Supply</h6>
+                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
+              </div>
+              <h5>Lending Pool</h5>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Total Debt</h6>
+                <span className="text-truncate">{lendingPoolDebt && asset ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
                 <span className="text-truncate">{lendingPoolEquity && asset ? numbro(utils.formatEther(lendingPoolEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Working Capital</h6>
+                <h6>Loanable Funds</h6>
                 <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt && asset ? numbro(utils.formatUnits(lendingPoolEquity.sub(lendingPoolDebt).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
                 <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(lendingPoolDebt.mul(RAY).div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
-              </div>
-              <div className="my-2 d-flex justify-content-between">
-                <h6>Total Debt</h6>
-                <span className="text-truncate">{lendingPoolDebt && asset ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
             </>
           )
