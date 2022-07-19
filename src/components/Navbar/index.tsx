@@ -23,24 +23,22 @@ function Balance() {
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
 
-  // TODO: Make the below code more scalable for other ERC20 tokens besides USD.
+  const args = currentAsset === nativeTokenSymbol ? (
+    ["getBalance", account, "latest"]
+  ) : (
+    [CONTRACTS[chainId!][currentAsset]?.address, 'balanceOf', account]
+  )
 
-  const { data: nativeTokenBalance, mutate: mutateNativeTokenBalance } = useSWR(["getBalance", account, "latest"], {
-    fetcher: fetcher(library),
-  });
-
-  const { data: usdTokenBalance, mutate: mutateUsdTokenBalance } = useSWR([CONTRACTS[chainId!]?.USD?.address, 'balanceOf', account], {
+  const { data: balance, mutate: mutateBalance } = useSWR(args, {
     fetcher: fetcher(library, CONTRACTS[chainId!]?.USD?.abi)
   })
 
-  const balance = usdTokenBalance
-  const symbol = "USD"
+  const symbol = currentAsset
 
   React.useEffect(() => {
     if (library !== undefined) {
       library.on("block", () => {
-        mutateNativeTokenBalance(undefined, true); // Update balance
-        mutateUsdTokenBalance(undefined, true); // Update balance
+        mutateBalance(undefined, true); // Update balance
       });
 
       return () => {
