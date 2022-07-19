@@ -69,7 +69,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
-        { gasLimit: 300000 }
+        { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
       ]
 
       try {
@@ -103,7 +103,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(-collateralAmount), 18),
         utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
-        { gasLimit: 300000 }
+        { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
       ]
 
       try {
