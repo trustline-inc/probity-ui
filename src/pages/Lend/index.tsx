@@ -75,7 +75,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   }
 
   /**
-   * Dynamically calculate the collateralization ratio
+   * Dynamically calculate the underlying ratio
    */
   React.useEffect(() => {
     if (vault) {
