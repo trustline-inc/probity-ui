@@ -137,7 +137,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(underlyingAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
-          { gasLimit: 300000 }
+          { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.modifyEquity(...args);
@@ -168,6 +168,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(-underlyingAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
+          { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
@@ -204,7 +205,8 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         args = [
           utils.parseUnits(String(interestAmount), 18),
           {
-            gasLimit: web3.utils.toWei('400000', 'wei')
+            gasLimit: web3.utils.toWei('300000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
           }
         ]
 
