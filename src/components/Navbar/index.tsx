@@ -26,11 +26,11 @@ function Balance() {
   const args = currentAsset === nativeTokenSymbol ? (
     ["getBalance", account, "latest"]
   ) : (
-    [CONTRACTS[chainId!][currentAsset]?.address, 'balanceOf', account]
+    [CONTRACTS[chainId!]?.[currentAsset]?.address, 'balanceOf', account]
   )
 
   const { data: balance, mutate: mutateBalance } = useSWR(args, {
-    fetcher: fetcher(library, CONTRACTS[chainId!]?.USD?.abi)
+    fetcher: fetcher(library, CONTRACTS[chainId!]?.[currentAsset]?.abi)
   })
 
   const symbol = currentAsset
