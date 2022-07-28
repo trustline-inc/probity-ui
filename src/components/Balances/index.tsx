@@ -74,6 +74,18 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: lendingPoolEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'lendingPoolEquity'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
+  const { data: lendingPoolPrincipal, mutate: mutateTotalPrincipal } = useSWR([VAULT_ENGINE.address, 'lendingPoolPrincipal'], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
+  const { data: lendingPoolSupply, mutate: mutateLendingPoolSupply } = useSWR([VAULT_ENGINE.address, 'lendingPoolSupply'], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
+  const { data: debtAccumulator, mutate: mutateDebtAccumulator } = useSWR([VAULT_ENGINE.address, 'debtAccumulator'], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
+  const { data: equityAccumulator, mutate: mutateEquityAccumulator } = useSWR([VAULT_ENGINE.address, 'equityAccumulator'], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
   const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
@@ -96,7 +108,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         mutatePbtErc20Balance(undefined, true);
         mutateTotalEquity(undefined, true);
         mutateVaultPbtBalance(undefined, true);
-        mutateAsset(undefined, true);
+        // mutateAsset(undefined, true);
       });
 
       return () => {
@@ -109,21 +121,21 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
    * Update the current APR
    */
   React.useEffect(() => {
-    if (lendingPoolDebt && lendingPoolEquity) {
-      if (lendingPoolEquity.toString() === "0" || lendingPoolDebt.toString() === "0") {
+    if (lendingPoolPrincipal && lendingPoolSupply) {
+      if (lendingPoolSupply.toString() === "0" || lendingPoolPrincipal.toString() === "0") {
         setEstimatedAPR("0%")
         setEstimatedAPY("0%")
         return
       }
-      const borrows = Number(utils.formatEther(lendingPoolDebt.div(RAY)));
-      const supply = Number(utils.formatEther(lendingPoolEquity.div(RAY)));
+      const borrows = Number(utils.formatEther(lendingPoolPrincipal.div(RAY)));
+      const supply = Number(utils.formatEther(lendingPoolSupply.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
       const newAPY = newAPR * newUtilization
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
       setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
-  }, [lendingPoolEquity, lendingPoolDebt, vault])
+  }, [lendingPoolSupply, lendingPoolPrincipal, vault])
 
   /**
    * Updates the collateral and underlying ratios
@@ -134,18 +146,16 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         try {
           const vaultEngine = new Contract(VAULT_ENGINE.address, VAULT_ENGINE.abi, library.getSigner())
           const {
-            debt,
+            normDebt,
             collateral,
             underlying,
             initialEquity
           } = await vaultEngine.vaults(utils.id(currentAsset), account);
-          const {
-            debtAccumulator
-          } = await vaultEngine.assets(utils.id(currentAsset));
+          const debtAccumulator = await vaultEngine.debtAccumulator();
           const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
           const price = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
   
-          const _debt = debt.mul(debtAccumulator)
+          const _debt = normDebt.mul(debtAccumulator)
 
           // Get collateral ratio
           if (_debt.toString() !== "0") {
@@ -176,7 +186,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     else setActiveKey(key)
   }
 
-  if (!vault || !asset) return null;
+  if (!vault) return null;
 
   return (
     <>
@@ -245,7 +255,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Standby</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(vault.standby)).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(vault.standbyAmount)).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
@@ -256,16 +266,8 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Total</h6>
-                        <span className="text-truncate">{numbro(utils.formatEther(vault.standby.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
+                        <span className="text-truncate">{numbro(utils.formatEther(vault.standbyAmount.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
-                      {
-                        currentAsset !== nativeTokenSymbol && (
-                          <div className="my-2 d-flex justify-content-between">
-                            <h6>Address</h6>
-                            <span className="text-truncate col-8">{ctx.address}</span>
-                          </div>
-                        )
-                      }
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
@@ -277,7 +279,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Equity</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.equity.mul(asset.equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {vault && equityAccumulator ? numbro(utils.formatEther(vault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -297,7 +299,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Interest Earned</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatUnits(vault.equity.mul(asset.equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
+                        {vault && equityAccumulator ? numbro(utils.formatUnits(vault.normEquity.mul(equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
                       </span>
                     </div>
                   </Accordion.Body>
@@ -310,7 +312,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Debt</h6>
                       <span className="text-truncate">
-                        {vault && asset ? numbro(utils.formatEther(vault.debt.mul(asset.debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {vault && debtAccumulator ? numbro(utils.formatEther(vault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -331,7 +333,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                 </Accordion.Item>
                 <Accordion.Item eventKey="currencies">
                   <Accordion.Header onClick={() => updateActiveKey("currencies")}>
-                    <h5>Currencies</h5>
+                    <h5>Available Funds</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
@@ -351,7 +353,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
                         <h6>Vault PBT</h6>
-                        <span className="text-truncate">{vaultPbtBalance && vault && asset ? numbro(utils.formatUnits(vaultPbtBalance, 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
+                        <span className="text-truncate">{vaultPbtBalance && vault ? numbro(utils.formatUnits(vaultPbtBalance, 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>ERC20 PBT</h6>
@@ -365,8 +367,8 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             <>
               <h5>System Currency</h5>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Vault Supply</h6>
-                <span className="text-truncate">{systemCurrencyIssued && asset ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <h6>Issued Supply</h6>
+                <span className="text-truncate">{systemCurrencyIssued ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 mb-4 d-flex justify-content-between">
                 <h6>ERC20 Supply</h6>
@@ -375,19 +377,19 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               <h5>Lending Pool</h5>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
-                <span className="text-truncate">{lendingPoolDebt && asset ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
-                <span className="text-truncate">{lendingPoolEquity && asset ? numbro(utils.formatEther(lendingPoolEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolEquity ? numbro(utils.formatEther(lendingPoolEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Loanable Funds</h6>
-                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt && asset ? numbro(utils.formatUnits(lendingPoolEquity.sub(lendingPoolDebt).toString(), 45)).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt ? numbro(utils.formatUnits(lendingPoolEquity.sub(lendingPoolDebt).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>
-                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" && asset ? numbro(utils.formatUnits(lendingPoolDebt.mul(RAY).div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
+                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" ? numbro(utils.formatUnits(lendingPoolDebt.mul(RAY).div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
               </div>
             </>
           )

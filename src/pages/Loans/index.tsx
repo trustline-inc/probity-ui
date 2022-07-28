@@ -45,6 +45,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const { data: rate } = useSWR([CONTRACTS[chainId!].TELLER.address, 'apr'], {
     fetcher: fetcher(library, CONTRACTS[chainId!].TELLER.abi),
   })
+  const { data: debtAccumulator } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'debtAccumulator'], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
+  })
   const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
@@ -66,9 +69,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       const args = [
         utils.id(currentAsset),
-        CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(collateralAmount), 18),
-        utils.parseUnits(String(amount), 45).div(asset.debtAccumulator),
+        utils.parseUnits(String(amount), 45).div(debtAccumulator),
         { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
       ]
 
@@ -100,9 +102,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       const args = [
         utils.id(currentAsset),
-        CONTRACTS[chainId!].TREASURY.address,
         utils.parseUnits(String(-collateralAmount), 18),
-        utils.parseUnits(String(-amount), 45).div(asset.debtAccumulator),
+        utils.parseUnits(String(-amount), 45).div(debtAccumulator),
         { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
       ]
 
@@ -158,11 +159,11 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       let newDebtAmount
       switch (activity) {
         case ActivityType.Borrow:
-          newDebtAmount = (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) + Number(amount))
+          newDebtAmount = (Number(utils.formatUnits(vault.normDebt.mul(debtAccumulator), 45)) + Number(amount))
           setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;
         case ActivityType.Repay:
-          newDebtAmount = (Number(utils.formatUnits(vault.debt.mul(asset.debtAccumulator), 45)) - Number(amount))
+          newDebtAmount = (Number(utils.formatUnits(vault.normDebt.mul(debtAccumulator), 45)) - Number(amount))
           if (newDebtAmount === 0) setCollateralRatio(0)
           else setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;

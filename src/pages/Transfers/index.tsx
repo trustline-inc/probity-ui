@@ -4,8 +4,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import QRCodeModal from "@walletconnect/qrcode-modal";
-import { ERROR, getAppMetadata } from "@walletconnect/utils";
 import Web3 from "web3"
 import * as bridge from "@trustline-inc/bridge"
 import Info from '../../components/Info';
@@ -22,8 +20,8 @@ import {
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import Client, { CLIENT_EVENTS } from "@walletconnect/client";
-import { PairingTypes, SessionTypes, ClientTypes, ProposalTypes } from "@walletconnect/types";
+import Client from "@walletconnect/sign-client";
+import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const location = useLocation();
@@ -72,45 +70,45 @@ export default function Transfers() {
       try {
         if (!client) {
           console.log("Intializing client")
-          const options: ClientTypes.Options = {
-            logger: DEFAULT_LOGGER,
-            relayUrl: DEFAULT_RELAY_PROVIDER,
-            projectId: PROJECT_ID,
-            metadata: DEFAULT_APP_METADATA
-          }
-          console.log("opts:", options)
-          const _client = new Client(options);
-          console.log("Client:", _client)
+          // const options: ClientTypes.Options = {
+          //   logger: DEFAULT_LOGGER,
+          //   relayUrl: DEFAULT_RELAY_PROVIDER,
+          //   projectId: PROJECT_ID,
+          //   metadata: DEFAULT_APP_METADATA
+          // }
+          // console.log("opts:", options)
+          // const _client = new Client(options);
+          // console.log("Client:", _client)
 
-          _client.on(
-            CLIENT_EVENTS.session_proposal,
-            async (proposal: any) => {
-              const { uri } = proposal.signal.params;
-              console.log("EVENT", "QR Code Modal open");
-              QRCodeModal.open(uri, () => {
-                console.log("EVENT", "QR Code Modal closed");
-              });
-            },
-          );
+          // _client.on(
+          //   CLIENT_EVENTS.session_proposal,
+          //   async (proposal: any) => {
+          //     const { uri } = proposal.signal.params;
+          //     console.log("EVENT", "QR Code Modal open");
+          //     QRCodeModal.open(uri, () => {
+          //       console.log("EVENT", "QR Code Modal closed");
+          //     });
+          //   },
+          // );
 
-          _client.on(CLIENT_EVENTS.session_update, async (proposal: any) => {
-            if (typeof _client === "undefined") return;
-            setPairings(_client.pairing);
-          });
+          // _client.on(CLIENT_EVENTS.session_update, async (proposal: any) => {
+          //   if (typeof _client === "undefined") return;
+          //   setPairings(_client.pairing);
+          // });
 
-          _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
-            if (session.topic !== session?.topic) return;
-            console.log("EVENT", "session_deleted");
-          });
+          // _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
+          //   if (session.topic !== session?.topic) return;
+          //   console.log("EVENT", "session_deleted");
+          // });
 
-          setClient(_client)
-          setPairings(_client.pairing);
-          if (typeof session !== "undefined") return;
-          // populates existing session to state (assume only the top one)
-          if (_client.session.length) {
-            const session = await _client.session.get("");
-            onSessionConnected(session);
-          }
+          // setClient(_client)
+          // setPairings(_client.pairing);
+          // if (typeof session !== "undefined") return;
+          // // populates existing session to state (assume only the top one)
+          // if (_client.session.length) {
+          //   const session = await _client.session.get("");
+          //   onSessionConnected(session);
+          // }
         }
       } catch (error) {
         console.log("connection error")
@@ -123,10 +121,10 @@ export default function Transfers() {
       console.log("cleaning up")
       if (client && session) {
         console.log("attempting disconnect")
-        client.disconnect({
-          topic: (session as any).topic,
-          reason: ERROR.USER_DISCONNECTED.format(),
-        });
+        // client.disconnect({
+        //   topic: (session as any).topic,
+        //   reason: ERROR.USER_DISCONNECTED.format(),
+        // });
       }
     }
   }, [session, pairings, client])
@@ -202,7 +200,7 @@ export default function Transfers() {
 
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
-      const requiredNamespaces: ProposalTypes.RequiredNamespace = {
+      const requiredNamespaces = {
         chains: ["xrpl:1, xrpl:2"],
         methods,
         events: []
@@ -231,7 +229,7 @@ export default function Transfers() {
     }
 
     // close modal in case it was open
-    QRCodeModal.close();
+    // QRCodeModal.close();
   };
 
   /**
@@ -245,10 +243,10 @@ export default function Transfers() {
     if (typeof session === "undefined") {
       throw new Error("Session is not connected");
     }
-    await client.disconnect({
-      topic: (session as any).topic,
-      reason: ERROR.USER_DISCONNECTED.format(),
-    });
+    // await client.disconnect({
+    //   topic: (session as any).topic,
+    //   reason: ERROR.USER_DISCONNECTED.format(),
+    // });
     console.log("disconnected")
   };
 

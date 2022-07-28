@@ -50,6 +50,10 @@ function Lend({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
+  let { data: equityAccumulator } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'equityAccumulator'], {
+    fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
+  })
+
   let liquidationRatio = "";
   if (price && asset?.adjustedPrice) {
     // Get the liquidation ratio
@@ -101,7 +105,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
     setEquityAmount(amount);
     if (equityAmount > 0) {
       setUnderlyingRatio(
-        totalUnderlying / (Number(utils.formatEther(vault.initialEquity)) + Number(utils.formatEther(vault.debt)) + Number(equityAmount))
+        totalUnderlying / (Number(utils.formatEther(vault.initialEquity)) + Number(utils.formatEther(vault.normDebt)) + Number(equityAmount))
       );
     }
   }
@@ -130,13 +134,13 @@ function Lend({ assetPrice }: { assetPrice: number }) {
    const invest = async () => {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
+      equityAccumulator = await vaultEngine.equityAccumulator();
       setLoading(true)
       try {
         const args = [
           utils.id(currentAsset),
-          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(underlyingAmount), 18),
-          utils.parseUnits(String(equityAmount), 45).div(asset.equityAccumulator),
+          utils.parseUnits(String(equityAmount), 45).div(equityAccumulator),
           { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
@@ -160,14 +164,14 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const redeem = async () => {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
+      equityAccumulator = await vaultEngine.equityAccumulator();
       setLoading(true)
 
       try {
         const args = [
           utils.id(currentAsset),
-          CONTRACTS[chainId!].TREASURY.address,
           utils.parseUnits(String(-underlyingAmount), 18),
-          utils.parseUnits(String(-equityAmount), 45).div(asset.equityAccumulator),
+          utils.parseUnits(String(-equityAmount), 45).div(equityAccumulator),
           { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
@@ -195,7 +199,13 @@ function Lend({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
 
       try {
-        let args: any = [utils.id(getNativeTokenSymbol(chainId!))]
+        let args: any = [
+          utils.id("USD"),
+          {
+            gasLimit: web3.utils.toWei('300000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
+          }
+        ]
         await vaultEngine.callStatic.collectInterest(...args)
         let result = await vaultEngine.collectInterest(...args);
         let data = await result.wait();

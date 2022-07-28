@@ -50,10 +50,10 @@ export const getNativeTokenSymbol = (chainId: number) => {
     case 14:
       return "FLR"
     case 16:
-      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL || "CFLR"
+      return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"
     case 19:
       return "SGB"
     default:
-      return process.env.REACT_APP_NATIVE_TOKEN_SYMBOL || "CFLR"
+      return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"
   }
 }

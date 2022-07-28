@@ -48,17 +48,15 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
           const {
             underlying,
-            equity,
-            debt,
+            normEquity,
+            normDebt,
             collateral,
             initialEquity
           } = await vaultEngine.vaults(utils.id(currentAsset), address);
-          const {
-            debtAccumulator,
-            adjustedPrice
-          } = await vaultEngine.assets(utils.id(currentAsset));
+          const { adjustedPrice } = await vaultEngine.assets(utils.id(currentAsset));
+          const debtAccumulator = await vaultEngine.debtAccumulator();
 
-          const _debt = debt.mul(debtAccumulator)
+          const _debt = normDebt.mul(debtAccumulator)
 
           // Get collateral ratio
           let collateralRatio
@@ -85,8 +83,8 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
           _vaults.push({
             address: address,
-            debt: `${numbro(utils.formatEther(debt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
-            equity: `${numbro(utils.formatEther(equity).toString()).format(formatOptions)} USD`,
+            debt: `${numbro(utils.formatEther(normDebt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
+            equity: `${numbro(utils.formatEther(normEquity).toString()).format(formatOptions)} USD`,
             collateralRatio,
             underlyingRatio,
             liquidationEligible,
@@ -160,7 +158,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           <div className="row">
             <div className="col-4">
               <h5>Equity</h5>
-              {vault.equity}
+              {vault.normEquity}
             </div>
             <div className="col-4">
               <h5>Underlying</h5>
@@ -174,7 +172,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           <div className="row mt-4">
             <div className="col-4">
               <h5>Debt</h5>
-              {vault.debt}
+              {vault.normDebt}
             </div>
             <div className="col-4">
               <h5>Collateral</h5>

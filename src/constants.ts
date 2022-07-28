@@ -13,6 +13,7 @@ import PbtABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Pb
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineIssuerABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineIssuer.sol/VaultEngineIssuer.json";
 import VaultEngineLimitedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineLimited.sol/VaultEngineLimited.json";
 import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineUnrestricted.sol/VaultEngineUnrestricted.json";
 
@@ -23,11 +24,11 @@ export const CONTRACTS: { [key: number]: any } = {
   // Local
   1337: {
     USD: {
-      address: "0x60f8E563a7A1Ba3D62136f551E9169B3143C7672",
+      address: "0xa7db5AB2eEb901Ab81eD5F500A53Ea411A33305E",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0xCe9a7dABcB38508cC94dBF206D8fD25Ed835F3E7",
+      address: "0x39dcFf08F4060Cac48A7A2506b3B92eC6DBA9C02",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -36,58 +37,58 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0x4426Ea5Dc1F984b65a87405C93cae10528b69b50",
+      address: "0x87F1dC4940968F55854141c18fcC9BFD48E3dD18",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0x415c831190a69d0B87D832ba448A6ECdC958bF1C",
+      address: "0xfB2e8D1A52760aF87F5E54828f5eF19FA9437cf3",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0x590B3cA87cE8a078709f4E3d30A041038d27a899",
+      address: "0x2c7C5fE98482fe9a3f01D94f67408eA0DCaA3fdb",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0x3a07c034907c3EFE96C4883fC1144c038eC44434",
+      address: "0x99CDaDd8dB08055B5125b8d0493e9Ce42FbC80c7",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0xe308Ab3312EE410141c38fd428f25638D8C7B171",
+      address: "0xBc20dF627E8513Fb56F64E41dB7E4AA39202782e",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0x1E5f5f115dEa465B86C16D94EDE0705f00758bd9",
+      address: "0xF388b171C7008fd69c22468850DA7079770785eB",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0x0f59ed744D2d3167DBa567aE33598617867aa4de",
+      address: "0xaA24A48ffdD3605A60D1aE93C9A6428E7DAB5cE9",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0x487d56FAb093A69C2367F45a83cAC78047024036",
+      address: "0xDD31E3e0A39F1604e6B4a48Cb8a86FE395bF5186",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x0e67F5dfFe73a37e1A61EdC874D7C09a4dCBe10A",
+      address: "0x7F9De1AC1Cb10fa5b15E3CF31eD9838a132026fE",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0x2b331eEBBEC584cE1202402B209CF663685F30b7",
-      abi: VaultEngineLimitedABI.abi
+      address: "0xdf38A687f4A8E235e64C143810044C7877132E8E",
+      abi: VaultEngineABI.abi
     },
     INTERFACES: {
-      "0x60f8E563a7A1Ba3D62136f551E9169B3143C7672": UsdABI,
-      "0xCe9a7dABcB38508cC94dBF206D8fD25Ed835F3E7": AuctioneerABI,
-      "0x4426Ea5Dc1F984b65a87405C93cae10528b69b50": LiquidatorABI,
-      "0x590B3cA87cE8a078709f4E3d30A041038d27a899": PriceFeedABI,
-      "0x3a07c034907c3EFE96C4883fC1144c038eC44434": NativeAssetManagerABI,
-      "0x001732E25B7F1542d6dc22279FA08Cde8d9585ec": Erc20AssetManagerABI,
-      "0xe308Ab3312EE410141c38fd428f25638D8C7B171": RegistryABI,
-      "0x1E5f5f115dEa465B86C16D94EDE0705f00758bd9": PbtABI,
-      "0x0f59ed744D2d3167DBa567aE33598617867aa4de": ReservePoolABI,
-      "0x487d56FAb093A69C2367F45a83cAC78047024036": TellerABI,
-      "0x0e67F5dfFe73a37e1A61EdC874D7C09a4dCBe10A": TreasuryABI,
-      "0x2b331eEBBEC584cE1202402B209CF663685F30b7": VaultEngineLimitedABI
+      "0xa7db5AB2eEb901Ab81eD5F500A53Ea411A33305E": UsdABI,
+      "0x39dcFf08F4060Cac48A7A2506b3B92eC6DBA9C02": AuctioneerABI,
+      "0x87F1dC4940968F55854141c18fcC9BFD48E3dD18": LiquidatorABI,
+      "0x2c7C5fE98482fe9a3f01D94f67408eA0DCaA3fdb": PriceFeedABI,
+      "0x99CDaDd8dB08055B5125b8d0493e9Ce42FbC80c7": NativeAssetManagerABI,
+      "0xfB2e8D1A52760aF87F5E54828f5eF19FA9437cf3": Erc20AssetManagerABI,
+      "0xBc20dF627E8513Fb56F64E41dB7E4AA39202782e": RegistryABI,
+      "0xF388b171C7008fd69c22468850DA7079770785eB": PbtABI,
+      "0xaA24A48ffdD3605A60D1aE93C9A6428E7DAB5cE9": ReservePoolABI,
+      "0xDD31E3e0A39F1604e6B4a48Cb8a86FE395bF5186": TellerABI,
+      "0x7F9De1AC1Cb10fa5b15E3CF31eD9838a132026fE": TreasuryABI,
+      "0xdf38A687f4A8E235e64C143810044C7877132E8E": VaultEngineABI
     }
   },
   // Songbird
@@ -164,8 +165,8 @@ export const CONTRACTS: { [key: number]: any } = {
 // WalletConnect
 export const PROJECT_ID = process.env.REACT_APP_WC_PROJECT_ID
 export const DEFAULT_APP_METADATA = {
-  name: "Probity Vault",
-  description: "An asset-backed stablecoin protocol",
+  name: "Probity",
+  description: "A credit facility protocol",
   url: "https://probity.finance/",
   icons: ["https://probity.finance/probity-logo.png"],
 };
