@@ -27,7 +27,7 @@ npm install
 
 This will install React, Web3, and Probity libraries.
 
-If you're working with a local development build of `@trustline-inc/bridge`, make sure that you `tsc` in the bridge project directory and install the package with `npm install --force ../bridge`.
+If you're working with a local development build of `@trustline-inc/solaris-sdk`, make sure that you `tsc` in the solaris-sdk project directory and install the package with `npm install --force ../solaris-sdk`.
 
 **3. Set environment variables**
 
