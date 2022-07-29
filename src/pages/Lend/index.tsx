@@ -36,7 +36,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const eventContext = React.useContext(EventContext)
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = assetContext.asset || nativeTokenSymbol
-  const [interestType, setInterestType] = React.useState("PBT")
+  const [interestType, setInterestType] = React.useState("USD")
 
   const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
@@ -246,7 +246,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         <title>Probity | Lend</title>
       </Helmet>
       <header>
-        <h1>Lending</h1>
+        <h1>Investment Management</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

@@ -68,7 +68,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'totalSupply'], {
     fetcher: fetcher(library, USD.abi),
   })
-  const { data: lendingPoolDebt, mutate: mutateTotalDebt } = useSWR([VAULT_ENGINE.address, 'lendingPoolDebt'], {
+  const { data: lendingPoolDebt, mutate: mutateLendingPoolDebt } = useSWR([VAULT_ENGINE.address, 'lendingPoolDebt'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: lendingPoolEquity, mutate: mutateTotalEquity } = useSWR([VAULT_ENGINE.address, 'lendingPoolEquity'], {
@@ -103,7 +103,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         mutateVault(undefined, true);
         mutateBalance(undefined, true);
         mutateTotalSupply(undefined, true);
-        mutateTotalDebt(undefined, true);
+        mutateLendingPoolDebt(undefined, true);
         mutateErc20Balance(undefined, true);
         mutatePbtErc20Balance(undefined, true);
         mutateTotalEquity(undefined, true);
@@ -333,20 +333,16 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                 </Accordion.Item>
                 <Accordion.Item eventKey="currencies">
                   <Accordion.Header onClick={() => updateActiveKey("currencies")}>
-                    <h5>Available Funds</h5>
+                    <h5>Vault Funds</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Vault USD</h6>
                       <span className="text-truncate">{balance ? numbro(utils.formatEther(balance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
-                    <div className="my-2 d-flex justify-content-between">
-                      <h6>ERC20 USD</h6>
-                      <span className="text-truncate">{erc20Balance ? numbro(utils.formatEther(erc20Balance)).format(formatOptions) : "0"} USD</span>
-                    </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="voting">
+                {/* <Accordion.Item eventKey="voting">
                   <Accordion.Header onClick={() => updateActiveKey("voting")}>
                     <h5>Voting Power</h5>
                   </Accordion.Header>
@@ -360,7 +356,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                         <span className="text-truncate">{pbtErc20Balance ? numbro(utils.formatEther(pbtErc20Balance)).format(formatOptions) : "0"} PBT</span>
                       </div>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
               </Accordion>
             </>
           ) : (
@@ -377,15 +373,15 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               <h5>Lending Pool</h5>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Debt</h6>
-                <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.mul(debtAccumulator).div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Total Supply</h6>
-                <span className="text-truncate">{lendingPoolEquity ? numbro(utils.formatEther(lendingPoolEquity.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatEther(lendingPoolSupply.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Loanable Funds</h6>
-                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt ? numbro(utils.formatUnits(lendingPoolEquity.sub(lendingPoolDebt).toString(), 45)).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolSupply && lendingPoolPrincipal ? numbro(utils.formatUnits(lendingPoolSupply.sub(lendingPoolPrincipal).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization Ratio</h6>

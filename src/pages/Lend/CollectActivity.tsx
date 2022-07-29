@@ -21,7 +21,7 @@ function CollectActivity({
 }: Props) {
   return (
     <>
-      <div className="row">
+      {/* <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2">
@@ -37,7 +37,7 @@ function CollectActivity({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row">
         <div className="col-12 mb-4">
           <label htmlFor="collateralConversionInput" className="form-label">
