@@ -7,9 +7,9 @@ import globalid from "../../assets/globalid_logo.png"
 
 const nonce = nanoid()
 const GLOBAL_ID_CONNECT_URL = new URL("https://connect.global.id/")
+GLOBAL_ID_CONNECT_URL.searchParams.append("client_id", process.env.REACT_APP_GLOBALID_CLIENT_ID!)
 
 if (process.env.NODE_ENV === "production") {
-  GLOBAL_ID_CONNECT_URL.searchParams.append("client_id", "11c975d0-6e00-469b-b84c-22f2ab208c7b")
   GLOBAL_ID_CONNECT_URL.searchParams.append("response_type", "code")
   GLOBAL_ID_CONNECT_URL.searchParams.append("scope", "openid")
   GLOBAL_ID_CONNECT_URL.searchParams.append("logo", "true")
@@ -21,7 +21,6 @@ if (process.env.NODE_ENV === "production") {
   GLOBAL_ID_CONNECT_URL.searchParams.append("color", "4eb739")
   GLOBAL_ID_CONNECT_URL.searchParams.append("nonce", nonce)
 } else {
-  GLOBAL_ID_CONNECT_URL.searchParams.append("client_id", "ce43c787-031e-4993-b39f-03c124fa2d43")
   GLOBAL_ID_CONNECT_URL.searchParams.append("response_type", "code")
   GLOBAL_ID_CONNECT_URL.searchParams.append("scope", "openid")
   GLOBAL_ID_CONNECT_URL.searchParams.append("logo", "true")
