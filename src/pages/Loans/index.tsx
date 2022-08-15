@@ -66,7 +66,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const borrow = async () => {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
-      const debtAccumulator = vaultEngine.debtAccumulator()
+      const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
       const args = [
         utils.id(currentAsset),
@@ -100,7 +100,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const repay = async () => {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
-      const debtAccumulator = vaultEngine.debtAccumulator()
+      const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
       const args = [
         utils.id(currentAsset),

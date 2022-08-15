@@ -22,13 +22,13 @@ import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contrac
  */
 export const CONTRACTS: { [key: number]: any } = {
   // Local
-  1337: {
+  4294967295: {
     USD: {
-      address: "0xa7db5AB2eEb901Ab81eD5F500A53Ea411A33305E",
+      address: "0x5B6A3735f981e7D191229FadA854DedfB02Bf341",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0x39dcFf08F4060Cac48A7A2506b3B92eC6DBA9C02",
+      address: "0x8990547b9DBd227a9f758960CEE0bae43d1c6DB2",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -37,123 +37,58 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0x87F1dC4940968F55854141c18fcC9BFD48E3dD18",
+      address: "0x826D41d24eF10E24388a32ee0E37aEB40ed84a72",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0xfB2e8D1A52760aF87F5E54828f5eF19FA9437cf3",
+      address: "0x077a26C9D83044bBF376c18CA546E3F9Cde19a4E",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0x2c7C5fE98482fe9a3f01D94f67408eA0DCaA3fdb",
+      address: "0x2cB106e7DC976807Db28F34b0c6C63f661074899",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0x99CDaDd8dB08055B5125b8d0493e9Ce42FbC80c7",
+      address: "0x51c22C95180b38a44e32fae2B25B79CbA10Bac97",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0xBc20dF627E8513Fb56F64E41dB7E4AA39202782e",
+      address: "0xd4605c18B944515DDAE8E5568bB139794aFE8a59",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0xF388b171C7008fd69c22468850DA7079770785eB",
+      address: "0x7c935e525cB6D5c9A4Bc618ADF948a9a4ecC0f1D",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0xaA24A48ffdD3605A60D1aE93C9A6428E7DAB5cE9",
+      address: "0xB4B57DeDC27aecf11bf6505653e323FD9CC138EB",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0xDD31E3e0A39F1604e6B4a48Cb8a86FE395bF5186",
+      address: "0x895742455acae0F62ca8dEBA5699159BCd176325",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x7F9De1AC1Cb10fa5b15E3CF31eD9838a132026fE",
+      address: "0x94cc2044Fd152F633F89E202e8A93620Ce8C3D6A",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0xdf38A687f4A8E235e64C143810044C7877132E8E",
-      abi: VaultEngineABI.abi
+      address: "0xED96EE55607a6D5D09FCc0d36065b2427A680D1a",
+      abi: VaultEngineIssuerABI.abi
     },
     INTERFACES: {
-      "0xa7db5AB2eEb901Ab81eD5F500A53Ea411A33305E": UsdABI,
-      "0x39dcFf08F4060Cac48A7A2506b3B92eC6DBA9C02": AuctioneerABI,
-      "0x87F1dC4940968F55854141c18fcC9BFD48E3dD18": LiquidatorABI,
-      "0x2c7C5fE98482fe9a3f01D94f67408eA0DCaA3fdb": PriceFeedABI,
-      "0x99CDaDd8dB08055B5125b8d0493e9Ce42FbC80c7": NativeAssetManagerABI,
-      "0xfB2e8D1A52760aF87F5E54828f5eF19FA9437cf3": Erc20AssetManagerABI,
-      "0xBc20dF627E8513Fb56F64E41dB7E4AA39202782e": RegistryABI,
-      "0xF388b171C7008fd69c22468850DA7079770785eB": PbtABI,
-      "0xaA24A48ffdD3605A60D1aE93C9A6428E7DAB5cE9": ReservePoolABI,
-      "0xDD31E3e0A39F1604e6B4a48Cb8a86FE395bF5186": TellerABI,
-      "0x7F9De1AC1Cb10fa5b15E3CF31eD9838a132026fE": TreasuryABI,
-      "0xdf38A687f4A8E235e64C143810044C7877132E8E": VaultEngineABI
-    }
-  },
-  // Songbird
-  16: {
-    USD: {
-      address: "0x5322E9cE9DFc60372222F899D2B3683D45D9C167",
-      abi: UsdABI.abi
-    },
-    AUCTIONEER: {
-      address: "0x80584b42bC51219fB5556e27fa6c16ADbaEA1E53",
-      abi: AuctioneerABI.abi
-    },
-    BRIDGE: {
-      address: "",
-      abi: null
-    },
-    LIQUIDATOR: {
-      address: "0xfE850285031a976de274b969d098fBb9E94fc7bb",
-      abi: LiquidatorABI.abi
-    },
-    PRICE_FEED: {
-      address: "0x51D82d9d17fAdaC40cDef03cf9CB07b1Fb65563C",
-      abi: PriceFeedABI.abi
-    },
-    NATIVE_ASSET_MANAGER: {
-      address: "0x836BD8CBf5baFc971012397879490Ef7Ede64a38",
-      abi: NativeAssetManagerABI.abi
-    },
-    REGISTRY: {
-      address: "0xCA33D13E5D03b262C06E98244cb47328d5f890f3",
-      abi: RegistryABI.abi
-    },
-    PBT: {
-      address: "0x9E9600168c3b6FA0d3A779956969c41aaD21e1a1",
-      abi: PbtABI.abi
-    },
-    RESERVE_POOL: {
-      address: "0x13F332fd05F85909E1f1a74949c30fC74D9Ce3B1",
-      abi: ReservePoolABI.abi
-    },
-    TELLER: {
-      address: "0x25bb8E3bf6228e9cd4F8A29337438357BdDbDfeF",
-      abi: TellerABI.abi
-    },
-    TREASURY: {
-      address: "0x08E6eC157F126d30D3E2Ba0f9c3F95Fb53bd0613",
-      abi: TreasuryABI.abi
-    },
-    VAULT_ENGINE: {
-      address: "0x02b1A3b0efB8D04A3d91e3CD548885bC4c4bC1c7",
-      abi: VaultEngineLimitedABI.abi
-    },
-    INTERFACES: {
-      "0x5322E9cE9DFc60372222F899D2B3683D45D9C167": UsdABI,
-      "0x80584b42bC51219fB5556e27fa6c16ADbaEA1E53": AuctioneerABI,
-      "0xfE850285031a976de274b969d098fBb9E94fc7bb": LiquidatorABI,
-      "0x51D82d9d17fAdaC40cDef03cf9CB07b1Fb65563C": PriceFeedABI,
-      "0x836BD8CBf5baFc971012397879490Ef7Ede64a38": NativeAssetManagerABI,
-      "": Erc20AssetManagerABI,
-      "0xCA33D13E5D03b262C06E98244cb47328d5f890f3": RegistryABI,
-      "0x9E9600168c3b6FA0d3A779956969c41aaD21e1a1": PbtABI,
-      "0x13F332fd05F85909E1f1a74949c30fC74D9Ce3B1": ReservePoolABI,
-      "0x25bb8E3bf6228e9cd4F8A29337438357BdDbDfeF": TellerABI,
-      "0x08E6eC157F126d30D3E2Ba0f9c3F95Fb53bd0613": TreasuryABI,
-      "0x02b1A3b0efB8D04A3d91e3CD548885bC4c4bC1c7": VaultEngineABI
+      "0x5B6A3735f981e7D191229FadA854DedfB02Bf341": UsdABI,
+      "0x8990547b9DBd227a9f758960CEE0bae43d1c6DB2": AuctioneerABI,
+      "0x826D41d24eF10E24388a32ee0E37aEB40ed84a72": LiquidatorABI,
+      "0x2cB106e7DC976807Db28F34b0c6C63f661074899": PriceFeedABI,
+      "0x51c22C95180b38a44e32fae2B25B79CbA10Bac97": NativeAssetManagerABI,
+      "0x077a26C9D83044bBF376c18CA546E3F9Cde19a4E": Erc20AssetManagerABI,
+      "0xd4605c18B944515DDAE8E5568bB139794aFE8a59": RegistryABI,
+      "0x7c935e525cB6D5c9A4Bc618ADF948a9a4ecC0f1D": PbtABI,
+      "0xB4B57DeDC27aecf11bf6505653e323FD9CC138EB": ReservePoolABI,
+      "0x895742455acae0F62ca8dEBA5699159BCd176325": TellerABI,
+      "0x94cc2044Fd152F633F89E202e8A93620Ce8C3D6A": TreasuryABI,
+      "0xED96EE55607a6D5D09FCc0d36065b2427A680D1a": VaultEngineIssuerABI
     }
   },
   // Coston

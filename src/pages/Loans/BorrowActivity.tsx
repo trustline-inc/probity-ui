@@ -40,8 +40,7 @@ function BorrowActivity({
 }: Props) {
   const ctx = React.useContext(AssetContext)
   const { library, chainId } = useWeb3React<Web3Provider>()
-  const [estimatedAPR, setEstimatedAPR] = React.useState(rate?.toString())
-
+  const [estimatedAPR, setEstimatedAPR] = React.useState(rate ? utils.formatUnits(rate, 27).toString() : "")
   const { data: lendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "lendingPoolDebt"], {
     fetcher: fetcher(library, VaultEngineABI.abi),
   })
@@ -63,7 +62,7 @@ function BorrowActivity({
     if (lendingPoolDebt && lendingPoolEquity) {
       try {
         const borrows = Number(utils.formatEther(lendingPoolDebt.div(RAY)));
-        const supply = Number(utils.formatEther(lendingPoolEquity.div(RAY)));
+        const supply = Number(utils.formatEther(lendingPoolEquity));
         const newBorrows = borrows + Number(amount);
         const newUtilization = (newBorrows / supply);
         if (newUtilization >= 1) setEstimatedAPR("100")
