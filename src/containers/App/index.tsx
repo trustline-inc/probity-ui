@@ -164,7 +164,7 @@ function App() {
                   <div className="container-fluid">
                     <div className="row">
                       <div className="col-12">
-                        {displayInfoAlert ? (
+                        {/* {displayInfoAlert ? (
                           <div
                             className="alert alert-info alert-dismissible fade show"
                             role="alert"
@@ -183,7 +183,7 @@ function App() {
                               }}
                             ></button>
                           </div>
-                        ) : null}
+                        ) : null} */}
                         <Alert variant="warning">
                           THE BETA SOFTWARE LICENSED HEREUNDER IS BELIEVED TO CONTAIN DEFECTS AND A PRIMARY PURPOSE OF THIS BETA TESTING LICENSE IS TO OBTAIN FEEDBACK ON SOFTWARE PERFORMANCE AND THE IDENTIFICATION OF DEFECTS. LICENSEE IS ADVISED TO SAFEGUARD IMPORTANT DATA, TO USE CAUTION AND NOT TO RELY IN ANY WAY ON THE CORRECT FUNCTIONING OR PERFORMANCE OF THE SOFTWARE AND/OR ACCOMPANYING MATERIALS.
                         </Alert>
