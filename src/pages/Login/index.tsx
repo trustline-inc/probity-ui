@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
   GLOBAL_ID_CONNECT_URL.searchParams.append("scope", "openid")
   GLOBAL_ID_CONNECT_URL.searchParams.append("logo", "true")
   GLOBAL_ID_CONNECT_URL.searchParams.append("login", "true")
-  GLOBAL_ID_CONNECT_URL.searchParams.append("redirect_uri", "http://localhost:3000/login/callback")
+  GLOBAL_ID_CONNECT_URL.searchParams.append("redirect_uri", "http://localhost:8000/login/callback")
   GLOBAL_ID_CONNECT_URL.searchParams.append("qr_only", "true")
   GLOBAL_ID_CONNECT_URL.searchParams.append("acrc_id", "75d652df-5825-448c-909c-236ea6f35c13")
   GLOBAL_ID_CONNECT_URL.searchParams.append("document_id", "tos pp")

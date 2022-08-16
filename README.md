@@ -50,7 +50,7 @@ REACT_APP_GLOBALID_CLIENT_ID=ce43c787-031e-4993-b39f-03c124fa2d43
 npm start
 ```
 
-This starts the application at [`http://localhost:3000`](http://localhost:3000).
+This starts the application at [`http://localhost:8000`](http://localhost:8000).
 
 ## Development
 
