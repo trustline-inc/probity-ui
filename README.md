@@ -33,6 +33,17 @@ If you're working with a local development build of `@trustline-inc/solaris-sdk`
 
 Set the environment variables for the network in `src/constants.ts`.
 
+Create `.env` in the project root with the following variables defined:
+
+```
+PORT=8000
+REACT_APP_REQUIRE_AUTH=true
+REACT_APP_NATIVE_TOKEN=FLR
+REACT_APP_VERSION=$npm_package_version
+REACT_APP_WC_PROJECT_ID=28f4820aced00becb7371afffb64bd15
+REACT_APP_GLOBALID_CLIENT_ID=ce43c787-031e-4993-b39f-03c124fa2d43
+```
+
 **4. Start the app**
 
 ```

@@ -1,14 +1,14 @@
 import { BigNumber } from "ethers";
 import UsdABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
 import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
-import BridgeABI from "@trustline-inc/bridge/artifacts/contracts/Bridge.sol/Bridge.json";
+import BridgeABI from "@trustline-inc/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeAssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
 import Erc20AssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/ERC20AssetManager.sol/ERC20AssetManager.json";
 import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
 import ReservePoolABI from "@trustline-inc/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
-import StateConnectorABI from "@trustline-inc/bridge/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
+import StateConnectorABI from "@trustline-inc/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
 import PbtABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Pbt.sol/PBT.json";
 import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
@@ -33,7 +33,7 @@ export const CONTRACTS: { [key: number]: any } = {
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
     BRIDGE: {
-      address: "",
+      address: "0xdA676Da121A77fa051EFCaA98f85321d38E08B61",
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
@@ -94,11 +94,11 @@ export const CONTRACTS: { [key: number]: any } = {
   // Coston
   16: {
     USD: {
-      address: "0x137ABa115B5321f4fAae99148eAdaA99e06e5462",
+      address: "0x3cd70e240095368a10973dfc70b324439aD9038A",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0x73Bb9cF3e66F378d4517Cfb600bA8922908310e0",
+      address: "0x3DeDD9ce4C2398d92a477Ef65D41165B6cb02fcD",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -107,58 +107,58 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0x0F6553811ce1C3b31c73B90849D9FED4dcAC2A98",
+      address: "0xCfb4669806EC451e7AB7Cb5173947770f986EE37",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0xd20b52fe4D1551AC4E09Ca035ccAF6d7F6D8EB86",
+      address: "0xD719B8f9a11e4b9E51F8bEeE92D5bfbc366b5Fcb",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0xB221725772963BbeD981560385cac09d276Bd2d1",
+      address: "0xd98dDBAa05F6690E09B45F24c66102CE73fE5DF0",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0xb387b72a4074aB5924973510c2E20722DAbBc710",
+      address: "0x6c90857e495099CbA67059f59A61ccaC943b6AA3",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0x02DDB098A9117858DdB91b950653F41Cde7fa2dc",
+      address: "0x90c7C75F559aF137069A73db55296886e8120244",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0xe6cf0E52C456872a8de869bB10eC9986000A7516",
+      address: "0x6779d8B78879161419A009F9e1448201FfA72eAc",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0xFb8c2f015B3ce2A760318c6C3d2C4D4d1de3A17c",
+      address: "0x588eFA59567b7eb25edF7A043dC907bDCCE025De",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0x06BcB41816c2B3AB7555a460ef3dA9752E83A2df",
+      address: "0x176375a099793fFF44e50ed15DAc623A1301aD48",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x5F69ebAe912879D9A6E48820D00a26400f3FAe27",
+      address: "0x690F9d18dD9708eF83968684703861745Ea1095B",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0x4B79710B9CDA9901Ca28693ecA84CC131CA85C9b",
+      address: "0xAB592f6945B63AF46B26617D12a164311bD4ED9C",
       abi: VaultEngineIssuerABI.abi
     },
     INTERFACES: {
-      "0x137ABa115B5321f4fAae99148eAdaA99e06e5462": UsdABI,
-      "0x73Bb9cF3e66F378d4517Cfb600bA8922908310e0": AuctioneerABI,
-      "0x0F6553811ce1C3b31c73B90849D9FED4dcAC2A98": LiquidatorABI,
-      "0xB221725772963BbeD981560385cac09d276Bd2d1": PriceFeedABI,
-      "0xb387b72a4074aB5924973510c2E20722DAbBc710": NativeAssetManagerABI,
-      "0xd20b52fe4D1551AC4E09Ca035ccAF6d7F6D8EB86": Erc20AssetManagerABI,
-      "0x02DDB098A9117858DdB91b950653F41Cde7fa2dc": RegistryABI,
-      "0xe6cf0E52C456872a8de869bB10eC9986000A7516": PbtABI,
-      "0xFb8c2f015B3ce2A760318c6C3d2C4D4d1de3A17c": ReservePoolABI,
-      "0x06BcB41816c2B3AB7555a460ef3dA9752E83A2df": TellerABI,
-      "0x5F69ebAe912879D9A6E48820D00a26400f3FAe27": TreasuryABI,
-      "0x4B79710B9CDA9901Ca28693ecA84CC131CA85C9b": VaultEngineIssuerABI
+      "0x3cd70e240095368a10973dfc70b324439aD9038A": UsdABI,
+      "0x3DeDD9ce4C2398d92a477Ef65D41165B6cb02fcD": AuctioneerABI,
+      "0xCfb4669806EC451e7AB7Cb5173947770f986EE37": LiquidatorABI,
+      "0xd98dDBAa05F6690E09B45F24c66102CE73fE5DF0": PriceFeedABI,
+      "0x6c90857e495099CbA67059f59A61ccaC943b6AA3": NativeAssetManagerABI,
+      "0xD719B8f9a11e4b9E51F8bEeE92D5bfbc366b5Fcb": Erc20AssetManagerABI,
+      "0x90c7C75F559aF137069A73db55296886e8120244": RegistryABI,
+      "0x6779d8B78879161419A009F9e1448201FfA72eAc": PbtABI,
+      "0x588eFA59567b7eb25edF7A043dC907bDCCE025De": ReservePoolABI,
+      "0x176375a099793fFF44e50ed15DAc623A1301aD48": TellerABI,
+      "0x690F9d18dD9708eF83968684703861745Ea1095B": TreasuryABI,
+      "0xAB592f6945B63AF46B26617D12a164311bD4ED9C": VaultEngineIssuerABI
     }
   },
   // Songbird

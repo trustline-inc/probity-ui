@@ -5,7 +5,7 @@ import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
-import * as bridge from "@trustline-inc/bridge"
+import * as solaris from "@trustline-inc/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
@@ -70,45 +70,35 @@ export default function Transfers() {
       try {
         if (!client) {
           console.log("Intializing client")
-          // const options: ClientTypes.Options = {
-          //   logger: DEFAULT_LOGGER,
-          //   relayUrl: DEFAULT_RELAY_PROVIDER,
-          //   projectId: PROJECT_ID,
-          //   metadata: DEFAULT_APP_METADATA
-          // }
-          // console.log("opts:", options)
-          // const _client = new Client(options);
-          // console.log("Client:", _client)
-
-          // _client.on(
-          //   CLIENT_EVENTS.session_proposal,
-          //   async (proposal: any) => {
-          //     const { uri } = proposal.signal.params;
-          //     console.log("EVENT", "QR Code Modal open");
-          //     QRCodeModal.open(uri, () => {
-          //       console.log("EVENT", "QR Code Modal closed");
-          //     });
+          // const _client = await Client.init({
+          //   projectId: "<YOUR_PROJECT_ID>",
+          //   metadata: {
+          //     name: "Example Dapp",
+          //     description: "Example Dapp",
+          //     url: "#",
+          //     icons: ["https://walletconnect.com/walletconnect-logo.png"],
           //   },
-          // );
-
-          // _client.on(CLIENT_EVENTS.session_update, async (proposal: any) => {
-          //   if (typeof _client === "undefined") return;
-          //   setPairings(_client.pairing);
           // });
 
-          // _client.on(CLIENT_EVENTS.session_delete, (session: any) => {
-          //   if (session.topic !== session?.topic) return;
-          //   console.log("EVENT", "session_deleted");
+          // _client.on("session_event", (args: any) => {
+          //   console.log(args)
+          //   // Handle session events, such as "chainChanged", "accountsChanged", etc.
+          // });
+          
+          // _client.on("session_update", ({ topic, params }: any) => {
+          //   const { namespaces } = params;
+          //   const _session = _client.session.get(topic);
+          //   // Overwrite the `namespaces` of the existing session with the incoming one.
+          //   const updatedSession = { ..._session, namespaces };
+          //   // Integrate the updated session state into your dapp state.
+          //   onSessionUpdate(updatedSession);
+          // });
+          
+          // _client.on("session_delete", () => {
+          //   // Session was deleted -> reset the dapp state, clean up from user session, etc.
           // });
 
           // setClient(_client)
-          // setPairings(_client.pairing);
-          // if (typeof session !== "undefined") return;
-          // // populates existing session to state (assume only the top one)
-          // if (_client.session.length) {
-          //   const session = await _client.session.get("");
-          //   onSessionConnected(session);
-          // }
         }
       } catch (error) {
         console.log("connection error")
@@ -151,8 +141,8 @@ export default function Transfers() {
     (async () => {
       // Get verified issuers
       // try {
-      //   const bridge = new Contract(CONTRACTS[chainId!].BRIDGE.address, CONTRACTS[chainId!].BRIDGE.abi, library)
-      //   const _verifiedIssuers = await bridge.getVerifiedIssuers()
+      //   const solaris = new Contract(CONTRACTS[chainId!].BRIDGE.address, CONTRACTS[chainId!].BRIDGE.abi, library)
+      //   const _verifiedIssuers = await solaris.getVerifiedIssuers()
       //   setVerifiedIssuers(_verifiedIssuers)
       // } catch (error) {
       //   console.error(error)
@@ -258,7 +248,7 @@ export default function Transfers() {
   const onSessionConnected = async (_session: any) => {
     console.log("Connected to session", _session)
     setSession(_session)
-    onSessionUpdate(_session.state.accounts, _session.permissions.blockchain.chains);
+    onSessionUpdate(_session);
 
     // Make RPC request
     const success = await client?.request({
@@ -303,9 +293,8 @@ export default function Transfers() {
 
   };
 
-  const onSessionUpdate = async (accounts: string[], chains: string[]) => {
-    console.log("accounts", accounts)
-    console.log("chains", chains)
+  const onSessionUpdate = async (sessionUpdate: any) => {
+    console.log("sessionUpdate", sessionUpdate)
   };
 
   /**
@@ -398,7 +387,7 @@ export default function Transfers() {
 
       if (library && account) {
         console.log("Creating Transfer object")
-        const _transfer = new bridge.Transfer({
+        const _transfer = new solaris.Transfer({
           direction: {
             source: "LOCAL",
             destination: "XRPL_TESTNET"
@@ -547,7 +536,7 @@ export default function Transfers() {
   const prepareRedemption = async () => {
     try {
       setLoading(true)
-      const _transfer = new bridge.Transfer({
+      const _transfer = new solaris.Transfer({
         direction: {
           source: "XRPL",
           destination: "FLARE"
