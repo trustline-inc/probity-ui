@@ -255,14 +255,35 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/lend/invest"} onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}>Invest</NavLink>
+                <NavLink
+                  className="nav-link"
+                  activeClassName="active"
+                  to={"/lend/invest"}
+                  onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}
+                >
+                  Invest
+                </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/lend/redeem"} onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}>Redeem</NavLink>
+                <NavLink
+                  className="nav-link"
+                  activeClassName="active"
+                  to={"/lend/redeem"}
+                  onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}
+                >
+                  Redeem
+                </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/lend/collect-interest"} onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}>Collect</NavLink>
-              </li>
+              {/* <li className="nav-item">
+                <NavLink
+                  className="nav-link"
+                  activeClassName="active"
+                  to={"/lend/collect-interest"}
+                  onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}
+                >
+                  Collect
+                </NavLink>
+              </li> */}
             </ul>
           </div>
           <hr />
@@ -271,7 +292,8 @@ function Lend({ assetPrice }: { assetPrice: number }) {
             {
               activity === ActivityType.IssueEquity && (
                 <InvestActivity
-                  underlyingAmount={underlyingAmount}
+                  // underlyingAmount={underlyingAmount}
+                  underlyingAmount={equityAmount} // Apex demo - for USD only
                   equityAmount={equityAmount}
                   underlyingRatio={underlyingRatio}
                   invest={invest}
@@ -286,7 +308,8 @@ function Lend({ assetPrice }: { assetPrice: number }) {
             {
               activity === ActivityType.RedeemEquity && (
                 <RedemptionActivity
-                  underlyingAmount={underlyingAmount}
+                  // underlyingAmount={underlyingAmount}
+                  underlyingAmount={equityAmount} // Apex demo - for USD only
                   onUnderlyingAmountChange={onUnderlyingAmountChange}
                   equityAmount={equityAmount}
                   underlyingRatio={underlyingRatio}

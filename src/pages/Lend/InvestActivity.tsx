@@ -40,10 +40,10 @@ function InvestActivity({
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
       <div className="row mb-4">
-        <div className="col-12">
+        {/* <div className="col-12">
           <p className="text-muted">Your investment must actively maintain a mimumum {liquidationRatio} ratio to equity to avoid penalties.</p>
-        </div>
-        <div className="col-12">
+        </div> */}
+        {/* <div className="col-12">
           <label htmlFor="collateralConversionInput" className="form-label">
             Underlying<br/>
             <small className="form-text text-muted">
@@ -68,14 +68,14 @@ function InvestActivity({
               {currentAsset}
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityAmount" className="form-label">
-            Shares<br/>
+            Amount<br/>
             <small className="form-text text-muted">
-              The amount of shares to create
+              The amount of funds to invest
             </small>
           </label>
           <div className="input-group">
@@ -92,8 +92,8 @@ function InvestActivity({
           </div>
         </div>
       </div>
-      <PriceFeed asset={currentAsset} amount={underlyingAmount} />
-      <div className="row">
+      {/* <PriceFeed asset={currentAsset} amount={underlyingAmount} /> */}
+      {/* <div className="row">
         <div className="col-12">
           <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
             <div className="m-2">
@@ -105,7 +105,7 @@ function InvestActivity({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button

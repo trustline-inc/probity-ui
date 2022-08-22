@@ -811,37 +811,12 @@ export default function Transfers() {
                 </div>
                 <div className="row mt-3">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" onChange={(e) => setUsePayStringProtocol(!usePayStringProtocol)} checked={usePayStringProtocol} />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        Use PayString Protocol
-                      </label>
+                    <label className="form-label">XRP Address</label>
+                    <div className="input-group mb-3">
+                      <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
                     </div>
                   </div>
                 </div>
-                {
-                  usePayStringProtocol ? (
-                  <div className="row mt-3">
-                    <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                      <label className="form-label">PayString Address</label>
-                      <div className="input-group mb-3">
-                        <input type="text" className="form-control" value={username} onChange={onUsernameChange} placeholder="username" aria-label="username" />
-                        <span className="input-group-text">$</span>
-                        <input type="text" className="form-control" value={domain} onChange={onDomainChange} placeholder="trustline.app" aria-label="domain" />
-                      </div>
-                    </div>
-                  </div>
-                  ) : (
-                    <div className="row mt-3">
-                      <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                        <label className="form-label">XRP Address</label>
-                        <div className="input-group mb-3">
-                          <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
-                        </div>
-                      </div>
-                    </div>
-                  )
-                }
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-4 d-grid">
                     <button
