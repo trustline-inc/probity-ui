@@ -282,7 +282,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                         {vault && equityAccumulator ? numbro(utils.formatEther(vault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
-                    <div className="my-2 d-flex justify-content-between">
+                    {/* <div className="my-2 d-flex justify-content-between">
                       <h6>Underlying</h6>
                       <span className="text-truncate">
                         {numbro(utils.formatEther(vault.underlying)).format(formatOptions)} {ctx.asset}
@@ -291,7 +291,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Supply Ratio</h6>
                       <span className="text-truncate">{underlyingRatio ? underlyingRatio : "0%"}</span>
-                    </div>
+                    </div> */}
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Current APY</h6>
                       <span className="text-truncate">{estimatedAPY}</span>
