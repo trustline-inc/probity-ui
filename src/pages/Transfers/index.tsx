@@ -366,24 +366,7 @@ export default function Transfers() {
     try {
       setTransferInProgress(true)
       setShowTransferModal(true)
-
-      if (usePayStringProtocol) {
-        const response = await axios(`http://${domain}/${username}`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/xrpl-testnet+json',
-            'PayID-Version': '1.0'
-          }
-        })
-
-        if (response.data.addresses.length > 0) {
-          // Take the first one for now.
-          const address = response.data.addresses[0].addressDetails.address;
-          setReceiverAddress(address)
-        }
-      } else {
-        setReceiverAddress(xrpAddress)
-      }
+      setReceiverAddress(xrpAddress)
 
       if (library && account) {
         console.log("Creating Transfer object")
@@ -406,7 +389,11 @@ export default function Transfers() {
         })
 
         // First check the allowance
-        if (!CONTRACTS[chainId!].BRIDGE.address) return alert("Bridge address is not set")
+        if (!CONTRACTS[chainId!].BRIDGE.address) {
+          setTransferInProgress(false)
+          setShowTransferModal(false)
+          return alert("Bridge address is not set")
+        }
         const stablecoin = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
         const allowance = await stablecoin.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 
@@ -822,7 +809,7 @@ export default function Transfers() {
                     <button
                       className="btn btn-primary btn-lg mt-4"
                       onClick={openOutboundTransferModal}
-                      disabled={transferAmount === 0 || ((usePayStringProtocol && (username === "" || domain === "")) || (!usePayStringProtocol && xrpAddress === "")) || transferInProgress}
+                      disabled={transferAmount === 0 || xrpAddress === "" || transferInProgress}
                     >
                       {transferInProgress ? <i className="fa fa-spin fa-spinner" /> : "Confirm"}
                     </button>
