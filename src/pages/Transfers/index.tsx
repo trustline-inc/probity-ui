@@ -5,6 +5,9 @@ import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
+import QRCodeModal from "@walletconnect/qrcode-modal";
+import SignClient from "@walletconnect/sign-client";
+import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import * as solaris from "@trustline-inc/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
@@ -20,8 +23,6 @@ import {
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
-import Client from "@walletconnect/sign-client";
-import { PairingTypes, SessionTypes } from "@walletconnect/types";
 
 export default function Transfers() {
   const location = useLocation();
@@ -50,7 +51,7 @@ export default function Transfers() {
   const [xrpAddress, setXrpAddress] = React.useState("")
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
-  const [client, setClient] = React.useState<Client>()
+  const [client, setClient] = React.useState<SignClient>()
   const ctx = useContext(EventContext)
 
   // Transfer modal
@@ -70,35 +71,29 @@ export default function Transfers() {
       try {
         if (!client) {
           console.log("Intializing client")
-          // const _client = await Client.init({
-          //   projectId: "<YOUR_PROJECT_ID>",
-          //   metadata: {
-          //     name: "Example Dapp",
-          //     description: "Example Dapp",
-          //     url: "#",
-          //     icons: ["https://walletconnect.com/walletconnect-logo.png"],
-          //   },
-          // });
+          const _client = await SignClient.init({
+            projectId: PROJECT_ID,
+            metadata: DEFAULT_APP_METADATA
+          });
 
-          // _client.on("session_event", (args: any) => {
-          //   console.log(args)
-          //   // Handle session events, such as "chainChanged", "accountsChanged", etc.
-          // });
+          _client.on("session_event", ({ event }: any) => {
+            // Handle session events, such as "chainChanged", "accountsChanged", etc.
+          });
           
-          // _client.on("session_update", ({ topic, params }: any) => {
-          //   const { namespaces } = params;
-          //   const _session = _client.session.get(topic);
-          //   // Overwrite the `namespaces` of the existing session with the incoming one.
-          //   const updatedSession = { ..._session, namespaces };
-          //   // Integrate the updated session state into your dapp state.
-          //   onSessionUpdate(updatedSession);
-          // });
+          _client.on("session_update", ({ topic, params }) => {
+            const { namespaces } = params;
+            const _session = _client.session.get(topic);
+            // Overwrite the `namespaces` of the existing session with the incoming one.
+            const updatedSession = { ..._session, namespaces };
+            // Integrate the updated session state into your dapp state.
+            onSessionUpdate(updatedSession);
+          });
           
-          // _client.on("session_delete", () => {
-          //   // Session was deleted -> reset the dapp state, clean up from user session, etc.
-          // });
+          _client.on("session_delete", () => {
+            // Session was deleted -> reset the dapp state, clean up from user session, etc.
+          });
 
-          // setClient(_client)
+          setClient(_client)
         }
       } catch (error) {
         console.log("connection error")
@@ -190,36 +185,35 @@ export default function Transfers() {
 
     try {
       const methods: string[] = DEFAULT_METHODS.flat()
-      const requiredNamespaces = {
-        chains: ["xrpl:1, xrpl:2"],
-        methods,
-        events: []
-      }
-      const session = await client.connect({
+      const { uri, approval } = await client.connect({
         requiredNamespaces: {
-          "xrpl": requiredNamespaces
-        }
-        // metadata: getAppMetadata() || DEFAULT_APP_METADATA,
-        // pairing,
-        // permissions: {
-        //   blockchain: {
-        //     chains: ["xrpl:2"],
-        //   },
-        //   jsonrpc: {
-        //     methods,
-        //   },
-        // },
+          xrpl: {
+            methods,
+            events: [],
+            chains: ["xrpl:1", "xrpl:2"]
+          }
+        },
+        pairingTopic: pairing?.topic
       });
-      console.log("session", session)
 
-      onSessionConnected(session);
+      // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
+      if (uri) {
+        QRCodeModal.open(uri, () => {
+          console.log("EVENT", "QR Code Modal closed");
+        });
+      }
+
+      // Await session approval from the wallet.
+      const session = await approval();
+      // Handle the returned session (e.g. update UI to "connected" state).
+      await onSessionConnected(session);
     } catch (e) {
       // ignore rejection
-      console.log(e)
+      console.error(e)
+    } finally {
+      QRCodeModal.close();
     }
 
-    // close modal in case it was open
-    // QRCodeModal.close();
   };
 
   /**
@@ -456,7 +450,7 @@ export default function Transfers() {
         })
         setTransferModalBody(
           <>
-            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended. From the home screen, go to the <i>Wallet</i> tab, press <i>USD</i>, then press <i>Inbound Transfer</i> at the bottom.</p>
+            <p>The next step will display a QR code. You can use any wallet that supports the WalletConnect protocol. The <a href="https://trustline.co" target="blank">Trustline</a> app is recommended.</p>
           </>
         )
       }
