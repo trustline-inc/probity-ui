@@ -18,7 +18,7 @@ import ConnectorModal from "../../components/ConnectorModal"
 import { CONTRACTS } from '../../constants';
 import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
-import Lend from "../../pages/Lend";
+import Lend from "../../pages/Investment";
 import Loans from "../../pages/Loans";
 import Assets from "../../pages/Assets";
 import Address from "../../pages/Address";
@@ -246,8 +246,8 @@ function App() {
                         <EventContext.Provider value={{ transactions, updateTransactions }}>
                           <AssetContext.Provider value={{ asset, address, updateAsset }}>
                             <Switch>
-                              {/* Address Management */}
-                              <Route path="/address">
+                              {/* Profile Management */}
+                              <Route path="/profile">
                                 <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                   <Address globalId={gidUuid} auth={auth} />
                                 </div>
@@ -272,8 +272,8 @@ function App() {
                                   )}
                                 </div>
                               </Route>
-                              {/* Lending */}
-                              <Route path="/lend">
+                              {/* Investment Management */}
+                              <Route path="/investment">
                                 <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                                   <Lend assetPrice={assetPrice} />
                                 </div>

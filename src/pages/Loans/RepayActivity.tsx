@@ -2,6 +2,7 @@ import React from "react"
 import numbro from "numbro"
 import NumberFormat from 'react-number-format';
 import PriceFeed from "../../components/PriceFeed"
+import { Form } from "react-bootstrap"
 import { getNativeTokenSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
@@ -37,10 +38,19 @@ function RepayActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = ctx.asset || nativeTokenSymbol
+  const currentAsset = "XRP"
+  const [repayFullAmount, setRepayFullAmount] = React.useState(false)
+
+  const handleOnChange = () => {
+    setRepayFullAmount(!repayFullAmount)
+  }
+
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
+      <Form.Group controlId="repay-full-amount" className="my-4">
+        <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} />
+      </Form.Group>
       <label className="form-label">
         Amount<br/>
         <small className="form-text text-muted">
@@ -49,6 +59,7 @@ function RepayActivity({
       </label>
       <div className="input-group">
         <NumberFormat
+          disabled={repayFullAmount}
           min="0.000000000000000000"
           className="form-control"
           placeholder="0.000000000000000000"
@@ -67,6 +78,7 @@ function RepayActivity({
       </label>
       <div className="input-group mb-3">
         <NumberFormat
+          disabled={repayFullAmount}
           min="0.000000000000000000"
           className="form-control"
           placeholder="0.000000000000000000"

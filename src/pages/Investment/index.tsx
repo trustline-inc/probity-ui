@@ -2,6 +2,7 @@ import React from 'react';
 import web3 from "web3";
 import useSWR from 'swr';
 import numbro from "numbro"
+import { BigNumber } from 'ethers';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
@@ -11,11 +12,10 @@ import { Contract, utils } from "ethers";
 import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
 import Activity from "../../containers/Activity";
-import InvestActivity from "./InvestActivity";
+import InvestActivity from "./SubscriptionActivity";
 import RedemptionActivity from "./RedemptionActivity";
-import CollectActivity from "./CollectActivity";
 import { Activity as ActivityType } from "../../types";
-import { CONTRACTS, RAY } from '../../constants';
+import { CONTRACTS, RAY, WAD } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
@@ -35,7 +35,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const [underlyingRatio, setUnderlyingRatio] = React.useState(0);
   const eventContext = React.useContext(EventContext)
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = assetContext.asset || nativeTokenSymbol
+  const currentAsset = "USD"
   const [interestType, setInterestType] = React.useState("USD")
 
   const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
@@ -61,6 +61,78 @@ function Lend({ assetPrice }: { assetPrice: number }) {
     liquidationRatio = String(1 / denominator)
   } else {
     liquidationRatio = `<Loading...>`
+  }
+
+  const deposit = async () => {
+    if (library && account) {
+      try {
+        const currentAsset = "USD"
+        let contract, args
+        let _amount = WAD.mul(equityAmount)
+
+        // ERC20 Token
+        const assetManager = CONTRACTS[chainId!][`${currentAsset}_MANAGER`]
+        contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
+
+        args = [
+          _amount,
+          {
+            gasLimit: web3.utils.toWei('300000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
+          },
+        ]
+
+        // ERC20 allowance check
+        const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+        let result = await erc20.allowance(account, assetManager.address);
+        const allowance = result
+        console.log("Allowance:", allowance.toString())
+        console.log("owner:", account)
+        console.log("spender:", assetManager.address)
+
+        // ERC20 balance check
+        result = await erc20.callStatic.balanceOf(account)
+        result = await erc20.balanceOf(account);
+        const balance = result
+        console.log("Balance:  ", BigNumber.from(balance).div(WAD).toString())
+
+        // ERC20 approve transaction
+        if (allowance.lt(_amount)) {
+          console.log("Creating allowance...")
+          result = await erc20.callStatic.approve(
+            assetManager.address,
+            _amount,
+            {
+              gasLimit: web3.utils.toWei('300000', 'wei'),
+              maxFeePerGas: 25 * 1e9,
+            }
+          )
+          result = await erc20.approve(
+            assetManager.address,
+            _amount,
+            {
+              gasLimit: web3.utils.toWei('300000', 'wei'),
+              maxFeePerGas: 25 * 1e9,
+            }
+          );
+          const tx = await result.wait();
+          console.log("tx", tx)
+        }
+
+        setLoading(true)
+
+        // Deposit asset
+        console.log("Depositing asset...")
+        await contract.callStatic.deposit(...args)
+        result = await contract.deposit(...args);
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        mutateVault(undefined, true)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
   }
 
   /**
@@ -123,26 +195,27 @@ function Lend({ assetPrice }: { assetPrice: number }) {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/lend/invest")  setActivity(ActivityType.IssueEquity);
-    if (location.pathname === "/lend/redeem") setActivity(ActivityType.RedeemEquity);
-    if (location.pathname === "/lend/collect-interest") setActivity(ActivityType.Collect);
+    if (location.pathname === "/investment/subscribe")  setActivity(ActivityType.IssueEquity);
+    if (location.pathname === "/investment/redeem") setActivity(ActivityType.RedeemEquity);
   }, [location])
 
   /**
-   * @function invest
+   * @function subscribe
    */
-   const invest = async () => {
+   const subscribe = async () => {
     if (library && account) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       equityAccumulator = await vaultEngine.equityAccumulator();
       setLoading(true)
+      await deposit()
       try {
         const args = [
-          utils.id(currentAsset),
-          utils.parseUnits(String(underlyingAmount), 18),
+          utils.id("USD"),
+          utils.parseUnits(String(equityAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(equityAccumulator),
           { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
+        console.log("args:", args)
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
@@ -169,8 +242,8 @@ function Lend({ assetPrice }: { assetPrice: number }) {
 
       try {
         const args = [
-          utils.id(currentAsset),
-          utils.parseUnits(String(-underlyingAmount), 18),
+          utils.id("USD"),
+          utils.parseUnits(String(-equityAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(equityAccumulator),
           { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
@@ -189,61 +262,10 @@ function Lend({ assetPrice }: { assetPrice: number }) {
     }
   }
 
-  /**
-   * @function collect
-   */
-    const collect = async () => {
-    if (library && account) {
-      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
-      const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, VaultEngineABI.abi, library.getSigner())
-      setLoading(true)
-
-      try {
-        let args: any = [
-          utils.id("USD"),
-          {
-            gasLimit: web3.utils.toWei('300000', 'wei'),
-            maxFeePerGas: 25 * 1e9,
-          }
-        ]
-        await vaultEngine.callStatic.collectInterest(...args)
-        let result = await vaultEngine.collectInterest(...args);
-        let data = await result.wait();
-        eventContext.updateTransactions(data);
-
-        const isPBT = interestType === "PBT";
-        args = [
-          utils.parseUnits(String(interestAmount), 18),
-          {
-            gasLimit: web3.utils.toWei('300000', 'wei'),
-            maxFeePerGas: 25 * 1e9,
-          }
-        ]
-
-        if (isPBT) {
-          await treasury.callStatic.withdrawPbt(...args)
-          result = await treasury.withdrawPbt(...args);
-        } else {
-          await treasury.callStatic.withdrawStablecoin(...args)
-          result = await treasury.withdrawStablecoin(...args);
-        }
-        data = await result.wait();
-        eventContext.updateTransactions(data);
-        mutateVault(undefined, true);
-        mutateAsset(undefined, true);
-        setInterestAmount(0)
-      } catch (error) {
-        console.log(error);
-        setError(error);
-      }
-      setLoading(false)
-    }
-  }
-
   return (
     <>
       <Helmet>
-        <title>Probity | Lend</title>
+        <title>Probity | Private Credit Fund</title>
       </Helmet>
       <header>
         <h1>Investment Management</h1>
@@ -258,32 +280,22 @@ function Lend({ assetPrice }: { assetPrice: number }) {
                 <NavLink
                   className="nav-link"
                   activeClassName="active"
-                  to={"/lend/invest"}
+                  to={"/investment/subscribe"}
                   onClick={() => { setActivity(ActivityType.IssueEquity); setUnderlyingAmount(0) }}
                 >
-                  Invest
+                  Subscribe
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink
                   className="nav-link"
                   activeClassName="active"
-                  to={"/lend/redeem"}
+                  to={"/investment/redeem"}
                   onClick={() => { setActivity(ActivityType.RedeemEquity); setUnderlyingAmount(0) }}
                 >
                   Redeem
                 </NavLink>
               </li>
-              {/* <li className="nav-item">
-                <NavLink
-                  className="nav-link"
-                  activeClassName="active"
-                  to={"/lend/collect-interest"}
-                  onClick={() => { setActivity(ActivityType.Collect); setUnderlyingAmount(0) }}
-                >
-                  Collect
-                </NavLink>
-              </li> */}
             </ul>
           </div>
           <hr />
@@ -296,7 +308,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
                   underlyingAmount={equityAmount} // Apex demo - for USD only
                   equityAmount={equityAmount}
                   underlyingRatio={underlyingRatio}
-                  invest={invest}
+                  subscribe={subscribe}
                   loading={loading}
                   onUnderlyingAmountChange={onUnderlyingAmountChange}
                   onEquityAmountChange={onEquityAmountChange}
@@ -318,18 +330,6 @@ function Lend({ assetPrice }: { assetPrice: number }) {
                   redeem={redeem}
                   loading={loading}
                   liquidationRatio={liquidationRatio}
-                />
-              )
-            }
-            {
-              activity === ActivityType.Collect && (
-                <CollectActivity
-                  interestAmount={interestAmount}
-                  onInterestAmountChange={onInterestAmountChange}
-                  collect={collect}
-                  loading={loading}
-                  setInterestType={setInterestType}
-                  interestType={interestType}
                 />
               )
             }

@@ -4,12 +4,13 @@ import numbro from "numbro";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { Contract, utils } from "ethers";
+import { Contract, utils, BigNumber } from "ethers";
+import web3 from "web3"
 import { Helmet } from "react-helmet";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { CONTRACTS } from '../../constants';
+import { CONTRACTS, WAD } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -30,10 +31,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(nativeTokenSymbol), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
@@ -48,7 +48,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const { data: debtAccumulator } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'debtAccumulator'], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
+  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(nativeTokenSymbol)], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
@@ -60,6 +60,40 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     if (location.pathname === "/loans/repay") setActivity(ActivityType.Repay);
   }, [location])
 
+  const deposit = async () => {
+    if (library && account) {
+      try {
+        let contract, args
+        let _amount = WAD.mul(collateralAmount)
+
+        // Native Token
+        const assetManager = CONTRACTS[chainId!][`NATIVE_ASSET_MANAGER`]
+        contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
+
+        args = [
+          {
+            gasLimit: web3.utils.toWei('300000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
+            value: _amount
+          },
+        ]
+
+        setLoading(true)
+
+        // Deposit asset
+        console.log("Depositing asset...")
+        await contract.callStatic.deposit(...args)
+        const result = await contract.deposit(...args);
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        mutateVault(undefined, true)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
   /**
    * @function borrow
    */
@@ -68,8 +102,9 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
+      await deposit()
       const args = [
-        utils.id(currentAsset),
+        utils.id(nativeTokenSymbol),
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(debtAccumulator),
         { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
@@ -103,7 +138,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
       const args = [
-        utils.id(currentAsset),
+        utils.id(nativeTokenSymbol),
         utils.parseUnits(String(-collateralAmount), 18),
         utils.parseUnits(String(-amount), 45).div(debtAccumulator),
         { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }

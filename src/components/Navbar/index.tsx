@@ -123,15 +123,15 @@ function Navbar() {
 
         <ul className={`navbar-nav my-4 ${mobileMenuVisibility ? 'mobile-visible' : ''}`}>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/address">
-              <i className="fas fa-address-card"></i> Address
+            <NavLink className="nav-link" activeClassName="active" to="/profile">
+              <i className="fa-solid fa-house-chimney-user"></i> Profile
             </NavLink>
           </li>
-          <li className="nav-item my-1">
+          {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/assets">
               <i className="fas fa-wallet"></i> Assets
             </NavLink>
-          </li>
+          </li> */}
           {
             // Not enabled on any chain, yet.
             chainId && [].includes(chainId as never) && (
@@ -146,44 +146,44 @@ function Navbar() {
             <NavLink
               className="nav-link"
               activeClassName="active"
-              to="/lend"
+              to="/investment"
             >
-              <i className="fa fa-percent"></i> Lend
+              <i className="fa-solid fa-circle-dollar-to-slot"></i> Invest
             </NavLink>
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-hand-holding-usd"></i> Borrow
+              <i className="fas fa-money-bill"></i> Borrow
             </NavLink>
           </li>
-          <li className="nav-item my-1">
+          {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/vault">
               <i className="fas fa-vault" /> Vault
             </NavLink>
-          </li>
+          </li> */}
           {
             // Only show Transfers tab if the bridge contract is in the env.
             // CONTRACTS[chainId!]?.BRIDGE?.address && (
               <li className="nav-item my-1">
                 <NavLink className="nav-link" activeClassName="active" to="/transfers">
-                  <i className="fas fa-paper-plane" /> Transfers
+                  <i className="fas fa-paper-plane" /> Transfer
                 </NavLink>
               </li>
             // )
           }
-          <li className="nav-item my-1">
+          {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/liquidations">
               <i className="fa-solid fa-water"></i> Liquidator
             </NavLink>
-          </li>
-          <li className="nav-item my-1">
+          </li> */}
+          {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/auctions">
               <i className="fas fa-gavel" /> Auctions
             </NavLink>
-          </li>
+          </li> */}
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/transactions">
-              <i className="fas fa-table" /> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
+              <i className="fa-solid fa-clock-rotate-left"></i> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
             </NavLink>
           </li>
           <li className="nav-item my-1">
@@ -204,7 +204,7 @@ function Navbar() {
                 &nbsp;Connected
               </div>
               <div className="spacer spacer-1" />
-              {
+              {/* {
                 chainId === 16 && (
                   <>
                     <Button
@@ -216,7 +216,7 @@ function Navbar() {
                     <div className="spacer spacer-1" />
                   </>
                 )
-              }
+              } */}
               {/*
                 <Button variant="light" onClick={whitelist}>
                   {loading ? (<i className="fa fa-spinner fa-spin" />) : "Whitelist Address"}

@@ -60,9 +60,9 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
   return (
     <>       
       <Helmet>
-        <title>{address ? "Probity | Registered Address" : "Probity | Register Address"}</title>
+        <title>Probity | User Profile</title>
       </Helmet>
-      <h1>Address</h1>
+      <h1>Profile</h1>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className="row mb-4">
           <div className="col-12">

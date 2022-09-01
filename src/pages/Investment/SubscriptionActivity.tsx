@@ -13,7 +13,7 @@ interface Props {
   underlyingRatio: number;
   onUnderlyingAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  invest: () => void;
+  subscribe: () => void;
   loading: boolean;
   currentAsset: string;
   liquidationRatio: string;
@@ -25,7 +25,7 @@ function InvestActivity({
   underlyingRatio,
   onUnderlyingAmountChange,
   onEquityAmountChange,
-  invest,
+  subscribe,
   loading,
   currentAsset,
   liquidationRatio
@@ -47,7 +47,7 @@ function InvestActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Underlying<br/>
             <small className="form-text text-muted">
-              The amount of underlying asset to invest
+              The amount of underlying asset to subscribe
             </small>
           </label>
           <div className="input-group">
@@ -75,7 +75,7 @@ function InvestActivity({
           <label htmlFor="equityAmount" className="form-label">
             Amount<br/>
             <small className="form-text text-muted">
-              The amount of funds to invest
+              The amount of funds to subscribe
             </small>
           </label>
           <div className="input-group">
@@ -111,7 +111,7 @@ function InvestActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={invest}
+            onClick={subscribe}
             disabled={(underlyingAmount === 0 && equityAmount === 0) || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}

@@ -212,6 +212,7 @@ export default function Transfers() {
       console.error(e)
     } finally {
       QRCodeModal.close();
+      setLoading(false)
     }
 
   };
@@ -792,14 +793,21 @@ export default function Transfers() {
                 </div>
                 <div className="row mt-3">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                    <label className="form-label">XRP Address</label>
+                    <label className="form-label">Destination XRP Address</label>
                     <div className="input-group mb-3">
                       <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
                     </div>
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-4 d-grid">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <Form.Group controlId="custodial">
+                      <Form.Check type="checkbox" label="Custodial Mode" checked disabled />
+                    </Form.Group>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-2 d-grid">
                     <button
                       className="btn btn-primary btn-lg mt-4"
                       onClick={openOutboundTransferModal}
@@ -816,6 +824,13 @@ export default function Transfers() {
             activity === ActivityType.InboundTransfer && (
               <>
                 <h4 className="text-center">Receive USD</h4>
+                <div className="row mt-4">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <Form.Group controlId="custodial">
+                      <Form.Check type="checkbox" label="Custodial Mode" checked disabled />
+                    </Form.Group>
+                  </div>
+                </div>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
                     <button
