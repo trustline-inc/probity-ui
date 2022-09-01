@@ -95,6 +95,31 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   }
 
   /**
+   * @function withdraw
+   */
+   const withdraw = async () => {
+    if (library && account) {
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
+      setLoading(true)
+      try {
+        const result = await treasury.withdrawStablecoin(
+          utils.parseUnits(String(amount), 18),
+          {
+            gasLimit: 300000,
+            maxFeePerGas: 25 *1e9
+          }
+        );
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        setAmount(0)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
+  /**
    * @function borrow
    */
   const borrow = async () => {
@@ -104,7 +129,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       await deposit()
       const args = [
-        utils.id(nativeTokenSymbol),
+        utils.id("CFLR"),
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(debtAccumulator),
         { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
@@ -118,13 +143,14 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         mutateVault(undefined, true);
         mutateBalance(undefined, true);
         mutateLendingPoolDebt(undefined, true)
-        setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
       }
     }
+
+    await withdraw()
 
     setLoading(false)
   }
@@ -168,10 +194,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    * @param event
    */
   const onAmountChange = (event: any) => {
-    let amount;
-    if (event.target.value === null) amount = 0
-    else amount = Number(numbro.unformat(event.target.value));
-    setAmount(amount);
+    let _amount;
+    if (event.target.value === null) _amount = 0
+    else _amount = Number(numbro.unformat(event.target.value));
+    setAmount(_amount);
   }
 
   /**
