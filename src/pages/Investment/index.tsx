@@ -36,6 +36,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const eventContext = React.useContext(EventContext)
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = "USD"
+  assetContext.updateAsset("USD")
   const [interestType, setInterestType] = React.useState("USD")
 
   const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
@@ -77,7 +78,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         args = [
           _amount,
           {
-            gasLimit: web3.utils.toWei('300000', 'wei'),
+            gasLimit: web3.utils.toWei('400000', 'wei'),
             maxFeePerGas: 25 * 1e9,
           },
         ]
@@ -103,7 +104,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
             assetManager.address,
             _amount,
             {
-              gasLimit: web3.utils.toWei('300000', 'wei'),
+              gasLimit: web3.utils.toWei('400000', 'wei'),
               maxFeePerGas: 25 * 1e9,
             }
           )
@@ -111,7 +112,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
             assetManager.address,
             _amount,
             {
-              gasLimit: web3.utils.toWei('300000', 'wei'),
+              gasLimit: web3.utils.toWei('400000', 'wei'),
               maxFeePerGas: 25 * 1e9,
             }
           );
@@ -125,6 +126,78 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         console.log("Depositing asset...")
         await contract.callStatic.deposit(...args)
         result = await contract.deposit(...args);
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        mutateVault(undefined, true)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
+  const withdraw = async () => {
+    if (library && account) {
+      try {
+        const currentAsset = "USD"
+        let contract, args
+        let _amount = WAD.mul(equityAmount)
+
+        // ERC20 Token
+        const assetManager = CONTRACTS[chainId!][`${currentAsset}_MANAGER`]
+        contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
+
+        args = [
+          _amount,
+          {
+            gasLimit: web3.utils.toWei('400000', 'wei'),
+            maxFeePerGas: 25 * 1e9,
+          },
+        ]
+
+        // ERC20 allowance check
+        const erc20 = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+        let result = await erc20.allowance(account, assetManager.address);
+        const allowance = result
+        console.log("Allowance:", allowance.toString())
+        console.log("owner:", account)
+        console.log("spender:", assetManager.address)
+
+        // ERC20 balance check
+        result = await erc20.callStatic.balanceOf(account)
+        result = await erc20.balanceOf(account);
+        const balance = result
+        console.log("Balance:  ", BigNumber.from(balance).div(WAD).toString())
+
+        // ERC20 approve transaction
+        if (allowance.lt(_amount)) {
+          console.log("Creating allowance...")
+          result = await erc20.callStatic.approve(
+            assetManager.address,
+            _amount,
+            {
+              gasLimit: web3.utils.toWei('400000', 'wei'),
+              maxFeePerGas: 25 * 1e9,
+            }
+          )
+          result = await erc20.approve(
+            assetManager.address,
+            _amount,
+            {
+              gasLimit: web3.utils.toWei('400000', 'wei'),
+              maxFeePerGas: 25 * 1e9,
+            }
+          );
+          const tx = await result.wait();
+          console.log("tx", tx)
+        }
+
+        setLoading(true)
+
+        // Withdrawing asset
+        console.log("Withdrawing asset...")
+        await contract.callStatic.withdraw(...args)
+        result = await contract.withdraw(...args);
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true)
@@ -213,9 +286,9 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           utils.id("USD"),
           utils.parseUnits(String(equityAmount), 18),
           utils.parseUnits(String(equityAmount), 45).div(equityAccumulator),
-          { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
+          { gasLimit: web3.utils.toWei('400000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
-        console.log("args:", args)
+        console.log("args:", args[1].toString(), args[2].toString())
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();
@@ -245,7 +318,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           utils.id("USD"),
           utils.parseUnits(String(-equityAmount), 18),
           utils.parseUnits(String(-equityAmount), 45).div(equityAccumulator),
-          { gasLimit: web3.utils.toWei('300000', 'wei'), maxFeePerGas: 25 * 1e9 }
+          { gasLimit: web3.utils.toWei('400000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.connect(library.getSigner()).modifyEquity(...args);
@@ -254,6 +327,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         mutateVault(undefined, true);
         setEquityAmount(0)
         setUnderlyingAmount(0)
+        await withdraw()
       } catch (error) {
         console.log(error);
         setError(error);

@@ -5,6 +5,7 @@ import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
+import QRCode from "react-qr-code";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import SignClient from "@walletconnect/sign-client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
@@ -144,6 +145,11 @@ export default function Transfers() {
       // }
     })()
   }, [library])
+
+  const showQRCode = () => {
+    setTransferStage("INBOUND_APEX_DEMO")
+    setShowTransferModal(true)
+  }
 
   /**
    * Input event handlers
@@ -323,7 +329,7 @@ export default function Transfers() {
           await requestXrplRedemptionTransaction()
           break;
         default:
-          await prepareRedemption()
+          await showQRCode()
           break;
       }
     }
@@ -347,6 +353,8 @@ export default function Transfers() {
       case "INBOUND_REDEMPTION_RESERVATION":
         return "Inbound Transfer Reservation"
       case "INBOUND_REDEMPTION_TRANSACTION":
+        return "Inbound Transfer Transaction"
+      case "INBOUND_APEX_DEMO":
         return "Inbound Transfer Transaction"
       default:
         return "Loading..."
@@ -618,6 +626,13 @@ export default function Transfers() {
             {/* TODO: can we put the modal body text in the elements below? */}
             {transferModalBody}
             {/* Forms */}
+            {
+              transferStage === "INBOUND_APEX_DEMO" && (
+                <div className="d-flex justify-content-center py-5">
+                  <QRCode value={account || ""} />
+                </div>
+              )
+            }
             {
               transferStage === "OUTBOUND_PERMIT" && (
                 <Form className="py-3">

@@ -13,6 +13,7 @@ import './index.css';
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
 import USD from "../../assets/usd.png"
+import XRP from "../../assets/xrp.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const assetIcons: { [key: string]: string } = {
@@ -20,6 +21,7 @@ const assetIcons: { [key: string]: string } = {
   SGB,
   FLR,
   USD,
+  XRP
 }
 
 const formatOptions = {
@@ -47,7 +49,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
   // Read data from deployed contracts
-  const { data: xrpVault, mutate: mutateXrpVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("CFLR"), account], {
+  const { data: xrpVault, mutate: mutateXrpVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("XRP"), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: usdVault, mutate: mutateUsdVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("USD"), account], {
@@ -154,10 +156,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             collateral,
             underlying,
             initialEquity
-          } = await vaultEngine.vaults(utils.id("CFLR"), account);
+          } = await vaultEngine.vaults(utils.id("XRP"), account);
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
-          const price = await priceFeed.callStatic.getPrice(utils.id("CFLR"))
+          const price = await priceFeed.callStatic.getPrice(utils.id("XRP"))
   
           const _debt = normDebt.mul(debtAccumulator)
           console.log(_debt)
@@ -305,7 +307,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Credit Used</h6>
+                      <h6>Balance</h6>
                       <span className="text-truncate">
                         {xrpVault && debtAccumulator ? numbro(utils.formatEther(xrpVault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
@@ -326,7 +328,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                {/* <Accordion.Item eventKey="currencies">
+                <Accordion.Item eventKey="currencies">
                   <Accordion.Header onClick={() => updateActiveKey("currencies")}>
                     <h5>Vault Funds</h5>
                   </Accordion.Header>
@@ -336,7 +338,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <span className="text-truncate">{balance ? numbro(utils.formatEther(balance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                   </Accordion.Body>
-                </Accordion.Item> */}
+                </Accordion.Item>
                 {/* <Accordion.Item eventKey="voting">
                   <Accordion.Header onClick={() => updateActiveKey("voting")}>
                     <h5>Voting Power</h5>

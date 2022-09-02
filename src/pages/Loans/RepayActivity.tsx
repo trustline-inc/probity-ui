@@ -1,6 +1,7 @@
 import React from "react"
 import numbro from "numbro"
 import NumberFormat from 'react-number-format';
+import { RAD } from "../../constants"
 import PriceFeed from "../../components/PriceFeed"
 import { Form } from "react-bootstrap"
 import { getNativeTokenSymbol } from "../../utils"
@@ -16,8 +17,13 @@ interface Props {
   rate: number;
   loading: boolean;
   repay: () => void;
-  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAmountChange: (value: string) => void;
+  onCollateralAmountChange: (value: string) => void;
+  collateralInUse: string;
+  repayFullAmount: boolean;
+  setRepayFullAmount: (value: boolean) => void;
+  vault: any;
+  debtAccumulator: any;
 }
 
 function RepayActivity({
@@ -27,7 +33,12 @@ function RepayActivity({
   collateralRatio,
   collateralAmount,
   onAmountChange,
-  onCollateralAmountChange
+  onCollateralAmountChange,
+  collateralInUse,
+  repayFullAmount,
+  setRepayFullAmount,
+  vault,
+  debtAccumulator
 }: Props) {
   const ctx = React.useContext(AssetContext)
   const { chainId } = useWeb3React<Web3Provider>()
@@ -39,79 +50,91 @@ function RepayActivity({
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = "XRP"
-  const [repayFullAmount, setRepayFullAmount] = React.useState(false)
 
   const handleOnChange = () => {
+    if (!repayFullAmount) {
+      console.log("onChange:", vault.normDebt.mul(debtAccumulator).div(RAD).toString())
+      onAmountChange(vault.normDebt.mul(debtAccumulator).div(RAD).toString())
+      console.log("collateralInUse", collateralInUse)
+      onCollateralAmountChange(collateralInUse)
+    } else {
+      onAmountChange("0")
+      onCollateralAmountChange("0")
+    }
     setRepayFullAmount(!repayFullAmount)
   }
 
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
-      <Form.Group controlId="repay-full-amount" className="my-4">
+      <Form.Group controlId="repay-full-amount" className="my-4 pt-5">
         <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} />
       </Form.Group>
-      <label className="form-label">
-        Amount<br/>
-        <small className="form-text text-muted">
-          Size of the repayment
-        </small>
-      </label>
-      <div className="input-group">
-        <NumberFormat
-          disabled={repayFullAmount}
-          min="0.000000000000000000"
-          className="form-control"
-          placeholder="0.000000000000000000"
-          thousandSeparator={true}
-          onChange={onAmountChange}
-          value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
-        />
-        <span className="input-group-text font-monospace">USD</span>
-      </div>
-      <br/>
-      <label className="form-label">
-        Collateral<br/>
-        <small className="form-text text-muted">
-          Amount of collateral to unlock
-        </small>
-      </label>
-      <div className="input-group mb-3">
-        <NumberFormat
-          disabled={repayFullAmount}
-          min="0.000000000000000000"
-          className="form-control"
-          placeholder="0.000000000000000000"
-          thousandSeparator={true}
-          onChange={onCollateralAmountChange}
-          value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
-        />
-        <button
-          onClick={handleShow}
-          className="btn btn-outline-secondary font-monospace"
-          type="button"
-        >
-          {currentAsset}
-        </button>
-      </div>
-      <PriceFeed asset={currentAsset} amount={collateralAmount} />
-      <div className="row">
-        <div className="col-12">
-          <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
-            <div className="m-2">
-              <span>Collateral Ratio:</span>
-              <br />
-              <small className="text-muted">
-                {collateralAmount ? (
-                  collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>
-                ) : (
-                  <span>N/A</span>
-                )}
-              </small>
+      {!repayFullAmount && (
+        <>
+          <label className="form-label">
+            Amount<br/>
+            <small className="form-text text-muted">
+              Size of the repayment
+            </small>
+          </label>
+          <div className="input-group">
+            <NumberFormat
+              disabled={repayFullAmount}
+              min="0.000000000000000000"
+              className="form-control"
+              placeholder="0.000000000000000000"
+              thousandSeparator={true}
+              onChange={(event: any) => onAmountChange(event.target.value)}
+              value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
+            />
+            <span className="input-group-text font-monospace">USD</span>
+          </div>
+          <br/>
+          <label className="form-label">
+            Collateral<br/>
+            <small className="form-text text-muted">
+              Amount of collateral to unlock
+            </small>
+          </label>
+          <div className="input-group mb-3">
+            <NumberFormat
+              disabled={repayFullAmount}
+              min="0.000000000000000000"
+              className="form-control"
+              placeholder="0.000000000000000000"
+              thousandSeparator={true}
+              onChange={(event: any) => onCollateralAmountChange(event.target.value)}
+              value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
+            />
+            <button
+              onClick={handleShow}
+              className="btn btn-outline-secondary font-monospace"
+              type="button"
+            >
+              {currentAsset}
+            </button>
+          </div>
+          <PriceFeed asset={currentAsset} amount={collateralAmount} />
+          <div className="row">
+            <div className="col-12">
+              <div className="h-100 d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                <div className="m-2">
+                  <span>Collateral Ratio:</span>
+                  <br />
+                  <small className="text-muted">
+                    {collateralAmount ? (
+                      collateralRatio ? `${(collateralRatio * 100).toFixed(2)}%` : <small className="text-muted">N/A</small>
+                    ) : (
+                      <span>N/A</span>
+                    )}
+                  </small>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
       <div className="row">
         <div className="col-12 mt-4 d-grid">
           <button

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import * as ethers from "ethers"
 
 /* Scroll */
 
@@ -40,7 +41,8 @@ export const getAssetId = (hash: string) => {
   const id = {
     "0x277471588dc8a8a12d9c788cbcd8dc8e5bfbd906b1c63d46bdba8d080442bf82": "FLR",
     "0x34f0798059a90d875925407ee1d283ae0650aaa8085071fb70c8c42029adc150": "SGB",
-    "0x3394a96ae3d76664d9a21dad8ede426bf36b6faee767e047d6aaf44653934fa9": "CFLR"
+    "0x3394a96ae3d76664d9a21dad8ede426bf36b6faee767e047d6aaf44653934fa9": "CFLR",
+    "0xaeb724422620edb430dcaf22aeeff2e9388a578c02754cd08699652fb76035c7": "XRP"
   }[hash]
   return id || "UNRECOGNIZED_ID"
 }

@@ -184,9 +184,9 @@ function App() {
                             ></button>
                           </div>
                         ) : null} */}
-                        <Alert variant="warning">
+                        {/* <Alert variant="warning">
                           THE BETA SOFTWARE LICENSED HEREUNDER IS BELIEVED TO CONTAIN DEFECTS AND A PRIMARY PURPOSE OF THIS BETA TESTING LICENSE IS TO OBTAIN FEEDBACK ON SOFTWARE PERFORMANCE AND THE IDENTIFICATION OF DEFECTS. LICENSEE IS ADVISED TO SAFEGUARD IMPORTANT DATA, TO USE CAUTION AND NOT TO RELY IN ANY WAY ON THE CORRECT FUNCTIONING OR PERFORMANCE OF THE SOFTWARE AND/OR ACCOMPANYING MATERIALS.
-                        </Alert>
+                        </Alert> */}
                       </div>
                     </div>
 
@@ -474,7 +474,7 @@ const LoginCallback = ({ setAuth }: any) => {
 
           if (response.status === 200) {
             setAuth({ accessToken, idToken, expiresAt })
-            history.push("/address")
+            history.push("/profile")
           } else {
             console.error(response)
           }

@@ -3,12 +3,14 @@ import { Modal } from "react-bootstrap"
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
 import USD from "../../assets/usd.png"
+import XRP from "../../assets/xrp.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const IMAGES: { [key: string]: any } = {
   "FLR": FLR,
   "SGB": SGB,
   "CFLR": FLR,
+  "XRP": XRP
 }
 
 export default function AssetSelector({

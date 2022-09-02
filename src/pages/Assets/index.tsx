@@ -47,7 +47,7 @@ function Assets() {
         let _amount = WAD.mul(amount)
 
         // Check token type (native token or ERC20 token)
-        if (["CFLR", "FLR", "SGB"].includes(currentAsset)) {
+        if (["CFLR", "FLR", "SGB", "XRP"].includes(currentAsset)) {
           // Native Token
           const nativeAssetManager = CONTRACTS[chainId!].NATIVE_ASSET_MANAGER
           contract = new Contract(nativeAssetManager.address, nativeAssetManager.abi, library.getSigner())
