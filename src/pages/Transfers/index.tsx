@@ -5,6 +5,7 @@ import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
+import QRCode from "react-qr-code";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import SignClient from "@walletconnect/sign-client";
 import { PairingTypes, SessionTypes } from "@walletconnect/types";
@@ -145,6 +146,11 @@ export default function Transfers() {
     })()
   }, [library])
 
+  const showQRCode = () => {
+    setTransferStage("INBOUND_APEX_DEMO")
+    setShowTransferModal(true)
+  }
+
   /**
    * Input event handlers
    */
@@ -212,6 +218,7 @@ export default function Transfers() {
       console.error(e)
     } finally {
       QRCodeModal.close();
+      setLoading(false)
     }
 
   };
@@ -322,7 +329,7 @@ export default function Transfers() {
           await requestXrplRedemptionTransaction()
           break;
         default:
-          await prepareRedemption()
+          await showQRCode()
           break;
       }
     }
@@ -346,6 +353,8 @@ export default function Transfers() {
       case "INBOUND_REDEMPTION_RESERVATION":
         return "Inbound Transfer Reservation"
       case "INBOUND_REDEMPTION_TRANSACTION":
+        return "Inbound Transfer Transaction"
+      case "INBOUND_APEX_DEMO":
         return "Inbound Transfer Transaction"
       default:
         return "Loading..."
@@ -618,6 +627,13 @@ export default function Transfers() {
             {transferModalBody}
             {/* Forms */}
             {
+              transferStage === "INBOUND_APEX_DEMO" && (
+                <div className="d-flex justify-content-center py-5">
+                  <QRCode value={account || ""} />
+                </div>
+              )
+            }
+            {
               transferStage === "OUTBOUND_PERMIT" && (
                 <Form className="py-3">
                   <Form.Group className="mb-3">
@@ -792,14 +808,21 @@ export default function Transfers() {
                 </div>
                 <div className="row mt-3">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
-                    <label className="form-label">XRP Address</label>
+                    <label className="form-label">Destination XRP Address</label>
                     <div className="input-group mb-3">
                       <input type="text" className="form-control" value={xrpAddress} minLength={25} maxLength={35} onChange={onXrpAddressChange} placeholder="rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh" aria-label="address" />
                     </div>
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-4 d-grid">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <Form.Group controlId="custodial">
+                      <Form.Check type="checkbox" label="Custodial Mode" checked disabled />
+                    </Form.Group>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 mt-2 d-grid">
                     <button
                       className="btn btn-primary btn-lg mt-4"
                       onClick={openOutboundTransferModal}
@@ -816,6 +839,13 @@ export default function Transfers() {
             activity === ActivityType.InboundTransfer && (
               <>
                 <h4 className="text-center">Receive USD</h4>
+                <div className="row mt-4">
+                  <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12">
+                    <Form.Group controlId="custodial">
+                      <Form.Check type="checkbox" label="Custodial Mode" checked disabled />
+                    </Form.Group>
+                  </div>
+                </div>
                 <div className="row">
                   <div className="col-xl-8 offset-xl-2 col-lg-12 col-md-12 my-4 d-grid">
                     <button

@@ -4,12 +4,13 @@ import numbro from "numbro";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { Contract, utils } from "ethers";
+import { Contract, utils, BigNumber } from "ethers";
+import web3 from "web3"
 import { Helmet } from "react-helmet";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { CONTRACTS } from '../../constants';
+import { CONTRACTS, WAD, RAY, RAD } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -29,14 +30,14 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const [collateralRatio, setCollateralRatio] = React.useState(0);
   const [maxSize, setMaxSize] = React.useState(0)
   const [loading, setLoading] = React.useState(false);
+  const [repayFullAmount, setRepayFullAmount] = React.useState(false)
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = assetContext.asset || nativeTokenSymbol
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(nativeTokenSymbol), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
+  const { data: balance, mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateLendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'lendingPoolDebt'], {
@@ -48,7 +49,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const { data: debtAccumulator } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'debtAccumulator'], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
+  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(nativeTokenSymbol)], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
@@ -60,6 +61,90 @@ function Loans({ assetPrice }: { assetPrice: number }) {
     if (location.pathname === "/loans/repay") setActivity(ActivityType.Repay);
   }, [location])
 
+  const deposit = async () => {
+    if (library && account) {
+      try {
+        let contract, args
+        let _amount = WAD.mul(collateralAmount)
+
+        // Native Token
+        const assetManager = CONTRACTS[chainId!][`NATIVE_ASSET_MANAGER`]
+        contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
+
+        args = [
+          {
+            gasLimit: web3.utils.toWei('400000', 'wei'),
+            maxFeePerGas: 30 * 1e9,
+            value: _amount
+          },
+        ]
+
+        setLoading(true)
+
+        // Deposit asset
+        console.log("Depositing asset...")
+        await contract.callStatic.deposit(...args)
+        const result = await contract.deposit(...args);
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        mutateVault(undefined, true)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+  
+  /**
+   * @function depositStablecoin
+   */
+   const depositStablecoin = async (_amount: BigNumber) => {
+    if (library && account) {
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
+      setLoading(true)
+      try {
+        const result = await treasury.depositStablecoin(
+          _amount,
+          {
+            gasLimit: 400000,
+            maxFeePerGas: 30 * 1e9,
+            maxPriorityFeePerGas: 1e9
+          }
+        );
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
+  /**
+   * @function withdraw
+   */
+   const withdraw = async () => {
+    if (library && account) {
+      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
+      setLoading(true)
+      try {
+        const result = await treasury.withdrawStablecoin(
+          utils.parseUnits(String(amount), 18),
+          {
+            gasLimit: 400000,
+            maxFeePerGas: 30 * 1e9
+          }
+        );
+        const data = await result.wait();
+        eventContext.updateTransactions(data);
+        setAmount(0)
+      } catch (error) {
+        console.log(error);
+        setError(error);
+      }
+    }
+  }
+
   /**
    * @function borrow
    */
@@ -68,11 +153,12 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
+      await deposit()
       const args = [
-        utils.id(currentAsset),
+        utils.id("XRP"),
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(debtAccumulator),
-        { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
+        { gasLimit: 400000, maxFeePerGas: 30 * 1e9 }
       ]
 
       try {
@@ -83,13 +169,14 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         mutateVault(undefined, true);
         mutateBalance(undefined, true);
         mutateLendingPoolDebt(undefined, true)
-        setAmount(0)
         setCollateralAmount(0)
       } catch (error) {
         console.log(error);
         setError(error);
       }
     }
+
+    await withdraw()
 
     setLoading(false)
   }
@@ -102,16 +189,32 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
       const debtAccumulator = await vaultEngine.debtAccumulator()
       setLoading(true)
+
+      let _amount, _collateralAmount
+      if (repayFullAmount) {
+        _amount = vault?.normDebt.mul("-1")
+        _collateralAmount = vault?.collateral.mul("-1")
+      } else {
+        _amount = utils.parseUnits(String(-amount), 45).div(debtAccumulator)
+        _collateralAmount = utils.parseUnits(String(-collateralAmount), 18)
+      }
+
       const args = [
-        utils.id(currentAsset),
-        utils.parseUnits(String(-collateralAmount), 18),
-        utils.parseUnits(String(-amount), 45).div(debtAccumulator),
-        { gasLimit: 300000, maxFeePerGas: 25 * 1e9 }
+        utils.id(nativeTokenSymbol),
+        _collateralAmount,
+        _amount,
+        { gasLimit: 400000, maxFeePerGas: 30 * 1e9 }
       ]
 
       try {
+        // console.log("depositing stablecoin...", _amount.toString())
+        // const amt = vault?.normDebt.mul(debtAccumulator).div(RAY).add(WAD)
+        // console.log("amt:", amt.toString())
+        // await depositStablecoin(amt)
+        // console.log("deposited amount:", amt.toString())
         await vaultEngine.callStatic.modifyDebt(...args)
         const result = await vaultEngine.modifyDebt(...args);
+        console.log("debt modified")
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);
@@ -132,21 +235,21 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    * @function onAmountChange
    * @param event
    */
-  const onAmountChange = (event: any) => {
-    let amount;
-    if (event.target.value === null) amount = 0
-    else amount = Number(numbro.unformat(event.target.value));
-    setAmount(amount);
+  const onAmountChange = (value: string, repayFullAmount?: boolean) => {
+    let _amount;
+    if (value === null) _amount = 0
+    else _amount = Number(numbro.unformat(value));
+    setAmount(_amount);
   }
 
   /**
    * @function onCollateralAmountChange
    * @param event
    */
-  const onCollateralAmountChange = (event: any) => {
+  const onCollateralAmountChange = (value: string, repayFullAmount?: boolean) => {
     let totalAmount, delta;
-    if (!event.target.value) delta = 0
-    else delta = Number(numbro.unformat(event.target.value));
+    if (!value) delta = 0
+    else delta = Number(numbro.unformat(value));
     if (activity === ActivityType.Repay) totalAmount = Number(utils.formatEther(vault.collateral)) - Number(delta);
     else totalAmount = Number(utils.formatEther(vault.collateral)) + Number(delta);
     setTotalCollateral(totalAmount);
@@ -226,6 +329,11 @@ function Loans({ assetPrice }: { assetPrice: number }) {
                     collateralAmount={collateralAmount}
                     onAmountChange={onAmountChange}
                     onCollateralAmountChange={onCollateralAmountChange}
+                    repayFullAmount={repayFullAmount}
+                    setRepayFullAmount={setRepayFullAmount}
+                    collateralInUse={vault ? vault?.collateral.div(WAD).toString() : ""}
+                    vault={vault}
+                    debtAccumulator={debtAccumulator}
                   />
                 )
               }

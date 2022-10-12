@@ -15,83 +15,153 @@ import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Trea
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import VaultEngineIssuerABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineIssuer.sol/VaultEngineIssuer.json";
 import VaultEngineLimitedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineLimited.sol/VaultEngineLimited.json";
-import VaultEngineUnrestrictedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineUnrestricted.sol/VaultEngineUnrestricted.json";
+import VaultEngineRestrictedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineRestricted.sol/VaultEngineRestricted.json";
 
 /**
  * Contract addresses
  */
 export const CONTRACTS: { [key: number]: any } = {
-  // Local
-  4294967295: {
+  // Hardhat node
+  1337: {
     USD: {
-      address: "0xd841Cf06e6348e4Ea06238DDA2fC28DC589e553b",
+      address: "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0xa2B58240ad7991450199b3BD084E11f4FbC450CB",
+      address: "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
     BRIDGE: {
-      address: "0xd95331455De63df32B3881420aAAdea506128b62",
+      address: "",
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0x80aeB05E0519F3D8336Bcdc18A6e2Ce159C2d320",
+      address: "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0xd2E752B617b937036248fc7bb99AF7F0e0CE8d92",
+      address: "0x7133c78E6A4070Bca396751F44E675eaFD379a83",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0x5eDaF2fe69775e47EF0125083B8d1Df6e3a4ED82",
+      address: "0xB161d50e02C36e6F91B71fB28dDaC442f3368440",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0x5F3c842590DA75556dE4BE8Af2f8A8Dd8E62D07a",
+      address: "0x7b199D048310F4144f7466Ea81006A7804c3A8BD",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0x6a1faD28bf1d57fd11e6FBC7b9a93588dCE6b10A",
+      address: "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0xB3AE837694d20436D0DA357E0bd616651b626b2d",
+      address: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0x28aB43E53055eE0114477D1BC0bbe92f55FD5d84",
+      address: "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0x05cEe024cdf2375b974E8F9371E16D895d1D8695",
+      address: "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x0f413c136393fB8A8ba89d10521a291bAB48a220",
+      address: "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0xF1816a6502Dd10e780f642334d8c64532e169445",
+      address: "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C",
       abi: VaultEngineIssuerABI.abi
     },
     INTERFACES: {
-      "0xd841Cf06e6348e4Ea06238DDA2fC28DC589e553b": UsdABI,
-      "0xa2B58240ad7991450199b3BD084E11f4FbC450CB": AuctioneerABI,
-      "0x80aeB05E0519F3D8336Bcdc18A6e2Ce159C2d320": LiquidatorABI,
-      "0x5eDaF2fe69775e47EF0125083B8d1Df6e3a4ED82": PriceFeedABI,
-      "0x5F3c842590DA75556dE4BE8Af2f8A8Dd8E62D07a": NativeAssetManagerABI,
-      "0xd2E752B617b937036248fc7bb99AF7F0e0CE8d92": Erc20AssetManagerABI,
-      "0x6a1faD28bf1d57fd11e6FBC7b9a93588dCE6b10A": RegistryABI,
-      "0xB3AE837694d20436D0DA357E0bd616651b626b2d": PbtABI,
-      "0x28aB43E53055eE0114477D1BC0bbe92f55FD5d84": ReservePoolABI,
-      "0x05cEe024cdf2375b974E8F9371E16D895d1D8695": TellerABI,
-      "0x0f413c136393fB8A8ba89d10521a291bAB48a220": TreasuryABI,
-      "0xF1816a6502Dd10e780f642334d8c64532e169445": VaultEngineIssuerABI
+      "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831": UsdABI,
+      "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8": AuctioneerABI,
+      "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516": LiquidatorABI,
+      "0xB161d50e02C36e6F91B71fB28dDaC442f3368440": PriceFeedABI,
+      "0x7b199D048310F4144f7466Ea81006A7804c3A8BD": NativeAssetManagerABI,
+      "0x7133c78E6A4070Bca396751F44E675eaFD379a83": Erc20AssetManagerABI,
+      "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03": RegistryABI,
+      "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf": PbtABI,
+      "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38": ReservePoolABI,
+      "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf": TellerABI,
+      "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887": TreasuryABI,
+      "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C": VaultEngineIssuerABI
     }
   },
-  // Coston
+  // Local flare network
+  4294967295: {
+    USD: {
+      address: "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831",
+      abi: UsdABI.abi
+    },
+    AUCTIONEER: {
+      address: "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8",
+      abi: AuctioneerABI.abi
+    },
+    // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
+    BRIDGE: {
+      address: "",
+      abi: BridgeABI.abi
+    },
+    LIQUIDATOR: {
+      address: "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516",
+      abi: LiquidatorABI.abi
+    },
+    USD_MANAGER: {
+      address: "0x7133c78E6A4070Bca396751F44E675eaFD379a83",
+      abi: Erc20AssetManagerABI.abi
+    },
+    PRICE_FEED: {
+      address: "0xB161d50e02C36e6F91B71fB28dDaC442f3368440",
+      abi: PriceFeedABI.abi
+    },
+    NATIVE_ASSET_MANAGER: {
+      address: "0x7b199D048310F4144f7466Ea81006A7804c3A8BD",
+      abi: NativeAssetManagerABI.abi
+    },
+    REGISTRY: {
+      address: "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03",
+      abi: RegistryABI.abi
+    },
+    PBT: {
+      address: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
+      abi: PbtABI.abi
+    },
+    RESERVE_POOL: {
+      address: "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38",
+      abi: ReservePoolABI.abi
+    },
+    TELLER: {
+      address: "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf",
+      abi: TellerABI.abi
+    },
+    TREASURY: {
+      address: "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887",
+      abi: TreasuryABI.abi
+    },
+    VAULT_ENGINE: {
+      address: "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C",
+      abi: VaultEngineIssuerABI.abi
+    },
+    INTERFACES: {
+      "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831": UsdABI,
+      "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8": AuctioneerABI,
+      "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516": LiquidatorABI,
+      "0xB161d50e02C36e6F91B71fB28dDaC442f3368440": PriceFeedABI,
+      "0x7b199D048310F4144f7466Ea81006A7804c3A8BD": NativeAssetManagerABI,
+      "0x7133c78E6A4070Bca396751F44E675eaFD379a83": Erc20AssetManagerABI,
+      "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03": RegistryABI,
+      "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf": PbtABI,
+      "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38": ReservePoolABI,
+      "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf": TellerABI,
+      "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887": TreasuryABI,
+      "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C": VaultEngineIssuerABI
+    }
+  },
+  // Coston network
   16: {
     USD: {
       address: "0x3cd70e240095368a10973dfc70b324439aD9038A",
@@ -161,9 +231,9 @@ export const CONTRACTS: { [key: number]: any } = {
       "0xAB592f6945B63AF46B26617D12a164311bD4ED9C": VaultEngineIssuerABI
     }
   },
-  // Songbird
+  // Songbird network
   19: {},
-  // Flare
+  // Flare network
   14: {}
 }
 
@@ -178,6 +248,18 @@ export const DEFAULT_APP_METADATA = {
 export const DEFAULT_LOGGER = "debug"
 export const DEFAULT_RELAY_PROVIDER = "wss://relay.walletconnect.com";
 export const DEFAULT_METHODS = ["createTrustLine"];
+
+// RPC URLs and polling interval
+interface IDictionary<TValue> {
+  [id: string]: TValue;
+}
+export const POLLING_INTERVAL = 12000;
+export const RPC_URLS: IDictionary<string> = {
+  1337: "http://127.0.0.1:8545/",
+  16: process.env.NODE_ENV === "production" ? "https://coston.trustline.co" : "http://127.0.0.1:9650/ext/bc/C/rpc",
+  19: "https://songbird.towolabs.com/rpc",
+  4294967295: "http://localhost:9650/ext/bc/C/rpc"
+};
 
 // Other constants
 export const RAD = BigNumber.from("1000000000000000000000000000000000000000000000");

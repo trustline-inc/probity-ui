@@ -2505,10 +2505,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@trustline-inc/probity@1.0.0-alpha27":
-  version "1.0.0-alpha27"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha27/fd786e749d6842a53cf6dd59cb5fa703d1616117#fd786e749d6842a53cf6dd59cb5fa703d1616117"
-  integrity sha512-lGh8g8+6os+UnzGGVLhjTYVKcqXCLuCqg2rYoHea9tP3wQxgrNeEjxGX8oiKtKWDknB8CEwiNtmM/LuSGO+x4Q==
+"@trustline-inc/probity@1.0.0-alpha28":
+  version "1.0.0-alpha28"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha28/0d82c7a03d120b6bd23c0b8fac04abff2f3dcbf5#0d82c7a03d120b6bd23c0b8fac04abff2f3dcbf5"
+  integrity sha512-Jsb0kIDGXKrgkEesfir9O4Bxdy87ux7TaCOmMWytfYrnR2C+Skzgu/PtZu/r38ralv9sk+u+4AL624dx10iGxg==
   dependencies:
     "@openzeppelin/contracts" "^4.5.0"
 
@@ -13670,6 +13670,11 @@ q@^1.1.2:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
+qr.js@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
+  integrity sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==
+
 qrcode@1.4.4:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/qrcode/-/qrcode-1.4.4.tgz#f0c43568a7e7510a55efc3b88d9602f71963ea83"
@@ -13928,6 +13933,14 @@ react-number-format@^4.9.1:
   integrity sha512-am1A1xYAbENuKJ+zpM7V+B1oRTSeOHYltqVKExznIVFweBzhLmOBmyb1DfIKjHo90E0bo1p3nzVJ2NgS5xh+sQ==
   dependencies:
     prop-types "^15.7.2"
+
+react-qr-code@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/react-qr-code/-/react-qr-code-2.0.7.tgz#508304e031e82426a044f5e9490aca87d7c3de38"
+  integrity sha512-NpknL80p7dWbLdHfBSIxQIqLCu3+kBlyzYD692rO0UnVwfCSziIxc1xn/p3JhPEv1RV1lRD8j0w+hR3L7tawTQ==
+  dependencies:
+    prop-types "^15.7.2"
+    qr.js "0.0.0"
 
 react-refresh@^0.8.3:
   version "0.8.3"

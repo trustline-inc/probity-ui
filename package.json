@@ -1,6 +1,6 @@
 {
   "name": "probity-ui",
-  "version": "1.0.0-alpha13",
+  "version": "1.0.0-alpha15",
   "private": true,
   "resolutions": {
     "@types/react": "17.0.2",
@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@trustline-inc/probity": "1.0.0-alpha27",
+    "@trustline-inc/probity": "1.0.0-alpha28",
     "@trustline-inc/solaris": "1.0.0-alpha15",
     "@types/jest": "^26.0.15",
     "@types/node": "^18.7.5",
@@ -37,6 +37,7 @@
     "react-error-overlay": "6.0.9",
     "react-helmet": "^6.1.0",
     "react-number-format": "^4.9.1",
+    "react-qr-code": "^2.0.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "swr": "^0.5.2",

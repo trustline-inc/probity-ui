@@ -22,8 +22,8 @@ interface Props {
   loading: boolean;
   maxSize: number;
   setMaxSize: (maxSize: number) => void;
-  onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onCollateralAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAmountChange: (value: string) => void;
+  onCollateralAmountChange: (value: string) => void;
 }
 
 function BorrowActivity({
@@ -55,7 +55,7 @@ function BorrowActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = ctx.asset || nativeTokenSymbol
+  const currentAsset = "XRP"
 
   // Set estimated APR
   React.useEffect(() => {
@@ -93,7 +93,7 @@ function BorrowActivity({
           placeholder="0.000000000000000000"
           thousandSeparator={true}
           max={maxSize}
-          onChange={onAmountChange}
+          onChange={(event: any) => onAmountChange(event.target.value)}
           value={amount === 0 ? "" : numbro(amount).format({ thousandSeparated: true })}
         />
         <span className="input-group-text font-monospace">USD</span>
@@ -121,7 +121,7 @@ function BorrowActivity({
           className="form-control"
           placeholder="0.000000000000000000"
           thousandSeparator={true}
-          onChange={onCollateralAmountChange}
+          onChange={(event: any) => onCollateralAmountChange(event.target.value)}
           value={collateralAmount === 0 ? "" : numbro(collateralAmount).format({ thousandSeparated: true })}
         />
         <button

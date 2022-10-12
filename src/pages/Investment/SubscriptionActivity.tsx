@@ -13,7 +13,7 @@ interface Props {
   underlyingRatio: number;
   onUnderlyingAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEquityAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  invest: () => void;
+  subscribe: () => void;
   loading: boolean;
   currentAsset: string;
   liquidationRatio: string;
@@ -25,7 +25,7 @@ function InvestActivity({
   underlyingRatio,
   onUnderlyingAmountChange,
   onEquityAmountChange,
-  invest,
+  subscribe,
   loading,
   currentAsset,
   liquidationRatio
@@ -47,7 +47,7 @@ function InvestActivity({
           <label htmlFor="collateralConversionInput" className="form-label">
             Underlying<br/>
             <small className="form-text text-muted">
-              The amount of underlying asset to invest
+              The amount of underlying asset to subscribe
             </small>
           </label>
           <div className="input-group">
@@ -73,13 +73,35 @@ function InvestActivity({
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityAmount" className="form-label">
-            Amount<br/>
+            Number of Shares<br/>
             <small className="form-text text-muted">
-              The amount of funds to invest
+              The amount of shares to purchase (minimum of 10k)
             </small>
           </label>
           <div className="input-group">
             <NumberFormat
+              min="10000"
+              className="form-control"
+              id="equityAmount"
+              placeholder="10,000"
+              thousandSeparator={true}
+              onChange={onEquityAmountChange}
+              value={equityAmount === 0 ? "" : numbro(equityAmount).format({ thousandSeparated: true })}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <label htmlFor="equityAmount" className="form-label">
+            Total Amount of Subscription<br/>
+            <small className="form-text text-muted">
+              {numbro(equityAmount).format({ thousandSeparated: true })} shares × $1 per share
+            </small>
+          </label>
+          <div className="input-group">
+            <NumberFormat
+              readOnly
               min="0.000000000000000000"
               className="form-control"
               id="equityAmount"
@@ -111,7 +133,7 @@ function InvestActivity({
           <button
             type="button"
             className="btn btn-primary btn-lg"
-            onClick={invest}
+            onClick={subscribe}
             disabled={(underlyingAmount === 0 && equityAmount === 0) || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}

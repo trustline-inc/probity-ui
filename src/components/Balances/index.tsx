@@ -13,6 +13,8 @@ import './index.css';
 import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
 import USD from "../../assets/usd.png"
+import XRP from "../../assets/xrp.png"
+import ETH from "../../assets/eth.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const assetIcons: { [key: string]: string } = {
@@ -20,6 +22,8 @@ const assetIcons: { [key: string]: string } = {
   SGB,
   FLR,
   USD,
+  XRP,
+  ETH
 }
 
 const formatOptions = {
@@ -31,8 +35,8 @@ const formatOptions = {
 
 function Balances({ newActiveKey }: { newActiveKey: string }) {
   const ctx = React.useContext(AssetContext)
-  enum BalanceType { Individual, Aggregate }
-  const [selected, setSelected] = React.useState(BalanceType.Individual)
+  enum BalanceType { User, System }
+  const [selected, setSelected] = React.useState(BalanceType.User)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
   const [collateralRatio, setCollateralRatio] = React.useState("")
   const [underlyingRatio, setUnderlyingRatio] = React.useState("")
@@ -47,7 +51,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
   // Read data from deployed contracts
-  const { data: vault, mutate: mutateVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id(currentAsset), account], {
+  const { data: ethVault, mutate: mutateEthVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("ETH"), account], {
+    fetcher: fetcher(library, VAULT_ENGINE.abi),
+  })
+  const { data: usdVault, mutate: mutateUsdVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("USD"), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: balance, mutate: mutateBalance } = useSWR([VAULT_ENGINE.address, 'systemCurrency', account], {
@@ -100,7 +107,8 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   React.useEffect(() => {
     if (library) {
       library.on("block", () => {
-        mutateVault(undefined, true);
+        mutateEthVault(undefined, true);
+        mutateUsdVault(undefined, true);
         mutateBalance(undefined, true);
         mutateTotalSupply(undefined, true);
         mutateLendingPoolDebt(undefined, true);
@@ -135,7 +143,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
       setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
-  }, [lendingPoolSupply, lendingPoolPrincipal, vault])
+  }, [lendingPoolSupply, lendingPoolPrincipal, usdVault])
 
   /**
    * Updates the collateral and underlying ratios
@@ -150,12 +158,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             collateral,
             underlying,
             initialEquity
-          } = await vaultEngine.vaults(utils.id(currentAsset), account);
+          } = await vaultEngine.vaults(utils.id("ETH"), account);
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
-          const price = await priceFeed.callStatic.getPrice(utils.id(currentAsset))
+          const price = await priceFeed.callStatic.getPrice(utils.id("ETH"))
   
           const _debt = normDebt.mul(debtAccumulator)
+          console.log(_debt)
 
           // Get collateral ratio
           if (_debt.toString() !== "0") {
@@ -179,14 +188,14 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, vault])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, usdVault])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")
     else setActiveKey(key)
   }
 
-  if (!vault) return null;
+  if (!usdVault && !ethVault) return null;
 
   return (
     <>
@@ -201,33 +210,31 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           activeKey={selected}
         >
           <Nav.Item>
-            <Nav.Link eventKey={BalanceType.Individual} onClick={() => setSelected(BalanceType.Individual)}>Individual</Nav.Link>
+            <Nav.Link eventKey={BalanceType.User} onClick={() => setSelected(BalanceType.User)}>User</Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey={BalanceType.Aggregate} onClick={() => setSelected(BalanceType.Aggregate)}>Aggregate</Nav.Link>
+            <Nav.Link eventKey={BalanceType.System} onClick={() => setSelected(BalanceType.System)}>System</Nav.Link>
           </Nav.Item>
         </Nav>
 
         <hr />
 
         {
-          selected === BalanceType.Individual ? (
+          selected === BalanceType.User ? (
             <>
-              <Accordion defaultActiveKey="assets" activeKey={activeKey}>
-                <Accordion.Item eventKey="assets">
+              <Accordion defaultActiveKey="" activeKey={activeKey}>
+                {/* <Accordion.Item eventKey="assets">
                   <Accordion.Header onClick={() => updateActiveKey("assets")}>
                     <h5>Assets</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="dropdown w-100">
                       <button className="text-dark btn btn-outline-light border dropdown-toggle w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {/* The button displays the currently selected asset */}
                         <div className="w-100 p-1 d-flex justify-content-between">
                           <h4 className="d-flex align-items-center mb-0">{ctx.asset}</h4>
                           <img src={assetIcons[ctx.asset || "FLR"]} className="rounded-circle border" alt={ctx.asset} height="50" />
                         </div>
                       </button>
-                      {/* Dropdown selection menu of other assets */}
                       <ul className="dropdown-menu w-100 p-0">
                         <li className="dropdown-item border" onClick={() => ctx.updateAsset("USD")}>
                           <div className="asset py-2 d-flex justify-content-between">
@@ -241,51 +248,43 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                             <img src={assetIcons[nativeTokenSymbol]} className="rounded-circle border" alt={nativeTokenSymbol} height="50" />
                           </div>
                         </li>
-                        {/*
-                        <li className="dropdown-item border disabled" onClick={() => ctx.updateAsset("FXRP")}>
-                          <div className="asset py-2 d-flex justify-content-between">
-                            <h4 className="d-flex align-items-center mb-0">FXRP</h4>
-                            <img src={XRP} className="rounded-circle border" alt="FXRP" height="50" />
-                          </div>
-                        </li>
-                        */}
                       </ul>
                     </div>
                     <div className="px-3 py-2 text-truncate">
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Standby</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(vault.standbyAmount)).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(ethVault.standbyAmount)).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Active</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(ethVault.underlying.add(ethVault.collateral))).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Total</h6>
-                        <span className="text-truncate">{numbro(utils.formatEther(vault.standbyAmount.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
+                        <span className="text-truncate">{numbro(utils.formatEther(ethVault.standbyAmount.add(ethVault.underlying).add(ethVault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
                     </div>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
                 <Accordion.Item eventKey="equity">
                   <Accordion.Header onClick={() => updateActiveKey("equity")}>
-                    <h5>Equity Position</h5>
+                    <h5>Debt Investment</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Equity</h6>
+                      <h6>Current Value</h6>
                       <span className="text-truncate">
-                        {vault && equityAccumulator ? numbro(utils.formatEther(vault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {usdVault && equityAccumulator ? numbro(utils.formatEther(usdVault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     {/* <div className="my-2 d-flex justify-content-between">
                       <h6>Underlying</h6>
                       <span className="text-truncate">
-                        {numbro(utils.formatEther(vault.underlying)).format(formatOptions)} {ctx.asset}
+                        {numbro(utils.formatEther(usdVault.underlying)).format(formatOptions)} {ctx.asset}
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -299,26 +298,26 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Interest Earned</h6>
                       <span className="text-truncate">
-                        {vault && equityAccumulator ? numbro(utils.formatUnits(vault.normEquity.mul(equityAccumulator).sub(vault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
+                        {usdVault && equityAccumulator ? numbro(utils.formatUnits(usdVault.normEquity.mul(equityAccumulator).sub(usdVault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
                       </span>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="debt">
                   <Accordion.Header onClick={() => updateActiveKey("debt")}>
-                    <h5>Debt Position</h5>
+                    <h5>Credit Facility</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
-                      <h6>Debt</h6>
+                      <h6>Balance</h6>
                       <span className="text-truncate">
-                        {vault && debtAccumulator ? numbro(utils.formatEther(vault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {ethVault && debtAccumulator ? numbro(utils.formatEther(ethVault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Collateral</h6>
                       <span className="text-truncate">
-                        {numbro(utils.formatEther(vault.collateral)).format(formatOptions)} {ctx.asset}
+                        {ethVault && numbro(utils.formatEther(ethVault.collateral)).format(formatOptions)} ETH
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -331,7 +330,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="currencies">
+                {/* <Accordion.Item eventKey="currencies">
                   <Accordion.Header onClick={() => updateActiveKey("currencies")}>
                     <h5>Vault Funds</h5>
                   </Accordion.Header>
@@ -341,7 +340,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <span className="text-truncate">{balance ? numbro(utils.formatEther(balance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
                 {/* <Accordion.Item eventKey="voting">
                   <Accordion.Header onClick={() => updateActiveKey("voting")}>
                     <h5>Voting Power</h5>
@@ -349,7 +348,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                   <Accordion.Body>
                     <div className="my-2 d-flex justify-content-between">
                         <h6>Vault PBT</h6>
-                        <span className="text-truncate">{vaultPbtBalance && vault ? numbro(utils.formatUnits(vaultPbtBalance, 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
+                        <span className="text-truncate">{vaultPbtBalance && usdVault ? numbro(utils.formatUnits(vaultPbtBalance, 45)).format({ ...formatOptions, mantissa: 8 }) : "0"} PBT</span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>ERC20 PBT</h6>
