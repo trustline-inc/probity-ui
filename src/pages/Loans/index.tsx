@@ -74,7 +74,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         args = [
           {
             gasLimit: web3.utils.toWei('400000', 'wei'),
-            maxFeePerGas: 25 * 1e9,
+            maxFeePerGas: 30 * 1e9,
             value: _amount
           },
         ]
@@ -107,7 +107,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
           _amount,
           {
             gasLimit: 400000,
-            maxFeePerGas: 25 * 1e9,
+            maxFeePerGas: 30 * 1e9,
             maxPriorityFeePerGas: 1e9
           }
         );
@@ -132,7 +132,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
           utils.parseUnits(String(amount), 18),
           {
             gasLimit: 400000,
-            maxFeePerGas: 25 * 1e9
+            maxFeePerGas: 30 * 1e9
           }
         );
         const data = await result.wait();
@@ -158,7 +158,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         utils.id("XRP"),
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(debtAccumulator),
-        { gasLimit: 400000, maxFeePerGas: 25 * 1e9 }
+        { gasLimit: 400000, maxFeePerGas: 30 * 1e9 }
       ]
 
       try {
@@ -198,14 +198,12 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         _amount = utils.parseUnits(String(-amount), 45).div(debtAccumulator)
         _collateralAmount = utils.parseUnits(String(-collateralAmount), 18)
       }
-      console.log(_amount.mul(debtAccumulator).toString())
-      console.log(_collateralAmount.toString())
 
       const args = [
         utils.id(nativeTokenSymbol),
         _collateralAmount,
         _amount,
-        { gasLimit: 400000, maxFeePerGas: 25 * 1e9 }
+        { gasLimit: 400000, maxFeePerGas: 30 * 1e9 }
       ]
 
       try {

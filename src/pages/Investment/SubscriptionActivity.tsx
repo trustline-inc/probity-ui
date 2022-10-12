@@ -73,13 +73,35 @@ function InvestActivity({
       <div className="row mb-4">
         <div className="col-12">
           <label htmlFor="equityAmount" className="form-label">
-            Amount<br/>
+            Number of Shares<br/>
             <small className="form-text text-muted">
-              The amount of funds to subscribe
+              The amount of shares to purchase (minimum of 10k)
             </small>
           </label>
           <div className="input-group">
             <NumberFormat
+              min="10000"
+              className="form-control"
+              id="equityAmount"
+              placeholder="10,000"
+              thousandSeparator={true}
+              onChange={onEquityAmountChange}
+              value={equityAmount === 0 ? "" : numbro(equityAmount).format({ thousandSeparated: true })}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12">
+          <label htmlFor="equityAmount" className="form-label">
+            Total Amount of Subscription<br/>
+            <small className="form-text text-muted">
+              {numbro(equityAmount).format({ thousandSeparated: true })} shares × $1 per share
+            </small>
+          </label>
+          <div className="input-group">
+            <NumberFormat
+              readOnly
               min="0.000000000000000000"
               className="form-control"
               id="equityAmount"

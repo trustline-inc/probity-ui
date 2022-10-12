@@ -14,6 +14,7 @@ import FLR from "../../assets/flare.jpg"
 import SGB from "../../assets/sgb.png"
 import USD from "../../assets/usd.png"
 import XRP from "../../assets/xrp.png"
+import ETH from "../../assets/eth.png"
 import AssetContext from "../../contexts/AssetContext"
 
 const assetIcons: { [key: string]: string } = {
@@ -21,7 +22,8 @@ const assetIcons: { [key: string]: string } = {
   SGB,
   FLR,
   USD,
-  XRP
+  XRP,
+  ETH
 }
 
 const formatOptions = {
@@ -49,7 +51,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
   // Read data from deployed contracts
-  const { data: xrpVault, mutate: mutateXrpVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("XRP"), account], {
+  const { data: ethVault, mutate: mutateEthVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("ETH"), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: usdVault, mutate: mutateUsdVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("USD"), account], {
@@ -105,7 +107,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   React.useEffect(() => {
     if (library) {
       library.on("block", () => {
-        mutateXrpVault(undefined, true);
+        mutateEthVault(undefined, true);
         mutateUsdVault(undefined, true);
         mutateBalance(undefined, true);
         mutateTotalSupply(undefined, true);
@@ -156,10 +158,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             collateral,
             underlying,
             initialEquity
-          } = await vaultEngine.vaults(utils.id("XRP"), account);
+          } = await vaultEngine.vaults(utils.id("ETH"), account);
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
-          const price = await priceFeed.callStatic.getPrice(utils.id("XRP"))
+          const price = await priceFeed.callStatic.getPrice(utils.id("ETH"))
   
           const _debt = normDebt.mul(debtAccumulator)
           console.log(_debt)
@@ -193,7 +195,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
     else setActiveKey(key)
   }
 
-  if (!usdVault && !xrpVault) return null;
+  if (!usdVault && !ethVault) return null;
 
   return (
     <>
@@ -252,18 +254,18 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Standby</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(xrpVault.standbyAmount)).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(ethVault.standbyAmount)).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Active</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(xrpVault.underlying.add(xrpVault.collateral))).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(ethVault.underlying.add(ethVault.collateral))).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Total</h6>
-                        <span className="text-truncate">{numbro(utils.formatEther(xrpVault.standbyAmount.add(xrpVault.underlying).add(xrpVault.collateral))).format(formatOptions)} {ctx.asset}</span>
+                        <span className="text-truncate">{numbro(utils.formatEther(ethVault.standbyAmount.add(ethVault.underlying).add(ethVault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
                     </div>
                   </Accordion.Body>
@@ -309,13 +311,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Balance</h6>
                       <span className="text-truncate">
-                        {xrpVault && debtAccumulator ? numbro(utils.formatEther(xrpVault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {ethVault && debtAccumulator ? numbro(utils.formatEther(ethVault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Collateral</h6>
                       <span className="text-truncate">
-                        {xrpVault && numbro(utils.formatEther(xrpVault.collateral)).format(formatOptions)} XRP
+                        {ethVault && numbro(utils.formatEther(ethVault.collateral)).format(formatOptions)} ETH
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
@@ -328,7 +330,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="currencies">
+                {/* <Accordion.Item eventKey="currencies">
                   <Accordion.Header onClick={() => updateActiveKey("currencies")}>
                     <h5>Vault Funds</h5>
                   </Accordion.Header>
@@ -338,7 +340,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <span className="text-truncate">{balance ? numbro(utils.formatEther(balance.div(RAY))).format(formatOptions) : "0"} USD</span>
                     </div>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
                 {/* <Accordion.Item eventKey="voting">
                   <Accordion.Header onClick={() => updateActiveKey("voting")}>
                     <h5>Voting Power</h5>
