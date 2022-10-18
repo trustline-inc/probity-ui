@@ -115,7 +115,7 @@ function App() {
         console.error(error)
       }
     })()
-  }, [library, price, asset]);
+  }, [library, price, asset, chainId]);
 
   /**
    * Set block listener

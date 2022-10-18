@@ -21,14 +21,14 @@ import VaultEngineRestrictedABI from "@trustline-inc/probity/artifacts/contracts
  * Contract addresses
  */
 export const CONTRACTS: { [key: number]: any } = {
-  // Hardhat node
-  1337: {
+  // Hardhat localhost network
+  31337: {
     USD: {
-      address: "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831",
+      address: "0x97F96eAD12B20bf9fEb6e7ba05530915fdfba5f2",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8",
+      address: "0x1c9cA3cF7F815EFc73B0f2D0F26e44ABedab1a7e",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -37,61 +37,61 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516",
+      address: "0xcf12f77b44879b673c71fA86486421CEeAe8Dd66",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0x7133c78E6A4070Bca396751F44E675eaFD379a83",
+      address: "0x67E8D55D6D3d2a2769baC7218BED2f64347D7037",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0xB161d50e02C36e6F91B71fB28dDaC442f3368440",
+      address: "0x26CC281a7f000028E6db3837a2A14419984E47e4",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0x7b199D048310F4144f7466Ea81006A7804c3A8BD",
+      address: "0xCAc26b652b1B340A282123c8ec17C2338631F64e",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03",
+      address: "0xf242fb760355f6B6654f024f6E3Fad8799077E34",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
+      address: "0x67814E34EADC8A2792B4fcBa790FbBa490cf58da",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38",
+      address: "0x39A1b10C82A126f5a0402747B913b49dCc9e210e",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf",
+      address: "0x692093354D52936656E588e9Af48B774ebfB684B",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887",
+      address: "0xA71B22aB660d735724141b60d31a18Ec751A1E46",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C",
+      address: "0xAc31815adF59e829a889B580FBd1Aa26e063Aad6",
       abi: VaultEngineIssuerABI.abi
     },
     INTERFACES: {
-      "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831": UsdABI,
-      "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8": AuctioneerABI,
-      "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516": LiquidatorABI,
-      "0xB161d50e02C36e6F91B71fB28dDaC442f3368440": PriceFeedABI,
-      "0x7b199D048310F4144f7466Ea81006A7804c3A8BD": NativeAssetManagerABI,
-      "0x7133c78E6A4070Bca396751F44E675eaFD379a83": Erc20AssetManagerABI,
-      "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03": RegistryABI,
-      "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf": PbtABI,
-      "0x65C992E29f2CA49bA3cfFf76D2e56DF545C3dE38": ReservePoolABI,
-      "0x578C3CCd7b0b2a9c4070B5eAc4de3F101812E0bf": TellerABI,
-      "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887": TreasuryABI,
-      "0x5cbDbC5Cc725103D890B7cC1a22eB6DCe3D9a57C": VaultEngineIssuerABI
+      "0x97F96eAD12B20bf9fEb6e7ba05530915fdfba5f2": UsdABI,
+      "0x1c9cA3cF7F815EFc73B0f2D0F26e44ABedab1a7e": AuctioneerABI,
+      "0xcf12f77b44879b673c71fA86486421CEeAe8Dd66": LiquidatorABI,
+      "0x26CC281a7f000028E6db3837a2A14419984E47e4": PriceFeedABI,
+      "0xCAc26b652b1B340A282123c8ec17C2338631F64e": NativeAssetManagerABI,
+      "0x67E8D55D6D3d2a2769baC7218BED2f64347D7037": Erc20AssetManagerABI,
+      "0xf242fb760355f6B6654f024f6E3Fad8799077E34": RegistryABI,
+      "0x67814E34EADC8A2792B4fcBa790FbBa490cf58da": PbtABI,
+      "0x39A1b10C82A126f5a0402747B913b49dCc9e210e": ReservePoolABI,
+      "0x692093354D52936656E588e9Af48B774ebfB684B": TellerABI,
+      "0xA71B22aB660d735724141b60d31a18Ec751A1E46": TreasuryABI,
+      "0xAc31815adF59e829a889B580FBd1Aa26e063Aad6": VaultEngineIssuerABI
     }
   },
-  // Local flare network
+  // Flare localhost network
   4294967295: {
     USD: {
       address: "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831",
@@ -255,7 +255,7 @@ interface IDictionary<TValue> {
 }
 export const POLLING_INTERVAL = 12000;
 export const RPC_URLS: IDictionary<string> = {
-  1337: "http://127.0.0.1:8545/",
+  31337: "http://127.0.0.1:8545/",
   16: process.env.NODE_ENV === "production" ? "https://coston.trustline.co" : "http://127.0.0.1:9650/ext/bc/C/rpc",
   19: "https://songbird.towolabs.com/rpc",
   4294967295: "http://localhost:9650/ext/bc/C/rpc"

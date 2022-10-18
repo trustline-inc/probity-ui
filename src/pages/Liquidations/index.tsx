@@ -103,7 +103,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
       const liquidator = new Contract(CONTRACTS[chainId!].LIQUIDATOR.address, CONTRACTS[chainId!].LIQUIDATOR.abi, library.getSigner())
 
       try {
-        const result = await liquidator.liquidateVault(utils.id("XRP"), vault.address);
+        const result = await liquidator.liquidateVault(utils.id(process.env.REACT_APP_NATIVE_TOKEN!), vault.address);
         const data = await result.wait();
         eventContext.updateTransactions(data);
         const _vaults = vaults

@@ -55,7 +55,7 @@ function BorrowActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = "XRP"
+  const currentAsset = process.env.REACT_APP_NATIVE_TOKEN!;
 
   // Set estimated APR
   React.useEffect(() => {

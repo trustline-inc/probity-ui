@@ -64,11 +64,16 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const deposit = async () => {
     if (library && account) {
       try {
-        let contract, args
-        let _amount = WAD.mul(collateralAmount)
+        let contract, args, _amount
+        if (collateralAmount < 1 && collateralAmount > 0) {
+          var divisor = 1 / collateralAmount;
+          _amount = WAD.div(divisor)
+        } else {
+          _amount = WAD.mul(collateralAmount)
+        }
 
         // Native Token
-        const assetManager = CONTRACTS[chainId!][`NATIVE_ASSET_MANAGER`]
+        const assetManager = CONTRACTS[chainId!].NATIVE_ASSET_MANAGER
         contract = new Contract(assetManager.address, assetManager.abi, library.getSigner())
 
         args = [
@@ -96,14 +101,14 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   }
   
   /**
-   * @function depositStablecoin
+   * @function depositSystemCurrency
    */
-   const depositStablecoin = async (_amount: BigNumber) => {
+   const depositSystemCurrency = async (_amount: BigNumber) => {
     if (library && account) {
       const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
       setLoading(true)
       try {
-        const result = await treasury.depositStablecoin(
+        const result = await treasury.depositSystemCurrency(
           _amount,
           {
             gasLimit: 400000,
@@ -128,7 +133,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
       setLoading(true)
       try {
-        const result = await treasury.withdrawStablecoin(
+        const result = await treasury.withdrawSystemCurrency(
           utils.parseUnits(String(amount), 18),
           {
             gasLimit: 400000,
@@ -155,7 +160,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       setLoading(true)
       await deposit()
       const args = [
-        utils.id("XRP"),
+        utils.id(process.env.REACT_APP_NATIVE_TOKEN!),
         utils.parseUnits(String(collateralAmount), 18),
         utils.parseUnits(String(amount), 45).div(debtAccumulator),
         { gasLimit: 400000, maxFeePerGas: 30 * 1e9 }
@@ -210,7 +215,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         // console.log("depositing stablecoin...", _amount.toString())
         // const amt = vault?.normDebt.mul(debtAccumulator).div(RAY).add(WAD)
         // console.log("amt:", amt.toString())
-        // await depositStablecoin(amt)
+        // await depositSystemCurrency(amt)
         // console.log("deposited amount:", amt.toString())
         await vaultEngine.callStatic.modifyDebt(...args)
         const result = await vaultEngine.modifyDebt(...args);
@@ -274,7 +279,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
           break;
       }
     }
-  }, [totalCollateral, assetPrice, amount, vault, activity, asset]);
+  }, [totalCollateral, assetPrice, amount, vault, activity, asset, debtAccumulator]);
 
   return (
     <>

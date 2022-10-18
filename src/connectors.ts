@@ -5,10 +5,10 @@ import { RPC_URLS, POLLING_INTERVAL } from './constants'
 
 export const injected = new InjectedConnector({
   supportedChainIds: [
-    1337, // Hardhat
-    16,   // Coston
-    19,   // Songbird
-    4294967295, // Localhost (Hardhat)
+    31337,      // Hardhat
+    16,         // Coston
+    19,         // Songbird
+    4294967295, // Localhost (Flare)
   ],
 })
 

@@ -49,7 +49,7 @@ function RepayActivity({
     setShow(false)
   }
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
-  const currentAsset = "XRP"
+  const currentAsset = process.env.REACT_APP_NATIVE_TOKEN!
 
   const handleOnChange = () => {
     if (!repayFullAmount) {

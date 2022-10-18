@@ -44,6 +44,7 @@ export const getAssetId = (hash: string) => {
     "0x3394a96ae3d76664d9a21dad8ede426bf36b6faee767e047d6aaf44653934fa9": "CFLR",
     "0xaeb724422620edb430dcaf22aeeff2e9388a578c02754cd08699652fb76035c7": "XRP",
     "0xaaaebeba3810b1e6b70781f14b2d72c1cb89c0b2b320c43bb67ff79f562f5ff4": "ETH",
+    "0xc4ae21aac0c6549d71dd96035b7e0bdb6c79ebdba8891b666115bc976d16a29e": "USD",
   }[hash]
   return id || "UNRECOGNIZED_ID"
 }
@@ -56,7 +57,7 @@ export const getNativeTokenSymbol = (chainId: number) => {
       return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"
     case 19:
       return "SGB"
-    case 1337:
+    case 31337:
       return "ETH"
     default:
       return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"

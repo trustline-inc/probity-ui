@@ -46,7 +46,7 @@ function Vault() {
       const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
       setLoading(true)
       try {
-        const result = await treasury.withdrawStablecoin(
+        const result = await treasury.withdrawSystemCurrency(
           utils.parseUnits(String(amount), 18),
           {
             gasLimit: 300000,
