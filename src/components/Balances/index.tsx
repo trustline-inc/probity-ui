@@ -366,7 +366,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Probity Amount</h6>
-                <span className="text-truncate">{systemCurrencyIssued && totalSupply ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).sub(totalSupply))).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{systemCurrencyIssued && totalSupply ? numbro(utils.formatEther(totalSupply.sub(systemCurrencyIssued.div(RAY)))).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 mb-4 d-flex justify-content-between">
                 <h6>ERC20 Amount</h6>
