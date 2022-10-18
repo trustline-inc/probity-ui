@@ -375,11 +375,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               </div>
               <h5>Fund Information</h5>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Debt Assets</h6>
-                <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.mul(debtAccumulator).div(RAY).toString())).format(formatOptions) : null} USD</span>
-              </div>
-              <div className="my-2 d-flex justify-content-between">
-                <h6>AUM</h6>
+                <h6>Assets Under Management</h6>
                 <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatEther(lendingPoolSupply.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
@@ -387,8 +383,12 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                 <span className="text-truncate">{lendingPoolSupply && lendingPoolPrincipal ? numbro(utils.formatUnits(lendingPoolSupply.sub(lendingPoolPrincipal).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
+                <h6>Debt Assets</h6>
+                <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.mul(debtAccumulator).div(RAY).toString())).format(formatOptions) : null} USD</span>
+              </div>
+              <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization</h6>
-                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" ? numbro(utils.formatUnits(lendingPoolDebt.mul(RAY).div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
+                <span className="text-truncate">{lendingPoolEquity && lendingPoolDebt.toString() !== "0" ? numbro(utils.formatUnits(lendingPoolPrincipal.div(lendingPoolEquity).mul(100).toString(), 27)).format('0,0.0[000]') : "0"}%</span>
               </div>
             </>
           )
