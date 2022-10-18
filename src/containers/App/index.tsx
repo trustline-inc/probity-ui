@@ -21,7 +21,7 @@ import Balances from "../../components/Balances";
 import Lend from "../../pages/Investment";
 import Loans from "../../pages/Loans";
 import Assets from "../../pages/Assets";
-import Address from "../../pages/Address";
+import Address from "../../pages/Profile";
 import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";

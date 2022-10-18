@@ -2,11 +2,45 @@ import { useWeb3React } from '@web3-react/core';
 import axios from 'axios';
 import React from 'react';
 import { Helmet } from "react-helmet";
+import {
+  usePlaidLink,
+  PlaidLinkOptions,
+  PlaidLinkOnSuccess,
+} from 'react-plaid-link';
 
-function Address({ globalId, auth }: { globalId: string, auth: any }) {
+function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   const [address, setAddress] = React.useState("")
   const [proposedAddress, setProposedAddress] = React.useState("")
   const { account } = useWeb3React()
+  const [token, setToken] = React.useState(null);
+
+  // Get Plaid Link token
+  React.useEffect(() => {
+    (async () => {
+      const response = await axios({
+        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/999/plaid_link_token",
+        method: "GET",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        }
+      })
+      console.log(response)
+      setToken(response.data.result)
+    })()
+  }, [])
+
+  // The usePlaidLink hook manages Plaid Link creation
+  // It does not return a destroy function;
+  // instead, on unmount it automatically destroys the Link instance
+  const config: PlaidLinkOptions = {
+    onSuccess: (public_token, metadata) => {},
+    onExit: (err, metadata) => {},
+    onEvent: (eventName, metadata) => {},
+    token: token,
+    //required for OAuth; if not using OAuth, set to null or omit:
+    receivedRedirectUri: window.location.href,
+  };
+  const { open, exit, ready } = usePlaidLink(config);
 
   React.useEffect(() => {
     (async () => {
@@ -97,8 +131,21 @@ function Address({ globalId, auth }: { globalId: string, auth: any }) {
           )
         }
       </section>
+      <section className="border rounded p-5 mb-5 shadow-sm bg-white">
+        <div className="row mb-4">
+          <div className="col-12">
+            <label htmlFor="address" className="form-label">
+              Bank Account<br/>
+              <small className="form-text text-muted">
+                Link a bank account to fund your investments.
+              </small>
+            </label>
+          </div>
+        </div>
+        <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+      </section>
     </>
   );
 }
 
-export default Address;
+export default Profile;
