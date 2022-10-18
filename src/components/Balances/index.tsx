@@ -93,7 +93,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: equityAccumulator, mutate: mutateEquityAccumulator } = useSWR([VAULT_ENGINE.address, 'equityAccumulator'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: asset, mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
+  const { mutate: mutateAsset } = useSWR([VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
 
@@ -116,14 +116,19 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         mutatePbtErc20Balance(undefined, true);
         mutateTotalEquity(undefined, true);
         mutateVaultPbtBalance(undefined, true);
-        // mutateAsset(undefined, true);
+        mutateAsset(undefined, true);
+        mutateEquityAccumulator(undefined, true);
+        mutateDebtAccumulator(undefined, true);
+        mutateTotalPrincipal(undefined, true);
+        mutateLendingPoolSupply(undefined, true);
+        mutateSystemCurrencyIssued(undefined, true);
       });
 
       return () => {
         library.removeAllListeners("block");
       };
     }
-  }, []);
+  }, [library, mutateEthVault, mutateUsdVault, mutateBalance, mutateTotalSupply, mutateLendingPoolDebt, mutateLendingPoolSupply, mutateAsset, mutateDebtAccumulator, mutateEquityAccumulator, mutateErc20Balance, mutatePbtErc20Balance, mutateSystemCurrencyIssued, mutateTotalEquity, mutateTotalPrincipal, mutateVaultPbtBalance]);
 
   /**
    * Update the current APR
@@ -187,7 +192,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, usdVault])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")

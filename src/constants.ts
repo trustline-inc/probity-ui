@@ -253,7 +253,7 @@ export const DEFAULT_METHODS = ["createTrustLine"];
 interface IDictionary<TValue> {
   [id: string]: TValue;
 }
-export const POLLING_INTERVAL = 12000;
+export const POLLING_INTERVAL = 5000;
 export const RPC_URLS: IDictionary<string> = {
   31337: "http://127.0.0.1:8545/",
   16: process.env.NODE_ENV === "production" ? "https://coston.trustline.co" : "http://127.0.0.1:9650/ext/bc/C/rpc",
