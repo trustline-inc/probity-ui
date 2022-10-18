@@ -9,6 +9,7 @@ function Contracts() {
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [contracts, setContracts] = React.useState<{ [key: string]: Contract|null}>({
     "USD": null,
+    "USD_MANAGER": null,
     "AUCTIONEER": null,
     "BRIDGE": null,
     "LIQUIDATOR": null,
@@ -47,7 +48,7 @@ function Contracts() {
         setFetched(true)
       })()
     }
-  }, [library, fetched, contracts])
+  }, [library, fetched, contracts, chainId])
 
   console.log("contracts:", contracts)
 

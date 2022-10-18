@@ -32,7 +32,7 @@ import "./index.css";
 import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import Currencies from "../../pages/Currencies";
+import Currencies from "../../pages/Tokenization";
 import Login from "../../pages/Login";
 import axios from "axios";
 import Vault from "../../pages/Vault";

@@ -74,7 +74,7 @@ function Vault() {
       const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, TreasuryABI.abi, library.getSigner())
       setLoading(true)
       try {
-        const result = await treasury.depositStablecoin(
+        const result = await treasury.depositSystemCurrency(
           utils.parseUnits(String(amount), 18),
           {
             gasLimit: 300000,
@@ -123,7 +123,7 @@ function Vault() {
             </ul>
           </div>
           <hr />
-          {/* Stablecoin Activities */}
+          {/* USD Activities */}
           <Activity active={active} activity={activity} error={error}>
             <>
               {

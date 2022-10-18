@@ -99,7 +99,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
 
         // ERC20 approve transaction
         if (allowance.lt(_amount)) {
-          console.log("Creating allowance...")
+          console.log(`Creating allowance of ${utils.parseUnits(_amount.toString(), 45)}`)
           result = await erc20.callStatic.approve(
             assetManager.address,
             _amount,

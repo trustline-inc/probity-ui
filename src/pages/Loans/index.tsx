@@ -212,14 +212,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       ]
 
       try {
-        // console.log("depositing stablecoin...", _amount.toString())
         // const amt = vault?.normDebt.mul(debtAccumulator).div(RAY).add(WAD)
-        // console.log("amt:", amt.toString())
         // await depositSystemCurrency(amt)
-        // console.log("deposited amount:", amt.toString())
         await vaultEngine.callStatic.modifyDebt(...args)
         const result = await vaultEngine.modifyDebt(...args);
-        console.log("debt modified")
         const data = await result.wait();
         eventContext.updateTransactions(data);
         mutateVault(undefined, true);

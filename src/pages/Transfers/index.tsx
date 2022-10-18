@@ -397,8 +397,8 @@ export default function Transfers() {
           setShowTransferModal(false)
           return alert("Bridge address is not set")
         }
-        const stablecoin = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
-        const allowance = await stablecoin.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
+        const usd = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+        const allowance = await usd.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 
         if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
           setTransferStage("OUTBOUND_PERMIT")

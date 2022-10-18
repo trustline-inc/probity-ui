@@ -1,6 +1,7 @@
 import { Contract, utils } from "ethers"
 import Web3 from "web3"
 import React, { useContext } from "react"
+import numbro from "numbro"
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
@@ -36,6 +37,13 @@ export default function Transactions() {
   const { active, library, chainId } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
 
+  const formatOptions = {
+    thousandSeparated: true,
+    optionalMantissa: true,
+    trimMantissa: false,
+    mantissa: 8
+  }
+
   let rows = ctx.transactions.map((tx: any, index) => {
     return tx.logs.map((element: any, idx: number) => {
       try {
@@ -51,7 +59,17 @@ export default function Transactions() {
               (name === "DepositNativeCrypto" || name === "WithdrawNativeCrypto") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)}</div>
+                  </div>
+                </Accordion.Collapse>
+              )
+            }
+            {
+              (name === "DepositToken") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="d-flex justify-content-around p-4">
+                    <div>Token: {log.args.token}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -60,8 +78,8 @@ export default function Transactions() {
               (name === "EquityModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔEquity: {utils.formatEther(log.args.equityAmount.div(RAY)).toString()}</div>
-                    <div>ΔUnderlying: {utils.formatEther(log.args.underlyingAmount).toString()}</div>
+                    <div>ΔEquity: {numbro(utils.formatEther(log.args.equityAmount.div(RAY)).toString()).format(formatOptions)}</div>
+                    <div>ΔUnderlying: {numbro(utils.formatEther(log.args.underlyingAmount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -70,17 +88,17 @@ export default function Transactions() {
               (name === "DebtModified") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>ΔDebt: {utils.formatEther(log.args.debtAmount.div(RAY)).toString()}</div>
-                    <div>ΔCollateral: {utils.formatEther(log.args.collAmount).toString()}</div>
+                    <div>ΔDebt: {numbro(utils.formatEther(log.args.debtAmount.div(RAY)).toString()).format(formatOptions)}</div>
+                    <div>ΔCollateral: {numbro(utils.formatEther(log.args.collAmount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
             }
             {
-              (name === "WithdrawStablecoin") && (
+              (name === "WithdrawSystemCurrency") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()} USD</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)} USD</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -90,7 +108,7 @@ export default function Transactions() {
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
                     <div>Spender: {log.args.spender}</div>
-                    <div>Value: {log.args.value.div(WAD).toString()}</div>
+                    <div>Value: {numbro(log.args.value.div(WAD).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -101,7 +119,7 @@ export default function Transactions() {
                   <div className="p-4">
                     <div>From: {log.args.from}</div>
                     <div>To: {log.args.to}</div>
-                    <div>Amount: {utils.formatEther(log.args.value.toString()).toString()}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.value.toString()).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -111,7 +129,7 @@ export default function Transactions() {
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
                     <div>Issuer: {log.args.issuer}</div>
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -121,7 +139,7 @@ export default function Transactions() {
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
                     <div>Issuer: {log.args.issuer}</div>
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -156,7 +174,7 @@ export default function Transactions() {
               (name === "WithdrawPbt") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.amount).toString()} PBT</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.amount).toString()).format(formatOptions)} PBT</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -165,7 +183,7 @@ export default function Transactions() {
               (name === "InterestCollected") && (
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
-                    <div>Amount: {utils.formatEther(log.args.interestAmount).toString()}</div>
+                    <div>Amount: {numbro(utils.formatEther(log.args.interestAmount).toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )
@@ -175,7 +193,18 @@ export default function Transactions() {
                 <Accordion.Collapse eventKey={(key).toString()} className="border">
                   <div className="d-flex justify-content-around p-4">
                     <div>ID: {log.args.auctionId.toString()}</div>
-                    <div>Lot Size: {utils.formatEther(log.args.lotSize).toString()} {getAssetId(log.args.collId.toString())}</div>
+                    <div>Lot Size: {numbro(utils.formatEther(log.args.lotSize).toString()).format(formatOptions)} {getAssetId(log.args.collId.toString())}</div>
+                  </div>
+                </Accordion.Collapse>
+              )
+            }
+            {
+              (name === "SupplyModified") && (
+                <Accordion.Collapse eventKey={(key).toString()} className="border">
+                  <div className="d-flex justify-content-around p-4">
+                    <div>Issuer: {log.args.issuer}</div>
+                    <div>Beneficiary: {log.args.holder}</div>
+                    <div>Amount: {numbro(log.args.amount.toString()).format(formatOptions)}</div>
                   </div>
                 </Accordion.Collapse>
               )

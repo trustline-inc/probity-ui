@@ -3,7 +3,7 @@ import numbro from "numbro"
 import NumberFormat from 'react-number-format';
 import { RAD } from "../../constants"
 import PriceFeed from "../../components/PriceFeed"
-import { Form } from "react-bootstrap"
+import { Form, OverlayTrigger, Tooltip } from "react-bootstrap"
 import { getNativeTokenSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
@@ -51,6 +51,12 @@ function RepayActivity({
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = process.env.REACT_APP_NATIVE_TOKEN!
 
+  const renderTooltip = (props: any) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Feature coming soon
+    </Tooltip>
+  );
+
   const handleOnChange = () => {
     if (!repayFullAmount) {
       console.log("onChange:", vault.normDebt.mul(debtAccumulator).div(RAD).toString())
@@ -67,9 +73,6 @@ function RepayActivity({
   return (
     <>
       <AssetSelector nativeTokenSymbol={nativeTokenSymbol} show={show} onSelect={onSelect} handleClose={handleClose} />
-      <Form.Group controlId="repay-full-amount" className="my-4 pt-5">
-        <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} />
-      </Form.Group>
       {!repayFullAmount && (
         <>
           <label className="form-label">
@@ -90,6 +93,15 @@ function RepayActivity({
             />
             <span className="input-group-text font-monospace">USD</span>
           </div>
+          <OverlayTrigger
+            placement="left"
+            delay={{ show: 250, hide: 400 }}
+            overlay={renderTooltip}
+          >
+            <Form.Group controlId="repay-full-amount" className="mt-2">
+              <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} disabled />
+            </Form.Group>
+          </OverlayTrigger>
           <br/>
           <label className="form-label">
             Collateral<br/>

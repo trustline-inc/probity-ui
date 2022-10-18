@@ -30,7 +30,7 @@ const formatOptions = {
   thousandSeparated: true,
   optionalMantissa: true,
   trimMantissa: false,
-  mantissa: 8
+  mantissa: 2
 }
 
 function Balances({ newActiveKey }: { newActiveKey: string }) {
@@ -164,7 +164,6 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           const price = await priceFeed.callStatic.getPrice(utils.id("ETH"))
   
           const _debt = normDebt.mul(debtAccumulator)
-          console.log(_debt)
 
           // Get collateral ratio
           if (_debt.toString() !== "0") {
@@ -360,23 +359,23 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             </>
           ) : (
             <>
-              <h5>USD Issuances</h5>
+              <h5>USD Supply</h5>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Total Issuance</h6>
+                <h6>Total Mint</h6>
                 <span className="text-truncate">{systemCurrencyIssued ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Probity Balance</h6>
-                <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
+                <h6>Probity Amount</h6>
+                <span className="text-truncate">{systemCurrencyIssued && totalSupply ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).sub(totalSupply))).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 mb-4 d-flex justify-content-between">
-                <h6>ERC20 Balance</h6>
+                <h6>ERC20 Amount</h6>
                 <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
               </div>
               <h5>Fund Information</h5>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Assets Under Management</h6>
-                <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatEther(lendingPoolSupply.div(RAY).toString())).format(formatOptions) : null} USD</span>
+                <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatUnits((lendingPoolSupply.sub(lendingPoolPrincipal)).add((lendingPoolDebt.mul(debtAccumulator)).toString()), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Cash</h6>
