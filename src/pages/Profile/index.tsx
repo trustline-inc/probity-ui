@@ -1,6 +1,8 @@
 import { useWeb3React } from '@web3-react/core';
 import axios from 'axios';
+import classnames from "classnames"
 import React from 'react';
+import { Card } from "react-bootstrap"
 import { Helmet } from "react-helmet";
 import {
   usePlaidLink,
@@ -15,7 +17,8 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   const { account } = useWeb3React()
   const [linkToken, setLinkToken] = React.useState(null);
   const [, setProcessorToken] = React.useState(null);
-  
+  const [externalAccounts, setExternalAccounts] = React.useState([]);
+
   /**
    * Log and save metadata and exchange public token
    */
@@ -24,7 +27,8 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
       if (!metadata.accounts.length) {
         return alert("Unable to link account.")
       }
-      const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
+      // Get Plaid processor token
+      let response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
         method: "POST",
         headers: {
           "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -35,14 +39,25 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
         },
       });
       setProcessorToken(response.data.result.processor_token);
+      // Create Modern Treasury bank account details
+      response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details', {
+        method: "POST",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        },
+        data: {
+          name: "John Smith",
+          accounts: [{ plaid_processor_token: response.data.result.processor_token }]
+        },
+      });
     },
     [],
   );
 
-  // Get Plaid Link token
+  // Get Plaid Link token and external accounts
   React.useEffect(() => {
     (async () => {
-      const response = await axios({
+      let response = await axios({
         url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
         method: "POST",
         headers: {
@@ -50,6 +65,15 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
         }
       })
       setLinkToken(response.data.result.link_token)
+
+      response = await axios({
+        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/external_accounts",
+        method: "GET",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        }
+      })
+      setExternalAccounts(response.data.result)
     })()
   }, [])
 
@@ -58,18 +82,13 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   // instead, on unmount it automatically destroys the Link instance
   const config: PlaidLinkOptions = {
     onSuccess: onSuccess,
-    onExit: (err, metadata) => {
-      console.log("err", err)
-      console.log("metadata", metadata)
-    },
-    onEvent: (eventName, metadata) => {
-      console.log("eventName", eventName)
-      console.log("metadata", metadata)
-    },
+    onExit: (err, metadata) => {},
+    onEvent: (eventName, metadata) => {},
     token: linkToken,
   };
   const { open, ready } = usePlaidLink(config);
 
+  // Fetch user address
   React.useEffect(() => {
     (async () => {
       if (process.env.REACT_APP_REQUIRE_AUTH) {
@@ -93,6 +112,9 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
     })()
   }, [globalId])
 
+  /**
+   * Saves user address
+   */
   const onSubmit = async () => {
     try {
       let url;
@@ -108,7 +130,6 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
           "Content-Type": "application/json"
         }
       })
-      console.log(response)
       if (response.status === 201) {
         setAddress(proposedAddress)
       }
@@ -160,7 +181,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
         }
       </section>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <div className="row mb-4">
+        <div className={classnames(["row", externalAccounts.length ? "" : "mb-4"])}>
           <div className="col-12">
             <label htmlFor="address" className="form-label">
               Bank Account<br/>
@@ -170,7 +191,25 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
             </label>
           </div>
         </div>
-        <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+        {
+          externalAccounts.length ? (
+            <pre>
+              {externalAccounts.map((externalAccount: any, index) => {
+                return (
+                  <Card key={index} className="my-2">
+                    <Card.Body>
+                      {externalAccount.details.account_type}<br/>
+                      {externalAccount.details.account_details[0].account_number}<br/>
+                      {externalAccount.details.routing_details[0].bank_name}
+                    </Card.Body>
+                  </Card>
+                )
+              })}
+            </pre>
+          ) : (
+            <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+          )
+        }
       </section>
     </>
   );
