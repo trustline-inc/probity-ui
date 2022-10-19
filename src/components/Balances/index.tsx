@@ -192,7 +192,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, ethVault, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address, debtAccumulator])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")
