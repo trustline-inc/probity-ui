@@ -282,7 +282,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Current Value</h6>
                       <span className="text-truncate">
-                        {usdVault && equityAccumulator ? numbro(utils.formatEther(usdVault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {usdVault && equityAccumulator ? numbro(utils.formatEther(usdVault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions }) : null} USD
                       </span>
                     </div>
                     {/* <div className="my-2 d-flex justify-content-between">
@@ -302,7 +302,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Interest Earned</h6>
                       <span className="text-truncate">
-                        {usdVault && equityAccumulator ? numbro(utils.formatUnits(usdVault.normEquity.mul(equityAccumulator).sub(usdVault.initialEquity), 45)).format({ ...formatOptions }) : null} USD
+                        {usdVault && equityAccumulator ? numbro(utils.formatUnits(usdVault.normEquity.mul(equityAccumulator).sub(usdVault.initialEquity), 45)).format(formatOptions) : null} USD
                       </span>
                     </div>
                   </Accordion.Body>
@@ -315,7 +315,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Balance</h6>
                       <span className="text-truncate">
-                        {ethVault && debtAccumulator ? numbro(utils.formatEther(ethVault.normDebt.mul(debtAccumulator).div(RAY))).format({ ...formatOptions, mantissa: 8 }) : null} USD
+                        {ethVault && debtAccumulator ? numbro(utils.formatEther(ethVault.normDebt.mul(debtAccumulator).div(RAY))).format(formatOptions) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
