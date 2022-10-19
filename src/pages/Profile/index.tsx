@@ -18,14 +18,13 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   React.useEffect(() => {
     (async () => {
       const response = await axios({
-        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/999/plaid_link_token",
-        method: "GET",
+        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
+        method: "POST",
         headers: {
           "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
         }
       })
-      console.log(response)
-      setToken(response.data.result)
+      setToken(response.data.result.link_token)
     })()
   }, [])
 
@@ -33,12 +32,19 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   // It does not return a destroy function;
   // instead, on unmount it automatically destroys the Link instance
   const config: PlaidLinkOptions = {
-    onSuccess: (public_token, metadata) => {},
-    onExit: (err, metadata) => {},
-    onEvent: (eventName, metadata) => {},
+    onSuccess: (public_token, metadata) => {
+      console.log("public_token", public_token)
+      console.log("metadata", metadata)
+    },
+    onExit: (err, metadata) => {
+      console.log("err", err)
+      console.log("metadata", metadata)
+    },
+    onEvent: (eventName, metadata) => {
+      console.log("eventName", eventName)
+      console.log("metadata", metadata)
+    },
     token: token,
-    //required for OAuth; if not using OAuth, set to null or omit:
-    receivedRedirectUri: window.location.href,
   };
   const { open, exit, ready } = usePlaidLink(config);
 
