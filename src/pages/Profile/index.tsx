@@ -159,7 +159,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
               address ? (
                 <input className="form-control" value={address} readOnly />
               ) : (
-                <input className="form-control" placeholder={account?.toString()} onChange={(event) => setProposedAddress(event.target.value) } />
+                <input className="form-control" placeholder={account?.toString()} value={""} onChange={(event) => setProposedAddress(event.target.value) } />
               )
             }
           </div>
