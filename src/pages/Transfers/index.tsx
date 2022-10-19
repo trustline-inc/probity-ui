@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import axios from "axios"
 import { NavLink, useLocation } from "react-router-dom";
 import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
@@ -8,16 +7,16 @@ import Web3 from "web3"
 import QRCode from "react-qr-code";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import SignClient from "@walletconnect/sign-client";
-import { PairingTypes, SessionTypes } from "@walletconnect/types";
+// import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import * as solaris from "@trustline-inc/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
   PROJECT_ID,
   DEFAULT_APP_METADATA,
-  DEFAULT_LOGGER,
+  // DEFAULT_LOGGER,
   DEFAULT_METHODS,
-  DEFAULT_RELAY_PROVIDER,
+  // DEFAULT_RELAY_PROVIDER,
   CONTRACTS,
   WAD,
 } from '../../constants';
@@ -33,22 +32,19 @@ export default function Transfers() {
     storage ? JSON.parse(storage) : null
   );
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
-  const [verifiedIssuers, setVerifiedIssuers] = React.useState<any>([])
+  const [verifiedIssuers] = React.useState<any>([])
   const [session, setSession] = React.useState<any|undefined>()
-  const [pairings, setPairings] = React.useState<any|string[]|undefined>()
+  const [pairings] = React.useState<any|string[]|undefined>()
   const [transferInProgress, setTransferInProgress] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
-  const [username, setUsername] = React.useState("");
   const [issuerAddress, setIssuerAddress] = React.useState("");
   const [receiverAddress, setReceiverAddress] = React.useState("");
   const [transactionID, setTransactionID] = React.useState("");
-  const [domain, setDomain] = React.useState("")
   const [transferAmount, setTransferAmount] = React.useState(0);
   const [error, setError] = React.useState<any|null>(null);
   const [transferStage, setTransferStage] = React.useState(transferData?.stage || "")
   const [showTransferModal, setShowTransferModal] = React.useState(false);
   const [transferModalBody, setTransferModalBody] = React.useState<any>();
-  const [usePayStringProtocol, setUsePayStringProtocol] = React.useState(true)
   const [xrpAddress, setXrpAddress] = React.useState("")
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:9650/ext/bc/C/rpc");
@@ -160,19 +156,6 @@ export default function Transfers() {
     setTransferAmount(amount);
   }
 
-  const onUsernameChange = (event: any) => {
-    const username = event.target.value.replace(/[^a-zA-Z\d]/ig, "");
-    setUsername(username);
-  }
-
-  const onDomainChange = (event: any) => {
-    let domain = event.target.value
-    if (process.env.NODE_ENV === "production") {
-      domain = domain.replace(/[^a-zA-Z\d].[^a-zA-Z]/ig, "");
-    }
-    setDomain(domain);
-  }
-
   const onXrpAddressChange = (event: any) => {
     let address = event.target.value
     setXrpAddress(address)
@@ -227,19 +210,19 @@ export default function Transfers() {
    * @function disconnect
    * Ends session and disconnects from the relay server.
    */
-  const disconnect = async () => {
-    if (typeof client === "undefined") {
-      throw new Error("WalletConnect is not initialized");
-    }
-    if (typeof session === "undefined") {
-      throw new Error("Session is not connected");
-    }
-    // await client.disconnect({
-    //   topic: (session as any).topic,
-    //   reason: ERROR.USER_DISCONNECTED.format(),
-    // });
-    console.log("disconnected")
-  };
+  // const disconnect = async () => {
+  //   if (typeof client === "undefined") {
+  //     throw new Error("WalletConnect is not initialized");
+  //   }
+  //   if (typeof session === "undefined") {
+  //     throw new Error("Session is not connected");
+  //   }
+  //   // await client.disconnect({
+  //   //   topic: (session as any).topic,
+  //   //   reason: ERROR.USER_DISCONNECTED.format(),
+  //   // });
+  //   console.log("disconnected")
+  // };
 
   /**
    * @function onSessionConnected
@@ -387,8 +370,7 @@ export default function Transfers() {
         setTransfer(_transfer)
         setTransferData({
           stage: "OUTBOUND_PERMIT",
-          amount: transferAmount.toString(),
-          username
+          amount: transferAmount.toString()
         })
 
         // First check the allowance
@@ -613,7 +595,7 @@ export default function Transfers() {
     }
   }
 
-  const completeRedemption = async () => {}
+  // const completeRedemption = async () => {}
 
   return (
     <>

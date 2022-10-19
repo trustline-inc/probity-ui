@@ -8,7 +8,6 @@ import { getNativeTokenSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
 import AssetSelector from "../../components/AssetSelector";
-import AssetContext from "../../contexts/AssetContext"
 
 interface Props {
   collateralRatio: number;
@@ -40,7 +39,6 @@ function RepayActivity({
   vault,
   debtAccumulator
 }: Props) {
-  const ctx = React.useContext(AssetContext)
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);

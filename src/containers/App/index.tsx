@@ -7,10 +7,9 @@ import {
   useHistory
 } from "react-router-dom";
 import useSWR from 'swr';
-import { Alert } from "react-bootstrap"
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import useLocalStorageState from "use-local-storage-state";
+// import useLocalStorageState from "use-local-storage-state";
 import { Contract, utils } from "ethers";
 import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
@@ -51,10 +50,10 @@ function App() {
   const [mobileDevice, setMobileDevice] = useState(false);
   const [assetPrice, setCollateralPrice] = useState(0.00);
   const { active, chainId, library, error } = useWeb3React<Web3Provider>()
-  const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
-    "displayInfoAlert",
-    true
-  );
+  // const [displayInfoAlert, setDisplayInfoAlert] = useLocalStorageState(
+  //   "displayInfoAlert",
+  //   true
+  // );
   const [transactions, setTransactions]: any = useState(localStorage.getItem("probity-txs") ? JSON.parse(localStorage.getItem("probity-txs")!) : [])
   const [asset, setAsset] = useState<string>("USD")
   const address = CONTRACTS[chainId!]?.USD.address

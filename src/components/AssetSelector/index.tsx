@@ -27,7 +27,7 @@ export default function AssetSelector({
   onSelect: () => void
 }) {
   const ctx = React.useContext(AssetContext)
-  const currentAsset = ctx.asset || nativeTokenSymbol
+  // const currentAsset = ctx.asset || nativeTokenSymbol
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import numbro from "numbro"
-import { scrollToTop, useScroll } from "../../utils"
+import { scrollToTop } from "../../utils"
 import { utils } from "ethers";
 import Pagination from "../../components/Pagination"
 import Activity from "../../containers/Activity";
@@ -21,9 +21,9 @@ const formatOptions = {
 
 function Auctions({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
-  const [metamaskLoading, setMetamaskLoading] = useState(false)
-  const [bidPrice, setBidPrice] = useState<number>(0.00)
-  const [bidLot, setBidLot] = useState<number>(0.00)
+  const [, setMetamaskLoading] = useState(false)
+  // const [bidPrice, setBidPrice] = useState<number>(0.00)
+  // const [bidLot, setBidLot] = useState<number>(0.00)
   const [lot, setLot] = useState<number>(0.00)
   const [maxPrice, setMaxPrice] = useState<number>(0.00)
   const [auctions, setAuctions] = useState<any[]>([]);
@@ -31,10 +31,10 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   // const ctx = useContext(EventContext)
-  const [currentPrices, setCurrentPrices] = useState<number[]>([])
-  const [auctionsPerPage, setAuctionsPerPage] = useState<number>(10)
+  // const [currentPrices, setCurrentPrices] = useState<number[]>([])
+  const [auctionsPerPage] = useState<number>(10)
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const scrollPosition = useScroll()
+  // const scrollPosition = useScroll()
   const lastAuctionId = currentPage * auctionsPerPage
   const firstAuctionId = Math.max(0, lastAuctionId - auctionsPerPage)
   const AUCTIONEER = CONTRACTS[chainId!].AUCTIONEER
@@ -54,7 +54,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
         setLoading(false)
       })()
     }
-  }, [library])
+  }, [library, AUCTIONEER.abi, AUCTIONEER.address])
 
   /**
    * Fetches the auctions
@@ -83,17 +83,17 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
         setLoading(false)
       })()
     }
-  }, [library, totalAuctions, currentPage, firstAuctionId, lastAuctionId])
+  }, [library, totalAuctions, currentPage, firstAuctionId, lastAuctionId, AUCTIONEER.abi, AUCTIONEER.address])
 
-  const onChangeBidPrice = (event: any) => {
-    const { value } = event.target
-    setBidPrice(value)
-  }
+  // const onChangeBidPrice = (event: any) => {
+  //   const { value } = event.target
+  //   setBidPrice(value)
+  // }
 
-  const onChangeBidLot = (event: any) => {
-    const { value } = event.target
-    setBidLot(value)
-  }
+  // const onChangeBidLot = (event: any) => {
+  //   const { value } = event.target
+  //   setBidLot(value)
+  // }
 
   const onChangeMaxPrice = (event: any) => {
     const { value } = event.target
@@ -105,20 +105,20 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     setLot(value)
   }
 
-  const placeBid = async (auctionId: number) => {
-    try {
-      console.log("placing bid:", bidPrice)
-      const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
-      const bidLot = 0
-      const tx = await auctioneer.placeBid(auctionId, bidPrice, bidLot)
-      setMetamaskLoading(true)
-      await tx.wait()
-      setMetamaskLoading(false)
-    } catch (error) {
-      console.log(error)
-      setError(error)
-    }
-  }
+  // const placeBid = async (auctionId: number) => {
+  //   try {
+  //     console.log("placing bid:", bidPrice)
+  //     const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
+  //     const bidLot = 0
+  //     const tx = await auctioneer.placeBid(auctionId, bidPrice, bidLot)
+  //     setMetamaskLoading(true)
+  //     await tx.wait()
+  //     setMetamaskLoading(false)
+  //   } catch (error) {
+  //     console.log(error)
+  //     setError(error)
+  //   }
+  // }
 
   const buyNow = async (auctionId: number, lot: number|string, maxPrice: number|string) => {
     try {
@@ -140,19 +140,19 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     }
   }
 
-  const finalizeSale = async (auctionId: number) => {
-    try {
-      console.log("finalizing sale")
-      const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
-      const tx = await auctioneer.finalizeSale(auctionId)
-      setMetamaskLoading(true)
-      await tx.wait()
-      setMetamaskLoading(false)
-    } catch (error) {
-      console.log(error)
-      setError(error)
-    }
-  }
+  // const finalizeSale = async (auctionId: number) => {
+  //   try {
+  //     console.log("finalizing sale")
+  //     const auctioneer = new Contract(AUCTIONEER.address, AUCTIONEER.abi, library!.getSigner())
+  //     const tx = await auctioneer.finalizeSale(auctionId)
+  //     setMetamaskLoading(true)
+  //     await tx.wait()
+  //     setMetamaskLoading(false)
+  //   } catch (error) {
+  //     console.log(error)
+  //     setError(error)
+  //   }
+  // }
 
   return (
     <Activity active={active} activity={ActivityType.Auction} error={error}>

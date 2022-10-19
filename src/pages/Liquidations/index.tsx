@@ -37,7 +37,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         setUsers(_users);
       })()
     }
-  }, [library])
+  }, [library, chainId])
 
   useEffect(() => {
     if (library) {
@@ -96,7 +96,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         setLoading(false)
       })()
     }
-  }, [library, users, assetPrice, chainId])
+  }, [library, users, assetPrice, chainId, currentAsset])
 
   const liquidate = async (vault: any, index: number) => {
     if (library) {

@@ -8,7 +8,7 @@ import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Trea
 import { Contract, utils } from "ethers";
 import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
-import { CONTRACTS, WAD } from '../../constants';
+import { CONTRACTS } from '../../constants';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import DepositActivity from '../Vault/DepositActivity';

@@ -73,7 +73,7 @@ const PaginationComponent = ({
     return null;
   });
 
-  useEffect(setLastPageAsCurrent, [pagesCount]);
+  useEffect(setLastPageAsCurrent, [pagesCount, currentPage, setCurrentPage]);
 
   return (
     <>

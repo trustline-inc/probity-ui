@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Button } from "react-bootstrap"
 import useSWR from "swr";
-import axios from "axios";
+// import axios from "axios";
 import numbro from "numbro";
 import { NavLink } from "react-router-dom";
 import { injected } from "../../connectors";
@@ -62,8 +62,8 @@ function Navbar() {
   const { chainId, active, activate, deactivate } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
-  const { account } = useWeb3React<Web3Provider>();
-  const [loading, setLoading] = useState(false)
+  // const { account } = useWeb3React<Web3Provider>();
+  // const [, setLoading] = useState(false)
 
   // Copy state temporarily to flip it. Seems to work better than just 
   // inverting the boolean in the onClick itself
@@ -72,28 +72,28 @@ function Navbar() {
     setMobileMenuVisibility(!currentVisibility);
   }
 
-  const handleFaucetRequest = async (event: React.MouseEvent) => {
-    event.preventDefault()
-    return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
-  }
+  // const handleFaucetRequest = async (event: React.MouseEvent) => {
+  //   event.preventDefault()
+  //   return window.open("https://faucet.towolabs.com/", "_blank")?.focus()
+  // }
 
-  const whitelist = async (event: React.MouseEvent) => {
-    setLoading(true)
-    try {
-      const result = await axios({
-        url: "https://faucet.trustline.io/whitelist",
-        params: {
-          user: account
-        }
-      })
-      if (result?.data?.reason) throw Error(result.data.reason)
-      alert("Success!")
-    } catch (error) {
-      console.error(error)
-      alert("An error occurred. Please report to the Probity Telegram group.")
-    }
-    setLoading(false)
-  }
+  // const whitelist = async (event: React.MouseEvent) => {
+  //   setLoading(true)
+  //   try {
+  //     const result = await axios({
+  //       url: "https://faucet.trustline.io/whitelist",
+  //       params: {
+  //         user: account
+  //       }
+  //     })
+  //     if (result?.data?.reason) throw Error(result.data.reason)
+  //     alert("Success!")
+  //   } catch (error) {
+  //     console.error(error)
+  //     alert("An error occurred. Please report to the Probity Telegram group.")
+  //   }
+  //   setLoading(false)
+  // }
 
   const onClick = () => {
     activate(injected);

@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
-import { CONTRACTS, WAD, RAY, RAD } from '../../constants';
+import { CONTRACTS, WAD } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
@@ -34,10 +34,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(nativeTokenSymbol), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(assetContext.asset), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
-  const { data: balance, mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
+  const { mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateLendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'lendingPoolDebt'], {
@@ -212,8 +212,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       ]
 
       try {
-        // const amt = vault?.normDebt.mul(debtAccumulator).div(RAY).add(WAD)
-        // await depositSystemCurrency(amt)
+        const amount = vault?.normDebt.mul(debtAccumulator)
+        await depositSystemCurrency(amount)
         await vaultEngine.callStatic.modifyDebt(...args)
         const result = await vaultEngine.modifyDebt(...args);
         const data = await result.wait();
@@ -265,8 +265,10 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       let newDebtAmount
       switch (activity) {
         case ActivityType.Borrow:
-          newDebtAmount = (Number(utils.formatUnits(vault.normDebt.mul(debtAccumulator), 45)) + Number(amount))
-          setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
+          if (vault && debtAccumulator) {
+            newDebtAmount = (Number(utils.formatUnits(vault?.normDebt.mul(debtAccumulator), 45)) + Number(amount))
+            setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
+          }
           break;
         case ActivityType.Repay:
           newDebtAmount = (Number(utils.formatUnits(vault.normDebt.mul(debtAccumulator), 45)) - Number(amount))

@@ -3,7 +3,6 @@ import numbro from "numbro"
 import NumberFormat from "react-number-format"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
-import PriceFeed from "../../components/PriceFeed"
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 
@@ -33,7 +32,7 @@ function RedemptionActivity({
   const { chainId } = useWeb3React<Web3Provider>()
   const [show, setShow] = React.useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  // const handleShow = () => setShow(true);
   const onSelect = () => setShow(false)
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   return (

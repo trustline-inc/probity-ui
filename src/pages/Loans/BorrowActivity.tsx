@@ -10,7 +10,6 @@ import { RAY, CONTRACTS } from '../../constants';
 import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
-import AssetContext from "../../contexts/AssetContext"
 import NumberFormat from "react-number-format";
 
 interface Props {
@@ -38,7 +37,6 @@ function BorrowActivity({
   onAmountChange,
   onCollateralAmountChange
 }: Props) {
-  const ctx = React.useContext(AssetContext)
   const { library, chainId } = useWeb3React<Web3Provider>()
   const [estimatedAPR, setEstimatedAPR] = React.useState(rate ? utils.formatUnits(rate, 27).toString() : "")
   const { data: lendingPoolDebt } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, "lendingPoolDebt"], {

@@ -6,8 +6,6 @@ import { BigNumber } from 'ethers';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { NavLink, useLocation } from "react-router-dom";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { Contract, utils } from "ethers";
 import { Helmet } from "react-helmet";
 import fetcher from "../../fetcher";
@@ -19,7 +17,6 @@ import { CONTRACTS, RAY, WAD } from '../../constants';
 import Info from '../../components/Info';
 import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
-import { getNativeTokenSymbol } from '../../utils';
 
 function Lend({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
@@ -29,15 +26,14 @@ function Lend({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = React.useState(false);
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [equityAmount, setEquityAmount] = React.useState(0);
-  const [interestAmount, setInterestAmount] = React.useState(0);
-  const [underlyingAmount, setUnderlyingAmount] = React.useState(0);
+  // const [interestAmount, setInterestAmount] = React.useState(0);
+  const [, setUnderlyingAmount] = React.useState(0);
   const [totalUnderlying, setTotalUnderlying] = React.useState(0);
   const [underlyingRatio, setUnderlyingRatio] = React.useState(0);
   const eventContext = React.useContext(EventContext)
-  const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = "USD"
   assetContext.updateAsset("USD")
-  const [interestType, setInterestType] = React.useState("USD")
+  // const [interestType, setInterestType] = React.useState("USD")
 
   const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(currentAsset), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
@@ -47,7 +43,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
     fetcher: fetcher(library, CONTRACTS[chainId!].PRICE_FEED.abi),
   })
 
-  const { data: asset, mutate: mutateAsset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
+  const { data: asset } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'assets', utils.id(currentAsset)], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
 
@@ -259,12 +255,12 @@ function Lend({ assetPrice }: { assetPrice: number }) {
    * @function onInterestAmountChange
    * @param event 
    */
-  const onInterestAmountChange = (event: any) => {
-    let amount
-    if (!event.target.value) amount = 0
-    else amount = Number(numbro.unformat(event.target.value))
-    setInterestAmount(amount);
-  }
+  // const onInterestAmountChange = (event: any) => {
+  //   let amount
+  //   if (!event.target.value) amount = 0
+  //   else amount = Number(numbro.unformat(event.target.value))
+  //   setInterestAmount(amount);
+  // }
 
   // Set activity by the path
   React.useEffect(() => {
@@ -288,7 +284,6 @@ function Lend({ assetPrice }: { assetPrice: number }) {
           utils.parseUnits(String(equityAmount), 45).div(equityAccumulator),
           { gasLimit: web3.utils.toWei('400000', 'wei'), maxFeePerGas: 25 * 1e9 }
         ]
-        console.log("args:", args[1].toString(), args[2].toString())
         await vaultEngine.callStatic.modifyEquity(...args)
         const result = await vaultEngine.modifyEquity(...args);
         const data = await result.wait();

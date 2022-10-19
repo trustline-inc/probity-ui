@@ -10,21 +10,21 @@ import { getNativeTokenSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import { RAY, CONTRACTS } from "../../constants";
 import './index.css';
-import FLR from "../../assets/flr.jpg"
-import SGB from "../../assets/sgb.png"
-import USD from "../../assets/usd.png"
-import XRP from "../../assets/xrp.png"
-import ETH from "../../assets/eth.png"
+// import FLR from "../../assets/flr.jpg"
+// import SGB from "../../assets/sgb.png"
+// import USD from "../../assets/usd.png"
+// import XRP from "../../assets/xrp.png"
+// import ETH from "../../assets/eth.png"
 import AssetContext from "../../contexts/AssetContext"
 
-const assetIcons: { [key: string]: string } = {
-  CFLR: FLR,
-  SGB,
-  FLR,
-  USD,
-  XRP,
-  ETH
-}
+// const assetIcons: { [key: string]: string } = {
+//   CFLR: FLR,
+//   SGB,
+//   FLR,
+//   USD,
+//   XRP,
+//   ETH
+// }
 
 const formatOptions = {
   thousandSeparated: true,
@@ -39,7 +39,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const [selected, setSelected] = React.useState(BalanceType.User)
   const { account, library, chainId } = useWeb3React<Web3Provider>()
   const [collateralRatio, setCollateralRatio] = React.useState("")
-  const [underlyingRatio, setUnderlyingRatio] = React.useState("")
+  const [, setUnderlyingRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
   const [estimatedAPY, setEstimatedAPY] = React.useState("")
   const [activeKey, setActiveKey] = React.useState("assets")
@@ -57,19 +57,19 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const { data: usdVault, mutate: mutateUsdVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("USD"), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: balance, mutate: mutateBalance } = useSWR([VAULT_ENGINE.address, 'systemCurrency', account], {
+  const { mutate: mutateBalance } = useSWR([VAULT_ENGINE.address, 'systemCurrency', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: systemCurrencyIssued, mutate: mutateSystemCurrencyIssued } = useSWR([VAULT_ENGINE.address, 'systemCurrencyIssued'], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: vaultPbtBalance, mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
+  const { mutate: mutateVaultPbtBalance } = useSWR([VAULT_ENGINE.address, 'pbt', account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
-  const { data: erc20Balance, mutate: mutateErc20Balance } = useSWR([USD.address, 'balanceOf', account], {
+  const { mutate: mutateErc20Balance } = useSWR([USD.address, 'balanceOf', account], {
     fetcher: fetcher(library, USD.abi),
   })
-  const { data: pbtErc20Balance, mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
+  const { mutate: mutatePbtErc20Balance } = useSWR([PBT.address, 'balanceOf', account], {
     fetcher: fetcher(library, PBT.abi),
   })
   const { data: totalSupply, mutate: mutateTotalSupply } = useSWR([USD.address, 'totalSupply'], {
