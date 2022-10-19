@@ -18,6 +18,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   const [linkToken, setLinkToken] = React.useState(null);
   const [, setProcessorToken] = React.useState(null);
   const [externalAccounts, setExternalAccounts] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   /**
    * Log and save metadata and exchange public token
@@ -54,9 +55,10 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
     [],
   );
 
-  // Get Plaid Link token and external accounts
+  // Get Plaid Link token + external accounts
   React.useEffect(() => {
     (async () => {
+      setLoading(true)
       let response = await axios({
         url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
         method: "POST",
@@ -74,6 +76,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
         }
       })
       setExternalAccounts(response.data.result)
+      setLoading(false)
     })()
   }, [])
 
@@ -212,7 +215,13 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
               <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
             </pre>
           ) : (
-            <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+            loading ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
+                <i className="fas fa-solid fa-spinner fa-spin fa-4x"></i>
+              </div>
+            ) : (
+              <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+            )
           )
         }
       </section>
