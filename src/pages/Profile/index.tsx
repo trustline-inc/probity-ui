@@ -198,13 +198,18 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
                 return (
                   <Card key={index} className="my-2">
                     <Card.Body>
-                      {externalAccount.details.account_type}<br/>
-                      {externalAccount.details.account_details[0].account_number}<br/>
-                      {externalAccount.details.routing_details[0].bank_name}
+                      <div className="d-flex flex-row justify-content-between">
+                        <div>
+                          {externalAccount.details.routing_details[0].bank_name}<br/>
+                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, '*')}<br/>
+                        </div>
+                        <button className="btn btn-outline-secondary btn-sm">Remove</button>
+                      </div>
                     </Card.Body>
                   </Card>
                 )
               })}
+              <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
             </pre>
           ) : (
             <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
