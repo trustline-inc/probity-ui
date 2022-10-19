@@ -6,13 +6,38 @@ import {
   usePlaidLink,
   PlaidLinkOptions,
   PlaidLinkOnSuccess,
+  PlaidLinkOnSuccessMetadata,
 } from 'react-plaid-link';
 
 function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   const [address, setAddress] = React.useState("")
   const [proposedAddress, setProposedAddress] = React.useState("")
   const { account } = useWeb3React()
-  const [token, setToken] = React.useState(null);
+  const [linkToken, setLinkToken] = React.useState(null);
+  const [, setProcessorToken] = React.useState(null);
+  
+  /**
+   * Log and save metadata and exchange public token
+   */
+  const onSuccess = React.useCallback<PlaidLinkOnSuccess>(
+    async (public_token: string, metadata: PlaidLinkOnSuccessMetadata) => {
+      if (!metadata.accounts.length) {
+        return alert("Unable to link account.")
+      }
+      const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
+        method: "POST",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        },
+        data: {
+          publicToken: public_token,
+          accountId: metadata.accounts[0].id
+        },
+      });
+      setProcessorToken(response.data.result.processor_token);
+    },
+    [],
+  );
 
   // Get Plaid Link token
   React.useEffect(() => {
@@ -24,7 +49,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
           "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
         }
       })
-      setToken(response.data.result.link_token)
+      setLinkToken(response.data.result.link_token)
     })()
   }, [])
 
@@ -32,10 +57,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
   // It does not return a destroy function;
   // instead, on unmount it automatically destroys the Link instance
   const config: PlaidLinkOptions = {
-    onSuccess: (public_token, metadata) => {
-      console.log("public_token", public_token)
-      console.log("metadata", metadata)
-    },
+    onSuccess: onSuccess,
     onExit: (err, metadata) => {
       console.log("err", err)
       console.log("metadata", metadata)
@@ -44,9 +66,9 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
       console.log("eventName", eventName)
       console.log("metadata", metadata)
     },
-    token: token,
+    token: linkToken,
   };
-  const { open, exit, ready } = usePlaidLink(config);
+  const { open, ready } = usePlaidLink(config);
 
   React.useEffect(() => {
     (async () => {
