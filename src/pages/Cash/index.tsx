@@ -21,6 +21,7 @@ function Cash() {
   const [selectedAccount, setSelectedAccount] = React.useState<any>(null);
   const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
   const [txPending, setTxPending] = React.useState(false);
+  const [txsLoading, setTxsLoading] = React.useState(false);
   const [balance, setBalance] = React.useState(null);
   const [transactions, setTransactions] = React.useState([]);
   const [amount, setAmount] = React.useState(0);
@@ -56,6 +57,7 @@ function Cash() {
   );
 
   const getTransactions = async () => {
+    setTxsLoading(true)
     const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/transactions", {
       method: "GET",
       headers: {
@@ -63,6 +65,7 @@ function Cash() {
       },
     })
     setTransactions(response.data.result)
+    setTxsLoading(false)
   }
 
   const getAccountBalance = async () => {
@@ -256,7 +259,7 @@ function Cash() {
       <section className="border rounded p-5 mb-4 shadow-sm bg-white">
         <div className="row">
           <div className="col-12">
-            <div className="d-flex justify-content-between mb-2">
+            <div className="d-flex justify-content-between mb-2 align-items-baseline">
               <span>Balance: ${balance}</span>
               <div>
                 <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
@@ -264,7 +267,7 @@ function Cash() {
               </div>
             </div>
             {
-              transactions.length ? (
+              transactions.length && !txsLoading ? (
                 <table className="table table-bordered">
                   <thead>
                     <tr>
@@ -280,13 +283,17 @@ function Cash() {
                         <tr key={index}>
                           <td>{new Date(tx.created_at).toLocaleString()}</td>
                           <td>{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
-                          <td>${parseFloat(tx.amount.slice(0, -2) + "." + tx.amount.slice(-2))}</td>
+                          <td>${Number(tx.amount).toFixed(2)}</td>
                           <td>{tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</td>
                         </tr>
                       )
                     })}
                   </tbody>
                 </table>
+              ) : txsLoading ? (
+                <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
+                  <i className="fas fa-solid fa-spinner fa-spin fa-4x"></i>
+                </div>
               ) : (
                 <div className="d-flex justify-content-center py-5 border">
                   <span>No transactions to display</span>
