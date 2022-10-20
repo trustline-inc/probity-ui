@@ -425,7 +425,7 @@ function Cash() {
               </div>
             </div>
           ) : (
-            <>
+            <div className="mb-4">
               <pre>
                 {externalAccounts.map((externalAccount: any, index) => {
                   return (
@@ -442,10 +442,9 @@ function Cash() {
                     </Card>
                   )
                 })}
-                <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
               </pre>
-              <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
-            </>
+              <button className="btn btn-primary float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+            </div>
           )
         }
         </div>
