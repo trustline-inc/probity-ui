@@ -123,6 +123,9 @@ function Cash() {
   const transfer = async () => {
     if (type === TransactionType.Deposit) await deposit()
     if (type === TransactionType.Withdrawal) await withdrawal()
+    await getTransactions()
+    await getAccountBalance()
+    setShow(false)
   }
 
   const getBankDetails = async (token: string) => {
