@@ -355,17 +355,13 @@ function Cash() {
       <section className="border rounded p-5 mb-4 shadow-sm bg-white">
         <div className="row">
           <div className="col-12">
-            {
-              balance && (
-                <div className="d-flex justify-content-between mb-2 align-items-baseline">
-                  <span>Balance: ${balance}</span>
-                  <div>
-                    <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
-                    <Button size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Withdrawal)}>Withdraw</Button>
-                  </div>
-                </div>
-              )
-            }
+            <div className="d-flex justify-content-between mb-2 align-items-baseline">
+              <label className="form-label">Transaction History</label>
+              <div>
+                <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
+                <Button size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Withdrawal)}>Withdraw</Button>
+              </div>
+            </div>
             {
               transactions.length && !txsLoading ? (
                 <table className="table table-bordered">
@@ -408,7 +404,7 @@ function Cash() {
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
         <div className={classnames(["row", externalAccounts.length ? "" : "mb-4"])}>
           <div className="col-12">
-            <label htmlFor="address" className="form-label">
+            <label className="form-label">
               Payment Methods<br/>
               <small className="form-text text-muted">
                 Link a bank account to fund your investments
