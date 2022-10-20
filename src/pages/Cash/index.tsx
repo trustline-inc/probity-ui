@@ -368,7 +368,7 @@ function Cash() {
                   <thead>
                     <tr>
                       <th scope="col">Date</th>
-                      <th scope="col">TransactionType</th>
+                      <th scope="col">Type</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Status</th>
                     </tr>
