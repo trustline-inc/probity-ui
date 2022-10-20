@@ -1,7 +1,7 @@
 import axios from 'axios';
 import classnames from "classnames"
 import React from 'react';
-import { Button, Card } from "react-bootstrap"
+import { Button, Card, Modal } from "react-bootstrap"
 import { Helmet } from "react-helmet";
 import {
   usePlaidLink,
@@ -16,7 +16,11 @@ function Cash() {
   const [externalAccounts, setExternalAccounts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [balance, setBalance] = React.useState(null);
-  const [transactions, setTransactions] = React.useState([])
+  const [transactions, setTransactions] = React.useState([]);
+  const [show, setShow] = React.useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   /**
    * Log and save metadata and exchange public token
@@ -139,6 +143,33 @@ function Cash() {
 
   return (
     <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Cash</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <label htmlFor="depositFrom" className="form-label">Deposit from</label>
+            <select className="form-select">
+              {externalAccounts.map((externalAccount: any) => {
+                return (
+                  <option value="">
+                    {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, '*')}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="amount" className="form-label">Amount</label>
+            <input type="number" className="form-control" id="amount" placeholder="0.00" />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+          <Button variant="primary">Continue</Button>
+        </Modal.Footer>
+      </Modal>
       <Helmet>
         <title>Probity | Manage Cash</title>
       </Helmet>
@@ -147,10 +178,10 @@ function Cash() {
         <div className="row">
           <div className="col-12">
             <div className="d-flex justify-content-between mb-2">
-              <h4>Balance: ${balance}</h4>
+              <span>Balance: ${balance}</span>
               <div>
-                <Button className="mx-2" size="sm" variant="outline-primary">Deposit</Button>
-                <Button size="sm" variant="outline-primary">Withdraw</Button>
+                <Button className="mx-2" size="sm" variant="outline-primary" onClick={handleShow}>Deposit</Button>
+                <Button size="sm" variant="outline-primary" onClick={handleShow}>Withdraw</Button>
               </div>
             </div>
             {
