@@ -87,7 +87,7 @@ function Cash() {
           currency: "USD",
           type: "ach",
           amount,
-          externalAccountId: selectedAccount?.id
+          externalAccountId: selectedAccount?.sub_id
         }
       })
       console.log(response)
@@ -159,6 +159,7 @@ function Cash() {
       }
     })
     setExternalAccounts(response.data.result)
+    if (response.data.result.length) setSelectedAccount(response.data.result[0])
   }
 
   const getLinkToken = async () => {
@@ -264,28 +265,28 @@ function Cash() {
             </div>
             {
               transactions.length ? (
-                transactions.map((tx: any) => {
-                  return (
-                    <table className="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th scope="col">Date</th>
-                          <th scope="col">TransactionType</th>
-                          <th scope="col">Amount</th>
-                          <th scope="col">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">TransactionType</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map((tx: any, index: number) => {
+                      return (
+                        <tr key={index}>
                           <td>{new Date(tx.created_at).toLocaleString()}</td>
                           <td>{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
                           <td>${parseFloat(tx.amount.slice(0, -2) + "." + tx.amount.slice(-2))}</td>
                           <td>{tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</td>
                         </tr>
-                      </tbody>
-                    </table>
-                  )
-                })
+                      )
+                    })}
+                  </tbody>
+                </table>
               ) : (
                 <div className="d-flex justify-content-center py-5 border">
                   <span>No transactions to display</span>
