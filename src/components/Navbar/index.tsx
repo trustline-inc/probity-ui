@@ -127,6 +127,11 @@ function Navbar() {
               <i className="fa-solid fa-house-chimney-user"></i> Profile
             </NavLink>
           </li>
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/cash-management">
+              <i className="fa-solid fa-wallet"></i> Cash
+            </NavLink>
+          </li>
           {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/assets">
               <i className="fas fa-wallet"></i> Assets
@@ -223,7 +228,6 @@ function Navbar() {
                 </Button>
                 <div className="spacer spacer-1" />
               */}
-              <Button variant="primary" onClick={deactivate}>Fund Account</Button>
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (

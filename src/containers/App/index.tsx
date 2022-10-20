@@ -19,6 +19,7 @@ import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Lend from "../../pages/Investment";
 import Loans from "../../pages/Loans";
+import Cash from "../../pages/Cash";
 import Assets from "../../pages/Assets";
 import Address from "../../pages/Profile";
 import Transactions from "../../pages/Transactions";
@@ -258,6 +259,19 @@ function App() {
                                   {active && (
                                     <AssetContext.Provider value={{ asset, address, updateAsset }}>
                                       <Balances newActiveKey="" />
+                                    </AssetContext.Provider>
+                                  )}
+                                </div>
+                              </Route>
+                              {/* Cash Management */}
+                              <Route path="/cash-management">
+                                <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                  <Cash />
+                                </div>
+                                <div className="col-xl-4 col-lg-6 col-md-12">
+                                  {active && (
+                                    <AssetContext.Provider value={{ asset, address, updateAsset }}>
+                                      <Balances newActiveKey="assets" />
                                     </AssetContext.Provider>
                                   )}
                                 </div>
