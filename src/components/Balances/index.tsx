@@ -144,7 +144,8 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
       const supply = Number(utils.formatEther(lendingPoolSupply.div(RAY)));
       const newUtilization = (borrows / supply);
       const newAPR = ((1 / (100 * (1 - newUtilization)))) * 100
-      const newAPY = newAPR
+      const newAPY = newAPR * newUtilization
+      // Round to the neartet 0.25%
       setEstimatedAPR(`${Math.min((Math.ceil(newAPR / 0.25) * 0.25), 100).toFixed(2)}%`)
       setEstimatedAPY(`${newAPY.toFixed(2)}%`)
     }
