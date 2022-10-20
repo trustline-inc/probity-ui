@@ -355,13 +355,17 @@ function Cash() {
       <section className="border rounded p-5 mb-4 shadow-sm bg-white">
         <div className="row">
           <div className="col-12">
-            <div className="d-flex justify-content-between mb-2 align-items-baseline">
-              <span>Balance: ${balance}</span>
-              <div>
-                <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
-                <Button size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Withdrawal)}>Withdraw</Button>
-              </div>
-            </div>
+            {
+              balance && (
+                <div className="d-flex justify-content-between mb-2 align-items-baseline">
+                  <span>Balance: ${balance}</span>
+                  <div>
+                    <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
+                    <Button size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Withdrawal)}>Withdraw</Button>
+                  </div>
+                </div>
+              )
+            }
             {
               transactions.length && !txsLoading ? (
                 <table className="table table-bordered">
@@ -388,7 +392,9 @@ function Cash() {
                 </table>
               ) : txsLoading ? (
                 <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
-                  <i className="fas fa-solid fa-spinner fa-spin fa-4x"></i>
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
                 </div>
               ) : (
                 <div className="d-flex justify-content-center py-5 border">
@@ -433,7 +439,9 @@ function Cash() {
           ) : (
             extAccountsLoading ? (
               <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
-                <i className="fas fa-solid fa-spinner fa-spin fa-4x"></i>
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               </div>
             ) : (
               <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
