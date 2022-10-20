@@ -104,7 +104,7 @@ function RepayActivity({
           <label className="form-label">
             Collateral<br/>
             <small className="form-text text-muted">
-              Amount of collateral to unlock
+              Amount of collateral to recover
             </small>
           </label>
           <div className="input-group mb-3">

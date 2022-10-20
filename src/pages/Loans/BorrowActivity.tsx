@@ -110,7 +110,7 @@ function BorrowActivity({
       <label className="form-label">
         Collateral<br/>
         <small className="form-text text-muted">
-          Amount of collateral to lock
+          Amount of collateral to pledge
         </small>
       </label>
       <div className="input-group mb-3">
