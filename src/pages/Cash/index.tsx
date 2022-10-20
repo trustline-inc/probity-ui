@@ -1,6 +1,6 @@
 import axios from "axios";
 import classnames from "classnames"
-import { Link, Route, Switch, useLocation } from "react-router-dom"
+import { Link, Route, Switch, useLocation, useHistory } from "react-router-dom"
 import React from "react";
 import { Alert, Button, Card, Modal, Nav } from "react-bootstrap"
 import { Helmet } from "react-helmet";
@@ -29,6 +29,7 @@ function Cash() {
   const [show, setShow] = React.useState(false);
   const [type, setType] = React.useState<TransactionType>(TransactionType.Deposit);
   const location = useLocation()
+  const history = useHistory()
 
   const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value)
@@ -37,9 +38,12 @@ function Cash() {
   const handleClose = () => {
     setAmount(0);
     setSelectedAccount(null);
+    history.push("/cash-management")
     setShow(false);
   }
   const handleShow = (txType: TransactionType) => {
+    if (txType === 0) history.push(`/cash-management/deposit/ach`)
+    else history.push(`/cash-management/withdrawal`)
     setType(txType)
     setShow(true);
   }
