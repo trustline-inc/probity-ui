@@ -223,6 +223,7 @@ function Navbar() {
                 </Button>
                 <div className="spacer spacer-1" />
               */}
+              <Button variant="primary" onClick={deactivate}>Fund Account</Button>
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
             </>
           ): (

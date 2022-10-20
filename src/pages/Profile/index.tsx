@@ -28,54 +28,72 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
       if (!metadata.accounts.length) {
         return alert("Unable to link account.")
       }
-      // Get Plaid processor token
-      let response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
-        method: "POST",
-        headers: {
-          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-        },
-        data: {
-          publicToken: public_token,
-          accountId: metadata.accounts[0].id
-        },
-      });
-      setProcessorToken(response.data.result.processor_token);
-      // Create Modern Treasury bank account details
-      response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details', {
-        method: "POST",
-        headers: {
-          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-        },
-        data: {
-          name: "John Smith",
-          accounts: [{ plaid_processor_token: response.data.result.processor_token }]
-        },
-      });
+      setLoading(true)
+      const accountId = metadata.accounts[0].id
+      const token = await getProcessorToken(public_token, accountId)
+      await getBankDetails(token)
+      await getExternalAccounts()
+      setLoading(false)
     },
     [],
   );
+
+  const getBankDetails = async (token: string) => {
+    await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details', {
+      method: "POST",
+      headers: {
+        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+      },
+      data: {
+        name: "John Smith",
+        accounts: [{ plaid_processor_token: token }]
+      },
+    });
+  }
+
+  const getProcessorToken = async (public_token: string, accountId: string) => {
+    const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
+      method: "POST",
+      headers: {
+        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+      },
+      data: {
+        publicToken: public_token,
+        accountId
+      },
+    });
+    setProcessorToken(response.data.result.processor_token);
+    return response.data.result.processor_token
+  }
+
+  const getExternalAccounts = async () => {
+    const response = await axios({
+      url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/external_accounts",
+      method: "GET",
+      headers: {
+        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+      }
+    })
+    setExternalAccounts(response.data.result)
+  }
+
+  const getLinkToken = async () => {
+    const response = await axios({
+      url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
+      method: "POST",
+      headers: {
+        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+      }
+    })
+    setLinkToken(response.data.result.link_token)
+  }
 
   // Get Plaid Link token + external accounts
   React.useEffect(() => {
     (async () => {
       setLoading(true)
-      let response = await axios({
-        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
-        method: "POST",
-        headers: {
-          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-        }
-      })
-      setLinkToken(response.data.result.link_token)
-
-      response = await axios({
-        url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/external_accounts",
-        method: "GET",
-        headers: {
-          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-        }
-      })
-      setExternalAccounts(response.data.result)
+      await getLinkToken()
+      await getExternalAccounts()
       setLoading(false)
     })()
   }, [])
@@ -195,7 +213,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
           </div>
         </div>
         {
-          externalAccounts.length ? (
+          externalAccounts.length && !loading ? (
             <pre>
               {externalAccounts.map((externalAccount: any, index) => {
                 return (

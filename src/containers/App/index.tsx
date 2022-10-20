@@ -75,17 +75,21 @@ function App() {
   useEffect(() => {
     (async () => {
       if (auth) {
-        const response = await axios({
-          method: "GET",
-          url: "https://api.global.id/v1/identities/me",
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${auth?.accessToken}`
+        try {
+          const response = await axios({
+            method: "GET",
+            url: "https://api.global.id/v1/identities/me",
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${auth?.accessToken}`
+            }
+          })
+          if (response.status === 200) {
+            setGidUuid(response.data.gid_uuid)
+            localStorage.setItem("probity__auth", JSON.stringify(auth));
           }
-        })
-        if (response.status === 200) {
-          setGidUuid(response.data.gid_uuid)
-          localStorage.setItem("probity__auth", JSON.stringify(auth));
+        } catch (error) {
+          console.error(error)
         }
       }
     })()
