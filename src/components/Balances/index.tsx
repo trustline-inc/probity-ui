@@ -367,15 +367,15 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             <>
               <h5>USD Supply</h5>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Total Mint</h6>
+                <h6>Linqto Issuance</h6>
                 <span className="text-truncate">{systemCurrencyIssued ? numbro(utils.formatEther(systemCurrencyIssued.div(RAY).toString())).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Probity Amount</h6>
+                <h6>Probity Issuance</h6>
                 <span className="text-truncate">{systemCurrencyIssued && totalSupply ? numbro(utils.formatEther(totalSupply.sub(systemCurrencyIssued.div(RAY)))).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 mb-4 d-flex justify-content-between">
-                <h6>ERC20 Amount</h6>
+                <h6>Total Issuance</h6>
                 <span className="text-truncate">{totalSupply ? numbro(utils.formatEther(totalSupply)).format(formatOptions) : null} USD</span>
               </div>
               <h5>Fund Information</h5>

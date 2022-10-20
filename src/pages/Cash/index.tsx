@@ -351,7 +351,7 @@ function Cash() {
       <Helmet>
         <title>Probity | Manage Cash</title>
       </Helmet>
-      <h1>Cash Management</h1>
+      <h1>Cash Account</h1>
       <section className="border rounded p-5 mb-4 shadow-sm bg-white">
         <div className="row">
           <div className="col-12">
@@ -416,38 +416,39 @@ function Cash() {
             </label>
           </div>
         </div>
+        <div>
         {
-          externalAccounts.length && !extAccountsLoading ? (
-            <pre>
-              {externalAccounts.map((externalAccount: any, index) => {
-                return (
-                  <Card key={index} className="my-2">
-                    <Card.Body>
-                      <div className="d-flex flex-row justify-content-between">
-                        <div>
-                          {externalAccount.details.routing_details[0].bank_name}<br/>
-                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
-                        </div>
-                        <button className="btn btn-outline-secondary btn-sm">Remove</button>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                )
-              })}
-              <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
-            </pre>
-          ) : (
-            extAccountsLoading ? (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+          extAccountsLoading ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
               </div>
-            ) : (
+            </div>
+          ) : (
+            <>
+              <pre>
+                {externalAccounts.map((externalAccount: any, index) => {
+                  return (
+                    <Card key={index} className="my-2">
+                      <Card.Body>
+                        <div className="d-flex flex-row justify-content-between">
+                          <div>
+                            {externalAccount.details.routing_details[0].bank_name}<br/>
+                            {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
+                          </div>
+                          <button className="btn btn-outline-secondary btn-sm">Remove</button>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  )
+                })}
+                <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
+              </pre>
               <button className="btn btn-primary" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
-            )
+            </>
           )
         }
+        </div>
       </section>
     </>
   );
