@@ -1,7 +1,8 @@
 import axios from "axios";
 import classnames from "classnames"
+import { Link, Route, Switch } from "react-router-dom"
 import React from "react";
-import { Button, Card, Modal } from "react-bootstrap"
+import { Button, Card, Modal, Nav } from "react-bootstrap"
 import { Helmet } from "react-helmet";
 import {
   usePlaidLink,
@@ -208,21 +209,46 @@ function Cash() {
         <Modal.Header closeButton>
           <Modal.Title>Create {TransactionType[type]}</Modal.Title>
         </Modal.Header>
+        {
+          type === TransactionType.Deposit && (
+            <Modal.Header >
+              <Nav variant="pills" defaultActiveKey="ach">
+                <Nav.Item>
+                  <Nav.Link as={Link} to={`/cash-management/deposit/ach`} eventKey="ach">Online deposit</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link as={Link} to={`/cash-management/deposit/wire`} eventKey="wire">Wire transfer</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Modal.Header>
+          )
+        }
         <Modal.Body>
           <div className="mb-3">
             {
               type === TransactionType.Deposit ? (
                 <>
-                  <label htmlFor="depositFrom" className="form-label">Deposit from</label>
-                  <select className="form-select">
-                    {externalAccounts.map((externalAccount: any, index: number) => {
-                      return (
-                        <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
-                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
-                        </option>
-                      )
-                    })}
-                  </select>
+                  <Switch>
+                    <Route path={`/cash-management/deposit/ach`}>
+                      <label htmlFor="depositFrom" className="form-label">Deposit from</label>
+                      <select className="form-select">
+                        {externalAccounts.map((externalAccount: any, index: number) => {
+                          return (
+                            <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
+                              {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                            </option>
+                          )
+                        })}
+                      </select>
+                      <div className="my-3">
+                        <label htmlFor="amount" className="form-label">Amount</label>
+                        <input type="number" className="form-control" id="amount" onChange={(event) => setAmount(Number(event.target.value))} placeholder="0.00" />
+                      </div>
+                    </Route>
+                    <Route path={`/cash-management/deposit/wire`}>
+
+                    </Route>
+                  </Switch>
                 </>
               ) : (
                 <>
@@ -236,13 +262,13 @@ function Cash() {
                       )
                     })}
                   </select>
+                  <div className="my-3">
+                    <label htmlFor="amount" className="form-label">Amount</label>
+                    <input type="number" className="form-control" id="amount" onChange={(event) => setAmount(Number(event.target.value))} placeholder="0.00" />
+                  </div>
                 </>
               )
             }
-          </div>
-          <div className="mb-3">
-            <label htmlFor="amount" className="form-label">Amount</label>
-            <input type="number" className="form-control" id="amount" onChange={(event) => setAmount(Number(event.target.value))} placeholder="0.00" />
           </div>
         </Modal.Body>
         <Modal.Footer>
