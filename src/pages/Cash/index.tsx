@@ -1,8 +1,8 @@
 import axios from "axios";
 import classnames from "classnames"
-import { Link, Route, Switch } from "react-router-dom"
+import { Link, Route, Switch, useLocation } from "react-router-dom"
 import React from "react";
-import { Button, Card, Modal, Nav } from "react-bootstrap"
+import { Alert, Button, Card, Modal, Nav } from "react-bootstrap"
 import { Helmet } from "react-helmet";
 import {
   usePlaidLink,
@@ -22,12 +22,17 @@ function Cash() {
   const [selectedAccount, setSelectedAccount] = React.useState<any>(null);
   const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
   const [txPending, setTxPending] = React.useState(false);
-  const [txsLoading, setTxsLoading] = React.useState(false);
+  const [txsLoading, setTxsLoading] = React.useState(true);
   const [balance, setBalance] = React.useState(null);
   const [transactions, setTransactions] = React.useState([]);
   const [amount, setAmount] = React.useState(0);
   const [show, setShow] = React.useState(false);
   const [type, setType] = React.useState<TransactionType>(TransactionType.Deposit);
+  const location = useLocation()
+
+  const copyToClipboard = (value: string) => {
+    navigator.clipboard.writeText(value)
+  }
 
   const handleClose = () => {
     setAmount(0);
@@ -246,7 +251,61 @@ function Cash() {
                       </div>
                     </Route>
                     <Route path={`/cash-management/deposit/wire`}>
-
+                      <h5>Wire transfer instructions</h5>
+                      <p>To add funds, send a wire from your bank to Linqto using the details below. We'll email you when the transfer is complete.</p>
+                      <Alert variant="primary">Make sure the name on your bank account exactly matches your name on Linqto.</Alert>
+                      <div className="mb-3">
+                        <label className="form-label">Recipient name</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="Linqto Inc." />
+                          <button onClick={() => copyToClipboard("Linqto Inc.")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Recipient address</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="101 Metro Drive, Suite 335, San Jose, CA 95110" />
+                          <button onClick={() => copyToClipboard("101 Metro Drive, Suite 335, San Jose, CA 95110")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Account number</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="############" />
+                          <button onClick={() => copyToClipboard("############")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Routing number</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="#########" />
+                          <button onClick={() => copyToClipboard("#########")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Bank name</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="JPMorgan Chase Bank National Association" />
+                          <button onClick={() => copyToClipboard("JPMorgan Chase Bank National Association")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Bank address</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="270 Park Avenue, 43rd floor New York, NY 10017" />
+                          <button onClick={() => copyToClipboard("270 Park Avenue, 43rd floor New York, NY 10017")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Bank country</label>
+                        <div className="d-flex">
+                          <input readOnly className="form-control-plaintext text-muted" value="United States" />
+                          <button onClick={() => copyToClipboard("United States")} className="btn btn-link" type="button"><i className="fas fa-copy" /></button>
+                        </div>
+                      </div>
+                      <Modal.Footer>
+                        <small>Please do not send funds via ACH. An actual wire transfer must be submitted. Funds will usually be credited to your Linqto account on the same day if submitted before 1pm PT. Otherwise, funds will be credited on the next business day.</small>
+                      </Modal.Footer>
                     </Route>
                   </Switch>
                 </>
@@ -275,10 +334,14 @@ function Cash() {
           <Button variant="secondary" onClick={handleClose} disabled={txPending}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={transfer} disabled={txPending}>
-            {txPending && <><span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;</>}
-            Continue
-          </Button>
+          {
+            !(new RegExp(".*/wire")).test(location.pathname) && (
+              <Button variant="primary" onClick={transfer} disabled={txPending}>
+                {txPending && <><span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;</>}
+                Continue
+              </Button>
+            )
+          }
         </Modal.Footer>
       </Modal>
       <Helmet>
