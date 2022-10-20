@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 import classnames from "classnames"
-import React from 'react';
+import React from "react";
 import { Button, Card, Modal } from "react-bootstrap"
 import { Helmet } from "react-helmet";
 import {
@@ -8,19 +8,34 @@ import {
   PlaidLinkOptions,
   PlaidLinkOnSuccess,
   PlaidLinkOnSuccessMetadata,
-} from 'react-plaid-link';
+} from "react-plaid-link";
+
+enum TransactionType {
+  Deposit, Withdrawal
+}
 
 function Cash() {
   const [linkToken, setLinkToken] = React.useState(null);
   const [, setProcessorToken] = React.useState(null);
   const [externalAccounts, setExternalAccounts] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
+  const [selectedAccount, setSelectedAccount] = React.useState<any>(null);
+  const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
+  const [txPending, setTxPending] = React.useState(false);
   const [balance, setBalance] = React.useState(null);
   const [transactions, setTransactions] = React.useState([]);
+  const [amount, setAmount] = React.useState(0);
   const [show, setShow] = React.useState(false);
+  const [type, setType] = React.useState<TransactionType>(TransactionType.Deposit);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setAmount(0);
+    setSelectedAccount(null);
+    setShow(false);
+  }
+  const handleShow = (txType: TransactionType) => {
+    setType(txType)
+    setShow(true);
+  }
 
   /**
    * Log and save metadata and exchange public token
@@ -30,18 +45,18 @@ function Cash() {
       if (!metadata.accounts.length) {
         return alert("Unable to link account.")
       }
-      setLoading(true)
+      setExtAccountsLoading(true)
       const accountId = metadata.accounts[0].id
       const token = await getProcessorToken(public_token, accountId)
       await getBankDetails(token)
       await getExternalAccounts()
-      setLoading(false)
+      setExtAccountsLoading(false)
     },
     [],
   );
 
   const getTransactions = async () => {
-    const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/transactions', {
+    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/transactions", {
       method: "GET",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -51,25 +66,64 @@ function Cash() {
   }
 
   const getAccountBalance = async () => {
-    const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/balances', {
+    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/balances", {
       method: "GET",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
       },
     })
-    setBalance(response.data.result.mt_ledger.USD)
+    setBalance(response.data.result.mt_ledger.USD.available)
   }
 
   const deposit = async () => {
-
+    try {
+      setTxPending(true)
+      const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/payments", {
+        method: "POST",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        },
+        data: {
+          currency: "USD",
+          type: "ach",
+          amount,
+          externalAccountId: selectedAccount?.id
+        }
+      })
+      console.log(response)
+    } catch (error) {
+      alert("There was an error.")
+    }
+    setTxPending(false)
   }
 
   const withdrawal = async () => {
+    try {
+      setTxPending(true)
+      const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/withdrawals", {
+        method: "POST",
+        headers: {
+          "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        },
+        data: {
+          currency: "USD",
+          value: amount
+        }
+      })
+      console.log(response)
+    } catch (error) {
+      alert("There was an error.")
+    }
+    setTxPending(false)
+  }
 
+  const transfer = async () => {
+    if (type === TransactionType.Deposit) await deposit()
+    if (type === TransactionType.Withdrawal) await withdrawal()
   }
 
   const getBankDetails = async (token: string) => {
-    await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details', {
+    await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details", {
       method: "POST",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -82,7 +136,7 @@ function Cash() {
   }
 
   const getProcessorToken = async (public_token: string, accountId: string) => {
-    const response = await axios('https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token', {
+    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token", {
       method: "POST",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -121,12 +175,12 @@ function Cash() {
   // Load data
   React.useEffect(() => {
     (async () => {
-      setLoading(true)
+      setExtAccountsLoading(true)
       await getLinkToken()
       await getExternalAccounts()
       await getAccountBalance()
       await getTransactions()
-      setLoading(false)
+      setExtAccountsLoading(false)
     })()
   }, [])
 
@@ -145,29 +199,53 @@ function Cash() {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Cash</Modal.Title>
+          <Modal.Title>Create {TransactionType[type]}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="mb-3">
-            <label htmlFor="depositFrom" className="form-label">Deposit from</label>
-            <select className="form-select">
-              {externalAccounts.map((externalAccount: any) => {
-                return (
-                  <option value="">
-                    {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, '*')}
-                  </option>
-                )
-              })}
-            </select>
+            {
+              type === TransactionType.Deposit ? (
+                <>
+                  <label htmlFor="depositFrom" className="form-label">Deposit from</label>
+                  <select className="form-select">
+                    {externalAccounts.map((externalAccount: any, index: number) => {
+                      return (
+                        <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
+                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </>
+              ) : (
+                <>
+                  <label htmlFor="withdrawTo" className="form-label">Withdraw to</label>
+                  <select className="form-select">
+                    {externalAccounts.map((externalAccount: any, index: number) => {
+                      return (
+                        <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
+                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </>
+              )
+            }
           </div>
           <div className="mb-3">
             <label htmlFor="amount" className="form-label">Amount</label>
-            <input type="number" className="form-control" id="amount" placeholder="0.00" />
+            <input type="number" className="form-control" id="amount" onChange={(event) => setAmount(Number(event.target.value))} placeholder="0.00" />
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-          <Button variant="primary">Continue</Button>
+          <Button variant="secondary" onClick={handleClose} disabled={txPending}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={transfer} disabled={txPending}>
+            {txPending && <><span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;</>}
+            Continue
+          </Button>
         </Modal.Footer>
       </Modal>
       <Helmet>
@@ -180,8 +258,8 @@ function Cash() {
             <div className="d-flex justify-content-between mb-2">
               <span>Balance: ${balance}</span>
               <div>
-                <Button className="mx-2" size="sm" variant="outline-primary" onClick={handleShow}>Deposit</Button>
-                <Button size="sm" variant="outline-primary" onClick={handleShow}>Withdraw</Button>
+                <Button className="mx-2" size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Deposit)}>Deposit</Button>
+                <Button size="sm" variant="outline-primary" onClick={() => handleShow(TransactionType.Withdrawal)}>Withdraw</Button>
               </div>
             </div>
             {
@@ -192,7 +270,7 @@ function Cash() {
                       <thead>
                         <tr>
                           <th scope="col">Date</th>
-                          <th scope="col">Type</th>
+                          <th scope="col">TransactionType</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Status</th>
                         </tr>
@@ -201,7 +279,7 @@ function Cash() {
                         <tr>
                           <td>{new Date(tx.created_at).toLocaleString()}</td>
                           <td>{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
-                          <td>{parseFloat(tx.sourceAmount.slice(0, -2) + "." + tx.sourceAmount.slice(-2))}</td>
+                          <td>${parseFloat(tx.amount.slice(0, -2) + "." + tx.amount.slice(-2))}</td>
                           <td>{tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</td>
                         </tr>
                       </tbody>
@@ -229,7 +307,7 @@ function Cash() {
           </div>
         </div>
         {
-          externalAccounts.length && !loading ? (
+          externalAccounts.length && !extAccountsLoading ? (
             <pre>
               {externalAccounts.map((externalAccount: any, index) => {
                 return (
@@ -238,7 +316,7 @@ function Cash() {
                       <div className="d-flex flex-row justify-content-between">
                         <div>
                           {externalAccount.details.routing_details[0].bank_name}<br/>
-                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, '*')}<br/>
+                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
                         </div>
                         <button className="btn btn-outline-secondary btn-sm">Remove</button>
                       </div>
@@ -249,7 +327,7 @@ function Cash() {
               <button className="btn btn-primary mt-4 float-end" disabled={!ready} onClick={() => open()}>Add Bank Account</button>
             </pre>
           ) : (
-            loading ? (
+            extAccountsLoading ? (
               <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
                 <i className="fas fa-solid fa-spinner fa-spin fa-4x"></i>
               </div>
