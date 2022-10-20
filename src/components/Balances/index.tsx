@@ -380,16 +380,16 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
               </div>
               <h5>Fund Information</h5>
               <div className="my-2 d-flex justify-content-between">
-                <h6>Assets Under Management</h6>
+                <h6>Total AUM</h6>
                 <span className="text-truncate">{lendingPoolSupply ? numbro(utils.formatUnits((lendingPoolSupply.sub(lendingPoolPrincipal)).add((lendingPoolDebt.mul(debtAccumulator)).toString()), 45)).format(formatOptions) : null} USD</span>
-              </div>
-              <div className="my-2 d-flex justify-content-between">
-                <h6>Cash</h6>
-                <span className="text-truncate">{lendingPoolSupply && lendingPoolPrincipal ? numbro(utils.formatUnits(lendingPoolSupply.sub(lendingPoolPrincipal).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Debt Assets</h6>
                 <span className="text-truncate">{lendingPoolDebt ? numbro(utils.formatEther(lendingPoolDebt.mul(debtAccumulator).div(RAY).toString())).format(formatOptions) : null} USD</span>
+              </div>
+              <div className="my-2 d-flex justify-content-between">
+                <h6>Cash</h6>
+                <span className="text-truncate">{lendingPoolSupply && lendingPoolPrincipal ? numbro(utils.formatUnits(lendingPoolSupply.sub(lendingPoolPrincipal).toString(), 45)).format(formatOptions) : null} USD</span>
               </div>
               <div className="my-2 d-flex justify-content-between">
                 <h6>Utilization</h6>
