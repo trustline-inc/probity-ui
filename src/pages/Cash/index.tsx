@@ -1,4 +1,5 @@
 import axios from "axios";
+import numbro from "numbro";
 import classnames from "classnames"
 import { Link, Route, Switch, useLocation, useHistory } from "react-router-dom"
 import React from "react";
@@ -23,7 +24,7 @@ function Cash() {
   const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
   const [txPending, setTxPending] = React.useState(false);
   const [txsLoading, setTxsLoading] = React.useState(true);
-  const [balance, setBalance] = React.useState(null);
+  const [, setBalance] = React.useState(null);
   const [transactions, setTransactions] = React.useState([]);
   const [amount, setAmount] = React.useState(0);
   const [show, setShow] = React.useState(false);
@@ -379,7 +380,7 @@ function Cash() {
                         <tr key={index}>
                           <td>{new Date(tx.created_at).toLocaleString()}</td>
                           <td>{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
-                          <td>${Number(tx.amount).toFixed(2)}</td>
+                          <td>${numbro(tx.amount).format({ mantissa: 2, thousandSeparated: true })}</td>
                           <td>{tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</td>
                         </tr>
                       )
