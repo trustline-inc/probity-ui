@@ -2505,10 +2505,10 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@trustline-inc/probity@1.0.0-alpha28":
-  version "1.0.0-alpha28"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha28/0d82c7a03d120b6bd23c0b8fac04abff2f3dcbf5#0d82c7a03d120b6bd23c0b8fac04abff2f3dcbf5"
-  integrity sha512-Jsb0kIDGXKrgkEesfir9O4Bxdy87ux7TaCOmMWytfYrnR2C+Skzgu/PtZu/r38ralv9sk+u+4AL624dx10iGxg==
+"@trustline-inc/probity@1.0.0-alpha29":
+  version "1.0.0-alpha29"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha29/c9ed29a6b0acb7fc2df5f140621c98bd8dbb1969#c9ed29a6b0acb7fc2df5f140621c98bd8dbb1969"
+  integrity sha512-3PjMZFtYCweyDoXl6L2N2nlKqA+3J6F1+Z4zKhuv5GMEU3EZ9oSLHF1LJth4hrzQut216q9NgRYm0ESvXh3kgg==
   dependencies:
     "@openzeppelin/contracts" "^4.5.0"
 
