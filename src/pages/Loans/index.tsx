@@ -14,13 +14,11 @@ import { CONTRACTS, WAD } from '../../constants';
 import BorrowActivity from './BorrowActivity';
 import RepayActivity from './RepayActivity';
 import Info from '../../components/Info';
-import AssetContext from "../../contexts/AssetContext"
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from '../../utils';
 
 function Loans({ assetPrice }: { assetPrice: number }) {
   const location = useLocation();
-  const assetContext = React.useContext(AssetContext)
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
   const [error, setError] = React.useState<any|null>(null);
@@ -34,7 +32,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const eventContext = React.useContext(EventContext)
 
-  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id(assetContext.asset), account], {
+  const { data: vault, mutate: mutateVault } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'vaults', utils.id("ETH"), account], {
     fetcher: fetcher(library, CONTRACTS[chainId!].VAULT_ENGINE.abi),
   })
   const { mutate: mutateBalance } = useSWR([CONTRACTS[chainId!].VAULT_ENGINE.address, 'systemCurrency', account], {
@@ -261,14 +259,12 @@ function Loans({ assetPrice }: { assetPrice: number }) {
    * Dynamically calculate the collateralization ratio
    */
   React.useEffect(() => {
-    if (vault && asset) {
+    if (vault && asset && debtAccumulator) {
       let newDebtAmount
       switch (activity) {
         case ActivityType.Borrow:
-          if (vault && debtAccumulator) {
-            newDebtAmount = (Number(utils.formatUnits(vault?.normDebt.mul(debtAccumulator), 45)) + Number(amount))
-            setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
-          }
+          newDebtAmount = (Number(utils.formatUnits(vault?.normDebt.mul(debtAccumulator), 45)) + Number(amount))
+          setCollateralRatio((totalCollateral * assetPrice) / newDebtAmount);
           break;
         case ActivityType.Repay:
           newDebtAmount = (Number(utils.formatUnits(vault.normDebt.mul(debtAccumulator), 45)) - Number(amount))
