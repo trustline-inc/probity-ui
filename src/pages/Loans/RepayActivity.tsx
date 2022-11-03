@@ -3,7 +3,7 @@ import numbro from "numbro"
 import NumberFormat from 'react-number-format';
 import { RAD } from "../../constants"
 import PriceFeed from "../../components/PriceFeed"
-import { Form, OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 import { getNativeTokenSymbol } from "../../utils"
 import { useWeb3React } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers"
@@ -49,17 +49,9 @@ function RepayActivity({
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = process.env.REACT_APP_NATIVE_TOKEN!
 
-  const renderTooltip = (props: any) => (
-    <Tooltip id="button-tooltip" {...props}>
-      Feature coming soon
-    </Tooltip>
-  );
-
   const handleOnChange = () => {
     if (!repayFullAmount) {
-      console.log("onChange:", vault.normDebt.mul(debtAccumulator).div(RAD).toString())
       onAmountChange(vault.normDebt.mul(debtAccumulator).div(RAD).toString())
-      console.log("collateralInUse", collateralInUse)
       onCollateralAmountChange(collateralInUse)
     } else {
       onAmountChange("0")
@@ -91,15 +83,13 @@ function RepayActivity({
             />
             <span className="input-group-text font-monospace">USD</span>
           </div>
-          <OverlayTrigger
-            placement="left"
-            delay={{ show: 250, hide: 400 }}
-            overlay={renderTooltip}
-          >
-            <Form.Group controlId="repay-full-amount" className="mt-2">
-              <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} disabled />
-            </Form.Group>
-          </OverlayTrigger>
+        </>
+      )}
+      <Form.Group controlId="repay-full-amount" className="mt-2">
+        <Form.Check type="checkbox" label="Repay Full Amount" checked={repayFullAmount} onChange={handleOnChange} />
+      </Form.Group>
+      {!repayFullAmount && (
+        <>
           <br/>
           <label className="form-label">
             Collateral<br/>
@@ -150,7 +140,7 @@ function RepayActivity({
           <button
             className="btn btn-primary btn-lg mt-4"
             onClick={repay}
-            disabled={(amount === 0 && collateralAmount === 0) || loading}
+            disabled={(amount === 0 && collateralAmount === 0 && !repayFullAmount) || loading}
           >
             {loading ? <span className="fa fa-spin fa-spinner" /> : "Confirm"}
           </button>
