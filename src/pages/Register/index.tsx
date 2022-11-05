@@ -1,20 +1,22 @@
 import { useState } from "react"
 import { Card } from "react-bootstrap"
-import { Link, useHistory } from "react-router-dom"
+import { useHistory, Link } from "react-router-dom"
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import logo from "../../assets/logo.png"
 import axios from "axios";
 
-export default function Login(props: any) {
+export default function Register(props: any) {
+  const [name, setName] = useState<string>()
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
   const history = useHistory()
 
-  const login = async () => {
-    const response = await axios("http://localhost:8080/v1/users/login", {
+  const register = async () => {
+    const response = await axios("http://localhost:8080/v1/users/register", {
       method: "POST",
       data: {
+        legal_name: name,
         email,
         password
       }
@@ -46,6 +48,10 @@ export default function Login(props: any) {
                 <div className="col-4 offset-4">
                   <form>
                     <div className="mb-3">
+                      <label className="form-label">Legal Name</label>
+                      <input type="email" className="form-control" onChange={(event) => setName(event.target.value)} />
+                    </div>
+                    <div className="mb-3">
                       <label className="form-label">Email address</label>
                       <input type="email" className="form-control" onChange={(event) => setEmail(event.target.value)} />
                     </div>
@@ -54,9 +60,9 @@ export default function Login(props: any) {
                       <input type="password" className="form-control" onChange={(event) => setPassword(event.target.value)} />
                     </div>
                     <div className="d-grid gap-2 mb-2">
-                      <button type="button" onClick={login} className="btn btn-primary">Submit</button>
+                      <button type="button" onClick={register} className="btn btn-primary">Register</button>
                     </div>
-                    <small>Already have an account? <Link to="/register">Register</Link></small>
+                    <small>Already have an account? <Link to="/login">Login</Link></small>
                   </form>
                 </div>
               </div>

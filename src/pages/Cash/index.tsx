@@ -4,7 +4,7 @@ import classnames from "classnames"
 import { Link, Route, Switch, useLocation, useHistory } from "react-router-dom"
 import React from "react";
 import { Alert, Button, Card, Modal, Nav } from "react-bootstrap"
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import {
   usePlaidLink,
   PlaidLinkOptions,
@@ -16,7 +16,7 @@ enum TransactionType {
   Deposit, Withdrawal
 }
 
-function Cash() {
+function Cash({ user, auth }: any) {
   const [linkToken, setLinkToken] = React.useState(null);
   const [, setProcessorToken] = React.useState(null);
   const [externalAccounts, setExternalAccounts] = React.useState([]);
@@ -58,9 +58,9 @@ function Cash() {
         return alert("Unable to link account.")
       }
       setExtAccountsLoading(true)
-      const accountId = metadata.accounts[0].id
-      const token = await getProcessorToken(public_token, accountId)
-      await getBankDetails(token)
+      // const accountId = metadata.accounts[0].id
+      // const token = await getProcessorToken(public_token, accountId)
+      // await getBankDetails(token)
       await getExternalAccounts()
       setExtAccountsLoading(false)
     },
@@ -69,30 +69,30 @@ function Cash() {
 
   const getTransactions = async () => {
     setTxsLoading(true)
-    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/transactions", {
-      method: "GET",
+    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/transactions`, {
       headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        "Authorization": `Bearer ${auth.token}`
       },
+      method: "GET"
     })
-    setTransactions(response.data.result)
+    setTransactions(response.data)
     setTxsLoading(false)
   }
 
   const getAccountBalance = async () => {
-    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/balances", {
+    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}`, {
       method: "GET",
       headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        "Authorization": `Bearer ${auth.token}`
       },
     })
-    setBalance(response.data.result.mt_ledger.USD.available)
+    setBalance(response.data.balances.available_balance)
   }
 
   const deposit = async () => {
     try {
       setTxPending(true)
-      const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/payments", {
+      const response = await axios(`https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.userId}/payments`, {
         method: "POST",
         headers: {
           "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -114,7 +114,7 @@ function Cash() {
   const withdrawal = async () => {
     try {
       setTxPending(true)
-      const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/withdrawals", {
+      const response = await axios(`https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.userId}/withdrawals`, {
         method: "POST",
         headers: {
           "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -140,7 +140,7 @@ function Cash() {
   }
 
   const getBankDetails = async (token: string) => {
-    await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/bank_details", {
+    await axios(`https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.ledger_account_id}/bank_details`, {
       method: "POST",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -169,11 +169,11 @@ function Cash() {
 
   const getExternalAccounts = async () => {
     const response = await axios({
-      url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/external_accounts",
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
       method: "GET",
       headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-      }
+        "Authorization": `Bearer ${auth.token}`
+      },
     })
     setExternalAccounts(response.data.result)
     if (response.data.result.length) setSelectedAccount(response.data.result[0])
@@ -181,7 +181,7 @@ function Cash() {
 
   const getLinkToken = async () => {
     const response = await axios({
-      url: "https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/1/plaid_link_token",
+      url: `https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.ledger_account_id}/plaid_link_token`,
       method: "POST",
       headers: {
         "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
@@ -195,7 +195,7 @@ function Cash() {
     (async () => {
       setExtAccountsLoading(true)
       await getLinkToken()
-      await getExternalAccounts()
+      // await getExternalAccounts()
       await getAccountBalance()
       await getTransactions()
       setExtAccountsLoading(false)

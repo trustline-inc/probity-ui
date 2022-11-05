@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
 import { Contract, utils } from "ethers";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import fetcher from "../../fetcher";
 import { CONTRACTS } from '../../constants';
 import { Activity as ActivityType } from "../../types";

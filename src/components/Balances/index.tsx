@@ -10,21 +10,20 @@ import { getNativeTokenSymbol } from "../../utils"
 import fetcher from "../../fetcher";
 import { RAY, CONTRACTS } from "../../constants";
 import './index.css';
-// import FLR from "../../assets/flr.jpg"
-// import SGB from "../../assets/sgb.png"
-// import USD from "../../assets/usd.png"
-// import XRP from "../../assets/xrp.png"
-// import ETH from "../../assets/eth.png"
+import FLR from "../../assets/flr.jpg"
+import SGB from "../../assets/sgb.png"
+import USD from "../../assets/usd.png"
+import XRP from "../../assets/xrp.png"
+import ETH from "../../assets/eth.png"
 import AssetContext from "../../contexts/AssetContext"
 
-// const assetIcons: { [key: string]: string } = {
-//   CFLR: FLR,
-//   SGB,
-//   FLR,
-//   USD,
-//   XRP,
-//   ETH
-// }
+const assetIcons: { [key: string]: string } = {
+  SGB,
+  FLR,
+  USD,
+  XRP,
+  ETH
+}
 
 const formatOptions = {
   thousandSeparated: true,
@@ -228,9 +227,9 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           selected === BalanceType.User ? (
             <>
               <Accordion defaultActiveKey="" activeKey={activeKey}>
-                {/* <Accordion.Item eventKey="assets">
+                <Accordion.Item eventKey="assets">
                   <Accordion.Header onClick={() => updateActiveKey("assets")}>
-                    <h5>Assets</h5>
+                    <h5>Collateral</h5>
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className="dropdown w-100">
@@ -257,13 +256,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     </div>
                     <div className="px-3 py-2 text-truncate">
                       <div className="my-2 d-flex justify-content-between">
-                        <h6>Standby</h6>
+                        <h6>Available</h6>
                         <span className="text-truncate">
                           {numbro(utils.formatEther(ethVault.standbyAmount)).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
-                        <h6>Active</h6>
+                        <h6>Pledged</h6>
                         <span className="text-truncate">
                           {numbro(utils.formatEther(ethVault.underlying.add(ethVault.collateral))).format(formatOptions)} {ctx.asset}
                         </span>
@@ -274,7 +273,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       </div>
                     </div>
                   </Accordion.Body>
-                </Accordion.Item> */}
+                </Accordion.Item>
                 <Accordion.Item eventKey="equity">
                   <Accordion.Header onClick={() => updateActiveKey("equity")}>
                     <h5>Debt Investment</h5>

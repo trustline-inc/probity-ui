@@ -1,61 +1,56 @@
 import { useWeb3React } from '@web3-react/core';
 import axios from 'axios';
 import React from 'react';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
-function Profile({ globalId, auth }: { globalId: string, auth: any }) {
+function Profile({ user, auth }: { user: any, auth: any }) {
   const [address, setAddress] = React.useState("")
   const [proposedAddress, setProposedAddress] = React.useState("")
   const { account } = useWeb3React()
 
-  // Fetch user address
+  /**
+   * Fetch/set user address
+   */
   React.useEffect(() => {
     (async () => {
       if (process.env.REACT_APP_REQUIRE_AUTH) {
         try {
-          let url;
-          if (process.env.NODE_ENV === "production")
-            url = `https://api.trustline.co/v1/auth/${globalId}`
-          else
-            url = `http://localhost:8080/v1/auth/${globalId}`
-          const response = await axios({
+          const response = await axios(`http://localhost:8080/v1/users/${user.id}`, {
             method: "GET",
-            url
+            headers: {
+              "Authorization": `Bearer ${auth.token}`
+            }
           })
           if (response.status === 200) {
-            setAddress(response.data.result.address)
+            if (response.data.address) setAddress(response.data.address)
           }
         } catch (error) {
           console.error(error)
         }
       }
     })()
-  }, [globalId])
+  }, [user.id, auth, address])
 
   /**
    * Saves user address
    */
   const onSubmit = async () => {
     try {
-      let url;
-      if (process.env.NODE_ENV === "production")
-        url = `https://api.trustline.co/v1/users`
-      else
-        url = `http://localhost:8080/v1/users`
-      const response = await axios({
-        method: "POST",
-        url,
-        data: { address: proposedAddress, id: globalId, token: auth.accessToken },
+      const response = await axios(`http://localhost:8080/v1/users/${user.id}`, {
+        method: "PATCH",
+        data: {
+          address: proposedAddress,
+        },
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${auth.token}`
         }
       })
       if (response.status === 201) {
         setAddress(proposedAddress)
       }
     } catch (error) {
-      console.error(error)
-      const message = (error as any)?.response.data.error.message
+      const message = (error as any)?.response.data
       if (message) alert(message)
     }
   }
@@ -79,7 +74,7 @@ function Profile({ globalId, auth }: { globalId: string, auth: any }) {
               address ? (
                 <input className="form-control" value={address} readOnly />
               ) : (
-                <input className="form-control" placeholder={account?.toString()} value={""} onChange={(event) => setProposedAddress(event.target.value) } />
+                <input className="form-control" placeholder={account?.toString()} value={proposedAddress} onChange={(event) => setProposedAddress(event.target.value) } />
               )
             }
           </div>

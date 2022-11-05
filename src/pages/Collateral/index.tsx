@@ -6,7 +6,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from "ethers";
 import web3 from "web3";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import fetcher from "../../fetcher";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
@@ -18,7 +18,7 @@ import DepositActivity from './DepositActivity';
 import WithdrawActivity from './WithdrawActivity';
 import { getNativeTokenSymbol } from '../../utils';
 
-function Assets() {
+function Collateral() {
   const location = useLocation();
   const { account, active, library, chainId } = useWeb3React<Web3Provider>()
   const [activity, setActivity] = React.useState<ActivityType|null>(null);
@@ -35,8 +35,8 @@ function Assets() {
 
   // Set activity by the path
   React.useEffect(() => {
-    if (location.pathname === "/assets/deposit") setActivity(ActivityType.Deposit);
-    if (location.pathname === "/assets/withdraw") setActivity(ActivityType.Withdraw);
+    if (location.pathname === "/collateral-management/deposit") setActivity(ActivityType.Deposit);
+    if (location.pathname === "/collateral-management/withdraw") setActivity(ActivityType.Withdraw);
   }, [location])
 
   const deposit = async () => {
@@ -161,10 +161,10 @@ function Assets() {
   return (
     <>
       <Helmet>
-        <title>Probity | Manage Assets</title>
+        <title>Probity | Manage Collateral</title>
       </Helmet>
       <header>
-        <h1>Asset Management</h1>
+        <h1>Collateral Management</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
@@ -173,10 +173,10 @@ function Assets() {
           <div>
             <ul className="nav nav-pills nav-justified">
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/assets/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setAmount(0) }}>Deposit</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/collateral-management/deposit"} onClick={() => { setActivity(ActivityType.Borrow); setAmount(0) }}>Deposit</NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" activeClassName="active" to={"/assets/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setAmount(0) }}>Withdraw</NavLink>
+                <NavLink className="nav-link" activeClassName="active" to={"/collateral-management/withdraw"} onClick={() => { setActivity(ActivityType.Repay); setAmount(0) }}>Withdraw</NavLink>
               </li>
             </ul>
           </div>
@@ -212,4 +212,4 @@ function Assets() {
   );
 }
 
-export default Assets;
+export default Collateral;

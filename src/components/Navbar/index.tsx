@@ -1,21 +1,20 @@
 import React, { useState, useContext } from "react";
 import { Button } from "react-bootstrap"
 import useSWR from "swr";
-// import axios from "axios";
 import numbro from "numbro";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { injected } from "../../connectors";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
 import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
-import "./index.css";
 import ExternalSites from "../ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import { getNativeTokenSymbol } from "../../utils";
 import { CONTRACTS } from "../../constants"
 import AssetContext from "../../contexts/AssetContext"
+import "./index.css";
 
 function Balance() {
   const ctx = React.useContext(AssetContext)
@@ -58,18 +57,25 @@ function Balance() {
   );
 }
 
-function Navbar() {
+function Navbar({ setAuth }: any) {
   const { chainId, active, activate, deactivate } = useWeb3React<Web3Provider>();
   const [mobileMenuVisibility, setMobileMenuVisibility] = useState(false);
   const ctx = useContext(EventContext)
+  const history = useHistory();
   // const { account } = useWeb3React<Web3Provider>();
-  // const [, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
 
   // Copy state temporarily to flip it. Seems to work better than just 
   // inverting the boolean in the onClick itself
   const toggleMobileMenuVisibility = () => {
     const currentVisibility = mobileMenuVisibility;
     setMobileMenuVisibility(!currentVisibility);
+  }
+
+  const logout = () => {
+    localStorage.removeItem("probity__auth");
+    setAuth()
+    history.push("/login")
   }
 
   // const handleFaucetRequest = async (event: React.MouseEvent) => {
@@ -132,11 +138,11 @@ function Navbar() {
               <i className="fa-solid fa-wallet"></i> Cash
             </NavLink>
           </li>
-          {/* <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/assets">
-              <i className="fas fa-wallet"></i> Assets
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/collateral-management">
+              <i className="fa-solid fa-vault"></i> Collateral
             </NavLink>
-          </li> */}
+          </li>
           {
             // Not enabled on any chain, yet.
             chainId && [].includes(chainId as never) && (
@@ -176,16 +182,16 @@ function Navbar() {
               </li>
             // )
           }
-          {/* <li className="nav-item my-1">
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/liquidations">
-              <i className="fa-solid fa-water"></i> Liquidator
+              <i className="fa-solid fa-circle-xmark"></i> Liquidate
             </NavLink>
-          </li> */}
-          {/* <li className="nav-item my-1">
+          </li>
+          <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/auctions">
               <i className="fas fa-gavel" /> Auctions
             </NavLink>
-          </li> */}
+          </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/transactions">
               <i className="fa-solid fa-clock-rotate-left"></i> Transactions {ctx.transactions.length > 0 && <span className="badge bg-light text-dark">{ctx.transactions.length}</span>}
@@ -229,6 +235,7 @@ function Navbar() {
                 <div className="spacer spacer-1" />
               */}
               <Button variant="light" onClick={deactivate}>Disconnect</Button>
+              {process.env.REACT_APP_REQUIRE_AUTH === "true" && <Button variant="primary" onClick={logout}>Logout</Button>}
             </>
           ): (
             <div className="mt-2">

@@ -55,7 +55,7 @@ function PriceFeed({ asset, amount }: { asset: string, amount: number; }) {
           <div className="mx-4">
             <span className="text-muted">Value</span>
             <br />
-            ${numbro(Math.abs(value).toFixed(2)).format({ thousandSeparated: true })}
+            ${value && numbro(Math.abs(value).toFixed(2)).format({ thousandSeparated: true })}
           </div>
         </div>
       </div>

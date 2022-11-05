@@ -4,9 +4,9 @@ import numbro from "numbro";
 import { NavLink, useLocation } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import { Contract, utils, BigNumber } from "ethers";
+import { Contract, utils } from "ethers";
 import web3 from "web3"
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import fetcher from "../../fetcher";
@@ -101,27 +101,27 @@ function Loans({ assetPrice }: { assetPrice: number }) {
   /**
    * @function depositSystemCurrency
    */
-   const depositSystemCurrency = async (_amount: BigNumber) => {
-    if (library && account) {
-      const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
-      setLoading(true)
-      try {
-        const result = await treasury.depositSystemCurrency(
-          _amount,
-          {
-            gasLimit: 400000,
-            maxFeePerGas: 30 * 1e9,
-            maxPriorityFeePerGas: 1e9
-          }
-        );
-        const data = await result.wait();
-        eventContext.updateTransactions(data);
-      } catch (error) {
-        console.log(error);
-        setError(error);
-      }
-    }
-  }
+  //  const depositSystemCurrency = async (_amount: BigNumber) => {
+  //   if (library && account) {
+  //     const treasury = new Contract(CONTRACTS[chainId!].TREASURY.address, CONTRACTS[chainId!].TREASURY.abi, library.getSigner())
+  //     setLoading(true)
+  //     try {
+  //       const result = await treasury.depositSystemCurrency(
+  //         _amount,
+  //         {
+  //           gasLimit: 400000,
+  //           maxFeePerGas: 30 * 1e9,
+  //           maxPriorityFeePerGas: 1e9
+  //         }
+  //       );
+  //       const data = await result.wait();
+  //       eventContext.updateTransactions(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setError(error);
+  //     }
+  //   }
+  // }
 
   /**
    * @function withdraw
@@ -210,8 +210,8 @@ function Loans({ assetPrice }: { assetPrice: number }) {
       ]
 
       try {
-        const amount = vault?.normDebt.mul(debtAccumulator)
-        await depositSystemCurrency(amount)
+        // const amount = vault?.normDebt.mul(debtAccumulator)
+        // await depositSystemCurrency(amount)
         await vaultEngine.callStatic.modifyDebt(...args)
         const result = await vaultEngine.modifyDebt(...args);
         const data = await result.wait();

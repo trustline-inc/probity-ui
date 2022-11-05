@@ -24,11 +24,11 @@ export const CONTRACTS: { [key: number]: any } = {
   // Hardhat localhost network
   31337: {
     USD: {
-      address: "0x4728B22F9F220060d36333139aE2D36415DB0351",
+      address: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
       abi: UsdABI.abi
     },
     AUCTIONEER: {
-      address: "0xD8aba37226FFc9666E7ef5fAeF51A30dCBCde3ef",
+      address: "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8",
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
@@ -37,58 +37,58 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: BridgeABI.abi
     },
     LIQUIDATOR: {
-      address: "0xF513b895ed6846F190C7a67cF50dE0a47377f7Ba",
+      address: "0x5ee1b382Cd74B6AC105F673bc13cd1947A10Bf27",
       abi: LiquidatorABI.abi
     },
     USD_MANAGER: {
-      address: "0x5DA88e9148c9E5E584facE8a7773C7Ba185a812d",
+      address: "0x7133c78E6A4070Bca396751F44E675eaFD379a83",
       abi: Erc20AssetManagerABI.abi
     },
     PRICE_FEED: {
-      address: "0x9decD2bD0B210869219670B817Cb046025c4CA02",
+      address: "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887",
       abi: PriceFeedABI.abi
     },
     NATIVE_ASSET_MANAGER: {
-      address: "0xF48dB09403FF2762E7811E9Af25D6182deDDF1d8",
+      address: "0x6dCC372B0C163987D6fb39224Cbe286f513e35fD",
       abi: NativeAssetManagerABI.abi
     },
     REGISTRY: {
-      address: "0x30BA16bacA622afA5f7B056D97292a29329D5329",
+      address: "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03",
       abi: RegistryABI.abi
     },
     PBT: {
-      address: "0xD16f3E5175a25A60Ee31Ea2B88Fb5883Fc8EA7c8",
+      address: "0x0094e34763Dd14a6aE8A1f32E5fF88DB586df96f",
       abi: PbtABI.abi
     },
     RESERVE_POOL: {
-      address: "0x9b5b5Ff81832aB3d97f53605D0cF0522393E6b2D",
+      address: "0x4A0BE80C82B8e70ba1E5E8a385a68a4a7Bd99601",
       abi: ReservePoolABI.abi
     },
     TELLER: {
-      address: "0xf4dC7dB778C459220181Eb33d1A381E3cee0C65e",
+      address: "0x55BeE6eA1758314017676aB5a345d281FB4ec72d",
       abi: TellerABI.abi
     },
     TREASURY: {
-      address: "0x9AfA6021cc3b8b72530A54ad00C31D719b32d802",
+      address: "0xB700A5E562596cf6B49bfc1E56B351bD896288c9",
       abi: TreasuryABI.abi
     },
     VAULT_ENGINE: {
-      address: "0x11e011Ee7611a51107223B337337BF9f0eAB5ef0",
+      address: "0x7b199D048310F4144f7466Ea81006A7804c3A8BD",
       abi: VaultEngineIssuerABI.abi
     },
     INTERFACES: {
-      "0x4728B22F9F220060d36333139aE2D36415DB0351": UsdABI,
-      "0xD8aba37226FFc9666E7ef5fAeF51A30dCBCde3ef": AuctioneerABI,
-      "0xF513b895ed6846F190C7a67cF50dE0a47377f7Ba": LiquidatorABI,
-      "0x9decD2bD0B210869219670B817Cb046025c4CA02": PriceFeedABI,
-      "0xF48dB09403FF2762E7811E9Af25D6182deDDF1d8": NativeAssetManagerABI,
-      "0x5DA88e9148c9E5E584facE8a7773C7Ba185a812d": Erc20AssetManagerABI,
-      "0x30BA16bacA622afA5f7B056D97292a29329D5329": RegistryABI,
-      "0xD16f3E5175a25A60Ee31Ea2B88Fb5883Fc8EA7c8": PbtABI,
-      "0x9b5b5Ff81832aB3d97f53605D0cF0522393E6b2D": ReservePoolABI,
-      "0xf4dC7dB778C459220181Eb33d1A381E3cee0C65e": TellerABI,
-      "0x9AfA6021cc3b8b72530A54ad00C31D719b32d802": TreasuryABI,
-      "0x11e011Ee7611a51107223B337337BF9f0eAB5ef0": VaultEngineIssuerABI
+      "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf": UsdABI,
+      "0x8060Ec526B71bb5AB10eF28Af1824797F7f615A8": AuctioneerABI,
+      "0x5ee1b382Cd74B6AC105F673bc13cd1947A10Bf27": LiquidatorABI,
+      "0xa444B86fed3986B0b5B5cFEB202f4d52804b1887": PriceFeedABI,
+      "0x6dCC372B0C163987D6fb39224Cbe286f513e35fD": NativeAssetManagerABI,
+      "0x7133c78E6A4070Bca396751F44E675eaFD379a83": Erc20AssetManagerABI,
+      "0x01e0cb9E05c98A1baff3AFeF80237C7074353F03": RegistryABI,
+      "0x0094e34763Dd14a6aE8A1f32E5fF88DB586df96f": PbtABI,
+      "0x4A0BE80C82B8e70ba1E5E8a385a68a4a7Bd99601": ReservePoolABI,
+      "0x55BeE6eA1758314017676aB5a345d281FB4ec72d": TellerABI,
+      "0xB700A5E562596cf6B49bfc1E56B351bD896288c9": TreasuryABI,
+      "0x7b199D048310F4144f7466Ea81006A7804c3A8BD": VaultEngineIssuerABI
     }
   },
   // Flare localhost network
