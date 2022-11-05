@@ -58,7 +58,7 @@ function Cash({ user, auth }: any) {
         return alert("Unable to link account.")
       }
       setExtAccountsLoading(true)
-      // const accountId = metadata.accounts[0].id
+      const accountId = metadata.accounts[0].id
       // const token = await getProcessorToken(public_token, accountId)
       // await getBankDetails(token)
       await getExternalAccounts()
@@ -181,13 +181,13 @@ function Cash({ user, auth }: any) {
 
   const getLinkToken = async () => {
     const response = await axios({
-      url: `https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.ledger_account_id}/plaid_link_token`,
-      method: "POST",
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid_link_token`,
+      method: "GET",
       headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-      }
+        "Authorization": `Bearer ${auth.token}`
+      },
     })
-    setLinkToken(response.data.result.link_token)
+    setLinkToken(response.data.link_token)
   }
 
   // Load data
