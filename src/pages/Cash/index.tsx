@@ -19,7 +19,7 @@ enum TransactionType {
 function Cash({ user, auth }: any) {
   const [linkToken, setLinkToken] = React.useState(null);
   const [, setProcessorToken] = React.useState(null);
-  const [externalAccounts, setExternalAccounts] = React.useState([]);
+  const [externalAccounts, ] = React.useState([]);
   const [selectedAccount, setSelectedAccount] = React.useState<any>(null);
   const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
   const [txPending, setTxPending] = React.useState(false);
@@ -49,6 +49,21 @@ function Cash({ user, auth }: any) {
     setShow(true);
   }
 
+  const getProcessorToken = React.useCallback(async (public_token: string, accountId: string) => {
+    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${auth.token}`
+      },
+      data: {
+        publicToken: public_token,
+        accountId
+      },
+    });
+    setProcessorToken(response.data.processor_token);
+    return response.data.processor_token
+  }, [auth, user])
+
   /**
    * Log and save metadata and exchange public token
    */
@@ -65,10 +80,10 @@ function Cash({ user, auth }: any) {
       // await getExternalAccounts()
       setExtAccountsLoading(false)
     },
-    [],
+    [getProcessorToken],
   );
 
-  const getTransactions = async () => {
+  const getTransactions = React.useCallback(async () => {
     setTxsLoading(true)
     const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/transactions`, {
       headers: {
@@ -78,9 +93,9 @@ function Cash({ user, auth }: any) {
     })
     setTransactions(response.data)
     setTxsLoading(false)
-  }
+  }, [auth, user])
 
-  const getAccountBalance = async () => {
+  const getAccountBalance = React.useCallback(async () => {
     const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}`, {
       method: "GET",
       headers: {
@@ -88,7 +103,7 @@ function Cash({ user, auth }: any) {
       },
     })
     setBalance(response.data.balances.available_balance)
-  }
+  }, [auth, user])
 
   const deposit = async () => {
     try {
@@ -140,34 +155,19 @@ function Cash({ user, auth }: any) {
     setShow(false)
   }
 
-  const getProcessorToken = async (public_token: string, accountId: string) => {
-    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${auth.token}`
-      },
-      data: {
-        publicToken: public_token,
-        accountId
-      },
-    });
-    setProcessorToken(response.data.processor_token);
-    return response.data.processor_token
-  }
+  // const getExternalAccounts = async () => {
+  //   const response = await axios({
+  //     url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
+  //     method: "GET",
+  //     headers: {
+  //       "Authorization": `Bearer ${auth.token}`
+  //     },
+  //   })
+  //   setExternalAccounts(response.data.result)
+  //   if (response.data.result.length) setSelectedAccount(response.data.result[0])
+  // }
 
-  const getExternalAccounts = async () => {
-    const response = await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${auth.token}`
-      },
-    })
-    setExternalAccounts(response.data.result)
-    if (response.data.result.length) setSelectedAccount(response.data.result[0])
-  }
-
-  const getLinkToken = async () => {
+  const getLinkToken = React.useCallback(async () => {
     const response = await axios({
       url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/link_token`,
       method: "GET",
@@ -176,7 +176,7 @@ function Cash({ user, auth }: any) {
       },
     })
     setLinkToken(response.data.link_token)
-  }
+  }, [auth, user])
 
   // Load data
   React.useEffect(() => {
@@ -188,7 +188,7 @@ function Cash({ user, auth }: any) {
       await getTransactions()
       setExtAccountsLoading(false)
     })()
-  }, [])
+  }, [getAccountBalance, getLinkToken, getTransactions])
 
   // The usePlaidLink hook manages Plaid Link creation
   // It does not return a destroy function;
