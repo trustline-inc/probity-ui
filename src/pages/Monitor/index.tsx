@@ -52,8 +52,8 @@ function Monitor({ assetPrice }: { assetPrice: number }) {
             normDebt,
             collateral,
             initialEquity
-          } = await vaultEngine.vaults(utils.id(currentAsset), address);
-          const { adjustedPrice } = await vaultEngine.assets(utils.id(currentAsset));
+          } = await vaultEngine.vaults(utils.id("ETH"), address);
+          const { adjustedPrice } = await vaultEngine.assets(utils.id("ETH"));
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const equityAccumulator = await vaultEngine.equityAccumulator();
 
@@ -81,26 +81,6 @@ function Monitor({ assetPrice }: { assetPrice: number }) {
 
           // Check if it's liquidation eligible
           const liquidationEligible = _debt.gt(collateral.mul(adjustedPrice))
-          
-          console.log(
-            underlying.toString(),
-            normEquity.toString(),
-            normDebt.toString(),
-            collateral.toString(),
-            initialEquity.toString()
-          )
-          console.log(
-            {
-              address: address,
-              debt: `${numbro(utils.formatEther(normDebt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
-              equity: `${numbro(utils.formatEther(normEquity.mul(equityAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
-              collateralRatio,
-              underlyingRatio,
-              liquidationEligible,
-              underlying: `${numbro(utils.formatEther(underlying).toString()).format(formatOptions)} ${currentAsset}`,
-              collateral: `${numbro(utils.formatEther(collateral).toString()).format(formatOptions)} ${currentAsset}`
-            }
-          )
           _positions.push({
             address: address,
             debt: `${numbro(utils.formatEther(normDebt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
@@ -144,7 +124,7 @@ function Monitor({ assetPrice }: { assetPrice: number }) {
 
   const liquidationEligiblePositions = positions.filter((vault: any) => vault.liquidationEligible).map((vault: any, index: number) => {
     return (
-      <div className="card my-3" key={index}>
+      <div className="card my-3 px-2" key={index}>
         <div className="card-body">
           <div className="row">
             <div className="col-8 border">
