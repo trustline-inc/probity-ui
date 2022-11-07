@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import numbro from "numbro"
+import web3 from "web3"
 import { scrollToTop } from "../../utils"
 import { utils } from "ethers";
 import Pagination from "../../components/Pagination"
@@ -127,7 +128,15 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
         auctionId,
         utils.parseUnits(String(maxPrice), 27),
         utils.parseEther(String(lot)),
+        {
+          gasLimit: web3.utils.toWei('300000', 'wei'),
+          maxFeePerGas: 25 * 1e9,
+        }
       ]
+      console.log(
+        utils.parseUnits(String(maxPrice), 27).toString(),
+        utils.parseEther(String(lot)).toString()
+      )
       await auctioneer.callStatic.buyItNow(...args)
       const tx = await auctioneer.buyItNow(...args)
       setMetamaskLoading(true)
@@ -172,7 +181,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
               <code>{RESERVE_POOL.address}</code> is the Reserve Pool's address.
             </div>
             {auctions.map((auction: any, index: number) => {
-              const collId = getAssetId(auction?.collId)
+              const collId = getAssetId(auction?.assetId)
               return (
                 <div className="card my-3" key={index}>
                   <div className="card-body">
