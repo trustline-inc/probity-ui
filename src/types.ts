@@ -25,6 +25,6 @@ export enum Activity {
   // Auth
   Login,
 
-  // Liquidations
-  Liquidate
+  // Monitor
+  Monitor
 }

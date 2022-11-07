@@ -183,8 +183,8 @@ function Navbar({ setAuth }: any) {
             // )
           }
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/liquidations">
-              <i className="fa-solid fa-circle-xmark"></i> Liquidate
+            <NavLink className="nav-link" activeClassName="active" to="/monitor">
+              <i className="fa-solid fa-heart-pulse"></i> Monitor
             </NavLink>
           </li>
           <li className="nav-item my-1">

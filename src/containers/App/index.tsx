@@ -27,7 +27,7 @@ import Transactions from "../../pages/Transactions";
 import Transfers from "../../pages/Transfers";
 import Auctions from "../../pages/Auctions";
 import Register from "../../pages/Register";
-import Liquidations from "../../pages/Liquidations";
+import Monitor from "../../pages/Monitor";
 import Contracts from "../../pages/Contracts";
 import { VERSION } from '../../constants';
 import ExternalSites from "../../components/ExternalSites";
@@ -344,10 +344,10 @@ function App() {
                                     )}
                                   </div>
                                 </Route>
-                                {/* Liquidations */}
-                                <Route path="/liquidations">
+                                {/* Monitor */}
+                                <Route path="/monitor">
                                   <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                                    <Liquidations assetPrice={assetPrice} />
+                                    <Monitor assetPrice={assetPrice} />
                                   </div>
                                   <div className="col-xl-4 col-lg-4 col-md-12">
                                     {active && (

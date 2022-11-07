@@ -18,10 +18,10 @@ const formatOptions = {
   mantissa: 4
 }
 
-function Liquidations({ assetPrice }: { assetPrice: number }) {
+function Monitor({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [vaults, setVaults] = useState<any>([]);
+  const [positions, setPositions] = useState<any>([]);
   const { library, active, chainId } = useWeb3React<Web3Provider>()
   const [error, setError] = useState<any|null>(null);
   const eventContext = useContext(EventContext)
@@ -43,7 +43,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
     if (library) {
       (async () => {
         setLoading(true)
-        const _vaults: any[] = [];
+        const _positions: any[] = [];
         for (let address of users) {
           const vaultEngine = new Contract(CONTRACTS[chainId!].VAULT_ENGINE.address, CONTRACTS[chainId!].VAULT_ENGINE.abi, library.getSigner())
           const {
@@ -55,6 +55,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           } = await vaultEngine.vaults(utils.id(currentAsset), address);
           const { adjustedPrice } = await vaultEngine.assets(utils.id(currentAsset));
           const debtAccumulator = await vaultEngine.debtAccumulator();
+          const equityAccumulator = await vaultEngine.equityAccumulator();
 
           const _debt = normDebt.mul(debtAccumulator)
 
@@ -80,11 +81,30 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
           // Check if it's liquidation eligible
           const liquidationEligible = _debt.gt(collateral.mul(adjustedPrice))
-
-          _vaults.push({
+          
+          console.log(
+            underlying.toString(),
+            normEquity.toString(),
+            normDebt.toString(),
+            collateral.toString(),
+            initialEquity.toString()
+          )
+          console.log(
+            {
+              address: address,
+              debt: `${numbro(utils.formatEther(normDebt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
+              equity: `${numbro(utils.formatEther(normEquity.mul(equityAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
+              collateralRatio,
+              underlyingRatio,
+              liquidationEligible,
+              underlying: `${numbro(utils.formatEther(underlying).toString()).format(formatOptions)} ${currentAsset}`,
+              collateral: `${numbro(utils.formatEther(collateral).toString()).format(formatOptions)} ${currentAsset}`
+            }
+          )
+          _positions.push({
             address: address,
             debt: `${numbro(utils.formatEther(normDebt.mul(debtAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
-            equity: `${numbro(utils.formatEther(normEquity).toString()).format(formatOptions)} USD`,
+            equity: `${numbro(utils.formatEther(normEquity.mul(equityAccumulator).div(RAY)).toString()).format(formatOptions)} USD`,
             collateralRatio,
             underlyingRatio,
             liquidationEligible,
@@ -92,7 +112,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
             collateral: `${numbro(utils.formatEther(collateral).toString()).format(formatOptions)} ${currentAsset}`
           });
         }
-        setVaults(_vaults);
+        setPositions(_positions);
         setLoading(false)
       })()
     }
@@ -106,15 +126,15 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
         const result = await liquidator.liquidateVault(utils.id(process.env.REACT_APP_NATIVE_TOKEN!), vault.address);
         const data = await result.wait();
         eventContext.updateTransactions(data);
-        const _vaults = vaults
-        _vaults[index] = {
+        const _positions = positions
+        _positions[index] = {
           ...vault,
           debt: "$0.00",
           equity: "$0.00",
           collateralRatio: "0%",
           liquidationEligible: false,
         }
-        setVaults(_vaults)
+        setPositions(_positions)
       } catch (error) {
         console.error(error)
         setError(error);
@@ -122,7 +142,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
     }
   }
 
-  const liquidationEligibleVaults = vaults.filter((vault: any) => vault.liquidationEligible).map((vault: any, index: number) => {
+  const liquidationEligiblePositions = positions.filter((vault: any) => vault.liquidationEligible).map((vault: any, index: number) => {
     return (
       <div className="card my-3" key={index}>
         <div className="card-body">
@@ -133,7 +153,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
             <div className="col-4 d-flex justify-content-center align-items-center">
               <div>
                 <button className="btn btn-primary w-100" disabled={!vault.liquidationEligible} onClick={() => liquidate(vault, index)}>
-                  {loading ? (<i className="fa fa-spinner fa-spin" />) : "Liquidate Vault"}
+                  {loading ? (<i className="fa fa-spinner fa-spin" />) : "Liquidate Position"}
                 </button>
               </div>
             </div>
@@ -143,7 +163,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
     )
   })
 
-  const nonEligibleVaults = vaults.filter((vault: any) => !vault.liquidationEligible).map((vault: any, index: number) => {
+  const nonEligiblePositions = positions.filter((vault: any) => !vault.liquidationEligible).map((vault: any, index: number) => {
     return (
       <div className="card my-3" key={index}>
         <div className="card-body text-center">
@@ -158,7 +178,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           <div className="row">
             <div className="col-4">
               <h5>Equity</h5>
-              {vault.normEquity}
+              {vault.equity}
             </div>
             <div className="col-4">
               <h5>Underlying</h5>
@@ -172,7 +192,7 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
           <div className="row mt-4">
             <div className="col-4">
               <h5>Debt</h5>
-              {vault.normDebt}
+              {vault.debt}
             </div>
             <div className="col-4">
               <h5>Collateral</h5>
@@ -190,36 +210,36 @@ function Liquidations({ assetPrice }: { assetPrice: number }) {
 
   return (
     <>
-      <h1>Vaults</h1>
-      <Activity active={active} activity={ActivityType.Liquidate} error={error}>
-        <h4>Liquidation Eligible</h4>
+      <h1>Health Monitor</h1>
+      <Activity active={active} activity={ActivityType.Monitor} error={error}>
+        <h4>Eligible for Collateral Liquidation</h4>
         {
           loading ? (
             <div className="d-flex justify-content-center align-items-center py-5">
               Loading...
             </div>
-          ) : liquidationEligibleVaults.length === 0 ? (
+          ) : liquidationEligiblePositions.length === 0 ? (
             <div className="d-flex justify-content-center align-items-center py-5">
-              No vault collateral is currently eligible for liquidation
+              No collateral is currently eligible for liquidation
             </div>
-          ) : liquidationEligibleVaults
+          ) : liquidationEligiblePositions
         }
         <div className="py-1" />
-        <h4>Non-Eligible Vaults</h4>
+        <h4>Non-Eligible Positions</h4>
         {
           loading ? (
             <div className="d-flex justify-content-center align-items-center py-5">
               Loading...
             </div>
-          ) : nonEligibleVaults.length === 0 ? (
+          ) : nonEligiblePositions.length === 0 ? (
             <div className="d-flex justify-content-center align-items-center py-5">
-              There are no vaults to display.
+              There are no positions to display.
             </div>
-          ) : nonEligibleVaults
+          ) : nonEligiblePositions
         }
       </Activity>
     </>
   )
 }
 
-export default Liquidations;
+export default Monitor;
