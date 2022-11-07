@@ -59,9 +59,10 @@ function Cash({ user, auth }: any) {
       }
       setExtAccountsLoading(true)
       const accountId = metadata.accounts[0].id
-      // const token = await getProcessorToken(public_token, accountId)
-      // await getBankDetails(token)
-      await getExternalAccounts()
+      // TODO: Save external account mask, bank name, and account name
+      const processorToken = await getProcessorToken(public_token, accountId)
+      console.log(processorToken)
+      // await getExternalAccounts()
       setExtAccountsLoading(false)
     },
     [],
@@ -139,32 +140,19 @@ function Cash({ user, auth }: any) {
     setShow(false)
   }
 
-  const getBankDetails = async (token: string) => {
-    await axios(`https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/accounts/${user.ledger_account_id}/bank_details`, {
-      method: "POST",
-      headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
-      },
-      data: {
-        name: "John Smith",
-        accounts: [{ plaid_processor_token: token }]
-      },
-    });
-  }
-
   const getProcessorToken = async (public_token: string, accountId: string) => {
-    const response = await axios("https://onewypfu44.execute-api.us-east-1.amazonaws.com/dev/plaid_processor_token", {
+    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
       method: "POST",
       headers: {
-        "X-API-KEY": "17ubFzR3dj8AAupmXSwYf5bovnKwPjl472eUdjnV"
+        "Authorization": `Bearer ${auth.token}`
       },
       data: {
         publicToken: public_token,
         accountId
       },
     });
-    setProcessorToken(response.data.result.processor_token);
-    return response.data.result.processor_token
+    setProcessorToken(response.data.processor_token);
+    return response.data.processor_token
   }
 
   const getExternalAccounts = async () => {
@@ -181,7 +169,7 @@ function Cash({ user, auth }: any) {
 
   const getLinkToken = async () => {
     const response = await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid_link_token`,
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/link_token`,
       method: "GET",
       headers: {
         "Authorization": `Bearer ${auth.token}`
