@@ -33,10 +33,8 @@ import { VERSION } from '../../constants';
 import ExternalSites from "../../components/ExternalSites";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
-import Currencies from "../../pages/Tokenization";
 import Login from "../../pages/Login";
 import axios from "axios";
-import Vault from "../../pages/Vault";
 import "./index.css";
 
 function App() {
@@ -305,19 +303,6 @@ function App() {
                                     )}
                                   </div>
                                 </Route>
-                                {/* Currencies */}
-                                <Route path="/currencies">
-                                  <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                    <Currencies />
-                                  </div>
-                                  <div className="col-xl-4 col-lg-6 col-md-12">
-                                    {active && (
-                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
-                                        <Balances newActiveKey="currencies" />
-                                      </AssetContext.Provider>
-                                    )}
-                                  </div>
-                                </Route>
                                 {/* Transfers */}
                                 <Route path="/transfers">
                                   <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
@@ -331,20 +316,7 @@ function App() {
                                     )}
                                   </div>
                                 </Route>
-                                {/* Vault */}
-                                <Route path="/vault">
-                                  <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                    <Vault />
-                                  </div>
-                                  <div className="col-xl-4 col-lg-6 col-md-12">
-                                    {active && (
-                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
-                                        <Balances newActiveKey="currencies" />
-                                      </AssetContext.Provider>
-                                    )}
-                                  </div>
-                                </Route>
-                                {/* Monitor */}
+                                {/* Health Monitor */}
                                 <Route path="/monitor">
                                   <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
                                     <Monitor assetPrice={assetPrice} />
