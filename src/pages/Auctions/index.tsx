@@ -117,6 +117,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     } catch (error) {
       console.log(error)
       setError(error)
+      scrollToTop()
     }
   }
 
@@ -158,6 +159,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
     } catch (error) {
       console.log(error)
       setError(error)
+      scrollToTop()
     }
   }
 
