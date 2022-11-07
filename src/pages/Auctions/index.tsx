@@ -72,9 +72,8 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
           } else {
             highestBid = await auctioneer.bids(id, _nextHighestBidder)
           }
-          console.log("highestBid", highestBid)
           const currentPrice = await auctioneer.callStatic.calculatePrice(id)
-          _auctions.push({ ...auction, id, highestBid: null, currentPrice })
+          _auctions.push({ ...auction, id, highestBid, currentPrice })
         }
         setAuctions(_auctions);
         setLoading(false)
@@ -277,7 +276,7 @@ function Auctions({ assetPrice }: { assetPrice: number }) {
                           <h6>Current High Bid</h6>
                           {
                             auction.highestBid ? (
-                              <div className="text-muted">{auction.highestBid?.lot.toString()} {collId} for {auction.highestBid?.price.toString()} USD</div>
+                              <div className="text-muted">{String(utils.formatEther(String(auction.highestBid?.lot)))} {collId} for {String(utils.formatUnits(String(auction.highestBid?.price), 27))} USD</div>
                             ) : (
                               <p className="text-muted">No bids</p>
                             )
