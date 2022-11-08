@@ -259,7 +259,7 @@ function App() {
                                   <div className="col-xl-4 col-lg-6 col-md-12">
                                     {active && (
                                       <AssetContext.Provider value={{ asset, address, updateAsset }}>
-                                        <Balances newActiveKey="assets" />
+                                        <Balances newActiveKey="" />
                                       </AssetContext.Provider>
                                     )}
                                   </div>

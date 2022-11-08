@@ -41,7 +41,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const [, setUnderlyingRatio] = React.useState("")
   const [estimatedAPR, setEstimatedAPR] = React.useState("")
   const [estimatedAPY, setEstimatedAPY] = React.useState("")
-  const [activeKey, setActiveKey] = React.useState("assets")
+  const [activeKey, setActiveKey] = React.useState("")
   const nativeTokenSymbol = getNativeTokenSymbol(chainId!)
   const currentAsset = ctx.asset || nativeTokenSymbol
   const USD = CONTRACTS[chainId!].USD
