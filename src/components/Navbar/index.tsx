@@ -139,27 +139,17 @@ function Navbar({ setAuth }: any) {
             </NavLink>
           </li>
           <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/collateral-management">
-              <i className="fa-solid fa-vault"></i> Collateral
-            </NavLink>
-          </li>
-          {
-            // Not enabled on any chain, yet.
-            chainId && [].includes(chainId as never) && (
-              <li className="nav-item my-1">
-                <NavLink className="nav-link" activeClassName="active" to="/currencies">
-                  <i className="fas fa-coins"></i> Currencies
-                </NavLink>
-              </li>
-            )
-          }
-          <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"
               to="/investment"
             >
               <i className="fa-solid fa-circle-dollar-to-slot"></i> Invest
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/collateral-management">
+              <i className="fa-solid fa-vault"></i> Collateral
             </NavLink>
           </li>
           <li className="nav-item my-1">
