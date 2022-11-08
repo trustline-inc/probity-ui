@@ -157,20 +157,15 @@ function Navbar({ setAuth }: any) {
               <i className="fas fa-money-bill"></i> Borrow
             </NavLink>
           </li>
-          {/* <li className="nav-item my-1">
-            <NavLink className="nav-link" activeClassName="active" to="/vault">
-              <i className="fas fa-vault" /> Vault
-            </NavLink>
-          </li> */}
           {
             // Only show Transfers tab if the bridge contract is in the env.
-            // CONTRACTS[chainId!]?.BRIDGE?.address && (
+            CONTRACTS[chainId!]?.BRIDGE?.address && (
               <li className="nav-item my-1">
                 <NavLink className="nav-link" activeClassName="active" to="/transfers">
                   <i className="fas fa-paper-plane" /> Transfer
                 </NavLink>
               </li>
-            // )
+            )
           }
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/monitor">
