@@ -227,6 +227,39 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
           selected === BalanceType.User ? (
             <>
               <Accordion defaultActiveKey="" activeKey={activeKey}>
+                <Accordion.Item eventKey="equity">
+                  <Accordion.Header onClick={() => updateActiveKey("equity")}>
+                    <h5>Debt Investment</h5>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <div className="my-2 d-flex justify-content-between">
+                      <h6>Current Value</h6>
+                      <span className="text-truncate">
+                        {usdVault && equityAccumulator ? numbro(utils.formatEther(usdVault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions }) : null} USD
+                      </span>
+                    </div>
+                    {/* <div className="my-2 d-flex justify-content-between">
+                      <h6>Underlying</h6>
+                      <span className="text-truncate">
+                        {numbro(utils.formatEther(usdVault.underlying)).format(formatOptions)} {ctx.asset}
+                      </span>
+                    </div>
+                    <div className="my-2 d-flex justify-content-between">
+                      <h6>Supply Ratio</h6>
+                      <span className="text-truncate">{underlyingRatio ? underlyingRatio : "0%"}</span>
+                    </div> */}
+                    <div className="my-2 d-flex justify-content-between">
+                      <h6>Current APY</h6>
+                      <span className="text-truncate">{estimatedAPY}</span>
+                    </div>
+                    <div className="my-2 d-flex justify-content-between">
+                      <h6>Interest Earned</h6>
+                      <span className="text-truncate">
+                        {usdVault && equityAccumulator ? numbro(utils.formatUnits(usdVault.normEquity.mul(equityAccumulator).sub(usdVault.initialEquity), 45)).format(formatOptions) : null} USD
+                      </span>
+                    </div>
+                  </Accordion.Body>
+                </Accordion.Item>
                 <Accordion.Item eventKey="assets">
                   <Accordion.Header onClick={() => updateActiveKey("assets")}>
                     <h5>Collateral</h5>
@@ -271,39 +304,6 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                         <h6>Total</h6>
                         <span className="text-truncate">{numbro(utils.formatEther(ethVault.standbyAmount.add(ethVault.underlying).add(ethVault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
-                    </div>
-                  </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="equity">
-                  <Accordion.Header onClick={() => updateActiveKey("equity")}>
-                    <h5>Debt Investment</h5>
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <div className="my-2 d-flex justify-content-between">
-                      <h6>Current Value</h6>
-                      <span className="text-truncate">
-                        {usdVault && equityAccumulator ? numbro(utils.formatEther(usdVault.normEquity.mul(equityAccumulator).div(RAY))).format({ ...formatOptions }) : null} USD
-                      </span>
-                    </div>
-                    {/* <div className="my-2 d-flex justify-content-between">
-                      <h6>Underlying</h6>
-                      <span className="text-truncate">
-                        {numbro(utils.formatEther(usdVault.underlying)).format(formatOptions)} {ctx.asset}
-                      </span>
-                    </div>
-                    <div className="my-2 d-flex justify-content-between">
-                      <h6>Supply Ratio</h6>
-                      <span className="text-truncate">{underlyingRatio ? underlyingRatio : "0%"}</span>
-                    </div> */}
-                    <div className="my-2 d-flex justify-content-between">
-                      <h6>Current APY</h6>
-                      <span className="text-truncate">{estimatedAPY}</span>
-                    </div>
-                    <div className="my-2 d-flex justify-content-between">
-                      <h6>Interest Earned</h6>
-                      <span className="text-truncate">
-                        {usdVault && equityAccumulator ? numbro(utils.formatUnits(usdVault.normEquity.mul(equityAccumulator).sub(usdVault.initialEquity), 45)).format(formatOptions) : null} USD
-                      </span>
                     </div>
                   </Accordion.Body>
                 </Accordion.Item>

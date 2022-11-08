@@ -264,19 +264,6 @@ function App() {
                                     )}
                                   </div>
                                 </Route>
-                                {/* Collateral Management */}
-                                <Route path="/collateral-management">
-                                  <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
-                                    <Assets />
-                                  </div>
-                                  <div className="col-xl-4 col-lg-6 col-md-12">
-                                    {active && (
-                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
-                                        <Balances newActiveKey="assets" />
-                                      </AssetContext.Provider>
-                                    )}
-                                  </div>
-                                </Route>
                                 {/* Investment Management */}
                                 <Route path="/investment">
                                   <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
@@ -286,6 +273,19 @@ function App() {
                                     {active && (
                                       <AssetContext.Provider value={{ asset, address, updateAsset }}>
                                         <Balances newActiveKey="equity" />
+                                      </AssetContext.Provider>
+                                    )}
+                                  </div>
+                                </Route>
+                                {/* Collateral Management */}
+                                <Route path="/collateral-management">
+                                  <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                    <Assets />
+                                  </div>
+                                  <div className="col-xl-4 col-lg-6 col-md-12">
+                                    {active && (
+                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
+                                        <Balances newActiveKey="assets" />
                                       </AssetContext.Provider>
                                     )}
                                   </div>
