@@ -409,7 +409,7 @@ function App() {
                     </Route>
                     <Route path="/register">
                       <div className="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12">
-                        <Register error={null} setAUth={setAuth} />
+                        <Register error={null} setAuth={setAuth} />
                       </div>
                     </Route>
                     <Route path="*">

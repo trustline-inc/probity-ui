@@ -49,7 +49,7 @@ function Cash({ user, auth }: any) {
   }
 
   const createExternalAccount = React.useCallback(async (accountId: string) => {
-    await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
+    await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -73,6 +73,18 @@ function Cash({ user, auth }: any) {
     })
   }, [auth, user])
 
+  const getExternalAccounts = React.useCallback(async () => {
+    const response = await axios({
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${auth.token}`
+      },
+    })
+    setExternalAccounts(response.data.items)
+    if (response.data.items.length) setSelectedAccount(response.data.items[0])
+  }, [auth, user])
+
   /**
    * Log and save metadata and exchange public token
    */
@@ -81,10 +93,13 @@ function Cash({ user, auth }: any) {
       if (!metadata.accounts.length) {
         return alert("Unable to link account.")
       }
+      setExternalAccountsLoading(true)
       await createPlaidAccessToken(public_token)
       await createExternalAccount(metadata.accounts[0].id)
+      await getExternalAccounts()
+      setExternalAccountsLoading(false)
     },
-    [createPlaidAccessToken, createExternalAccount],
+    [createPlaidAccessToken, createExternalAccount, getExternalAccounts, setExternalAccountsLoading],
   );
 
   const getTransactions = React.useCallback(async () => {
@@ -118,11 +133,13 @@ function Cash({ user, auth }: any) {
           "Authorization": `Bearer ${auth.token}`
         },
         data: {
-          amount
+          amount,
+          account_id: selectedAccount.id
         }
       })
       console.log(response)
     } catch (error) {
+      console.log(error)
       alert("There was an error.")
     }
     setTransactionInProgress(false)
@@ -154,18 +171,6 @@ function Cash({ user, auth }: any) {
     await getAccountBalance()
     setShow(false)
   }
-
-  const getExternalAccounts = React.useCallback(async () => {
-    const response = await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${auth.token}`
-      },
-    })
-    setExternalAccounts(response.data.items)
-    if (response.data.length) setSelectedAccount(response.data[0])
-  }, [auth, user])
 
   const getLinkToken = React.useCallback(async () => {
     const response = await axios({
@@ -229,11 +234,11 @@ function Cash({ user, auth }: any) {
                   <Switch>
                     <Route path={`/cash-management/deposit/ach`}>
                       <label htmlFor="depositFrom" className="form-label">Deposit from</label>
-                      <select className="form-select">
+                      <select className="form-select" defaultValue={externalAccounts[0]}>
                         {externalAccounts.map((externalAccount: any, index: number) => {
                           return (
                             <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
-                              {externalAccount.name} {externalAccount.mask}
+                              {externalAccount.account_type.charAt(0).toUpperCase() + externalAccount.account_type.slice(1)} {externalAccount.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
                             </option>
                           )
                         })}
@@ -305,11 +310,11 @@ function Cash({ user, auth }: any) {
               ) : (
                 <>
                   <label htmlFor="withdrawTo" className="form-label">Withdraw to</label>
-                  <select className="form-select">
+                  <select className="form-select" defaultValue={externalAccounts[0]}>
                     {externalAccounts.map((externalAccount: any, index: number) => {
                       return (
                         <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
-                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                          {externalAccount.account_type.charAt(0).toUpperCase() + externalAccount.account_type.slice(1)} {externalAccount.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
                         </option>
                       )
                     })}
@@ -418,8 +423,8 @@ function Cash({ user, auth }: any) {
                       <Card.Body>
                         <div className="d-flex flex-row justify-content-between">
                           <div>
-                            {externalAccount.name}<br/>
-                            {externalAccount.mask}<br/>
+                            {externalAccount.routing_details[0].bank_name}<br/>
+                            {externalAccount.account_type.charAt(0).toUpperCase() + externalAccount.account_type.slice(1)} {externalAccount.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
                           </div>
                           <button className="btn btn-outline-secondary btn-sm">Remove</button>
                         </div>

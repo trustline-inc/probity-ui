@@ -46,7 +46,7 @@ function Profile({ user, auth }: { user: any, auth: any }) {
           "Authorization": `Bearer ${auth.token}`
         }
       })
-      if (response.status === 201) {
+      if (response.status === 200) {
         setAddress(proposedAddress)
       }
     } catch (error) {
