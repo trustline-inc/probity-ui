@@ -146,7 +146,7 @@ function App() {
           <ConnectorModal show={showConnectorModal} handleClose={handleClose} />
           {
             // (process.env.REACT_APP_REQUIRE_AUTH === "true" ? (auth && new Date(auth?.expiresAt) > new Date()) : true) ? (
-            (process.env.REACT_APP_REQUIRE_AUTH === "true" ? (auth) : true) ? (
+            (process.env.REACT_APP_REQUIRE_AUTH === "true" ? (auth && user) : true) ? (
               <>
                 <div className="d-flex main-container min-vh-100">
                   <div className="min-vh-100 left-nav">
@@ -257,6 +257,19 @@ function App() {
                                     <Cash user={user} auth={auth} />
                                   </div>
                                   <div className="col-xl-4 col-lg-6 col-md-12">
+                                    {active && (
+                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
+                                        <Balances newActiveKey="" />
+                                      </AssetContext.Provider>
+                                    )}
+                                  </div>
+                                </Route>
+                                {/* Exchange */}
+                                <Route path="/exchange">
+                                  <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
+                                    {/* <Exchange /> */}
+                                  </div>
+                                  <div className="col-xl-4 col-lg-4 col-md-12">
                                     {active && (
                                       <AssetContext.Provider value={{ asset, address, updateAsset }}>
                                         <Balances newActiveKey="" />

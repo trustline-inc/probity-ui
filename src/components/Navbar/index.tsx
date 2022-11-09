@@ -142,6 +142,15 @@ function Navbar({ setAuth }: any) {
             <NavLink
               className="nav-link"
               activeClassName="active"
+              to="/exchange"
+            >
+              <i className="fa-solid fa-exchange"></i> Exchange
+            </NavLink>
+          </li>
+          <li className="nav-item my-1">
+            <NavLink
+              className="nav-link"
+              activeClassName="active"
               to="/investment"
             >
               <i className="fa-solid fa-circle-dollar-to-slot"></i> Invest

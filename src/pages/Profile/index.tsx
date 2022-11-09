@@ -13,7 +13,7 @@ function Profile({ user, auth }: { user: any, auth: any }) {
    */
   React.useEffect(() => {
     (async () => {
-      if (process.env.REACT_APP_REQUIRE_AUTH) {
+      if (process.env.REACT_APP_REQUIRE_AUTH && user) {
         try {
           const response = await axios(`http://localhost:8080/v1/users/${user.id}`, {
             method: "GET",
@@ -29,7 +29,7 @@ function Profile({ user, auth }: { user: any, auth: any }) {
         }
       }
     })()
-  }, [user.id, auth, address])
+  }, [user, auth, address])
 
   /**
    * Saves user address

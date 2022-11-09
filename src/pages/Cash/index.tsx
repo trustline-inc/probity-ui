@@ -18,10 +18,9 @@ enum TransactionType {
 
 function Cash({ user, auth }: any) {
   const [linkToken, setLinkToken] = React.useState(null);
-  const [, setProcessorToken] = React.useState(null);
-  const [externalAccounts, ] = React.useState([]);
+  const [plaidAccounts, setPlaidAccounts] = React.useState([]);
   const [selectedAccount, setSelectedAccount] = React.useState<any>(null);
-  const [extAccountsLoading, setExtAccountsLoading] = React.useState(true);
+  const [plaidAccountsLoading, setPlaidAccountsLoading] = React.useState(true);
   const [txPending, setTxPending] = React.useState(false);
   const [txsLoading, setTxsLoading] = React.useState(true);
   const [, setBalance] = React.useState(null);
@@ -49,19 +48,29 @@ function Cash({ user, auth }: any) {
     setShow(true);
   }
 
-  const getProcessorToken = React.useCallback(async (public_token: string, accountId: string) => {
-    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
+  const createPlaidProcessorToken = React.useCallback(async (accountId: string) => {
+    await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/processor_token`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${auth.token}`
       },
       data: {
-        publicToken: public_token,
         accountId
       },
     });
-    setProcessorToken(response.data.processor_token);
-    return response.data.processor_token
+  }, [auth, user])
+
+  const createPlaidAccessToken = React.useCallback(async (publicToken) => {
+    await axios({
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/access_token`,
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${auth.token}`
+      },
+      data: {
+        publicToken
+      }
+    })
   }, [auth, user])
 
   /**
@@ -72,15 +81,10 @@ function Cash({ user, auth }: any) {
       if (!metadata.accounts.length) {
         return alert("Unable to link account.")
       }
-      setExtAccountsLoading(true)
-      const accountId = metadata.accounts[0].id
-      // TODO: Save external account mask, bank name, and account name
-      const processorToken = await getProcessorToken(public_token, accountId)
-      console.log(processorToken)
-      // await getExternalAccounts()
-      setExtAccountsLoading(false)
+      await createPlaidAccessToken(public_token)
+      await createPlaidProcessorToken(metadata.accounts[0].id)
     },
-    [getProcessorToken],
+    [createPlaidAccessToken, createPlaidProcessorToken],
   );
 
   const getTransactions = React.useCallback(async () => {
@@ -117,7 +121,7 @@ function Cash({ user, auth }: any) {
           currency: "USD",
           type: "ach",
           amount,
-          externalAccountId: selectedAccount?.sub_id
+          plaidAccountId: selectedAccount?.sub_id
         }
       })
       console.log(response)
@@ -155,17 +159,17 @@ function Cash({ user, auth }: any) {
     setShow(false)
   }
 
-  // const getExternalAccounts = async () => {
-  //   const response = await axios({
-  //     url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
-  //     method: "GET",
-  //     headers: {
-  //       "Authorization": `Bearer ${auth.token}`
-  //     },
-  //   })
-  //   setExternalAccounts(response.data.result)
-  //   if (response.data.result.length) setSelectedAccount(response.data.result[0])
-  // }
+  const getPlaidAccounts = React.useCallback(async () => {
+    const response = await axios({
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/accounts`,
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${auth.token}`
+      },
+    })
+    setPlaidAccounts(response.data)
+    if (response.data.length) setSelectedAccount(response.data[0])
+  }, [auth, user])
 
   const getLinkToken = React.useCallback(async () => {
     const response = await axios({
@@ -181,14 +185,14 @@ function Cash({ user, auth }: any) {
   // Load data
   React.useEffect(() => {
     (async () => {
-      setExtAccountsLoading(true)
+      setPlaidAccountsLoading(true)
       await getLinkToken()
-      // await getExternalAccounts()
+      await getPlaidAccounts()
       await getAccountBalance()
       await getTransactions()
-      setExtAccountsLoading(false)
+      setPlaidAccountsLoading(false)
     })()
-  }, [getAccountBalance, getLinkToken, getTransactions])
+  }, [getAccountBalance, getLinkToken, getTransactions, getPlaidAccounts])
 
   // The usePlaidLink hook manages Plaid Link creation
   // It does not return a destroy function;
@@ -230,10 +234,10 @@ function Cash({ user, auth }: any) {
                     <Route path={`/cash-management/deposit/ach`}>
                       <label htmlFor="depositFrom" className="form-label">Deposit from</label>
                       <select className="form-select">
-                        {externalAccounts.map((externalAccount: any, index: number) => {
+                        {plaidAccounts.map((plaidAccount: any, index: number) => {
                           return (
-                            <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
-                              {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                            <option onSelect={() => setSelectedAccount(plaidAccount)} key={index}>
+                              {plaidAccount.name} {plaidAccount.mask}
                             </option>
                           )
                         })}
@@ -306,10 +310,10 @@ function Cash({ user, auth }: any) {
                 <>
                   <label htmlFor="withdrawTo" className="form-label">Withdraw to</label>
                   <select className="form-select">
-                    {externalAccounts.map((externalAccount: any, index: number) => {
+                    {plaidAccounts.map((plaidAccount: any, index: number) => {
                       return (
-                        <option onSelect={() => setSelectedAccount(externalAccount)} key={index}>
-                          {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
+                        <option onSelect={() => setSelectedAccount(plaidAccount)} key={index}>
+                          {plaidAccount.details.account_type.charAt(0).toUpperCase() + plaidAccount.details.account_type.slice(1)} {plaidAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}
                         </option>
                       )
                     })}
@@ -391,7 +395,7 @@ function Cash({ user, auth }: any) {
         </div>
       </section>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">
-        <div className={classnames(["row", externalAccounts.length ? "" : "mb-4"])}>
+        <div className={classnames(["row", plaidAccounts.length ? "" : "mb-4"])}>
           <div className="col-12">
             <label className="form-label">
               Payment Methods<br/>
@@ -403,7 +407,7 @@ function Cash({ user, auth }: any) {
         </div>
         <div>
         {
-          extAccountsLoading ? (
+          plaidAccountsLoading ? (
             <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
               <div className="spinner-border text-primary" role="status">
                 <span className="visually-hidden">Loading...</span>
@@ -412,14 +416,14 @@ function Cash({ user, auth }: any) {
           ) : (
             <div className="mb-4">
               <pre>
-                {externalAccounts.map((externalAccount: any, index) => {
+                {plaidAccounts.map((plaidAccount: any, index) => {
                   return (
                     <Card key={index} className="my-2">
                       <Card.Body>
                         <div className="d-flex flex-row justify-content-between">
                           <div>
-                            {externalAccount.details.routing_details[0].bank_name}<br/>
-                            {externalAccount.details.account_type.charAt(0).toUpperCase() + externalAccount.details.account_type.slice(1)} {externalAccount.details.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
+                            {plaidAccount.name}<br/>
+                            {plaidAccount.mask}<br/>
                           </div>
                           <button className="btn btn-outline-secondary btn-sm">Remove</button>
                         </div>
