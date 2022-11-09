@@ -337,7 +337,7 @@ function Lend({ assetPrice }: { assetPrice: number }) {
         <title>Probity | Private Credit Fund</title>
       </Helmet>
       <header>
-        <h1>Investment Management</h1>
+        <h1>Debt Investment</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

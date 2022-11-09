@@ -153,7 +153,7 @@ function Navbar({ setAuth }: any) {
               activeClassName="active"
               to="/investment"
             >
-              <i className="fa-solid fa-circle-dollar-to-slot"></i> Invest
+              <i className="fa-solid fa-circle-dollar-to-slot"></i> Lend
             </NavLink>
           </li>
           <li className="nav-item my-1">

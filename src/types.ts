@@ -6,7 +6,7 @@ export enum Activity {
   RedeemEquity,
   Collect,
 
-  // Debt Management
+  // Loan Management
   Borrow,
   Repay,
 

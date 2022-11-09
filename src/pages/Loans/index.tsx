@@ -281,7 +281,7 @@ function Loans({ assetPrice }: { assetPrice: number }) {
         <title>Probity | Borrow</title>
       </Helmet>
       <header>
-        <h1>Debt Management</h1>
+        <h1>Loan Management</h1>
         {active && <Info />}
       </header>
       <section className="border rounded p-5 mb-5 shadow-sm bg-white">

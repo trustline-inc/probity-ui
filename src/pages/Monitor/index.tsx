@@ -192,7 +192,7 @@ function Monitor({ assetPrice }: { assetPrice: number }) {
     <>
       <h1>Health Monitor</h1>
       <Activity active={active} activity={ActivityType.Monitor} error={error}>
-        <h4>Eligible for Collateral Liquidation</h4>
+        <h4>Eligible for Liquidation</h4>
         {
           loading ? (
             <div className="d-flex justify-content-center align-items-center py-5">

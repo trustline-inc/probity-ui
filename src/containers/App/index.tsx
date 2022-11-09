@@ -303,7 +303,7 @@ function App() {
                                     )}
                                   </div>
                                 </Route>
-                                {/* Debt Management */}
+                                {/* Loan Management */}
                                 <Route path="/loans">
                                   <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                     <Loans assetPrice={assetPrice} />
