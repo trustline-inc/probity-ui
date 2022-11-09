@@ -1,4 +1,5 @@
 export enum Activity {
+  // Auctions
   Auction,
 
   // Equity Management
@@ -26,5 +27,9 @@ export enum Activity {
   Login,
 
   // Monitor
-  Monitor
+  Monitor,
+
+  // Exchange
+  Trade,
+  Provide
 }

@@ -20,6 +20,7 @@ import Navbar from "../../components/Navbar";
 import Balances from "../../components/Balances";
 import Lend from "../../pages/Investment";
 import Loans from "../../pages/Loans";
+import Exchange from "../../pages/Exchange";
 import Cash from "../../pages/Cash";
 import Assets from "../../pages/Collateral";
 import Profile from "../../pages/Profile";
@@ -267,7 +268,7 @@ function App() {
                                 {/* Exchange */}
                                 <Route path="/exchange">
                                   <div className="offset-xl-1 col-xl-6 col-lg-8 col-md-12">
-                                    {/* <Exchange /> */}
+                                    <Exchange />
                                   </div>
                                   <div className="col-xl-4 col-lg-4 col-md-12">
                                     {active && (
