@@ -134,7 +134,7 @@ function Cash({ user, auth }: any) {
         },
         data: {
           amount,
-          account_id: selectedAccount.id
+          external_account_id: selectedAccount.id
         }
       })
       console.log(response)
@@ -162,6 +162,17 @@ function Cash({ user, auth }: any) {
       alert("There was an error.")
     }
     setTransactionInProgress(false)
+  }
+
+  const removeExternalAccount = async (id: any) => {
+    await axios({
+      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts/${id}`,
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${auth.token}`
+      },
+    })
+    await getExternalAccounts()
   }
 
   const transfer = async () => {
@@ -426,7 +437,7 @@ function Cash({ user, auth }: any) {
                             {externalAccount.routing_details[0].bank_name}<br/>
                             {externalAccount.account_type.charAt(0).toUpperCase() + externalAccount.account_type.slice(1)} {externalAccount.account_details[0].account_number.replace(/.(?=.{4,}$)/g, "*")}<br/>
                           </div>
-                          <button className="btn btn-outline-secondary btn-sm">Remove</button>
+                          <button className="btn btn-outline-secondary btn-sm" onClick={() => removeExternalAccount(externalAccount.id)}>Remove</button>
                         </div>
                       </Card.Body>
                     </Card>
