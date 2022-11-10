@@ -6,6 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Activity as ActivityType } from "../../types";
 import Activity from "../../containers/Activity";
 import TradeActivity from './TradeActivity';
+import ProvideActivity from './ProvideActivity';
 import Info from '../../components/Info';
 
 function Exchange() {
@@ -31,7 +32,7 @@ function Exchange() {
                                 <NavLink className="nav-link" activeClassName="active" to={"/exchange/trade"} onClick={() => { setActivity(ActivityType.Trade); }}>Trade</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink className="nav-link disabled" activeClassName="active" to={"/exchange/provide"} onClick={() => { setActivity(ActivityType.Provide); }}>Provide</NavLink>
+                                <NavLink className="nav-link" activeClassName="active" to={"/exchange/provide"} onClick={() => { setActivity(ActivityType.Provide); }}>Provide</NavLink>
                             </li>
                         </ul>
                     </div>
@@ -41,6 +42,11 @@ function Exchange() {
                         {
                             activity === ActivityType.Trade && (
                                 <TradeActivity />
+                            )
+                        }
+                        {
+                            activity === ActivityType.Provide && (
+                                <ProvideActivity />
                             )
                         }
                     </Activity>
