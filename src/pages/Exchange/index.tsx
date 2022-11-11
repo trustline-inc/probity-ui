@@ -11,7 +11,7 @@ import Info from '../../components/Info';
 
 function Exchange() {
     const { active } = useWeb3React<Web3Provider>()
-    const [activity, setActivity] = React.useState<ActivityType|null>(ActivityType.Trade);
+    const [activity, setActivity] = React.useState<ActivityType|null>(null);
     const [error, ] = React.useState<any|null>(null);
 
     return (
