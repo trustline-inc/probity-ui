@@ -127,7 +127,7 @@ function Cash({ user, auth }: any) {
   const deposit = async () => {
     try {
       setTransactionInProgress(true)
-      const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/deposit`, {
+      await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/deposits`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${auth.token}`
@@ -137,7 +137,7 @@ function Cash({ user, auth }: any) {
           external_account_id: selectedAccount.id
         }
       })
-      console.log(response)
+      alert("Deposit successfully initiated.")
     } catch (error) {
       console.log(error)
       alert("There was an error.")
@@ -148,16 +148,17 @@ function Cash({ user, auth }: any) {
   const withdrawal = async () => {
     try {
       setTransactionInProgress(true)
-      const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/withdrawals`, {
+      await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/withdrawals`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${auth.token}`
         },
         data: {
-
+          amount,
+          external_account_id: selectedAccount.id
         }
       })
-      console.log(response)
+      alert("Withdraw successfully initiated.")
     } catch (error) {
       alert("There was an error.")
     }
