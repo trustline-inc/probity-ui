@@ -50,14 +50,8 @@ function Contracts() {
     }
   }, [library, fetched, contracts, chainId])
 
-  console.log("contracts:", contracts)
-
   const rows = Object.keys(contracts).map(contract => {
 
-    console.log("===========================")
-    console.log("contract_name:", contract)
-    console.log("contract_instance:", contracts[contract])
-    console.log("contract_address:", contracts[contract]?.address)
     return (
       <tr key={contract}>
         <td><code>{contract}</code></td>
@@ -71,8 +65,6 @@ function Contracts() {
       </tr>
     )
   })
-
-  console.log("rows", rows)
 
   return (
     <>
@@ -92,6 +84,7 @@ function Contracts() {
           <i className="fa fa-spin fa-spinner fa-2x"></i>
         </div>
       )}
+      Admin Account: <code>0xDEc68161D56397B682841a4666706c1Dfc4F63a8</code>
     </>
   );
 }
