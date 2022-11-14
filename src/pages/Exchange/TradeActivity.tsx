@@ -131,7 +131,7 @@ function TradeActivity() {
             {quote && (<p className="text-center">≈ ${quote.toString()} per unit</p>)}
             <div className="d-grid gap-2">
                 <button className="btn btn-primary" onClick={swap}>
-                    {loading ? <div className="spinner-border spinner-border-sm text-light" role="status" /> : "Swap"}
+                    {loading ? <div className="spinner-border spinner-border-sm text-light" role="status" /> : "Place Trade"}
                 </button>
             </div>
         </>

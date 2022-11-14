@@ -110,7 +110,7 @@ function Cash({ user, auth }: any) {
       },
       method: "GET"
     })
-    setTransactions(response.data)
+    setTransactions(response.data.items)
     setTransactionsLoading(false)
   }, [auth, user])
 
@@ -193,6 +193,27 @@ function Cash({ user, auth }: any) {
     })
     setLinkToken(response.data.link_token)
   }, [auth, user])
+
+  /**
+   * @function getTransactionType
+   * @param {any} transaction
+   * @returns {string}
+   * Determine the transaction type by the ledger entries
+   */
+  const getTransactionType = (transaction: any) => {
+    const entries = transaction.ledger_entries;
+
+    if (entries.length === 2) {
+      if (entries[0].ledger_account_id === user.ledger_account_id) {
+        if (entries[0].direction === "credit") {
+          return "Deposit"
+        } else if (entries[0].direction === "debit") {
+          return "Withdrawal"
+        }
+      }
+    }
+    return "Unknown"
+  }
 
   // Load data
   React.useEffect(() => {
@@ -383,8 +404,8 @@ function Cash({ user, auth }: any) {
                       return (
                         <tr key={index}>
                           <td>{new Date(tx.created_at).toLocaleString()}</td>
-                          <td>{tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
-                          <td>${numbro(tx.amount).format({ mantissa: 2, thousandSeparated: true })}</td>
+                          <td>{getTransactionType(tx)}</td>
+                          <td>${numbro(tx.ledger_entries[0].amount / 100).format({ mantissa: 2, thousandSeparated: true })}</td>
                           <td>{tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</td>
                         </tr>
                       )
