@@ -19,14 +19,14 @@ function TradeActivity() {
     const [reserveIn, setReserveIn] = useState(BigNumber.from(0))
     const [reserveOut, setReserveOut] = useState(BigNumber.from(0))
 
-    const ROUTER = "0x2bfEd21c4315B9770398Ce90D6928aAcfe4E5256"
-    const FACTORY = "0xFbCC76D2e42C2C50BBEB342E185B97802Cc877eA"
+    const ROUTER = "0xE4c986c2FCE7D8c90630e91F4AFaBa62796cb12A"
+    const FACTORY = "0x7c5dF2675221eb4F630a19616db160de918C44Ca"
 
     const addresses: {
         [key: string]: string;
     } = {
-        USD: "0x85E73942644D5020Ae1A8Fce6f8D02557e933651",
-        LQO: "0x1483e8dd076c7FAA65EfcB388a66eEcf06A13576"
+        USD: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
+        LQO: "0x6F3f496abdF70ea0272cA49196c0FaBbF3410E1b"
     }
 
     const { data: pairsLength } = useSWR([FACTORY, "allPairsLength"], {
@@ -98,13 +98,13 @@ function TradeActivity() {
         if (assetIn === "USD") {
             setAssetIn("LQO")
             setAssetOut("USD")
-            setReserveIn(reserves[0])
-            setReserveOut(reserves[1])
+            setReserveIn(reserveOut)
+            setReserveOut(reserveIn)
         } else {
             setAssetIn("USD")
             setAssetOut("LQO")
-            setReserveIn(reserves[1])
-            setReserveOut(reserves[0])
+            setReserveIn(reserveOut)
+            setReserveOut(reserveIn)
         }
         setAmountIn(BigNumber.from(0))
         setAmountOut(BigNumber.from(0))
