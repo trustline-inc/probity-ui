@@ -11,13 +11,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from "ethers";
 import { Activity as ActivityType } from "../../types";
 import { getAssetId } from "../../utils";
-
-const formatOptions = {
-  thousandSeparated: true,
-  optionalMantissa: true,
-  trimMantissa: true,
-  mantissa: 4
-}
+import { formatOptions } from "../../constants";
 
 function Auctions({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);

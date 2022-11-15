@@ -9,6 +9,7 @@ import Info from '../../components/Info';
 import EventContext from "../../contexts/TransactionContext"
 import { CONTRACTS, RAY, WAD } from "../../constants";
 import { getAssetId } from "../../utils";
+import { formatOptions } from "../../constants";
 
 function RowToggle({ eventKey, name, tx }: any) {
   const decoratedOnClick = useAccordionButton(eventKey);
@@ -36,13 +37,6 @@ export default function Transactions() {
   const web3 = new Web3(Web3.givenProvider || "http://localhost:9560/ext/bc/C/rpc");
   const { active, library, chainId } = useWeb3React<Web3Provider>();
   const ctx = useContext(EventContext)
-
-  const formatOptions = {
-    thousandSeparated: true,
-    optionalMantissa: true,
-    trimMantissa: false,
-    mantissa: 8
-  }
 
   let rows = ctx.transactions.map((tx: any, index) => {
     return tx.logs.map((element: any, idx: number) => {

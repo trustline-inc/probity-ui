@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
 import QRCode from "react-qr-code";
-import QRCodeModal from "@walletconnect/qrcode-modal";
+// import QRCodeModal from "@walletconnect/qrcode-modal";
 import SignClient from "@walletconnect/sign-client";
 // import { PairingTypes, SessionTypes } from "@walletconnect/types";
 import * as solaris from "@trustline-inc/solaris"
@@ -187,9 +187,9 @@ export default function Transfers() {
 
       // Open QRCode modal if a URI was returned (i.e. we're not connecting an existing pairing).
       if (uri) {
-        QRCodeModal.open(uri, () => {
-          console.log("EVENT", "QR Code Modal closed");
-        });
+        // QRCodeModal.open(uri, () => {
+        //   console.log("EVENT", "QR Code Modal closed");
+        // });
       }
 
       // Await session approval from the wallet.
@@ -200,7 +200,7 @@ export default function Transfers() {
       // ignore rejection
       console.error(e)
     } finally {
-      QRCodeModal.close();
+      // QRCodeModal.close();
       setLoading(false)
     }
 

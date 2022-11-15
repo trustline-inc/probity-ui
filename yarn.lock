@@ -2505,12 +2505,14 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
 
-"@trustline-inc/probity@1.0.0-alpha30":
-  version "1.0.0-alpha30"
-  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha30/510acf27b28fad18f695f2ed461d405c0832342b#510acf27b28fad18f695f2ed461d405c0832342b"
-  integrity sha512-ZcnfbWKzdx7bb1thOhL1QFBXb2U4DbYa5z4WR+kNaSgeIxmGtH2zvLyom9wdI3prGh/+BUcWaScTQYdyfS6jBA==
+"@trustline-inc/probity@1.0.0-alpha32":
+  version "1.0.0-alpha32"
+  resolved "https://npm.pkg.github.com/download/@trustline-inc/probity/1.0.0-alpha32/ce6d39b7053a16fb1c30377627b20107faf254d9#ce6d39b7053a16fb1c30377627b20107faf254d9"
+  integrity sha512-pHic/mnXumSe1tlLmfcsYFZzVkAA/SjfubLvybn1l2Iyvj55tGBB//Ntc4ihrx9/jvAqFrffBKEEBCgJy9it6g==
   dependencies:
     "@openzeppelin/contracts" "^4.5.0"
+    "@uniswap/v2-core" "^1.0.1"
+    "@uniswap/v2-periphery" "^1.1.0-beta.0"
 
 "@trustline-inc/solaris@1.0.0-alpha15":
   version "1.0.0-alpha15"

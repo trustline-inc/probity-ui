@@ -10,13 +10,7 @@ import numbro from "numbro";
 import EventContext from "../../contexts/TransactionContext"
 import AssetContext from "../../contexts/AssetContext"
 import { getNativeTokenSymbol } from "../../utils";
-
-const formatOptions = {
-  thousandSeparated: true,
-  optionalMantissa: true,
-  trimMantissa: true,
-  mantissa: 4
-}
+import { formatOptions } from "../../constants";
 
 function Monitor({ assetPrice }: { assetPrice: number }) {
   const [loading, setLoading] = useState(false);

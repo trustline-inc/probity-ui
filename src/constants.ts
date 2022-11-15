@@ -266,3 +266,11 @@ export const RAD = BigNumber.from("100000000000000000000000000000000000000000000
 export const RAY = BigNumber.from("1000000000000000000000000000");
 export const WAD = BigNumber.from("1000000000000000000");
 export const VERSION = process.env.REACT_APP_VERSION
+
+// NumbroJS
+export const formatOptions = {
+  thousandSeparated: true,
+  optionalMantissa: true,
+  trimMantissa: false,
+  mantissa: 2
+}

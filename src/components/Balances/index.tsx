@@ -16,6 +16,7 @@ import USD from "../../assets/usd.png"
 import XRP from "../../assets/xrp.png"
 import ETH from "../../assets/eth.png"
 import AssetContext from "../../contexts/AssetContext"
+import { formatOptions } from "../../constants";
 
 const assetIcons: { [key: string]: string } = {
   SGB,
@@ -23,13 +24,6 @@ const assetIcons: { [key: string]: string } = {
   USD,
   XRP,
   ETH
-}
-
-const formatOptions = {
-  thousandSeparated: true,
-  optionalMantissa: true,
-  trimMantissa: false,
-  mantissa: 2
 }
 
 function Balances({ newActiveKey }: { newActiveKey: string }) {
