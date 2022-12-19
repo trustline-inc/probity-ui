@@ -74,5 +74,6 @@
     "@types/react-router-dom": "^5.1.7",
     "better-sqlite3": "^7.6.2",
     "patch-package": "^6.4.7"
-  }
+  },
+  "license": "Apache-2.0"
 }
