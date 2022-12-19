@@ -6,18 +6,7 @@ A public react interface for the Probity blockchain app.
 
 This project uses [Node.js](https://nodejs.org/en/), a JavaScript runtime built on Chrome's V8 JavaScript engine.
 
-**1. Create `.npmrc`**
-
-This step is temporary until the NPM package is made public.
-
-[Authenticate with a GitHub personal access token](https://docs.github.com/en/packages/guides/configuring-npm-for-use-with-github-packages#authenticating-with-a-personal-access-token)
-
-```
-@trustline-inc:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=TOKEN
-```
-
-**2. Install dependencies**
+**1. Install dependencies**
 
 Use `npm` to manage dependencies
 
@@ -27,9 +16,7 @@ npm install
 
 This will install React, Web3, and Probity libraries.
 
-If you're working with a local development build of `@trustline-inc/solaris-sdk`, make sure that you `tsc` in the solaris-sdk project directory and install the package with `npm install --force ../solaris-sdk`.
-
-**3. Set environment variables**
+**2. Set environment variables**
 
 Set the environment variables for the network in `src/constants.ts`.
 
@@ -44,7 +31,7 @@ REACT_APP_WC_PROJECT_ID=28f4820aced00becb7371afffb64bd15
 REACT_APP_GLOBALID_CLIENT_ID=ce43c787-031e-4993-b39f-03c124fa2d43
 ```
 
-**4. Start the app**
+**3. Start the app**
 
 ```
 npm start

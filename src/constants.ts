@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import UsdABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
 import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
-import BridgeABI from "@trustline-inc/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
+// import BridgeABI from "@trustline-inc/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
 import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
 import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
 import NativeAssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
@@ -32,10 +32,10 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
-    BRIDGE: {
-      address: "",
-      abi: BridgeABI.abi
-    },
+    // BRIDGE: {
+    //   address: "",
+    //   abi: BridgeABI.abi
+    // },
     LIQUIDATOR: {
       address: "0x5ee1b382Cd74B6AC105F673bc13cd1947A10Bf27",
       abi: LiquidatorABI.abi
@@ -102,10 +102,10 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
-    BRIDGE: {
-      address: "",
-      abi: BridgeABI.abi
-    },
+    // BRIDGE: {
+    //   address: "",
+    //   abi: BridgeABI.abi
+    // },
     LIQUIDATOR: {
       address: "0x2AD8e37297Fd5781BCe1144392E79a6D3706E516",
       abi: LiquidatorABI.abi
@@ -172,10 +172,10 @@ export const CONTRACTS: { [key: number]: any } = {
       abi: AuctioneerABI.abi
     },
     // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
-    BRIDGE: {
-      address: "0xd95331455De63df32B3881420aAAdea506128b62",
-      abi: BridgeABI.abi
-    },
+    // BRIDGE: {
+    //   address: "0xd95331455De63df32B3881420aAAdea506128b62",
+    //   abi: BridgeABI.abi
+    // },
     LIQUIDATOR: {
       address: "0xCfb4669806EC451e7AB7Cb5173947770f986EE37",
       abi: LiquidatorABI.abi

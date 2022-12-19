@@ -8,7 +8,7 @@ import QRCode from "react-qr-code";
 // import QRCodeModal from "@walletconnect/qrcode-modal";
 import SignClient from "@walletconnect/sign-client";
 // import { PairingTypes, SessionTypes } from "@walletconnect/types";
-import * as solaris from "@trustline-inc/solaris"
+// import * as solaris from "@trustline-inc/solaris"
 import Info from '../../components/Info';
 import { BigNumber, Contract, utils } from "ethers";
 import {
@@ -356,58 +356,58 @@ export default function Transfers() {
 
       if (library && account) {
         console.log("Creating Transfer object")
-        const _transfer = new solaris.Transfer({
-          direction: {
-            source: "LOCAL",
-            destination: "XRPL_TESTNET"
-          },
-          amount: BigNumber.from(transferAmount).mul(WAD),
-          tokenAddress: CONTRACTS[chainId!].USD.address,
-          bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
-          provider: library,
-          signer: library.getSigner() as any
-        })
-        setTransfer(_transfer)
-        setTransferData({
-          stage: "OUTBOUND_PERMIT",
-          amount: transferAmount.toString()
-        })
+        // const _transfer = new solaris.Transfer({
+        //   direction: {
+        //     source: "LOCAL",
+        //     destination: "XRPL_TESTNET"
+        //   },
+        //   amount: BigNumber.from(transferAmount).mul(WAD),
+        //   tokenAddress: CONTRACTS[chainId!].USD.address,
+        //   bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
+        //   provider: library,
+        //   signer: library.getSigner() as any
+        // })
+        // setTransfer(_transfer)
+        // setTransferData({
+        //   stage: "OUTBOUND_PERMIT",
+        //   amount: transferAmount.toString()
+        // })
 
-        // First check the allowance
-        if (!CONTRACTS[chainId!].BRIDGE.address) {
-          setTransferInProgress(false)
-          setShowTransferModal(false)
-          return alert("Bridge address is not set")
-        }
-        const usd = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
-        const allowance = await usd.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
+        // // First check the allowance
+        // if (!CONTRACTS[chainId!].BRIDGE.address) {
+        //   setTransferInProgress(false)
+        //   setShowTransferModal(false)
+        //   return alert("Bridge address is not set")
+        // }
+        // const usd = new Contract(CONTRACTS[chainId!].USD.address, CONTRACTS[chainId!].USD.abi, library.getSigner())
+        // const allowance = await usd.allowance(account, CONTRACTS[chainId!].BRIDGE.address)
 
-        if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
-          setTransferStage("OUTBOUND_PERMIT")
-          setTransferModalBody(`Permit the Bridge contract to spend your USD for the transfer.`)
-          let data = await _transfer.approve()
-          const transactionObject = {
-            to: CONTRACTS[chainId!].USD.address,
-            from: account,
-            data
-          };
-          const result = await web3.eth.sendTransaction((transactionObject as any))
-          setTransferModalBody(`Bridge contract allowance created successfully.`)
-          ctx.updateTransactions(result);
-        }
-        setTransferStage("OUTBOUND_PENDING")
-        setTransferData({
-          ...transferData,
-          stage: "OUTBOUND_PENDING"
-        })
-        setTransferModalBody(
-          <>
-            <p>
-              The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
-            </p>
-            <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new account. Copy the address under <code>account.address</code> below.</p>
-          </>
-        )
+        // if (Number(utils.formatEther(allowance)) < Number(transferAmount)) {
+        //   setTransferStage("OUTBOUND_PERMIT")
+        //   setTransferModalBody(`Permit the Bridge contract to spend your USD for the transfer.`)
+        //   let data = await _transfer.approve()
+        //   const transactionObject = {
+        //     to: CONTRACTS[chainId!].USD.address,
+        //     from: account,
+        //     data
+        //   };
+        //   const result = await web3.eth.sendTransaction((transactionObject as any))
+        //   setTransferModalBody(`Bridge contract allowance created successfully.`)
+        //   ctx.updateTransactions(result);
+        // }
+        // setTransferStage("OUTBOUND_PENDING")
+        // setTransferData({
+        //   ...transferData,
+        //   stage: "OUTBOUND_PENDING"
+        // })
+        // setTransferModalBody(
+        //   <>
+        //     <p>
+        //       The <a href="https://graph.trustline.co/" target="blank">XRPL Composer</a> app is recommended for creating a new issuing account.
+        //     </p>
+        //     <p>To get started, go to <i>Build</i> and create a new node under <i>Actions</i>. Provide an account identifier and enable the default ripple flag. Upon creation, select the new account. Copy the address under <code>account.address</code> below.</p>
+        //   </>
+        // )
       }
     } catch (error) {
       setError(error);
@@ -507,38 +507,38 @@ export default function Transfers() {
    */
   const prepareRedemption = async () => {
     try {
-      setLoading(true)
-      const _transfer = new solaris.Transfer({
-        direction: {
-          source: "XRPL",
-          destination: "FLARE"
-        },
-        tokenAddress: CONTRACTS[chainId!].USD.address,
-        bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
-        provider: library,
-        signer: library!.getSigner() as any
-      })
-      setTransfer(_transfer)
-      setTransferStage("INBOUND_REDEMPTION_RESERVATION")
-      setTransferModalBody(
-        <div className="d-flex flex-column justify-content-center align-items-center">
-          {
-            verifiedIssuers.length ? (
-              <>
-                <p>First, please enter a verified issuer.</p>
-                <ul>
-                  {verifiedIssuers.map((issuer: string, index: number) => <li key={index}>{issuer}</li>)}
-                </ul>
-              </>
-            ) : (
-              <Alert variant="danger">
-                There are no verified issuers yet. To create a verified issuer, please complete the outbound transfer flow.
-              </Alert>
-            )
-          }
-        </div>
-      )
-      setShowTransferModal(true);
+      // setLoading(true)
+      // const _transfer = new solaris.Transfer({
+      //   direction: {
+      //     source: "XRPL",
+      //     destination: "FLARE"
+      //   },
+      //   tokenAddress: CONTRACTS[chainId!].USD.address,
+      //   bridgeAddress: CONTRACTS[chainId!].BRIDGE.address,
+      //   provider: library,
+      //   signer: library!.getSigner() as any
+      // })
+      // setTransfer(_transfer)
+      // setTransferStage("INBOUND_REDEMPTION_RESERVATION")
+      // setTransferModalBody(
+      //   <div className="d-flex flex-column justify-content-center align-items-center">
+      //     {
+      //       verifiedIssuers.length ? (
+      //         <>
+      //           <p>First, please enter a verified issuer.</p>
+      //           <ul>
+      //             {verifiedIssuers.map((issuer: string, index: number) => <li key={index}>{issuer}</li>)}
+      //           </ul>
+      //         </>
+      //       ) : (
+      //         <Alert variant="danger">
+      //           There are no verified issuers yet. To create a verified issuer, please complete the outbound transfer flow.
+      //         </Alert>
+      //       )
+      //     }
+      //   </div>
+      // )
+      // setShowTransferModal(true);
     } catch (error) {
       console.log("error", error)
     }

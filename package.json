@@ -1,6 +1,6 @@
 {
   "name": "probity-ui",
-  "version": "1.0.0-alpha15",
+  "version": "1.0.0-beta1",
   "private": true,
   "resolutions": {
     "@types/react": "17.0.2",
@@ -12,8 +12,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@trustline-inc/probity": "1.0.0-alpha32",
-    "@trustline-inc/solaris": "1.0.0-alpha15",
+    "@trustline/probity": "1.0.0-beta2",
     "@types/jest": "^26.0.15",
     "@types/node": "^18.7.5",
     "@types/react": "^17.0.0",
