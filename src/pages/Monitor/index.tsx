@@ -46,8 +46,8 @@ function Monitor({ assetPrice }: { assetPrice: number }) {
             normDebt,
             collateral,
             initialEquity
-          } = await vaultEngine.vaults(utils.id("ETH"), address);
-          const { adjustedPrice } = await vaultEngine.assets(utils.id("ETH"));
+          } = await vaultEngine.vaults(utils.id("XRP"), address);
+          const { adjustedPrice } = await vaultEngine.assets(utils.id("XRP"));
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const equityAccumulator = await vaultEngine.equityAccumulator();
 

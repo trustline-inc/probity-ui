@@ -8,6 +8,7 @@ export const injected = new InjectedConnector({
     31337,      // Hardhat
     16,         // Coston
     19,         // Songbird
+    1440001,    // XRP Ledger
     4294967295, // Localhost (Flare)
   ],
 })

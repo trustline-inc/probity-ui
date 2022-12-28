@@ -50,15 +50,22 @@ export const getAssetId = (hash: string) => {
 
 export const getNativeTokenSymbol = (chainId: number) => {
   switch (chainId) {
+    // Goerli
+    case 5:
+      return "ETH"
+    // Flare
     case 14:
       return "FLR"
+    // Coston
     case 16:
       return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"
+    // Songbird
     case 19:
       return "SGB"
+    // XRP Ledger EVM Sidechain
     case 31337:
-      return "ETH"
+      return "XRP"
     default:
-      return process.env.REACT_APP_NATIVE_TOKEN || "CFLR"
+      return process.env.REACT_APP_NATIVE_TOKEN || "XRP"
   }
 }
