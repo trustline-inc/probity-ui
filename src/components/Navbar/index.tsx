@@ -6,7 +6,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { injected } from "../../connectors";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { formatEther } from "@ethersproject/units";
+import { formatEther } from "ethers";
 import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
 import ExternalSites from "../ExternalSites";
