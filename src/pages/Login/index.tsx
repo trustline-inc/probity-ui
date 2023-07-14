@@ -56,7 +56,7 @@ export default function Login(props: any) {
                     <div className="d-grid gap-2 mb-2">
                       <button type="button" onClick={login} className="btn btn-primary">Submit</button>
                     </div>
-                    <small>Already have an account? <Link to="/register">Register</Link></small>
+                    <small>Don't have an account? <Link to="/register">Register</Link></small>
                   </form>
                 </div>
               </div>

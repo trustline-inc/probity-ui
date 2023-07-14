@@ -186,7 +186,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, vault, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address, debtAccumulator])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, vault, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address, debtAccumulator, nativeTokenSymbol])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")

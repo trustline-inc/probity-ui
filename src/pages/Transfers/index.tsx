@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Alert, Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
+import { Button, Form, Modal, Row, Col, Container } from "react-bootstrap"
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import Web3 from "web3"
@@ -10,7 +10,7 @@ import SignClient from "@walletconnect/sign-client";
 // import { PairingTypes, SessionTypes } from "@walletconnect/types";
 // import * as solaris from "@trustline-inc/solaris"
 import Info from '../../components/Info';
-import { BigNumber, Contract, utils } from "ethers";
+import { Contract } from "ethers";
 import {
   PROJECT_ID,
   DEFAULT_APP_METADATA,
@@ -18,7 +18,6 @@ import {
   DEFAULT_METHODS,
   // DEFAULT_RELAY_PROVIDER,
   CONTRACTS,
-  WAD,
 } from '../../constants';
 import EventContext from "../../contexts/TransactionContext"
 import { Activity as ActivityType } from "../../types";
@@ -27,7 +26,7 @@ import Activity from "../../containers/Activity";
 export default function Transfers() {
   const location = useLocation();
   const storage = localStorage.getItem('probity-transfer')
-  const [transfer, setTransfer] = React.useState<any>()
+  const [transfer] = React.useState<any>()
   const [transferData, setTransferData] = React.useState<any>(
     storage ? JSON.parse(storage) : null
   );

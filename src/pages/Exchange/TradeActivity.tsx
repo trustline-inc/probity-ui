@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import numbro from "numbro"
 import { BigNumber, Contract, utils } from "ethers";
 import Router from "@uniswap/v2-periphery/build/UniswapV2Router02.json";
@@ -29,10 +29,12 @@ function TradeActivity() {
 
     const addresses: {
         [key: string]: string;
-    } = {
-        USD: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
-        LQO: "0xa8cF0dCF0A118f1AaD8E75fF3e1F4E80Bf1410fc"
-    }
+    } = useMemo(() => {
+        return {
+            USD: "0x482e8BEf8235ff6333B671A78e94d6576C4B2CFf",
+            LQO: "0xa8cF0dCF0A118f1AaD8E75fF3e1F4E80Bf1410fc"
+        }
+    }, [])
 
     useEffect(() => {
         (async () => {
@@ -48,7 +50,7 @@ function TradeActivity() {
                 }
             }
         })()
-    }, [library, assetIn, assetOut])
+    }, [library, assetIn, assetOut, addresses])
 
     useEffect(() => {
         (async () => {
