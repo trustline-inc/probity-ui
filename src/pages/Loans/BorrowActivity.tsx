@@ -7,7 +7,7 @@ import PriceFeed from "../../components/PriceFeed";
 import { BigNumber, utils } from "ethers";
 import fetcher from "../../fetcher";
 import { RAY, CONTRACTS } from '../../constants';
-import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
 import { getNativeTokenSymbol } from "../../utils";
 import AssetSelector from "../../components/AssetSelector";
 import NumberFormat from "react-number-format";

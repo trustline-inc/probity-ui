@@ -4,8 +4,8 @@ import { BigNumber, Contract, utils } from "ethers";
 import Router from "@uniswap/v2-periphery/build/UniswapV2Router02.json";
 import Factory from "@uniswap/v2-core/build/UniswapV2Factory.json";
 import Pair from "@uniswap/v2-core/build/UniswapV2Pair.json";
-import UsdABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
-import LqoABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Lqo.sol/LQO.json";
+import UsdABI from "@trustline/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
+import LqoABI from "@trustline/probity/artifacts/contracts/probity/tokens/Lqo.sol/LQO.json";
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
 import { formatOptions } from "../../constants";

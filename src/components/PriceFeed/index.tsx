@@ -2,7 +2,7 @@ import React from "react";
 import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers';
-import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/mocks/MockPriceFeed.sol/MockPriceFeed.json";
+import PriceFeedABI from "@trustline/probity/artifacts/contracts/mocks/MockPriceFeed.sol/MockPriceFeed.json";
 import { utils } from "ethers";
 import numbro from "numbro";
 import { CONTRACTS } from '../../constants';

@@ -133,12 +133,19 @@ function Navbar({ setAuth }: any) {
               <i className="fa-solid fa-house-chimney-user"></i> Profile
             </NavLink>
           </li>
-          <li className="nav-item my-1">
+          {/* Hide for now */}
+          {/* <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/cash-management">
-              <i className="fa-solid fa-wallet"></i> Cash
+              <i className="fa-solid fa-money-bill"></i> Cash
+            </NavLink>
+          </li> */}
+          <li className="nav-item my-1">
+            <NavLink className="nav-link" activeClassName="active" to="/crypto-management">
+              <i className="fa-solid fa-wallet"></i> Crypto
             </NavLink>
           </li>
-          <li className="nav-item my-1">
+          {/* Hide exchange for now */}
+          {/* <li className="nav-item my-1">
             <NavLink
               className="nav-link"
               activeClassName="active"
@@ -146,7 +153,7 @@ function Navbar({ setAuth }: any) {
             >
               <i className="fa-solid fa-exchange"></i> Exchange
             </NavLink>
-          </li>
+          </li> */}
           <li className="nav-item my-1">
             <NavLink
               className="nav-link"
@@ -163,7 +170,7 @@ function Navbar({ setAuth }: any) {
           </li>
           <li className="nav-item my-1">
             <NavLink className="nav-link" activeClassName="active" to="/loans">
-              <i className="fas fa-money-bill"></i> Borrow
+              <i className="fas fa-scale-unbalanced"></i> Borrow
             </NavLink>
           </li>
           {

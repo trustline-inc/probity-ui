@@ -44,7 +44,7 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
   const VAULT_ENGINE = CONTRACTS[chainId!].VAULT_ENGINE
 
   // Read data from deployed contracts
-  const { data: ethVault, mutate: mutateEthVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("ETH"), account], {
+  const { data: vault, mutate: mutateEthVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id(currentAsset), account], {
     fetcher: fetcher(library, VAULT_ENGINE.abi),
   })
   const { data: usdVault, mutate: mutateUsdVault } = useSWR([VAULT_ENGINE.address, "vaults", utils.id("USD"), account], {
@@ -157,10 +157,10 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
             collateral,
             underlying,
             initialEquity
-          } = await vaultEngine.vaults(utils.id("ETH"), account);
+          } = await vaultEngine.vaults(utils.id(nativeTokenSymbol), account);
           const debtAccumulator = await vaultEngine.debtAccumulator();
           const priceFeed = new Contract(PRICE_FEED.address, PRICE_FEED.abi, library.getSigner())
-          const price = await priceFeed.callStatic.getPrice(utils.id("ETH"))
+          const price = await priceFeed.callStatic.getPrice(utils.id(nativeTokenSymbol))
   
           const _debt = normDebt.mul(debtAccumulator)
 
@@ -186,14 +186,14 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
         }
       })()
     }
-  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, ethVault, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address, debtAccumulator])
+  }, [account, library, chainId, lendingPoolDebt, lendingPoolEquity, currentAsset, vault, usdVault, PRICE_FEED.abi, PRICE_FEED.address, VAULT_ENGINE.abi, VAULT_ENGINE.address, debtAccumulator])
 
   const updateActiveKey = (key: string) => {
     if (activeKey === key) setActiveKey("")
     else setActiveKey(key)
   }
 
-  if (!usdVault && !ethVault) return null;
+  if (!usdVault && !vault) return null;
 
   return (
     <>
@@ -285,18 +285,18 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Available</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(ethVault.standbyAmount)).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(vault.standbyAmount)).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Pledged</h6>
                         <span className="text-truncate">
-                          {numbro(utils.formatEther(ethVault.underlying.add(ethVault.collateral))).format(formatOptions)} {ctx.asset}
+                          {numbro(utils.formatEther(vault.underlying.add(vault.collateral))).format(formatOptions)} {ctx.asset}
                         </span>
                       </div>
                       <div className="my-2 d-flex justify-content-between">
                         <h6>Total</h6>
-                        <span className="text-truncate">{numbro(utils.formatEther(ethVault.standbyAmount.add(ethVault.underlying).add(ethVault.collateral))).format(formatOptions)} {ctx.asset}</span>
+                        <span className="text-truncate">{numbro(utils.formatEther(vault.standbyAmount.add(vault.underlying).add(vault.collateral))).format(formatOptions)} {ctx.asset}</span>
                       </div>
                     </div>
                   </Accordion.Body>
@@ -309,13 +309,13 @@ function Balances({ newActiveKey }: { newActiveKey: string }) {
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Balance</h6>
                       <span className="text-truncate">
-                        {ethVault && debtAccumulator ? numbro(utils.formatEther(ethVault.normDebt.mul(debtAccumulator).div(RAY))).format(formatOptions) : null} USD
+                        {vault && debtAccumulator ? numbro(utils.formatEther(vault.normDebt.mul(debtAccumulator).div(RAY))).format(formatOptions) : null} USD
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">
                       <h6>Collateral</h6>
                       <span className="text-truncate">
-                        {ethVault && numbro(utils.formatEther(ethVault.collateral)).format(formatOptions)} ETH
+                        {vault && numbro(utils.formatEther(vault.collateral)).format(formatOptions)} {nativeTokenSymbol}
                       </span>
                     </div>
                     <div className="my-2 d-flex justify-content-between">

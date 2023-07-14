@@ -6,6 +6,7 @@ import { RPC_URLS, POLLING_INTERVAL } from './constants'
 export const injected = new InjectedConnector({
   supportedChainIds: [
     31337,      // Hardhat
+    14,         // Flare
     16,         // Coston
     19,         // Songbird
     1440001,    // XRP Ledger

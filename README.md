@@ -1,6 +1,6 @@
 # Probity Frontend
 
-A public react interface for [Probity](https://github.com/trustline-inc/probity). If you're a developer, please take a look at the [developer documentation](./docs/development.md) to get started.
+A public react interface for [Probity](https://github.com/trustline/probity). If you're a developer, please take a look at the [developer documentation](./docs/development.md) to get started.
 
 [![Probity](./demo.png)](https://docs.trustline.co)
 

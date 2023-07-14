@@ -49,7 +49,7 @@ function Cash({ user, auth }: any) {
   }
 
   const createExternalAccount = React.useCallback(async (accountId: string) => {
-    await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`, {
+    await axios(`http://localhost:8080/v1/accounts/${user?.ledger_account_id}/external_accounts`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -62,7 +62,7 @@ function Cash({ user, auth }: any) {
 
   const createPlaidAccessToken = React.useCallback(async (publicToken) => {
     await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/access_token`,
+      url: `http://localhost:8080/v1/accounts/${user?.ledger_account_id}/plaid/access_token`,
       method: "POST",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -75,7 +75,7 @@ function Cash({ user, auth }: any) {
 
   const getExternalAccounts = React.useCallback(async () => {
     const response = await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts`,
+      url: `http://localhost:8080/v1/accounts/${user?.ledger_account_id}/external_accounts`,
       method: "GET",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -104,7 +104,7 @@ function Cash({ user, auth }: any) {
 
   const getTransactions = React.useCallback(async () => {
     setTransactionsLoading(true)
-    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/transactions`, {
+    const response = await axios(`http://localhost:8080/v1/accounts/${user?.ledger_account_id}/transactions`, {
       headers: {
         "Authorization": `Bearer ${auth.token}`
       },
@@ -115,7 +115,7 @@ function Cash({ user, auth }: any) {
   }, [auth, user])
 
   const getAccountBalance = React.useCallback(async () => {
-    const response = await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}`, {
+    const response = await axios(`http://localhost:8080/v1/accounts/${user?.ledger_account_id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -127,7 +127,7 @@ function Cash({ user, auth }: any) {
   const deposit = async () => {
     try {
       setTransactionInProgress(true)
-      await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/deposits`, {
+      await axios(`http://localhost:8080/v1/accounts/${user?.ledger_account_id}/deposits`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${auth.token}`
@@ -148,7 +148,7 @@ function Cash({ user, auth }: any) {
   const withdrawal = async () => {
     try {
       setTransactionInProgress(true)
-      await axios(`http://localhost:8080/v1/accounts/${user.ledger_account_id}/withdrawals`, {
+      await axios(`http://localhost:8080/v1/accounts/${user?.ledger_account_id}/withdrawals`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${auth.token}`
@@ -167,7 +167,7 @@ function Cash({ user, auth }: any) {
 
   const removeExternalAccount = async (id: any) => {
     await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/external_accounts/${id}`,
+      url: `http://localhost:8080/v1/accounts/${user?.ledger_account_id}/external_accounts/${id}`,
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -186,7 +186,7 @@ function Cash({ user, auth }: any) {
 
   const getLinkToken = React.useCallback(async () => {
     const response = await axios({
-      url: `http://localhost:8080/v1/accounts/${user.ledger_account_id}/plaid/link_token`,
+      url: `http://localhost:8080/v1/accounts/${user?.ledger_account_id}/plaid/link_token`,
       method: "GET",
       headers: {
         "Authorization": `Bearer ${auth.token}`
@@ -205,7 +205,7 @@ function Cash({ user, auth }: any) {
     const entries = transaction.ledger_entries;
 
     if (entries.length === 2) {
-      if (entries[0].ledger_account_id === user.ledger_account_id) {
+      if (entries[0].ledger_account_id === user?.ledger_account_id) {
         if (entries[0].direction === "credit") {
           return "Deposit"
         } else if (entries[0].direction === "debit") {

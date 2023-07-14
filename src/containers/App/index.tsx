@@ -22,6 +22,7 @@ import Lend from "../../pages/Investment";
 import Loans from "../../pages/Loans";
 import Exchange from "../../pages/Exchange";
 import Cash from "../../pages/Cash";
+import Crypto from "../../pages/Crypto";
 import Assets from "../../pages/Collateral";
 import Profile from "../../pages/Profile";
 import Transactions from "../../pages/Transactions";
@@ -167,7 +168,7 @@ function App() {
                                 <strong>
                                   <i className="fas fa-exclamation-circle"></i> Notice
                                 </strong>{" "}
-                                Probity is currently in closed testing mode.
+                                This app is for demo purposes only.
                               </div>
                               <button
                                 type="button"
@@ -256,6 +257,19 @@ function App() {
                                 <Route path="/cash-management">
                                   <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
                                     <Cash user={user} auth={auth} />
+                                  </div>
+                                  <div className="col-xl-4 col-lg-6 col-md-12">
+                                    {active && (
+                                      <AssetContext.Provider value={{ asset, address, updateAsset }}>
+                                        <Balances newActiveKey="" />
+                                      </AssetContext.Provider>
+                                    )}
+                                  </div>
+                                </Route>
+                                {/* Crypto Management */}
+                                <Route path="/crypto-management">
+                                  <div className="offset-xl-1 col-xl-6 col-lg-6 col-md-12">
+                                    <Crypto user={user} auth={auth} />
                                   </div>
                                   <div className="col-xl-4 col-lg-6 col-md-12">
                                     {active && (

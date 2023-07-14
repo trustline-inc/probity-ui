@@ -1,21 +1,21 @@
 import { BigNumber } from "ethers";
-import UsdABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
-import AuctioneerABI from "@trustline-inc/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
+import UsdABI from "@trustline/probity/artifacts/contracts/probity/tokens/Usd.sol/USD.json";
+import AuctioneerABI from "@trustline/probity/artifacts/contracts/probity/Auctioneer.sol/Auctioneer.json";
 // import BridgeABI from "@trustline-inc/solaris/artifacts/contracts/Bridge.sol/Bridge.json";
-import LiquidatorABI from "@trustline-inc/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
-import PriceFeedABI from "@trustline-inc/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
-import NativeAssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
-import Erc20AssetManagerABI from "@trustline-inc/probity/artifacts/contracts/probity/assets/ERC20AssetManager.sol/ERC20AssetManager.json";
-import RegistryABI from "@trustline-inc/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
-import ReservePoolABI from "@trustline-inc/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
+import LiquidatorABI from "@trustline/probity/artifacts/contracts/probity/Liquidator.sol/Liquidator.json";
+import PriceFeedABI from "@trustline/probity/artifacts/contracts/probity/PriceFeed.sol/PriceFeed.json";
+import NativeAssetManagerABI from "@trustline/probity/artifacts/contracts/probity/assets/NativeAssetManager.sol/NativeAssetManager.json";
+import Erc20AssetManagerABI from "@trustline/probity/artifacts/contracts/probity/assets/ERC20AssetManager.sol/ERC20AssetManager.json";
+import RegistryABI from "@trustline/probity/artifacts/contracts/probity/Registry.sol/Registry.json";
+import ReservePoolABI from "@trustline/probity/artifacts/contracts/probity/ReservePool.sol/ReservePool.json";
 // import StateConnectorABI from "@trustline-inc/solaris/artifacts/contracts/test/StateConnector.sol/StateConnector.json"
-import PbtABI from "@trustline-inc/probity/artifacts/contracts/probity/tokens/Pbt.sol/PBT.json";
-import TellerABI from "@trustline-inc/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
-import TreasuryABI from "@trustline-inc/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
-// import VaultEngineABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
-import VaultEngineIssuerABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineIssuer.sol/VaultEngineIssuer.json";
-// import VaultEngineLimitedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineLimited.sol/VaultEngineLimited.json";
-// import VaultEngineRestrictedABI from "@trustline-inc/probity/artifacts/contracts/probity/VaultEngineRestricted.sol/VaultEngineRestricted.json";
+import PbtABI from "@trustline/probity/artifacts/contracts/probity/tokens/Pbt.sol/PBT.json";
+import TellerABI from "@trustline/probity/artifacts/contracts/probity/Teller.sol/Teller.json";
+import TreasuryABI from "@trustline/probity/artifacts/contracts/probity/Treasury.sol/Treasury.json";
+// import VaultEngineABI from "@trustline/probity/artifacts/contracts/probity/VaultEngine.sol/VaultEngine.json";
+import VaultEngineIssuerABI from "@trustline/probity/artifacts/contracts/probity/VaultEngineIssuer.sol/VaultEngineIssuer.json";
+// import VaultEngineLimitedABI from "@trustline/probity/artifacts/contracts/probity/VaultEngineLimited.sol/VaultEngineLimited.json";
+// import VaultEngineRestrictedABI from "@trustline/probity/artifacts/contracts/probity/VaultEngineRestricted.sol/VaultEngineRestricted.json";
 
 /**
  * Contract addresses
@@ -91,7 +91,7 @@ export const CONTRACTS: { [key: number]: any } = {
       "0x23f02A4F5119201D31a90ED071eE5680e9780A55": VaultEngineIssuerABI
     }
   },
-  // XRP Ledger
+  // XRP Ledger Sidechain Devnet
   1440001: {
     USD: {
       address: "0xbfa5ff89e20D4b9f75d1C5126e80CfFC2ceC2831",
@@ -302,9 +302,145 @@ export const CONTRACTS: { [key: number]: any } = {
     }
   },
   // Songbird network
-  19: {},
+  19: {
+    USD: {
+      address: "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
+      abi: UsdABI.abi
+    },
+    AUCTIONEER: {
+      address: "0xa09dAB87b5dD723458d76ceC090E9224c80Be3a7",
+      abi: AuctioneerABI.abi
+    },
+    // // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
+    // BRIDGE: {
+    //   address: "",
+    //   abi: BridgeABI.abi
+    // },
+    LIQUIDATOR: {
+      address: "0xAb935B158336723448C676071B28717c2B135ffd",
+      abi: LiquidatorABI.abi
+    },
+    USD_MANAGER: {
+      address: "0xE1F322df0660470d1f8af66412FE631700a5eC95",
+      abi: Erc20AssetManagerABI.abi
+    },
+    PRICE_FEED: {
+      address: "0x0EdF1C1BaE930B74f80371128239Ab5f584aADF1",
+      abi: PriceFeedABI.abi
+    },
+    NATIVE_ASSET_MANAGER: {
+      address: "0x1aDF9d1AF441d4489ea2C6b9a7e944B1A59b0e98",
+      abi: NativeAssetManagerABI.abi
+    },
+    REGISTRY: {
+      address: "0x72b96dF84644e9F5bC91228C52cA24D74aC04558",
+      abi: RegistryABI.abi
+    },
+    PBT: {
+      address: "0x7f2cF5bC5065BCaDF7713d11de41D9e0523D574e",
+      abi: PbtABI.abi
+    },
+    RESERVE_POOL: {
+      address: "0xe2F72317D5F14Cc6d4b23019088768D456697fd6",
+      abi: ReservePoolABI.abi
+    },
+    TELLER: {
+      address: "0x1c86117F477D4C84e5954A85f3F1c787b67f1a31",
+      abi: TellerABI.abi
+    },
+    TREASURY: {
+      address: "0x60b1d01AC1036906Eca859e6b55ca1bf9cAB92EF",
+      abi: TreasuryABI.abi
+    },
+    VAULT_ENGINE: {
+      address: "0x776C09f1640175f509c743C451Bb513ee13fF67A",
+      abi: VaultEngineIssuerABI.abi
+    },
+    INTERFACES: {
+      "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d": UsdABI,
+      "	0xa09dAB87b5dD723458d76ceC090E9224c80Be3a7": AuctioneerABI,
+      "0xAb935B158336723448C676071B28717c2B135ffd": LiquidatorABI,
+      "0x0EdF1C1BaE930B74f80371128239Ab5f584aADF1": PriceFeedABI,
+      "0x1aDF9d1AF441d4489ea2C6b9a7e944B1A59b0e98": NativeAssetManagerABI,
+      "0xE1F322df0660470d1f8af66412FE631700a5eC95": Erc20AssetManagerABI,
+      "0xbF8A3CA285C7ccbACbC0c8666348f432060794Aa": RegistryABI,
+      "0x2d552d09c96A4c3d57924A636038CcceC2DF2c5e": PbtABI,
+      "0x72b96dF84644e9F5bC91228C52cA24D74aC04558": ReservePoolABI,
+      "0x1c86117F477D4C84e5954A85f3F1c787b67f1a31": TellerABI,
+      "0x60b1d01AC1036906Eca859e6b55ca1bf9cAB92EF": TreasuryABI,
+      "0x776C09f1640175f509c743C451Bb513ee13fF67A": VaultEngineIssuerABI
+    }
+  },
   // Flare network
-  14: {}
+  14: {
+    USD: {
+      address: "0x2De05d67bf2D03045684a48Ba269A09c51F53A6f",
+      abi: UsdABI.abi
+    },
+    AUCTIONEER: {
+      address: "0xa09dAB87b5dD723458d76ceC090E9224c80Be3a7",
+      abi: AuctioneerABI.abi
+    },
+    // // NOTE: BRIDGE is deployed from https://github.com/trustline-inc/solaris-sdk
+    // BRIDGE: {
+    //   address: "",
+    //   abi: BridgeABI.abi
+    // },
+    LIQUIDATOR: {
+      address: "0xAb935B158336723448C676071B28717c2B135ffd",
+      abi: LiquidatorABI.abi
+    },
+    USD_MANAGER: {
+      address: "0x8f40D140307D20954a77a390BBfF31269561cC45",
+      abi: Erc20AssetManagerABI.abi
+    },
+    PRICE_FEED: {
+      address: "0x6F1D557192f959339AfDF798F5Dba16c73C2A863",
+      abi: PriceFeedABI.abi
+    },
+    NATIVE_ASSET_MANAGER: {
+      address: "0x3de0107eF69a5164B0e79daE9793B7C08f877aDb",
+      abi: NativeAssetManagerABI.abi
+    },
+    REGISTRY: {
+      address: "0xbF8A3CA285C7ccbACbC0c8666348f432060794Aa",
+      abi: RegistryABI.abi
+    },
+    PBT: {
+      address: "0x2d552d09c96A4c3d57924A636038CcceC2DF2c5e",
+      abi: PbtABI.abi
+    },
+    RESERVE_POOL: {
+      address: "0x6E4e94D9f9D36F1C4C9695fDA80cc9B5Ba16A3c5",
+      abi: ReservePoolABI.abi
+    },
+    TELLER: {
+      address: "0xDBB461218eD84D712c2d57519c6672eF5F1529E9",
+      abi: TellerABI.abi
+    },
+    TREASURY: {
+      address: "0xF8b3093D277E5C8315CEFdB774d48d8665c28Bb8",
+      abi: TreasuryABI.abi
+    },
+    VAULT_ENGINE: {
+      address: "0x29e42438a60EC8F5aacC51f826a0BB07F32507bb",
+      abi: VaultEngineIssuerABI.abi
+    },
+    INTERFACES: {
+      "0x2De05d67bf2D03045684a48Ba269A09c51F53A6f": UsdABI,
+      "0xa09dAB87b5dD723458d76ceC090E9224c80Be3a7": AuctioneerABI,
+      "0xAb935B158336723448C676071B28717c2B135ffd": LiquidatorABI,
+      "0x6F1D557192f959339AfDF798F5Dba16c73C2A863": PriceFeedABI,
+      "0x3de0107eF69a5164B0e79daE9793B7C08f877aDb": NativeAssetManagerABI,
+      "0x8f40D140307D20954a77a390BBfF31269561cC45": Erc20AssetManagerABI,
+      "0xbF8A3CA285C7ccbACbC0c8666348f432060794Aa": RegistryABI,
+      "0x2d552d09c96A4c3d57924A636038CcceC2DF2c5e": PbtABI,
+      "0x6E4e94D9f9D36F1C4C9695fDA80cc9B5Ba16A3c5": ReservePoolABI,
+      "0xDBB461218eD84D712c2d57519c6672eF5F1529E9": TellerABI,
+      "0xF8b3093D277E5C8315CEFdB774d48d8665c28Bb8": TreasuryABI,
+      "0x29e42438a60EC8F5aacC51f826a0BB07F32507bb": VaultEngineIssuerABI
+    }
+  }
 }
 
 // WalletConnect

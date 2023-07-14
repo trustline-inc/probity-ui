@@ -11,6 +11,7 @@ const IMAGES: { [key: string]: any } = {
   "FLR": FLR,
   "SGB": SGB,
   "CFLR": FLR,
+  "C2FLR": FLR,
   "XRP": XRP,
   "ETH": ETH
 }
