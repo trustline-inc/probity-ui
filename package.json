@@ -1,6 +1,7 @@
 {
   "name": "probity-ui",
   "version": "1.0.0-beta1",
+  "homepage": "https://trustline-inc.github.io/probity-ui",
   "resolutions": {
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2",
