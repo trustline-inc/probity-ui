@@ -6,7 +6,7 @@ import { NavLink, useHistory } from "react-router-dom";
 import { injected } from "../../connectors";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { formatEther } from "ethers";
+import { utils } from "ethers";
 import fetcher from "../../fetcher";
 import logo from "../../assets/probity.png";
 import ExternalSites from "../ExternalSites";
@@ -51,7 +51,7 @@ function Balance() {
     <div className="your-balance my-3 mt-5 shadow-sm p-3 rounded text-truncate">
       <h3>Balance</h3>
       <span className="tokens">
-        {numbro(parseFloat(formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {symbol}
+        {numbro(parseFloat(utils.formatEther(balance)).toFixed(4)).format({ thousandSeparated: true, mantissa: 4, optionalMantissa: true })} {symbol}
       </span>
     </div>
   );
